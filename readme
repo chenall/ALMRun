@@ -1,0 +1,13 @@
+Build Merry
+===========
+cd Build
+cmake ..
+
+Requirement
+===========
+Mac OS >= 10.7
+
+Resource
+========
+ICON:
+http://dakirby309.deviantart.com/art/Metro-UI-Dock-Icon-Set-RELEASED-436-Icons-280724102
