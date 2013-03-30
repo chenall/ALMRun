@@ -3,7 +3,7 @@
 #include "MerryLua.h"
 
 MerryCommandManager* g_commands = NULL;
-
+int Ex_CompareMode;
 MerryCommandManager::~MerryCommandManager()
 {
 	for (size_t i=0; i<m_commands.size(); ++i)
@@ -48,7 +48,7 @@ const MerryCommand* MerryCommandManager::GetCommand(int commandID) const
 MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) const
 {
 	MerryCommandArray commands;
-	bool cmp_hook = (g_lua->onCompare(wxT(''),wxT('')) != -1);
+	bool test_cmp = false;
 	for (size_t i=0; i<m_commands.size(); ++i)
 	{
 		MerryCommand* command = m_commands[i];
@@ -58,14 +58,20 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 			continue;
 		if (commandName.size() < commandPrefix.size())
 			continue;
-		if (cmp_hook)
+		switch(Ex_CompareMode)
 		{
-			if (g_lua->onCompare(commandName.c_str(),commandPrefix.c_str()) <= 0)
-				continue;
+			case 1:
+				test_cmp = (commandName.Upper().compare(0, commandPrefix.size(), commandPrefix.Upper()) == 0);
+				break;
+			case 2:
+				test_cmp = g_lua->onCompare(commandName.c_str(),commandPrefix.c_str());
+				break;
+			default:
+				test_cmp = (commandName.Upper().find(commandPrefix.Upper()) != wxNOT_FOUND);
+				break;
 		}
-		else if (commandName.Upper().compare(0, commandPrefix.size(), commandPrefix.Upper()))
-			continue;
-		commands.push_back(command);
+		if (test_cmp)
+			commands.push_back(command);
 	}
 	return commands;
 }

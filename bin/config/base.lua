@@ -73,11 +73,6 @@ addEventHandler('onClose', function()
 	showWindow(curHideWindow, 'normal')
 end)
 
--- 命令匹配函数,可以自己扩展
-function HookCompare(commandName,Prefix)
-	return commandName:lower():find(Prefix:lower())
-end
-
 -- 默认的命令调用函数
 CmdCallFunc = function(cmdLine,cmdArg,Flags)
 -- 命令行以'@'开头,隐藏窗口执行

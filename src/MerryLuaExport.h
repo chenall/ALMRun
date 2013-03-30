@@ -288,3 +288,14 @@ static int LuaClearTimer(lua_State* L)
 	g_timers->ClearTimer(lua_touserdata(L, 1));
 	return 0;
 }
+
+static int LuaConfig(lua_State* L)
+{
+	if (!lua_istable(L, 1))
+		return 0;
+	lua_pushstring(L, "CompareMode");
+	lua_rawget(L, 1);
+	if (lua_isnumber(L,-1))
+		Ex_CompareMode = lua_tointeger(L,-1);
+	return 0;
+}

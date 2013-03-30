@@ -36,6 +36,7 @@ MerryLua::MerryLua()
 	lua_register(L, "enterText",                          LuaEnterText);
 	lua_register(L, "setTimer",                           LuaSetTimer);
 	lua_register(L, "clearTimer",                         LuaClearTimer);
+	lua_register(L, "config",							  LuaConfig);
 
 	lua_pushboolean(L, true);
 #ifdef __WXMSW__
@@ -93,21 +94,21 @@ void MerryLua::OnClose()
 	}
 }
 
-int MerryLua::onCompare(const wxString& commandName,const wxString& commandPrefix)
+bool MerryLua::onCompare(const wxString& commandName,const wxString& commandPrefix)
 {
 	assert(L);
-	int ret = 0;
+	bool ret = false;
 	lua_getglobal(L, "HookCompare");
 	if (lua_isnil(L, 1))
 	{
 		lua_pop(L, 1);
-		return -1;
+		return false;
 	}
 
 	lua_pushstring(L, commandName.c_str());
 	lua_pushstring(L, commandPrefix.c_str());
 	if (lua_pcall(L, 2, 1, 0) == 0)
-		ret = lua_tonumber(L,-1);
+		ret = (lua_toboolean(L,-1) == 1);
 	lua_pop(L, 1);
 	return ret;
 }

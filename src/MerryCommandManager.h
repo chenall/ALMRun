@@ -20,5 +20,5 @@ private:
 };
 
 extern MerryCommandManager* g_commands;
-
+extern int Ex_CompareMode;
 #endif

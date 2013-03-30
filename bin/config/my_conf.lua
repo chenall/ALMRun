@@ -12,3 +12,12 @@ scan_dir("E:\\绿色软件","*.exe")
 -- 调用altrun的配置
 altrun_config("ShortCutList.txt")
 
+-- 命令匹配模式
+-- 1 匹配开头
+-- 2 使用lua函数HookCompre自定义匹配
+-- 0 默认,任意位置匹配
+config{CompareMode=0}
+-- 命令匹配函数,可以自己扩展,当CompareMode为2时调用
+--function HookCompare(commandName,Prefix)
+--	return commandName:lower():find(Prefix:lower())
+--end

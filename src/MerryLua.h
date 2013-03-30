@@ -21,7 +21,7 @@ public:
 	// events
 	void OnClose();
 	void OnUndefinedCommand(const wxString& commandName, const wxString& commandArg);
-	int onCompare(const wxString& commandName,const wxString& commandPrefix);
+	bool onCompare(const wxString& commandName,const wxString& commandPrefix);
 private:
 	lua_State* L;
 };
