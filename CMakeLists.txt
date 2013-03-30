@@ -38,7 +38,7 @@ endif()
 message(STATUS "Build type (Makefile) - ${CMAKE_BUILD_TYPE}")
 
 # set output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 # add executable
 aux_source_directory(src SRCS)

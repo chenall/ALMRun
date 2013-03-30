@@ -103,11 +103,17 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 		case WXK_TAB:
 			if (!listBoxPanel->IsPopup())
 				break;
-			this->ChangeValue(listBoxPanel->GetSelectionCommand()->GetCommandName());
-			this->AppendText(wxT(">>"));
-			this->EnterArgs = this->GetValue().size();
-			listBoxPanel->flags = 1;
-			listBoxPanel->Refresh();
+			else
+			{
+				this->ChangeValue(listBoxPanel->GetSelectionCommand()->GetCommandName());
+				this->AppendText(wxT(">>"));
+				this->EnterArgs = this->GetValue().size();
+				listBoxPanel->flags = 1;
+				MerryCommandArray commands;
+				commands.push_back(const_cast<MerryCommand*>(listBoxPanel->GetSelectionCommand()));
+				listBoxPanel->SetCommandArray(commands);
+				listBoxPanel->Popup();
+			}
 	#ifdef __WXGTK__
 			m_needCompletion = true;
 	#endif
@@ -116,12 +122,15 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	#ifdef __WXGTK__
 			m_needCompletion = true;
 	#endif
-			if (this->GetInsertionPoint()<this->EnterArgs)
-				this->SetInsertionPoint(-1);
-			else if (this->GetInsertionPoint()==this->EnterArgs)
+			if (this->EnterArgs > 0)
 			{
-				if (keyCode == WXK_LEFT || keyCode == WXK_BACK)//设置光标在命令之后
-					break;
+				if (this->GetInsertionPoint()<this->EnterArgs)
+					this->SetInsertionPoint(-1);
+				else if (this->GetInsertionPoint()==this->EnterArgs)
+				{
+					if (keyCode == WXK_LEFT || keyCode == WXK_BACK)//设置光标在命令之后
+						break;
+				}
 			}
 			e.Skip();
 			break;
