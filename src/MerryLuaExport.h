@@ -20,6 +20,12 @@ static int LuaAddCommand(lua_State* L)
 	lua_rawget(L, 1);
 	wxString triggerKey(wxString(lua_tostring(L, -1), wxConvLocal));
 
+	if (commandName.empty() && triggerKey.empty())
+	{
+		lua_settop(L, 1);
+		luaL_error(L, "Command name or key not found.\r\n\r\n参数错误,丢失name或key参数.");
+	}
+
 	lua_pushstring(L, "desc");
 	lua_rawget(L, 1);
 	wxString commandDesc(wxString(lua_tostring(L, -1), wxConvLocal));
@@ -36,7 +42,8 @@ static int LuaAddCommand(lua_State* L)
 		if (commandLine.empty())
 		{
 			lua_settop(L, 1);
-			luaL_error(L, "can't find the command func");
+			luaL_error(L, "can't find the command or func\r\n\r\n参数错误,cmd或func参数未设置.");
+			return 0;
 		}
 	}
 	else
@@ -44,15 +51,19 @@ static int LuaAddCommand(lua_State* L)
 		funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
 	}
 
-	const MerryCommand* command = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey);
-	if (!command)
+	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey);
+	if (commandID == -2)
 	{
 		luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
 		lua_settop(L, 1);
 		luaL_error(L, ::MerryGetLastError().c_str());
 	}
+	else if (commandID == -1)
+	{
+		lua_settop(L, 1);
+		return 0;
+	}
 
-	int commandID = command->GetCommandID();
 	if (!g_hotkey->RegisterHotkey(commandID))
 	{
 		lua_settop(L, 1);

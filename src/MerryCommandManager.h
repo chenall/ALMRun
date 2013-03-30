@@ -11,7 +11,7 @@ class MerryCommandManager
 public:
 	~MerryCommandManager();
 
-	const MerryCommand* AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey);
+	const int AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey);
 	const MerryCommand* GetCommand(int commandID) const;
 	MerryCommandArray Collect(const wxString& commandPrefix) const;
 

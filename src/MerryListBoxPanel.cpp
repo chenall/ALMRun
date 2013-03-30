@@ -206,7 +206,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 	const wxString& cmdDesc = command->GetCommandDesc();
 	if (this->flags > 0)
 	{
-		dc.DrawLabel("输入命令参数,或按Esc返回",item.rect, wxALIGN_LEFT);
+		dc.DrawLabel("  输入命令参数按回车执行或按Esc键返回",item.rect, wxALIGN_LEFT);
 		this->flags = 0;
 		return;
 	}

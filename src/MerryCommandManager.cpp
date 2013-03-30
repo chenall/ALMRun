@@ -1,6 +1,7 @@
 #include "MerryCommandManager.h"
 #include "MerryError.h"
 #include "MerryLua.h"
+#include "MerryInformationDialog.h"
 
 MerryCommandManager* g_commands = NULL;
 int Ex_CompareMode;
@@ -10,12 +11,18 @@ MerryCommandManager::~MerryCommandManager()
 		delete m_commands[i];
 }
 
-const MerryCommand* MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey)
+const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey)
 {
+	if (m_commands.size() >= 1000)
+	{
+		::MerrySetLastError(wxT("1000 commands limit,If you need more please contact me!"));
+		return -2;
+	}
+
 	if (commandName.empty() && triggerKey.empty())
 	{
-		::MerrySetLastError(wxT("Command name and key not found"));
-		return NULL;
+		//::MerrySetLastError(wxT("Command name and key not found"));
+		return -1;
 	}
 	for (size_t i=0; i<m_commands.size(); ++i)
 	{
@@ -23,18 +30,20 @@ const MerryCommand* MerryCommandManager::AddCommand(const wxString& commandName,
 		assert(command);
 		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
 		{
-			::MerrySetLastError(wxString::Format(wxT("Command name \"%s\" already exists"), commandName));
-			return NULL;
+			new MerryInformationDialog(wxT("Command name exists"),wxString::Format(wxT("以下命令名称重复:\r\n%s"),commandName));
+			//::MerrySetLastError(wxString::Format(wxT("Command name \"%s\" already exists[%d]"), commandName,command->GetCommandID()));
+			return -1;
 		}
 		if (!triggerKey.empty() && triggerKey.IsSameAs(command->GetTriggerKey(), false))
 		{
-			::MerrySetLastError(wxString::Format(wxT("Command key \"%s\" already exists"), triggerKey));
-			return NULL;
+			new MerryInformationDialog(wxT("Command key exists"),wxString::Format(wxT("以下命令热键重复:\r\n%s"),triggerKey));
+			//::MerrySetLastError(wxString::Format(wxT("Command key \"%s\" already exists[%d]"), triggerKey,command->GetCommandID()));
+			return -1;
 		}
 	}
 	MerryCommand* command = new MerryCommand(m_commands.size(), commandName,commandDesc,commandLine, funcRef, triggerKey);
 	m_commands.push_back(command);
-	return command;
+	return command->GetCommandID();
 }
 
 const MerryCommand* MerryCommandManager::GetCommand(int commandID) const

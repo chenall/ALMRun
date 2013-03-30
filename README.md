@@ -29,10 +29,17 @@ Merry 的特点和功能
 #### 3.  支持直接调用ALTRUN的配置文件(部份功能不可用)
 > 
 	altrun_config('ShortCutList.txt')
+
 	提示: 可以ALTRUN的配置文件复制到merry.exe目录下,使用上面的命令,或指定路径(同上)
 
-#### 4. 支持任意位置匹配,原版是从头开始匹配
-	若不需要任意位置匹配请打开base.lua,删除HookCompare相关语句块就行了.
+#### 4. 可以设置命令匹配模式
+>
+	config{CompareMode=0}
+
+		命令匹配模式
+		1 匹配开头
+		2 使用lua函数HookCompre自定义匹配(需自己编写,具体请参考my_conf.lua)
+		0 默认,任意位置匹配
 
 #### 5.类似于altrun的功能
 	1). 按Ctrl+D打开对应命令的文件夹(使用cmd参数时可用,否则直接运行命令)
