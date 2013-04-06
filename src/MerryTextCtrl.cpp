@@ -69,8 +69,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			{
 				if (!listBoxPanel->IsPopup())
 					break;
-				wxString commandStr = this->GetValue();
-				wxString commandArg = (this->EnterArgs>0)?commandStr.substr(this->EnterArgs):wxT('');
+				wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxT('');
 				const MerryCommand* command = listBoxPanel->GetSelectionCommand();
 				const wxString& commandName = command->GetCommandName();
 				::wxGetApp().GetFrame().Hide();

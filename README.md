@@ -55,14 +55,17 @@ Merry 的特点和功能
 	message(message)
 
 #### 8. 界面修改
-	1).命令列表底部新增显示对应命令的命令行或备注(优先显示命令行)
+	1).命令列表底部新增显示对应命令的命令行或备注(优先显示备注信息)
 	2).托盘菜单中文化.
+	3).支持鼠标点击执行(原版不支持)
+	4).其它小修改.
 
 
 相关资源: 
 ========
 	原版: http://code.google.com/p/name5566-merry/
-	修改: http://chenall.net/post/alrun-merry/
+	修改: https://github.com/chenall/Merry
+	文章: http://chenall.net/post/alrun-merry/
 
 Build Merry(编译)
 =================

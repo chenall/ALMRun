@@ -210,13 +210,13 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		this->flags = 0;
 		return;
 	}
-	if (!cmdLine.empty())
-	{
-		dc.DrawLabel("รüม๎: "+cmdLine.c_str(),item.rect, wxALIGN_LEFT);
-	}
-	else if (!cmdDesc.empty())
+	if (!cmdDesc.empty())
 	{
 		dc.DrawLabel("หตร๗: "+cmdDesc.c_str(),item.rect, wxALIGN_LEFT);	
+	}
+	else if (!cmdLine.empty())
+	{
+		dc.DrawLabel("รüม๎: "+cmdLine.c_str(),item.rect, wxALIGN_LEFT);
 	}
 	
 }
