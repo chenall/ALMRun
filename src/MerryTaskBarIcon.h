@@ -9,6 +9,7 @@ class MerryTaskBarIcon : public wxTaskBarIcon
 private:
 	void OnOpenEvent(wxCommandEvent& e);
 	void OnAboutEvent(wxCommandEvent& e);
+	void OnOpenConfigEvent(wxCommandEvent& e);
 	void OnConfigEvent(wxCommandEvent& e);
 	void OnExitEvent(wxCommandEvent& e);
 	void OnLeftButtonDClickEvent(wxTaskBarIconEvent& e);

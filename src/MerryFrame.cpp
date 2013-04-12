@@ -9,6 +9,8 @@
 #include "MerryTimerManager.h"
 #include "MerryHotkey.h"
 #include "MerryController.h"
+#include  <wx/stdpaths.h>
+#include  <wx/filename.h>
 
 // #define DEBUG_ALWAYS_SHOW
 
@@ -60,6 +62,17 @@ void MerryFrame::OnInit()
 
 	assert(!g_lua);
 	g_lua = new MerryLua();
+}
+
+void MerryFrame::OpenConfigDir()
+{
+#ifdef __WXMSW__
+	wxStandardPaths std; //<wx/stdpaths.h>
+	wxString pathTmp = wxFileName(std.GetExecutablePath()).GetPath(); //<wx/filename.h>
+	pathTmp.Append("\\config");
+	::ShellExecute(NULL, NULL,pathTmp.c_str(),NULL, pathTmp.c_str(),true);
+	pathTmp.clear();
+#endif
 }
 
 void MerryFrame::OnClose()

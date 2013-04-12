@@ -211,14 +211,9 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		return;
 	}
 	if (!cmdDesc.empty())
-	{
-		dc.DrawLabel("说明: "+cmdDesc.c_str(),item.rect, wxALIGN_LEFT);	
-	}
+		dc.DrawLabel(wxString::Format(wxT("说明: %s"),cmdDesc.c_str()),item.rect, wxALIGN_LEFT);	
 	else if (!cmdLine.empty())
-	{
-		dc.DrawLabel("命令: "+cmdLine.c_str(),item.rect, wxALIGN_LEFT);
-	}
-	
+		dc.DrawLabel(wxString::Format(wxT("命令: %s"),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
 }
 
 void MerryListBoxPanel::SetHeight(int height)

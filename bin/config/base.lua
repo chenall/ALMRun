@@ -32,7 +32,7 @@ function get_name(file)
 	return file:match("[^\\]+$")
 end
 
--- ×Ô¶¯É¨ÃèÖ¸¶¨Ä¿Â¼ÏÂÖ¸¶¨À©Õ¹Ãû³ÌĞòµ½ÁĞ±íÖĞ --WINDOWS
+-- è‡ªåŠ¨æ‰«ææŒ‡å®šç›®å½•ä¸‹æŒ‡å®šæ‰©å±•åç¨‹åºåˆ°åˆ—è¡¨ä¸­ --WINDOWS
 function scan_dir(path,ext)
 	if ext == nil then
 		ext = "*.exe"
@@ -70,12 +70,21 @@ end)
 
 addEventHandler('onClose', function()
 	histroy:close()
+-- ä¿å­˜å‘½ä»¤ä¼˜å…ˆçº§è®¾ç½®å¼€å§‹
+	local f = io.open(MERRY_ORDER_FILE,'w+')
+	f:write('CmdOrder={')
+	for i,v in pairs(CmdOrder) do
+		f:write(i..'='..v..',')
+	end
+	f:write('}')
+	f:close()
+-- ä¿å­˜å‘½ä»¤ä¼˜å…ˆçº§è®¾ç½®å®Œæˆ
 	showWindow(curHideWindow, 'normal')
 end)
 
--- Ä¬ÈÏµÄÃüÁîµ÷ÓÃº¯Êı
+-- é»˜è®¤çš„å‘½ä»¤è°ƒç”¨å‡½æ•°
 CmdCallFunc = function(cmdLine,cmdArg,Flags)
--- ÃüÁîĞĞÒÔ'@'¿ªÍ·,Òş²Ø´°¿ÚÖ´ĞĞ
+-- å‘½ä»¤è¡Œä»¥'@'å¼€å¤´,éšè—çª—å£æ‰§è¡Œ
 	local show = 'normal'
 	local DestDir = ''
 	if cmdLine:sub(1,1) == '@' then
@@ -83,12 +92,12 @@ CmdCallFunc = function(cmdLine,cmdArg,Flags)
 		show = 'hide'
 	end
 
-	cmdLine = cmdLine:gsub("%%(%S+)%%",os.getenv) --ÏµÍ³»·¾³±äÁ¿À©Õ¹
+	cmdLine = cmdLine:gsub("%%(%S+)%%",os.getenv) --ç³»ç»Ÿç¯å¢ƒå˜é‡æ‰©å±•
 
-	pos = cmdLine:find(":::") -- Õı³£Ê¹ÓÃ:::·Ö¸ô²ÎÊı
+	local pos = cmdLine:find(":::") -- æ­£å¸¸ä½¿ç”¨:::åˆ†éš”å‚æ•°
 	if pos == nil then
-		T_arg = cmdLine:match("%s+[%-|/]%a") --Èç¹ûÃüÁîĞĞÖĞ³öÏÖ" -"»ò" /",Ò²ÈÏÎªÊÇ²ÎÊı²¿·İ,Òª·Ö¸ô¿ªÀ´.
-		if T_arg == nil then--°´ÎÄ¼şÃû·Ö¸ô²ÎÊı³ÌĞòĞèÒª´øÓĞÀ©Õ¹Ãû,·ñÔò»áÔËĞĞ´íÎó
+		T_arg = cmdLine:match("%s+[%-|/]%a") --å¦‚æœå‘½ä»¤è¡Œä¸­å‡ºç°" -"æˆ–" /",ä¹Ÿè®¤ä¸ºæ˜¯å‚æ•°éƒ¨ä»½,è¦åˆ†éš”å¼€æ¥.
+		if T_arg == nil then--æŒ‰æ–‡ä»¶ååˆ†éš”å‚æ•°ç¨‹åºéœ€è¦å¸¦æœ‰æ‰©å±•å,å¦åˆ™ä¼šè¿è¡Œé”™è¯¯
 			cmd = cmdLine:gsub("(.*%.[^%s]+).*", "%1")
 			arg = cmdLine:gsub("(.*%.[^%s]+)(.*)$", "%2")
 		else
@@ -103,7 +112,7 @@ CmdCallFunc = function(cmdLine,cmdArg,Flags)
 	if not (arg == "") then
 		cmdArg = arg..' '..cmdArg
 	end
--- ÌáÈ¡¿ÉÖ´ĞĞ³ÌĞòËùÔÚÄ¿Â¼
+-- æå–å¯æ‰§è¡Œç¨‹åºæ‰€åœ¨ç›®å½•
 	if cmd:match("^%a:") then
 		local FileName = cmd:match("[^\\]+$")
 		DestDir = cmd:sub(1,-FileName:len()-1)
@@ -113,6 +122,23 @@ CmdCallFunc = function(cmdLine,cmdArg,Flags)
 	else
 		shellExecute(cmd,cmdArg,DestDir,show)
 	end
+end
+
+--æœ¬å‡½æ•°åœ¨æ¯æ·»åŠ ä¸€ä¸ªå‘½ä»¤ä¹‹åè°ƒç”¨,è·å–å¯¹åº”å‘½ä»¤çš„ä¼˜å…ˆçº§,è¿”å›æ•°å€¼è¶Šå¤§ä¼˜å…ˆçº§è¶Šé«˜.
+function GetCmdOrder(cmdName)
+	local order = CmdOrder[cmdName]
+	if order then
+		return order
+	else
+		return 0
+	end
+end
+
+--æœ¬å‡½æ•°åœ¨æ¯æ‰§è¡Œä¸€æ¡å‘½ä»¤ä¹‹åè°ƒç”¨,è¿”å›æ•°å€¼è¶Šå¤§ä¼˜å…ˆçº§è¶Šé«˜.
+function SetCmdOrder(cmdName,order)
+	order = order + 1
+	CmdOrder[cmdName] = order
+	return order
 end
 
 function read_csv (file,delims)
@@ -130,9 +156,9 @@ function read_csv (file,delims)
   return csv
 end
 
--- ÍµÀÁ,Ö±½Óµ÷ÓÃALTRUNµÄÅäÖÃ,^_^
+-- å·æ‡’,ç›´æ¥è°ƒç”¨ALTRUNçš„é…ç½®,^_^
 function altrun_config(file)
-	altrun = read_csv(file,"|")
+	local altrun = read_csv(file,"|")
 	for i=1,#altrun do
 		addCommand{ name = altrun[i][3], desc = altrun[i][4],cmd = altrun[i][5]}
 	end

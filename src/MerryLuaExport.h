@@ -50,8 +50,21 @@ static int LuaAddCommand(lua_State* L)
 	{
 		funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
 	}
+	int order = 0;
+	if (!commandName.empty())
+	{
+		lua_getglobal(L, "GetCmdOrder");
+		if (!lua_isnil(L, 1))
+		{
+			lua_pushstring(L, commandName.c_str());
+			if (lua_pcall(L, 1, 1, 0) == 0)
+				order = lua_tointeger(L,-1);
 
-	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey);
+		}
+		lua_pop(L, 1);
+	}
+
+	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,order);
 	if (commandID == -2)
 	{
 		luaL_unref(L, LUA_REGISTRYINDEX, funcRef);

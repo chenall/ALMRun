@@ -1,12 +1,11 @@
 #ifndef _MERRY_COMMAND_H_
 #define _MERRY_COMMAND_H_
-
 #include "MerryWx.h"
 
 class MerryCommand
 {
 public:
-	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey);
+	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order);
 	~MerryCommand();
 
 	int GetCommandID() const { return m_commandID; }
@@ -15,7 +14,7 @@ public:
 	const wxString& GetCommandDesc() const { return m_commandDesc; }
 	const wxString& GetCommandLine() const { return m_commandLine; }
 	void ExecuteCommand(const wxString& commandArg) const;
-
+	int m_order;
 private:
 	int m_commandID;
 	wxString m_commandName;
@@ -23,6 +22,7 @@ private:
 	wxString m_commandLine;
 	int m_commandFunc;
 	wxString m_triggerKey;
+		
 };
 
 #endif

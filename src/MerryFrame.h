@@ -13,6 +13,7 @@ public:
 	~MerryFrame();
 	void OnInit();
 	void OnClose();
+	void OpenConfigDir();
 
 	MerryListBoxPanel* GetListBoxPanel();
 

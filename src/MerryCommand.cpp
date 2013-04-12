@@ -1,8 +1,9 @@
 #include "MerryCommand.h"
+#include "MerryCommandManager.h"
 #include "MerryLua.h"
 #include "MerryInformationDialog.h"
 
-MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey)
+MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
 {
 	m_commandID = commandID;
 	m_commandName = commandName;
@@ -10,6 +11,7 @@ MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxS
 	m_triggerKey = triggerKey;
 	m_commandDesc = commandDesc;
 	m_commandLine = commandLine;
+	m_order = order;
 }
 
 MerryCommand::~MerryCommand()
@@ -60,4 +62,6 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 		);
 		lua_pop(L, 1);
 	}
+	if (!m_commandName.empty())
+		g_commands->SetCmdOrder(m_commandID);
 }

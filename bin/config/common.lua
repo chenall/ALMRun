@@ -25,10 +25,15 @@ addCommand{ key = 'A-H', func = function()
 end }
 
 if WINDOWS then
-	addCommand{ name = 'c', func = function() shellExecute('c:', '', '', 'max') end }
-	addCommand{ name = 'd', func = function() shellExecute('d:', '', '', 'max') end }
-	addCommand{ name = 'e', func = function() shellExecute('e:', '', '', 'max') end }
-	addCommand{ name = 'f', func = function() shellExecute('f:', '', '', 'max') end }
+	for i = string.byte('c'), string.byte('z') do
+		local disk = string.char(i).. ':'
+		local isOk, errMsg = io.open(disk)
+		if isOk or errMsg:find('Permission denied') then
+			addCommand{name=disk,key='',cmd=disk,desc="´ò¿ª´ÅÅÌ"..disk}
+		else
+			break
+		end
+	end
 
 	addCommand{ name = 'cmd', key = 'A-T', func = function(arg)
 		local window = getForegroundWindow()
@@ -51,4 +56,3 @@ addCommand{ name = 'youku', func = function(str) shellExecute('http://www.soku.c
 addCommand{ name = 'doubanbook', func = function(str) shellExecute('http://book.douban.com/subject_search?search_text=' .. str) end }
 addCommand{ name = 'doubanmovie', func = function(str) shellExecute('http://movie.douban.com/subject_search?search_text=' .. str) end }
 addCommand{ name = 'name5566', func = function(str) shellExecute('http://name5566.com/?s=' .. str) end }
-
