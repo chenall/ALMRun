@@ -24,6 +24,14 @@ Merry 的特点和功能
 	desc用于在使用func时显示备注信息.使用cmd参数时desc没有效果.
 
 #### 2. 支持自动扫描目录添加命令
+    scan_dir(PATH,EXT,SUB)
+    PATH  要扫描的目录
+    EXT   条件
+          例: *.exe(所有.exe的文件),k*.exe(所有以k开头的exe文件)
+    SUB   扫描级别,默认(-1)
+          -1 不限.
+          0  不管子目录
+          N  N级子目录
   	scan_dir("E:\\绿色软件","*.exe")
 
 #### 3.  支持直接调用ALTRUN的配置文件(部份功能不可用)
