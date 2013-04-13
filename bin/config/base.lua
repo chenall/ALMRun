@@ -72,11 +72,9 @@ addEventHandler('onClose', function()
 	histroy:close()
 -- 保存命令优先级设置开始
 	local f = io.open(MERRY_ORDER_FILE,'w+')
-	f:write('CmdOrder={')
 	for i,v in pairs(CmdOrder) do
-		f:write(i..'='..v..',')
+		f:write('CmdOrder["'..i..'"]='..v.."\n")
 	end
-	f:write('}')
 	f:close()
 -- 保存命令优先级设置完成
 	showWindow(curHideWindow, 'normal')
