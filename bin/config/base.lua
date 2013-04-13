@@ -73,7 +73,7 @@ addEventHandler('onClose', function()
 -- 保存命令优先级设置开始
 	local f = io.open(MERRY_ORDER_FILE,'w+')
 	for i,v in pairs(CmdOrder) do
-		f:write('CmdOrder["'..i..'"]='..v.."\n")
+		f:write(v..'|'..i.."\n")
 	end
 	f:close()
 -- 保存命令优先级设置完成
@@ -151,6 +151,7 @@ function read_csv (file,delims)
 		csv[#csv+1] = row
     end
   end
+	fp:close()
   return csv
 end
 
