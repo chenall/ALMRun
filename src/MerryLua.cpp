@@ -37,6 +37,7 @@ MerryLua::MerryLua()
 	lua_register(L, "setTimer",                           LuaSetTimer);
 	lua_register(L, "clearTimer",                         LuaClearTimer);
 	lua_register(L, "config",							  LuaConfig);
+	lua_register(L, "ListDir",							  LuaDir);
 
 	lua_pushboolean(L, true);
 #ifdef __WXMSW__

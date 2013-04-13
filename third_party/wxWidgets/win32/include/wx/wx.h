@@ -92,6 +92,8 @@
 #include "wx/choicdlg.h"
 #include "wx/textdlg.h"
 #include "wx/filedlg.h"
+#include "wx/filefn.h"
+#include "wx/dir.h"
 
 // this one is included by exactly one file (mdi.cpp) during wx build so even
 // although we keep it here for the library users, don't include it to avoid

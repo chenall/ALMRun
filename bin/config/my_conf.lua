@@ -5,8 +5,16 @@ end}
 
 -- 普通模式,直接调用cmd参数指定的程序
 addCommand{ name = "test_cmd", desc = "单独命令测试",cmd = "cmd.exe /c pause >nul|echo 参数:"}
-
--- 扫描指定目录自动添加
+--[[
+ 扫描指定目录自动添加命令
+ scan_dir(PATH,EXT,SUB)
+ PATH  要扫描的目录
+ EXT   条件比如*.exe(所有.exe的文件),k*.exe(所有以k开头的文件)
+ SUB   扫描级别,默认(-1)
+       -1 不限.
+       0  不管子目录
+       N  N级子目录
+]]
 scan_dir("E:\\绿色软件","*.exe")
 
 -- 调用altrun的配置

@@ -32,18 +32,22 @@ function get_name(file)
 	return file:match("[^\\]+$")
 end
 
--- 自动扫描指定目录下指定扩展名程序到列表中 --WINDOWS
-function scan_dir(path,ext)
+-- 自动扫描指定目录下指定扩展名程序到列表中
+function scan_dir(path,ext,sub)
 	if ext == nil then
 		ext = "*.exe"
 	end
-	local f = io.popen('dir '..path..'\\'..ext..' /b /s')
-	local path_len = string.len(path)+1
-	for line in f:lines() do
-		m_name = get_name(string.sub(line,path_len))
-		addCommand{ name = m_name,cmd = line}
+	if sub == nil then
+		sub = -1
 	end
-	f:close()
+	local Files = ListDir(path,ext,sub)
+	if Files == nil then 
+		return
+	end
+	for key,value in pairs(Files) do  
+		m_name = get_name(value)
+		addCommand{ name = m_name,cmd = value}
+	end
 end
 
 -- Events
