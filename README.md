@@ -1,6 +1,7 @@
-alrun
+ ALMRun
 =====
 Fork from http://code.google.com/p/name5566-merry
+基于 Merry svn r98.
 
 Merry 的特点和功能
 ==================
@@ -38,7 +39,7 @@ Merry 的特点和功能
 > 
 	altrun_config('ShortCutList.txt')
 
-	提示: 可以ALTRUN的配置文件复制到merry.exe目录下,使用上面的命令,或指定路径(同上)
+	提示: 可以ALTRUN的配置文件复制到ALMRun.exe目录下,使用上面的命令,或指定路径(同上)
 
 #### 4. 可以设置命令匹配模式
 >
@@ -72,17 +73,21 @@ Merry 的特点和功能
 	1).默认自动根据运行次数排序.
 	2).提供两个接口GetCmdOrder和SetCmdOrder允许自定义排序.
 
+#### 10. 支持系统环境变量扩展
+	1).在命令中可以使用变量比如"%WinDir%\\Notepad.exe"
+	2).程序内置变量ALMRUN_HOME和ALMRUN_DRIVE
+
 相关资源: 
 ========
 	原版: http://code.google.com/p/name5566-merry/
-	修改: https://github.com/chenall/Merry
+	修改: https://github.com/chenall/ALMRun
 	文章: http://chenall.net/post/alrun-merry/
 
-Build Merry(编译)
+Build ALMRun(编译)
 =================
 	cd Build
 	cmake ..
-	merry.sln
+	ALMRun.sln
 
 Requirement(环境)
 ======================

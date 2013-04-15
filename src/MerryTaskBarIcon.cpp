@@ -27,7 +27,7 @@ wxMenu* MerryTaskBarIcon::CreatePopupMenu()
 	menu->Append(MENU_ITEM_OPEN, wxT("显示界面(&O)"));
 	menu->Append(MENU_ITEM_OPEN_CONFIG, wxT("显示配置(&S)"));
 	menu->Append(MENU_ITEM_CONFIG, wxT("刷新配置(R)"));
-	menu->Append(MENU_ITEM_ABOUT, wxT("关于Merry(&A)"));
+	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
 	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));
 
 	return menu;
@@ -50,7 +50,7 @@ void MerryTaskBarIcon::OnConfigEvent(wxCommandEvent& e)
 
 void MerryTaskBarIcon::OnAboutEvent(wxCommandEvent& e)
 {
-	new MerryInformationDialog(wxT("关于 Merry"),wxString::Format(wxT("version 1.0.0 --- http://name5566.com\r\n修改自(SVN Rev 98) --- http://chenall.net\r\n编译时间:%s %s"),__DATE__,__TIME__));
+	new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.0.0 --- http://name5566.com\r\n修改自(merry SVN R:98) --- http://chenall.net\r\n编译时间:%s %s"),__DATE__,__TIME__));
 }
 
 void MerryTaskBarIcon::OnExitEvent(wxCommandEvent& e)

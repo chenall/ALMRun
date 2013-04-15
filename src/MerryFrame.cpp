@@ -47,7 +47,7 @@ MerryFrame::MerryFrame():
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = new MerryTaskBarIcon();
-	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("Merry"));
+	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun ±ã½ÝÆô¶¯¹¤¾ß"));
 
 	m_isCentred = false;
 
