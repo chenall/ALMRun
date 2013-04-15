@@ -367,6 +367,16 @@ static int LuaDir(lua_State* L)
 	return 1;
 }
 
+static int LuaSetClipboardData(lua_State* L)
+{
+	return 0;
+}
+
+static int LuaGetClipboardData(lua_State* L)
+{
+	return 0;
+}
+
 static int LuaConfig(lua_State* L)
 {
 	if (!lua_istable(L, 1))

@@ -29,7 +29,8 @@ public:
 	void GetWindowPosition(void* window, int& x, int& y) const;
 	void SetWindowPosition(void* window, int x, int y) const;
 	void* FindWindow(const wxString& name, void* parentWindow) const;
-
+	wxString GetClipboardData(void) const;
+	void SetClipboardData(const wxString& text) const;
 	void GetMousePosition(int& x, int& y) const;
 	void SetMousePosition(int x, int y);
 

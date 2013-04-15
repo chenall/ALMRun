@@ -28,7 +28,22 @@ MerryFrame::MerryFrame():
 	)
 {
 	this->SetClientSize(MERRY_DEFAULT_WIDTH, MERRY_DEFAULT_HEIGHT);
-
+	#ifdef __WXMSW__
+	wxStandardPaths std; //<wx/stdpaths.h>
+	wxFileName fname = wxFileName(std.GetExecutablePath());
+	wxString volume;
+	wxString pathTmp = fname.GetPathWithSep(); //<wx/filename.h>
+	::wxSetEnv(wxT("ALMRUN_HOME"),pathTmp.c_str());
+	wxFileName::SplitVolume(pathTmp,&volume,NULL);
+	if (!volume.empty())
+	{
+		volume.Append(':');
+		::wxSetEnv(wxT("ALMRUN_DRIVE"),volume.c_str());
+	}
+	::wxSetWorkingDirectory(pathTmp);
+	pathTmp.Clear();
+	volume.Clear();
+	#endif
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = new MerryTaskBarIcon();
@@ -67,9 +82,9 @@ void MerryFrame::OnInit()
 void MerryFrame::OpenConfigDir()
 {
 #ifdef __WXMSW__
-	wxStandardPaths std; //<wx/stdpaths.h>
-	wxString pathTmp = wxFileName(std.GetExecutablePath()).GetPath(); //<wx/filename.h>
-	pathTmp.Append("\\config");
+	wxString pathTmp;
+	::wxGetEnv("ALMRUN_HOME",&pathTmp);
+	pathTmp.Append("config");
 	::ShellExecute(NULL, NULL,pathTmp.c_str(),NULL, pathTmp.c_str(),true);
 	pathTmp.clear();
 #endif

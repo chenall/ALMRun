@@ -153,6 +153,15 @@ void* MerryController::FindWindow(const wxString& name, void* parentWindow) cons
 	return ::FindWindowEx((HWND)parentWindow, NULL, NULL, name.c_str());
 }
 
+wxString MerryController::GetClipboardData(void) const
+{
+	return "Test";
+}
+
+void MerryController::SetClipboardData(const wxString& text) const
+{
+}
+
 void MerryController::EnterKey(const wxArrayString& keys)
 {
 	const int WIN_MOD[] = { VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN };
