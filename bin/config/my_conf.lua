@@ -4,7 +4,8 @@ addCommand{ name = "test_func", desc = "命令函数测试",func = function(arg,id,fla
 end}
 
 -- 普通模式,直接调用cmd参数指定的程序
-addCommand{ name = "test_cmd", desc = "单独命令测试",cmd = "cmd.exe /c pause >nul|echo 参数:"}
+addCommand{ name = "test_cmd", desc = "单独命令测试",cmd = [[cmd.exe /c pause >nul|echo 参数:]]}
+addCommand{ name = "test_notepad", desc = "Notepad",cmd = [[%WinDir%\notepad.exe]]}
 --[[
  扫描指定目录自动添加命令
  scan_dir(PATH,EXT,SUB)
@@ -15,7 +16,7 @@ addCommand{ name = "test_cmd", desc = "单独命令测试",cmd = "cmd.exe /c pause >nu
        0  不管子目录
        N  N级子目录
 ]]
-scan_dir("E:\\绿色软件","*.exe")
+scan_dir([[E:\绿色软件]],"*.exe")
 
 -- 调用altrun的配置
 altrun_config("ShortCutList.txt")
