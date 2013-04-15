@@ -40,6 +40,7 @@ MerryFrame::MerryFrame():
 		volume.Append(':');
 		::wxSetEnv(wxT("ALMRUN_DRIVE"),volume.c_str());
 	}
+	::wxSetEnv(wxT("ALMRUN_ROOT"),pathTmp.c_str());
 	::wxSetWorkingDirectory(pathTmp);
 	pathTmp.Clear();
 	volume.Clear();

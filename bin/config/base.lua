@@ -40,6 +40,7 @@ function scan_dir(path,ext,sub)
 	if sub == nil then
 		sub = -1
 	end
+	path = path:gsub("%%(%S+)%%",os.getenv)
 	local Files = ListDir(path,ext,sub)
 	if Files == nil then 
 		return
@@ -51,7 +52,7 @@ function scan_dir(path,ext,sub)
 end
 
 -- Events
-local histroy = io.open(MERRY_ROOT_PATH .. 'histroy.lua', 'a')
+local histroy = io.open(ALMRUN_CONFIG_PATH .. 'histroy.lua', 'a')
 addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 	local commandNameArray = { commandName }
 	if MAC then

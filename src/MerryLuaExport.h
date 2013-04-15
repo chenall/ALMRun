@@ -377,6 +377,23 @@ static int LuaGetClipboardData(lua_State* L)
 	return 0;
 }
 
+static int LuaSetEnv(lua_State* L)
+{
+	wxString var(lua_tostring(L, 1), wxConvLocal);
+	wxString value(lua_tostring(L, 2), wxConvLocal);
+	lua_pushboolean(L,::wxSetEnv(var,value));
+	return 1;
+}
+
+static int LuaGetEnv(lua_State* L)
+{
+	wxString var(lua_tostring(L, 1), wxConvLocal);
+	if (!::wxGetEnv(var,&var))
+		var.Clear();
+	lua_pushstring(L,var.c_str());
+	return 1;
+}
+
 static int LuaConfig(lua_State* L)
 {
 	if (!lua_istable(L, 1))
@@ -385,5 +402,16 @@ static int LuaConfig(lua_State* L)
 	lua_rawget(L, 1);
 	if (lua_isnumber(L,-1))
 		Ex_CompareMode = lua_tointeger(L,-1);
+	lua_pushstring(L, "ROOT");
+	lua_rawget(L, 1);
+	if (lua_isstring(L,-1))
+	{
+		wxString root(wxString(lua_tostring(L, -1), wxConvLocal));
+		if (::wxDirExists(root))
+		{
+			::wxSetEnv(wxT("ALMRUN_ROOT"),root.c_str());
+			::wxSetWorkingDirectory(root);
+		}
+	}
 	return 0;
 }

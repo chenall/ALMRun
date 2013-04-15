@@ -9,9 +9,9 @@ addCommand{ key = 'A-M', func = function()
 	end
 end }
 
-addCommand{ key = 'A-Q', func = function()
-	closeWindow(getForegroundWindow())
-end }
+--addCommand{ key = 'A-Q', func = function()
+--	closeWindow(getForegroundWindow())
+--end }
 
 local curHideWindow
 addCommand{ key = 'A-H', func = function()

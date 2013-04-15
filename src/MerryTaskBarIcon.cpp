@@ -50,7 +50,7 @@ void MerryTaskBarIcon::OnConfigEvent(wxCommandEvent& e)
 
 void MerryTaskBarIcon::OnAboutEvent(wxCommandEvent& e)
 {
-	new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.0.0 --- http://name5566.com\r\n修改自(merry SVN R:98) --- http://chenall.net\r\n编译时间:%s %s"),__DATE__,__TIME__));
+	new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.1.0 --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s"),__DATE__,__TIME__));
 }
 
 void MerryTaskBarIcon::OnExitEvent(wxCommandEvent& e)

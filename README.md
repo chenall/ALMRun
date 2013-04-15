@@ -11,8 +11,9 @@ Fork from <http://code.google.com/p/name5566-merry>
 * [相关资源](#resource)
 * [编译方法](#build)
 
-<h1 name="main">Merry 的特点和功能</h1>
-*****************
+Merry 的特点和功能
+==================
+******************
 *	跨平台的支持，让你在所有平台下保持一致的操作方式（目前仅仅实现了 `Windows` 版本，相信不久之后 `Linux` 和 `MacOS` 版就会完成）
 *	可以定义 `Merry` 命令（快捷键）来完成一些常用的操作，例如：打开目录、启动程序、打开网页等
 *	通过 Merry 命令可以模拟用户的输入，例如：模拟键盘和鼠标输入
@@ -20,9 +21,10 @@ Fork from <http://code.google.com/p/name5566-merry>
 *	通过 Merry 命令可以来进行自动化的操作，例如：打开某应用程序，自动输入用户密码进行登录等
 *	Merry 采用完全开放的体系，可以使用 Lua 的扩展库或者外部程序来扩展 Merry 的功能
 
-<h1 name="modify">增加或修改功能</h1>
-*************
-#### 1. 添加命令方法修改<div name="add_cmd"></div>
+增加或修改功能
+==============
+*************=
+#### 1. 添加命令方法修改
     command 参数改为name,增加desc(备注)和cmd(命令)参数.     
     新的命令参数:
 > 
@@ -83,7 +85,8 @@ Fork from <http://code.google.com/p/name5566-merry>
 	1).在命令中可以使用变量比如"%WinDir%\\Notepad.exe"
 	2).程序内置变量ALMRUN_HOME和ALMRUN_DRIVE
 
-<h1 name="usage">使用方法:</h1>
+使用方法:
+=========
 *******************************
 #### 1. 添加命令(用记事本打开my_conf.lua)
 	addCommand{ name=命令名, desc=备注, key=热键, cmd=执行命令, func=函数}
@@ -104,14 +107,16 @@ Fork from <http://code.google.com/p/name5566-merry>
 #### 2. 更多功能请查看原版的说明
 		
 *******************************
-<h1 name="resource">相关资源: </h1>
+相关资源:
+=========
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 修改: <https://github.com/chenall/ALMRun>  
 * 介绍: <http://chenall.net/post/alrun-merry/>  
 
 [Merry]:http://code.google.com/p/name5566-merry/
 
-<h1 name="build">Build ALMRun(编译)</h1>
+Build ALMRun(编译)
+===================
 	cd Build
 	cmake ..
 	ALMRun.sln
