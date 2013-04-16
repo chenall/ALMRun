@@ -63,10 +63,8 @@ addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 	for _, commandNameFull in ipairs(commandNameArray) do
 		if shellExecute(commandNameFull, commandArg) then
 			addCommand{ name = commandName, func = function() shellExecute(commandNameFull) end }
-			local strCommandName = string.gsub(commandName, '\\', '\\\\')
-			local strCommandNameFull = string.gsub(commandNameFull, '\\', '\\\\')
-			histroy:write(string.format("addCommand{ name = '%s', func = function() shellExecute('%s') end }\n",
-				strCommandName, strCommandNameFull))
+			histroy:write(string.format("addCommand{ name = [[%s]], func = function() shellExecute([[%s]]) end }\n",
+				commandName, commandNameFull))
 			histroy:flush()
 			break
 		end

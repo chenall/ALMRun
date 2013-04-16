@@ -67,16 +67,17 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
 			{
-				if (!listBoxPanel->IsPopup())
-					break;
 				wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxT('');
+				if (!listBoxPanel->IsPopup())
+				{
+					wxString commandName = (this->EnterArgs>0)?this->GetValue().substr(0,this->EnterArgs-2):this->GetValue();
+					g_lua->OnUndefinedCommand(commandName, commandArg);
+					break;
+				}
 				const MerryCommand* command = listBoxPanel->GetSelectionCommand();
 				const wxString& commandName = command->GetCommandName();
 				::wxGetApp().GetFrame().Hide();
-				if (commandName.size())
-					command->ExecuteCommand(commandArg);
-				else
-					g_lua->OnUndefinedCommand(commandName, commandArg);
+				command->ExecuteCommand(commandArg);
 			}
 			break;
 		case WXK_ESCAPE:
@@ -101,7 +102,11 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			break;
 		case WXK_TAB:
 			if (!listBoxPanel->IsPopup())
+			{
+				this->AppendText(wxT(">>"));
+				this->EnterArgs = this->GetValue().size();
 				break;
+			}
 			else
 			{
 				this->ChangeValue(listBoxPanel->GetSelectionCommand()->GetCommandName());
