@@ -138,7 +138,7 @@ Merry 的配置和 API
 ### 17. setMousePosition
 
 	设置当前鼠标的位置
-	```setMousePosition(x, y)```
+	setMousePosition(x, y)
 
 ### 18. enterKey
 

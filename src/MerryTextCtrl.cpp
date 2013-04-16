@@ -71,6 +71,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 				if (!listBoxPanel->IsPopup())
 				{
 					wxString commandName = (this->EnterArgs>0)?this->GetValue().substr(0,this->EnterArgs-2):this->GetValue();
+					::wxGetApp().GetFrame().Hide();
 					g_lua->OnUndefinedCommand(commandName, commandArg);
 					break;
 				}
