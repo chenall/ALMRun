@@ -1,53 +1,58 @@
-Merry µÄÅäÖÃºÍ API
+Merry çš„é…ç½®å’Œ API
 =================
-Ö»ÒªÉÔÑ§Ï°Ò»ÏÂ lua ±à³ÌÓïÑÔ£¬¾Í¿ÉÒÔÁé»îµÄÅäÖÃ Merry¡£ÅäÖÃÎÄ¼þÎ»ÓÚ config Ä¿Â¼ÖÐ£¬common.lua Îª Merry Ìá¹©ÁËÄ¬ÈÏµÄÅäÖÃ¡£
-ÕâÀï½éÉÜÒ»ÏÂ Merry ÅäÖÃÎÄ¼þµÄ API£º
+åªè¦ç¨å­¦ä¹ ä¸€ä¸‹ lua ç¼–ç¨‹è¯­è¨€ï¼Œå°±å¯ä»¥çµæ´»çš„é…ç½® Merryã€‚é…ç½®æ–‡ä»¶ä½äºŽ config ç›®å½•ä¸­ï¼Œcommon.lua ä¸º Merry æä¾›äº†é»˜è®¤çš„é…ç½®ã€‚
+è¿™é‡Œä»‹ç»ä¸€ä¸‹ Merry é…ç½®æ–‡ä»¶çš„ APIï¼š
 
-### 0. addCommand{name=ÃüÁîÃû,desc=±¸×¢,key=ÈÈ¼ü,cmd=Ö´ÐÐÃüÁî,func=º¯Êý}
-	Ìí¼ÓÒ»¸öÃüÁî
-	ÆäÖÐ,cmdºÍfunc¶þÑ¡Ò»,ÓÅÏÈÊ¹ÓÃcmd²ÎÊý.descºÍkey¶¼ÊÇ¿ÉÑ¡µÄ.
-	descÓÃÓÚÔÚÊ¹ÓÃfuncÊ±ÏÔÊ¾±¸×¢ÐÅÏ¢.Ê¹ÓÃcmd²ÎÊýÊ±descÃ»ÓÐÐ§¹û.
-	key ÈÈ¼üËµÃ÷:
-	¿ì½Ý¼üÊ¹ÓÃ "X-Y" ÕâÑùµÄ×Ö·û´®£¨²»Çø·Ö´óÐ¡Ð´£©ÃèÊö£¬ÀýÈç£º
-	A-l ±íÊ¾ Alt + l
-	A-C-c ±íÊ¾ Alt + Control + c
-	ÔÚ¿ì½Ý¼üÃèÊö×Ö·û´® "X-Y" ÖÐ X Îª¿ÉÑ¡µÄ£¨Ò²¾ÍÊÇ¿ì½Ý¼ü¿ÉÒÔÎªÒ»¸ö°´¼ü£¬ÀýÈç F9£©£¬¿ÉÒÔÎª£º
-	A ±íÊ¾ Alt ¼ü
-	C ±íÊ¾ Control ¼ü
-	W »òÕß M ±íÊ¾ Win ¼ü
-	S ±íÊ¾ Shift ¼ü
-	¿ÉÓÃµÄ±íÊ¾°´¼üµÄ×Ö·û´®Çë²Î¿¼[key_string.txt](key_string.txt)£¨²¿·Ö°´¼ü×Ö·û´®ÔÚ Windows ÏÂÎÞÐ§£©¡£
+### 0. addCommand{name=å‘½ä»¤å,desc=å¤‡æ³¨,key=çƒ­é”®,cmd=æ‰§è¡Œå‘½ä»¤,func=å‡½æ•°}
+    æ·»åŠ ä¸€ä¸ªå‘½ä»¤
+	å…¶ä¸­,cmdå’ŒfuncäºŒé€‰ä¸€,ä¼˜å…ˆä½¿ç”¨cmdå‚æ•°.descå’Œkeyéƒ½æ˜¯å¯é€‰çš„.
+	descç”¨äºŽåœ¨ä½¿ç”¨funcæ—¶æ˜¾ç¤ºå¤‡æ³¨ä¿¡æ¯.ä½¿ç”¨cmdå‚æ•°æ—¶descæ²¡æœ‰æ•ˆæžœ.
+> 
+#### key çƒ­é”®è¯´æ˜Ž:
+
+å¿«æ·é”®ä½¿ç”¨ "X-Y" è¿™æ ·çš„å­—ç¬¦ä¸²ï¼ˆä¸åŒºåˆ†å¤§å°å†™ï¼‰æè¿°ï¼Œä¾‹å¦‚ï¼š
+  
+	A-l è¡¨ç¤º Alt + l
+	A-C-c è¡¨ç¤º Alt + Control + c
+  åœ¨å¿«æ·é”®æè¿°å­—ç¬¦ä¸² "X-Y" ä¸­ X ä¸ºå¯é€‰çš„ï¼ˆä¹Ÿå°±æ˜¯å¿«æ·é”®å¯ä»¥ä¸ºä¸€ä¸ªæŒ‰é”®ï¼Œä¾‹å¦‚ F9ï¼‰ï¼Œå¯ä»¥ä¸ºï¼š
+  
+    A è¡¨ç¤º Alt é”®
+	C è¡¨ç¤º Control é”®
+	W æˆ–è€… M è¡¨ç¤º Win é”®
+	S è¡¨ç¤º Shift é”®
+
+  å¯ç”¨çš„è¡¨ç¤ºæŒ‰é”®çš„å­—ç¬¦ä¸²è¯·å‚è€ƒ[key_string.txt](key_string.txt)ï¼ˆéƒ¨åˆ†æŒ‰é”®å­—ç¬¦ä¸²åœ¨ Windows ä¸‹æ— æ•ˆï¼‰ã€‚
 
 ### 1. shellExecute
-	ÓÃÓÚÖ´ÐÐÒ»¸ö shell ÃüÁî
-	commandName Îª shell ÃüÁîÃû
-	commandArg Îª shell ÃüÁîÐèÒªµÄ²ÎÊý
-	workingDir Îª shell ÃüÁîµÄ¹¤×÷Â·¾¶
-	show ±íÊ¾ÏÔÊ¾µÄ·½Ê½£¬°üÀ¨ 'normal'¡¢'max'¡¢'min'¡¢'hide'£¨³£¹æÏÔÊ¾¡¢×î´ó»¯¡¢×îÐ¡»¯¡¢Òþ²Ø£©
-	º¯Êý·µ»Ø true / false ±íÊ¾ÊÇ·ñÖ´ÐÐÊÇ·ñ³É¹¦
+	ç”¨äºŽæ‰§è¡Œä¸€ä¸ª shell å‘½ä»¤
+	commandName ä¸º shell å‘½ä»¤å
+	commandArg ä¸º shell å‘½ä»¤éœ€è¦çš„å‚æ•°
+	workingDir ä¸º shell å‘½ä»¤çš„å·¥ä½œè·¯å¾„
+	show è¡¨ç¤ºæ˜¾ç¤ºçš„æ–¹å¼ï¼ŒåŒ…æ‹¬ 'normal'ã€'max'ã€'min'ã€'hide'ï¼ˆå¸¸è§„æ˜¾ç¤ºã€æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—ï¼‰
+	å‡½æ•°è¿”å›ž true / false è¡¨ç¤ºæ˜¯å¦æ‰§è¡Œæ˜¯å¦æˆåŠŸ
 ```
 	shellExecute(commandName, commandArg, workingDir, show)
 ```
 	
-	·¶Àý£¬´ò¿ª cmd ´°¿Ú²¢ÇÒ×î´ó»¯
+	èŒƒä¾‹ï¼Œæ‰“å¼€ cmd çª—å£å¹¶ä¸”æœ€å¤§åŒ–
 ```
 	shellExecute('cmd', '', '', 'max')
 ```
 
 ### 2. getForegroundWindow()
-	»ñÈ¡Ç°Ì¨´°¿Ú
-	º¯Êý·µ»ØÇ°Ì¨´°¿Ú
+	èŽ·å–å‰å°çª—å£
+	å‡½æ•°è¿”å›žå‰å°çª—å£
 
 ### 3. setForegroundWindow
-	ÉèÖÃ´°¿Ú window ÎªÇ°Ì¨´°¿Ú
+	è®¾ç½®çª—å£ window ä¸ºå‰å°çª—å£
 	setForegroundWindow(window)
 
 ### 4. showWindow
-	ÏÔÊ¾´°¿Ú window
-	show ±íÊ¾ÏÔÊ¾µÄ·½Ê½£¬°üÀ¨ 'normal'¡¢'max'¡¢'min'¡¢'hide'¡¢'restore'£¨³£¹æÏÔÊ¾¡¢×î´ó»¯¡¢×îÐ¡»¯¡¢Òþ²Ø¡¢»¹Ô­£©
+	æ˜¾ç¤ºçª—å£ window
+	show è¡¨ç¤ºæ˜¾ç¤ºçš„æ–¹å¼ï¼ŒåŒ…æ‹¬ 'normal'ã€'max'ã€'min'ã€'hide'ã€'restore'ï¼ˆå¸¸è§„æ˜¾ç¤ºã€æœ€å¤§åŒ–ã€æœ€å°åŒ–ã€éšè—ã€è¿˜åŽŸï¼‰
 	showWindow(window, show)
 
-	·¶Àý£¬×î´ó»¯»ò»¹Ô­´°¿Ú
+	èŒƒä¾‹ï¼Œæœ€å¤§åŒ–æˆ–è¿˜åŽŸçª—å£
 
 	if isWindowMax(window) then
 		  showWindow(window, 'restore')
@@ -57,117 +62,117 @@ Merry µÄÅäÖÃºÍ API
 	closeWindow
 
 ### 5. closeWindow(window)
-	¹Ø±Õ´°¿Ú window
-	·¶Àý£¬¹Ø±ÕÇ°Ì¨´°¿Ú
+	å…³é—­çª—å£ window
+	èŒƒä¾‹ï¼Œå…³é—­å‰å°çª—å£
 	closeWindow(getForegroundWindow())
 
 ### 6. isWindowMax
 
-	´°¿Ú window ÊÇ·ñÎª×î´ó»¯
-	º¯Êý·µ»Ø true / false ±íÊ¾ window ÊÇ·ñ×î´ó»¯
+	çª—å£ window æ˜¯å¦ä¸ºæœ€å¤§åŒ–
+	å‡½æ•°è¿”å›ž true / false è¡¨ç¤º window æ˜¯å¦æœ€å¤§åŒ–
 	isWindowMax(window)
 
 ### 7. isWindowMin
 
-	´°¿Ú window ÊÇ·ñÎª×îÐ¡»¯
-	º¯Êý·µ»Ø true / false ±íÊ¾ window ÊÇ·ñ×îÐ¡»¯
+	çª—å£ window æ˜¯å¦ä¸ºæœ€å°åŒ–
+	å‡½æ•°è¿”å›ž true / false è¡¨ç¤º window æ˜¯å¦æœ€å°åŒ–
 	isWindowMin(window)
 
 ### 8. isWindowShown
 
-	´°¿Ú window ÊÇ·ñÔÚÏÔÊ¾
-	º¯Êý·µ»Ø true / false ±íÊ¾ window ÊÇ·ñÔÚÏÔÊ¾
+	çª—å£ window æ˜¯å¦åœ¨æ˜¾ç¤º
+	å‡½æ•°è¿”å›ž true / false è¡¨ç¤º window æ˜¯å¦åœ¨æ˜¾ç¤º
 	isWindowShown(window)
 
 ### 9. getWindowText
 
-	»ñÈ¡´°¿Ú window µÄ±êÌâÀ¸ÎÄ×Ö
-	º¯Êý·µ»Ø´°¿Ú window µÄ±êÌâÀ¸ÎÄ×Ö
+	èŽ·å–çª—å£ window çš„æ ‡é¢˜æ æ–‡å­—
+	å‡½æ•°è¿”å›žçª—å£ window çš„æ ‡é¢˜æ æ–‡å­—
 	getWindowText(window)
 
 ### 10. setWindowText
 
-	ÉèÖÃ´°¿Ú window µÄ±êÌâÀ¸ÎÄ×Ö
+	è®¾ç½®çª—å£ window çš„æ ‡é¢˜æ æ–‡å­—
 	setWindowText(window, text)
 
 ### 11. getWindowSize
 
-	»ñÈ¡´°¿Ú window µÄ´óÐ¡
-	º¯Êý·µ»ØÁ½¸öÖµ width ºÍ height
+	èŽ·å–çª—å£ window çš„å¤§å°
+	å‡½æ•°è¿”å›žä¸¤ä¸ªå€¼ width å’Œ height
 	getWindowSize(window)
 
-	·¶Àý£¬»ñÈ¡Ç°Ì¨´°¿ÚµÄ´óÐ¡
+	èŒƒä¾‹ï¼ŒèŽ·å–å‰å°çª—å£çš„å¤§å°
 	local width, height = getWindowSize(getForegroundWindow())
 	setWindowSize
 
 ### 12. setWindowSize(window, width, height)
-	ÉèÖÃ´°¿Ú window µÄ´óÐ¡
+	è®¾ç½®çª—å£ window çš„å¤§å°
 
 ### 13. getWindowPosition
 
-	»ñÈ¡´°¿Ú window µÄÎ»ÖÃ
-	º¯Êý·µ»ØÁ½¸öÖµ x ºÍ y Îª´°¿Ú×óÉÏ½ÇµÄÎ»ÖÃ
+	èŽ·å–çª—å£ window çš„ä½ç½®
+	å‡½æ•°è¿”å›žä¸¤ä¸ªå€¼ x å’Œ y ä¸ºçª—å£å·¦ä¸Šè§’çš„ä½ç½®
 	getWindowPosition(window)
 
-	·¶Àý£¬»ñÈ¡Ç°Ì¨´°¿ÚµÄÎ»ÖÃ
+	èŒƒä¾‹ï¼ŒèŽ·å–å‰å°çª—å£çš„ä½ç½®
 	local x, y = getWindowPosition(getForegroundWindow())
 
 ### 14. setWindowPosition
 
-	ÉèÖÃ´°¿Ú window µÄÎ»ÖÃ
-	ÉèÖÃµÄÎ»ÖÃÎª´°¿Ú×óÉÏ½ÇµÄÎ»ÖÃ
+	è®¾ç½®çª—å£ window çš„ä½ç½®
+	è®¾ç½®çš„ä½ç½®ä¸ºçª—å£å·¦ä¸Šè§’çš„ä½ç½®
 	setWindowPosition(window, x, y)
 
 ### 15. findWindow
 
-	Í¨¹ý´°¿ÚÃû³Æ²éÕÒ´°¿Ú
-	²ÎÊý parentWindow Îª¿ÉÑ¡²ÎÊý£¬ÓÃÓÚ±íÊ¾±»²éÕÒ´°¿ÚµÄ¸¸´°¿Ú
+	é€šè¿‡çª—å£åç§°æŸ¥æ‰¾çª—å£
+	å‚æ•° parentWindow ä¸ºå¯é€‰å‚æ•°ï¼Œç”¨äºŽè¡¨ç¤ºè¢«æŸ¥æ‰¾çª—å£çš„çˆ¶çª—å£
 	findWindow(name, parentWindow)
 
 ### 16. getMousePosition
 
-	»ñÈ¡µ±Ç°Êó±êµÄÎ»ÖÃ
-	º¯Êý·µ»ØÁ½¸öÖµ x ºÍ y ÎªÊó±êµÄÎ»ÖÃ
+	èŽ·å–å½“å‰é¼ æ ‡çš„ä½ç½®
+	å‡½æ•°è¿”å›žä¸¤ä¸ªå€¼ x å’Œ y ä¸ºé¼ æ ‡çš„ä½ç½®
 	getMousePosition()
 
 ### 17. setMousePosition
 
-	ÉèÖÃµ±Ç°Êó±êµÄÎ»ÖÃ
+	è®¾ç½®å½“å‰é¼ æ ‡çš„ä½ç½®
 	```setMousePosition(x, y)```
 
 ### 18. enterKey
 
-	Ä£ÄâÇÃ»÷Ò»¸ö°´¼ü
+	æ¨¡æ‹Ÿæ•²å‡»ä¸€ä¸ªæŒ‰é”®
 	enterKey(keyStr)
 
-	·¶Àý£¬Ä£Äâ¿ì½Ý¼ü Shift + F10 À´´ò¿ªÓÒ¼ü²Ëµ¥
+	èŒƒä¾‹ï¼Œæ¨¡æ‹Ÿå¿«æ·é”® Shift + F10 æ¥æ‰“å¼€å³é”®èœå•
 	enterKey('S-F10')
 
 ### 19. message
 
-	½«ÓÃ¶Ô»°¿òÊä³öÏûÏ¢
+	å°†ç”¨å¯¹è¯æ¡†è¾“å‡ºæ¶ˆæ¯
 	message(str)
 
-	·¶Àý£¬Êä³ö Hello Merry
+	èŒƒä¾‹ï¼Œè¾“å‡º Hello Merry
 	message('Hello Merry')
 
 ### 20. enableCommandKey
 
-	¼¤»î¿ì½Ý¼ü
-	²ÎÊý keyID ÓÉ addCommand º¯Êý·µ»Ø
-	´´½¨Ò»¸öÃüÁîºó£¬Æä¿ì½Ý¼üÊÇÄ¬ÈÏ¼¤»îµÄ
-	ÈôÖ´ÐÐÁË disableCommandKey ½ûÓÃÁËÄ³¸öÃüÁîµÄ¿ì½Ý¼ü£¬¿Éµ÷ÓÃ´Ëº¯Êý¼¤»î´ËÃüÁîµÄ¿ì½Ý¼ü
+	æ¿€æ´»å¿«æ·é”®
+	å‚æ•° keyID ç”± addCommand å‡½æ•°è¿”å›ž
+	åˆ›å»ºä¸€ä¸ªå‘½ä»¤åŽï¼Œå…¶å¿«æ·é”®æ˜¯é»˜è®¤æ¿€æ´»çš„
+	è‹¥æ‰§è¡Œäº† disableCommandKey ç¦ç”¨äº†æŸä¸ªå‘½ä»¤çš„å¿«æ·é”®ï¼Œå¯è°ƒç”¨æ­¤å‡½æ•°æ¿€æ´»æ­¤å‘½ä»¤çš„å¿«æ·é”®
 	enableCommandKey(keyID)
 
 ### 21. disableCommandKey
 
-	½ûÓÃ¿ì½Ý¼ü
-	²ÎÊý keyID ÓÉ addCommand º¯Êý·µ»Ø
-	´´½¨Ò»¸öÃüÁîºó£¬Æä¿ì½Ý¼üÊÇÄ¬ÈÏ¼¤»îµÄ
-	µ÷ÓÃ´Ëº¯Êý¿ÉÒÔ½ûÓÃÄ³¸öÃüÁîµÄ¿ì½Ý¼ü
+	ç¦ç”¨å¿«æ·é”®
+	å‚æ•° keyID ç”± addCommand å‡½æ•°è¿”å›ž
+	åˆ›å»ºä¸€ä¸ªå‘½ä»¤åŽï¼Œå…¶å¿«æ·é”®æ˜¯é»˜è®¤æ¿€æ´»çš„
+	è°ƒç”¨æ­¤å‡½æ•°å¯ä»¥ç¦ç”¨æŸä¸ªå‘½ä»¤çš„å¿«æ·é”®
 	disableCommandKey(keyID)
 
-	·¶Àý£¬°´ HOME ¼ü½ûÓÃÄ³¿ì½Ý¼ü
+	èŒƒä¾‹ï¼ŒæŒ‰ HOME é”®ç¦ç”¨æŸå¿«æ·é”®
 
 	local keyID = addCommand{ key = 'C-1', func = function() enterKey('S-F10', 'V', '', 'Return') end }
 	local enabled = true
@@ -183,17 +188,17 @@ Merry µÄÅäÖÃºÍ API
 
 ### 22. setTimer
 
-	¿ªÆôÒ»¸ö¶¨Ê±Æ÷
-	²ÎÊý milliseconds ±íÊ¾¶¨Ê±Æ÷Ã¿¸ô milliseconds ´¥·¢Ò»´Î
-	²ÎÊý oneShot ±íÊ¾¶¨Ê±Æ÷ÊÇ·ñÖ»´¥·¢Ò»´Î
-	²ÎÊý callback ÎªÒ»¸ö Lua º¯Êý£¬¶¨Ê±Æ÷Ã¿´Î´¥·¢Ê±¶¼»á±»µ÷ÓÃ
-	º¯Êý·µ»Ø³É¹¦´´½¨µÄ¶¨Ê±Æ÷
+	å¼€å¯ä¸€ä¸ªå®šæ—¶å™¨
+	å‚æ•° milliseconds è¡¨ç¤ºå®šæ—¶å™¨æ¯éš” milliseconds è§¦å‘ä¸€æ¬¡
+	å‚æ•° oneShot è¡¨ç¤ºå®šæ—¶å™¨æ˜¯å¦åªè§¦å‘ä¸€æ¬¡
+	å‚æ•° callback ä¸ºä¸€ä¸ª Lua å‡½æ•°ï¼Œå®šæ—¶å™¨æ¯æ¬¡è§¦å‘æ—¶éƒ½ä¼šè¢«è°ƒç”¨
+	å‡½æ•°è¿”å›žæˆåŠŸåˆ›å»ºçš„å®šæ—¶å™¨
 	setTimer(milliseconds, oneShot, callback)
 
-	·¶Àý£¬ÊµÏÖ¹¦ÄÜ£ºÊ¹ÓÃ Windows ÕÕÆ¬²é¿´Æ÷Ê±£¬¶¨Ê±·­¿´ÏÂÒ»ÕÅÍ¼Æ¬
+	èŒƒä¾‹ï¼Œå®žçŽ°åŠŸèƒ½ï¼šä½¿ç”¨ Windows ç…§ç‰‡æŸ¥çœ‹å™¨æ—¶ï¼Œå®šæ—¶ç¿»çœ‹ä¸‹ä¸€å¼ å›¾ç‰‡
 	--
-	Ê¹ÓÃ F7 Æô¶¯Ò»¸ö¶¨Ê±Æ÷£¬Ã¿ 5 ÃëÄ£Äâ°´ÏÂÓÒ·½Ïò¼ü
-	Ê¹ÓÃ Ctrl + F7 ¹Ø±Õ¶¨Ê±Æ÷
+	ä½¿ç”¨ F7 å¯åŠ¨ä¸€ä¸ªå®šæ—¶å™¨ï¼Œæ¯ 5 ç§’æ¨¡æ‹ŸæŒ‰ä¸‹å³æ–¹å‘é”®
+	ä½¿ç”¨ Ctrl + F7 å…³é—­å®šæ—¶å™¨
 
 	local timer
 	addCommand{ key = 'F7', func = function()
@@ -207,41 +212,41 @@ Merry µÄÅäÖÃºÍ API
 	clearTimer
 
 ### 23. clearTimer(timer)
-	ÇåÀí¶¨Ê±Æ÷
+	æ¸…ç†å®šæ—¶å™¨
 
-	Èç¹ûÓÐ¸ü¶à API ÐèÇó£¬Çë¸øÎÒ·¢ÓÊ¼þ¡£
+	å¦‚æžœæœ‰æ›´å¤š API éœ€æ±‚ï¼Œè¯·ç»™æˆ‘å‘é‚®ä»¶ã€‚
 
 ### 24. GetEnv
-	»ñÈ¡Ò»¸ö»·¾³±äÁ¿
-	±ÈÈç:
-	GetEnv('WinDir') ½á¹û "C:\WINDOWS"
+	èŽ·å–ä¸€ä¸ªçŽ¯å¢ƒå˜é‡
+	æ¯”å¦‚:
+	GetEnv('WinDir') ç»“æžœ "C:\WINDOWS"
 
 ### 25. SetEnv
-	ÉèÖÃÒ»¸ö»·¾³±äÁ¿
-	Àý:
+	è®¾ç½®ä¸€ä¸ªçŽ¯å¢ƒå˜é‡
+	ä¾‹:
 	SetEnv('test','mytest')
-	ÉèÖÃÒ»¸ö±äÁ¿test
+	è®¾ç½®ä¸€ä¸ªå˜é‡test
 
 ### 26. config
-  ³ÌÐòÐòÉèÖÃ
-  Ä¿Ç°Ö§³ÖÒÔÏÂÉèÖÃ
+  ç¨‹åºåºè®¾ç½®
+  ç›®å‰æ”¯æŒä»¥ä¸‹è®¾ç½®
 	1.CompareMode
-	  ÃüÁîÆ¥ÅäÄ£Ê½
-		1 Æ¥Åä¿ªÍ·
-		2 Ê¹ÓÃluaº¯ÊýHookCompre×Ô¶¨ÒåÆ¥Åä
-		0 Ä¬ÈÏ,ÈÎÒâÎ»ÖÃÆ¥Åä
-	Àý:config{CompareMode=0}
+	  å‘½ä»¤åŒ¹é…æ¨¡å¼
+		1 åŒ¹é…å¼€å¤´
+		2 ä½¿ç”¨luaå‡½æ•°HookCompreè‡ªå®šä¹‰åŒ¹é…
+		0 é»˜è®¤,ä»»æ„ä½ç½®åŒ¹é…
+	ä¾‹:config{CompareMode=0}
 	2.ROOT
-		ÉèÖÃÏà¶Ô¸ùÄ¿Â¼.
+		è®¾ç½®ç›¸å¯¹æ ¹ç›®å½•.
 ### 27. ListDir(path,ext,sub)
-	·µ»ØÖ¸¶¨Ä¿Â¼ÏÂµÄÎÄ¼þÁÐ±í
-	path  Â·¾¶,
-	ext	À©Õ¹ÃûÏÞÖÆ
-	sub	×ÓÄ¿Â¼ÏÞÖÆ
-	Àý: ListDir([[C:\WINDOWS]],".exe",0)
-Merry ÊÂ¼þ
+	è¿”å›žæŒ‡å®šç›®å½•ä¸‹çš„æ–‡ä»¶åˆ—è¡¨
+	path  è·¯å¾„,
+	ext	æ‰©å±•åé™åˆ¶
+	sub	å­ç›®å½•é™åˆ¶
+	ä¾‹: ListDir([[C:\WINDOWS]],".exe",0)
+Merry äº‹ä»¶
 =========
-ÎÒÃÇ¿ÉÒÔÔÚ Merry µÄ»ù±¾ÅäÖÃÖÐÕÒµ½ÈçÏÂ´úÂë£º
+æˆ‘ä»¬å¯ä»¥åœ¨ Merry çš„åŸºæœ¬é…ç½®ä¸­æ‰¾åˆ°å¦‚ä¸‹ä»£ç ï¼š
 
 	addEventHandler('onClose', function()
 	    ...
@@ -251,14 +256,14 @@ Merry ÊÂ¼þ
 	    ...
 	end)
 
-ÊÂ¼þ·¢ÉúÊ±£¬Merry »áÈ¥µ÷ÓÃ¶¨ÒåµÄÊÂ¼þ´¦Àíº¯Êý¡£ÀýÈç£ºMerry ¹Ø±Õ£¨»òÖØÐÂÔØÈëÅäÖÃÊ±£©Ê±»áµ÷ÓÃÒ»¸öÃûÎª onClose µÄº¯Êý¡£addEventHandler ÓÃÓÚÎªÄ³¸öÊÂ¼þÌí¼ÓÊÂ¼þ´¦Àíº¯Êý¡£Merry ÒÑÓÐµÄÊÂ¼þÈçÏÂ£º
+äº‹ä»¶å‘ç”Ÿæ—¶ï¼ŒMerry ä¼šåŽ»è°ƒç”¨å®šä¹‰çš„äº‹ä»¶å¤„ç†å‡½æ•°ã€‚ä¾‹å¦‚ï¼šMerry å…³é—­ï¼ˆæˆ–é‡æ–°è½½å…¥é…ç½®æ—¶ï¼‰æ—¶ä¼šè°ƒç”¨ä¸€ä¸ªåä¸º onClose çš„å‡½æ•°ã€‚addEventHandler ç”¨äºŽä¸ºæŸä¸ªäº‹ä»¶æ·»åŠ äº‹ä»¶å¤„ç†å‡½æ•°ã€‚Merry å·²æœ‰çš„äº‹ä»¶å¦‚ä¸‹ï¼š
 
 ### 1. onClose
 
-	Merry ¹Ø±Õ»òÕßÖØÐÂÔØÈëÅäÖÃÊ±´¥·¢
+	Merry å…³é—­æˆ–è€…é‡æ–°è½½å…¥é…ç½®æ—¶è§¦å‘
 	onClose()
 
 ### 2. onUndefinedCommand
 
-	Ö´ÐÐ Merry ÃüÁîÊ±£¬³öÏÖÎ´¶¨ÒåÃüÁîÊ±´¥·¢
+	æ‰§è¡Œ Merry å‘½ä»¤æ—¶ï¼Œå‡ºçŽ°æœªå®šä¹‰å‘½ä»¤æ—¶è§¦å‘
 	onUndefinedCommand(commandName, commandArg)
