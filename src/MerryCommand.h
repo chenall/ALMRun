@@ -10,6 +10,7 @@ public:
 
 	int GetCommandID() const { return m_commandID; }
 	const wxString& GetCommandName() const { return m_commandName; }
+	const wxString& GetCommandName(const int) const { return m_commandFName; }
 	const wxString& GetTriggerKey() const { return m_triggerKey; }
 	const wxString& GetCommandDesc() const { return m_commandDesc; }
 	const wxString& GetCommandLine() const { return m_commandLine; }
@@ -20,6 +21,7 @@ private:
 	wxString m_commandName;
 	wxString m_commandDesc;
 	wxString m_commandLine;
+	wxString m_commandFName;
 	int m_commandFunc;
 	wxString m_triggerKey;
 		

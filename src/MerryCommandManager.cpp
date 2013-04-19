@@ -113,7 +113,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 	{
 		MerryCommand* command = m_commands[i];
 		assert(command);
-		const wxString& commandName = command->GetCommandName();
+		const wxString& commandName = command->GetCommandName(0);
 		if (commandName.empty())
 			continue;
 		if (commandName.size() < commandPrefix.size())
