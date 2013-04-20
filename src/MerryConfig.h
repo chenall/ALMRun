@@ -3,7 +3,7 @@
 
 #include "MerryWx.h"
 
-const wxChar	MERRY_DEFAULT_TITLE[] = wxT("merry");
+const wxChar	MERRY_DEFAULT_TITLE[] = wxT("ALMRun");
 const int		MERRY_DEFAULT_WIDTH = 360;
 const int		MERRY_DEFAULT_HEIGHT = 36;
 const int		MERRY_DEFAULT_TEXT_CTRL_LEFT = 80;
