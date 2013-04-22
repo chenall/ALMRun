@@ -230,14 +230,15 @@ bool MerryController::ShellExecute(const wxString& commandName,
 		showCommand = SW_SHOWMINIMIZED;
 	else if (show.IsSameAs(wxT("max"), false))
 		showCommand = SW_SHOWMAXIMIZED;
+
 	while(true)
 	{
 		UCHAR T = cmdName.GetChar(0).GetValue();
-		if (T == '@')
+		if (T == '@')//前导'@'隐藏窗口运行
 			showCommand = SW_HIDE;
-		else if (T == '*')
+		else if (T == '*')//前导'*' NT6以上请会管理员权限,NT5运行为
 			runas = true;
-		else if (T == '>')
+		else if (T == '>')//前导'>'请求管理员权限(NT6以上有效)
 		{
 			if (::wxGetWinVersion() >= wxWinVersion_6)
 				runas = true;
@@ -246,8 +247,35 @@ bool MerryController::ShellExecute(const wxString& commandName,
 			break;
 		cmdName.erase(0,1);
 	}
+	if (!LocationExec)
+		return (int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand) > 32;
 
-	return (int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand) > 32;
+	LocationExec = false;//定位文件位置标志复位
+	wxString wdir = workingDir;
+	//如果文件存在或包含路径信息就不再进行其它额外的判断
+	if (!::wxFileExists(cmdName) && cmdName.find('\\') == wxNOT_FOUND && cmdName.find('/') == wxNOT_FOUND)
+	{
+		wxString cwd = ::wxGetCwd();
+		wxArrayString mcwd = ::wxSplit(::wxGetenv("PATH"),';','\0');//根据PATH路径查询文件
+
+		for(int i = 0;i< mcwd.size();++i)
+		{
+			if (!::wxDirExists(mcwd[i]) || !::wxSetWorkingDirectory(mcwd[i]))//路径错误或不存在不查找
+				continue;
+			wxString NameTmp = wxFindFirstFile(cmdName+".*");
+			if (!NameTmp.empty())
+			{
+				cmdName = NameTmp;
+				wdir = mcwd[i];
+				break;
+			}
+
+		}
+		::wxSetWorkingDirectory(cwd);
+	}
+
+	return (int)::ShellExecute(NULL,NULL,wxT("explorer.exe"),wxString::Format(wxT("/n,/select,%s"),cmdName.c_str()),wdir.c_str(), SW_SHOW) > 32;
+	
 }
 
 #endif

@@ -129,7 +129,7 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 		lua_pushnumber(L, m_commandID);
 	}
 
-	lua_pushnumber(L, ::wxGetKeyState(WXK_CONTROL)?1:0);//Ctr¼ü°´ÏÂ×´Ì¬
+	lua_pushnumber(L,0);
 
 	if (lua_pcall(L, 3, 0, 0))
 	{

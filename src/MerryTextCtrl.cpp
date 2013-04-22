@@ -10,6 +10,8 @@
 #include "MerryMacHelper.h"
 #endif
 
+bool LocationExec;
+
 BEGIN_EVENT_TABLE(MerryTextCtrl, wxTextCtrl)
 	EVT_KEY_DOWN(MerryTextCtrl::OnKeyDownEvent)
 #ifdef __WXGTK__
@@ -59,6 +61,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 		}
 		else if (e.ControlDown() && (keyCode | 0x20) == 'd')
 		{
+			LocationExec = true;
 			keyCode = WXK_RETURN;
 		}
 	}

@@ -52,7 +52,7 @@ function scan_dir(path,ext,sub)
 end
 
 -- Events
-local histroy = io.open(ALMRUN_CONFIG_PATH .. 'histroy.lua', 'a')
+
 addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 	local commandNameArray = { commandName }
 	if MAC then
@@ -63,16 +63,16 @@ addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 	for _, commandNameFull in ipairs(commandNameArray) do
 		if shellExecute(commandNameFull, commandArg) then
 			addCommand{ name = commandName, func = function() shellExecute(commandNameFull) end }
+			local histroy = io.open(ALMRUN_CONFIG_PATH .. 'histroy.lua', 'a')
 			histroy:write(string.format("addCommand{ name = [[%s]], desc='未定义命令,在histroy.lua文件中',func = function() shellExecute([[%s]]) end }\n",
 				commandName, commandNameFull))
-			histroy:flush()
+			history:close()
 			break
 		end
 	end
 end)
 
 addEventHandler('onClose', function()
-	histroy:close()
 -- 保存命令优先级设置开始
 	local f = io.open(MERRY_ORDER_FILE,'w+')
 	for i,v in pairs(CmdOrder) do
@@ -84,45 +84,35 @@ addEventHandler('onClose', function()
 end)
 
 -- 默认的命令调用函数
-CmdCallFunc = function(cmdLine,cmdArg,Flags)
--- 命令行以'@'开头,隐藏窗口执行
-	local show = 'normal'
-	local DestDir = ''
-	if cmdLine:sub(1,1) == '@' then
-		cmdLine = cmdLine:sub(2)
-		show = 'hide'
-	end
+CmdCallFunc = function(cmdLine,cmdArg)
+    local DestDir = ''
 
-	cmdLine = cmdLine:gsub("%%(%S+)%%",os.getenv) --系统环境变量扩展
+    cmdLine = cmdLine:gsub("%%(%S+)%%",os.getenv) --系统环境变量扩展
 
-	local pos = cmdLine:find(":::") -- 正常使用:::分隔参数
-	if pos == nil then
-		T_arg = cmdLine:match("%s+[%-|/]%a") --如果命令行中出现" -"或" /",也认为是参数部份,要分隔开来.
-		if T_arg == nil then--按文件名分隔参数程序需要带有扩展名,否则会运行错误
-			cmd = cmdLine:gsub("(.*%.[^%s]+).*", "%1")
-			arg = cmdLine:gsub("(.*%.[^%s]+)(.*)$", "%2")
-		else
-			pos = cmdLine:find(T_arg,1,true)
-			cmd = cmdLine:sub(1,pos-1)
-			arg = cmdLine:sub(pos+1)
-		end
-	else
-		cmd = cmdLine:sub(1,pos-1)
-		arg = cmdLine:sub(pos+3)
-	end
-	if not (arg == "") then
-		cmdArg = arg..' '..cmdArg
-	end
+    local pos = cmdLine:find(":::") -- 正常使用:::分隔参数
+    if pos == nil then
+	    T_arg = cmdLine:match("%s+[%-|/]%a") --如果命令行中出现" -"或" /",也认为是参数部份,要分隔开来.
+	    if T_arg == nil then--按文件名分隔参数程序需要带有扩展名,否则会运行错误
+		    cmd = cmdLine:gsub("(.*%.[^%s]+).*", "%1")
+		    arg = cmdLine:gsub("(.*%.[^%s]+)(.*)$", "%2")
+	    else
+		    pos = cmdLine:find(T_arg,1,true)
+		    cmd = cmdLine:sub(1,pos-1)
+		    arg = cmdLine:sub(pos+1)
+	    end
+    else
+	    cmd = cmdLine:sub(1,pos-1)
+	    arg = cmdLine:sub(pos+3)
+    end
+    if not (arg == "") then
+	    cmdArg = arg..' '..cmdArg
+    end
 -- 提取可执行程序所在目录
-	if cmd:match("^%a:") then
-		local FileName = cmd:match("[^\\]+$")
-		DestDir = cmd:sub(1,-FileName:len()-1)
-	end
-	if (Flags%2) == 1 then
-		shellExecute("explorer.exe","/n,/select,"..cmd,'','')
-	else
-		shellExecute(cmd,cmdArg,DestDir,show)
-	end
+    if cmd:match("^%a:") then
+	local FileName = cmd:match("[^\\]+$")
+	DestDir = cmd:sub(1,-FileName:len()-1)
+    end
+    shellExecute(cmd,cmdArg,DestDir)
 end
 
 --本函数在每添加一个命令之后调用,获取对应命令的优先级,返回数值越大优先级越高.
