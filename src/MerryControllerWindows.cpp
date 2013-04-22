@@ -221,16 +221,33 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	const wxString& show) const
 {
 	// wxLogNull logNo;
-
+	wxString cmdName = commandName;
 	int showCommand = SW_SHOW;
+	bool runas = false;
 	if (show.IsSameAs(wxT("hide"), false))
 		showCommand = SW_HIDE;
 	else if (show.IsSameAs(wxT("min"), false))
 		showCommand = SW_SHOWMINIMIZED;
 	else if (show.IsSameAs(wxT("max"), false))
 		showCommand = SW_SHOWMAXIMIZED;
+	while(true)
+	{
+		UCHAR T = cmdName.GetChar(0).GetValue();
+		if (T == '@')
+			showCommand = SW_HIDE;
+		else if (T == '*')
+			runas = true;
+		else if (T == '>')
+		{
+			if (::wxGetWinVersion() >= wxWinVersion_6)
+				runas = true;
+		}
+		else
+			break;
+		cmdName.erase(0,1);
+	}
 
-	return (int)::ShellExecute(NULL, NULL, commandName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand) > 32;
+	return (int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand) > 32;
 }
 
 #endif
