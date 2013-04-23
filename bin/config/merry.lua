@@ -1,4 +1,4 @@
-ALMRUN_CONFIG_PATH = GetEnv('ALMRUN_ROOT') .. "config/"
+ALMRUN_CONFIG_PATH = GetEnv('ALMRUN_ROOT') .. "config\\"
 MERRY_ORDER_FILE = ALMRUN_CONFIG_PATH .. 'order.lua'
 CmdOrder = {}--命令排序表
 --[[

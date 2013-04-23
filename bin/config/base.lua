@@ -59,17 +59,16 @@ addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 		table.insert(commandNameArray, "/Applications/" .. commandName .. ".app")
 		table.insert(commandNameArray, "/Applications/Utilities/" .. commandName .. ".app")
 	end
-
+	local f = io.open(ALMRUN_CONFIG_PATH .. 'histroy.lua', 'a')
 	for _, commandNameFull in ipairs(commandNameArray) do
 		if shellExecute(commandNameFull, commandArg) then
 			addCommand{ name = commandName, func = function() shellExecute(commandNameFull) end }
-			local histroy = io.open(ALMRUN_CONFIG_PATH .. 'histroy.lua', 'a')
-			histroy:write(string.format("addCommand{ name = [[%s]], desc='未定义命令,在histroy.lua文件中',func = function() shellExecute([[%s]]) end }\n",
+			f:write(string.format("addCommand{ name = [[%s]], desc='未定义命令,在histroy.lua文件中',func = function() shellExecute([[%s]]) end }\n",
 				commandName, commandNameFull))
-			history:close()
 			break
 		end
 	end
+	f:close()
 end)
 
 addEventHandler('onClose', function()
