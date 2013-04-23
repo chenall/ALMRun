@@ -253,29 +253,51 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	LocationExec = false;//定位文件位置标志复位
 	wxString wdir = workingDir;
 	//如果文件存在或包含路径信息就不再进行其它额外的判断
-	if (!::wxFileExists(cmdName) && cmdName.find('\\') == wxNOT_FOUND && cmdName.find('/') == wxNOT_FOUND)
+	if (!::wxFileExists(cmdName) && !::wxDirExists(cmdName) && cmdName.find('/') == wxNOT_FOUND)
 	{
+		bool wFound = false;
 		wxString cwd = ::wxGetCwd();
-		wxArrayString mcwd = ::wxSplit(::wxGetenv("PATH"),';','\0');//根据PATH路径查询文件
+		wxArrayString mcwd;//根据PATH路径查询文件
+		wxString Ext,NameTmp,sxPath;
+		wxString wExt = ::wxGetenv("PATHEXT");
+		wExt.UpperCase();
 
-		for(int i = 0;i< mcwd.size();++i)
+		::wxSplitPath(cmdName,&sxPath,NULL,&Ext);
+		if (Ext.empty())
+			cmdName.Append(".*");
+		if (cmdName.find('\\') == wxNOT_FOUND)//在PATH和当前目录中查询
+			mcwd = ::wxSplit(::wxGetCwd().Append(';').Append(::wxGetenv("PATH")),';','\0');
+		else if (cmdName.GetChar(1) == ':')//有带盘符信息,只在对应目录下查找
+			mcwd.Add(sxPath);
+		else//只在当前目录中查询
+			mcwd.Add(::wxGetCwd());
+
+		for(size_t i = 0;i< mcwd.size();++i)
 		{
 			if (!::wxDirExists(mcwd[i]) || !::wxSetWorkingDirectory(mcwd[i]))//路径错误或不存在不查找
 				continue;
-			wxString NameTmp = wxFindFirstFile(cmdName+".*");
-			if (!NameTmp.empty())
+			NameTmp =::wxFindFirstFile(cmdName);
+			if (NameTmp.empty())
+				continue;
+			do
 			{
-				cmdName = NameTmp;
-				wdir = mcwd[i];
+				::wxSplitPath(NameTmp,NULL,NULL,&Ext);
+				if (wExt.find(Ext.Upper()) != wxNOT_FOUND)//文件扩展名必须在PATHEXT变量里面
+				{
+					wFound = true;
+					cmdName = NameTmp;
+					wdir = mcwd[i];
+					break;
+				}
+				NameTmp = ::wxFindNextFile();
+			} while (!NameTmp.empty());
+			if (wFound)
 				break;
-			}
 
 		}
 		::wxSetWorkingDirectory(cwd);
 	}
-
-	return (int)::ShellExecute(NULL,NULL,wxT("explorer.exe"),wxString::Format(wxT("/n,/select,%s"),cmdName.c_str()),wdir.c_str(), SW_SHOW) > 32;
-	
+	return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
 }
 
 #endif
