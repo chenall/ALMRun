@@ -55,5 +55,6 @@
 
 // include the most common wx headers
 #include "wx/wx.h"
+#include "wx/clipbrd.h"
 
 #endif // WX_PRECOMP

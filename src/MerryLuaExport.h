@@ -369,12 +369,31 @@ static int LuaDir(lua_State* L)
 
 static int LuaSetClipboardData(lua_State* L)
 {
-	return 0;
+	if (wxTheClipboard->Open())
+	{
+		lua_pushboolean(L, wxTheClipboard->SetData(new wxTextDataObject(lua_tostring(L,1))));
+		wxTheClipboard->Close();
+	}
+	else
+		lua_pushboolean(L, 0);
+	return 1;
 }
 
 static int LuaGetClipboardData(lua_State* L)
 {
-	return 0;
+	int ret = 0;
+	if (wxTheClipboard->Open())
+	{
+		if (wxTheClipboard->IsSupported(wxDF_TEXT))
+		{
+			wxTextDataObject data;
+			wxTheClipboard->GetData(data);
+			lua_pushstring(L,data.GetText());
+			++ret;
+		}
+		wxTheClipboard->Close();
+	}
+	return ret;
 }
 
 static int LuaSetEnv(lua_State* L)

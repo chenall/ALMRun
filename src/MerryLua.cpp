@@ -28,6 +28,8 @@ MerryLua::MerryLua()
 	lua_register(L, "setWindowSize",                      LuaSetWindowSize);
 	lua_register(L, "getWindowPosition",                  LuaGetWindowPosition);
 	lua_register(L, "setWindowPosition",                  LuaSetWindowPosition);
+	lua_register(L, "GetClipboardData",					  LuaGetClipboardData);
+	lua_register(L, "SetClipboardData",					  LuaSetClipboardData);
 	lua_register(L, "findWindow",                         LuaFindWindow);
 	lua_register(L, "getMousePosition",                   LuaGetMousePosition);
 	lua_register(L, "setMousePosition",                   LuaSetMousePosition);
