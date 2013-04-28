@@ -16,7 +16,7 @@ Merry 的配置和 API
 	A-C-c 表示 Alt + Control + c
   在快捷键描述字符串 "X-Y" 中 X 为可选的（也就是快捷键可以为一个按键，例如 F9），可以为：
   
-    A 表示 Alt 键
+	A 表示 Alt 键
 	C 表示 Control 键
 	W 或者 M 表示 Win 键
 	S 表示 Shift 键
@@ -30,12 +30,12 @@ Merry 的配置和 API
 	workingDir 为 shell 命令的工作路径
 	show 表示显示的方式，包括 'normal'、'max'、'min'、'hide'（常规显示、最大化、最小化、隐藏）
 	函数返回 true / false 表示是否执行是否成功
-```
+```lua
 	shellExecute(commandName, commandArg, workingDir, show)
 ```
 	
 	范例，打开 cmd 窗口并且最大化
-```
+```lua
 	shellExecute('cmd', '', '', 'max')
 ```
 
@@ -53,14 +53,14 @@ Merry 的配置和 API
 	showWindow(window, show)
 
 	范例，最大化或还原窗口
-
+```lua
 	if isWindowMax(window) then
 		  showWindow(window, 'restore')
 	else
 		  showWindow(window, 'max')
 	end
 	closeWindow
-
+```
 ### 5. closeWindow(window)
 	关闭窗口 window
 	范例，关闭前台窗口
@@ -173,7 +173,7 @@ Merry 的配置和 API
 	disableCommandKey(keyID)
 
 	范例，按 HOME 键禁用某快捷键
-
+```lua
 	local keyID = addCommand{ key = 'C-1', func = function() enterKey('S-F10', 'V', '', 'Return') end }
 	local enabled = true
 	addCommand{ key = 'HOME', func = function()
@@ -185,7 +185,7 @@ Merry 的配置和 API
 						 enabled = true
 			  end
 	end }
-
+```
 ### 22. setTimer
 
 	开启一个定时器
@@ -199,7 +199,7 @@ Merry 的配置和 API
 	--
 	使用 F7 启动一个定时器，每 5 秒模拟按下右方向键
 	使用 Ctrl + F7 关闭定时器
-
+```lua
 	local timer
 	addCommand{ key = 'F7', func = function()
 			  timer = setTimer(5000, false, function()
@@ -210,7 +210,7 @@ Merry 的配置和 API
 			  clearTimer(timer)
 	end }
 	clearTimer
-
+```
 ### 23. clearTimer(timer)
 	清理定时器
 
@@ -244,18 +244,23 @@ Merry 的配置和 API
 	ext	扩展名限制
 	sub	子目录限制
 	例: ListDir([[C:\WINDOWS]],".exe",0)
+### 28. SetClipboardData(TEXT)
+	设剪贴板内容为TEXT.
+	GetClipboardData()
+	获取剪贴板TEXT格式.获取失败时返回nil
+    
 Merry 事件
 =========
 我们可以在 Merry 的基本配置中找到如下代码：
+```lua
+  addEventHandler('onClose', function()
+      ...
+  end)
 
-	addEventHandler('onClose', function()
-	    ...
-	end)
-	
-	addEventHandler('onUndefinedCommand', function(commandName, commandArg)
-	    ...
-	end)
-
+  addEventHandler('onUndefinedCommand', function(commandName, commandArg)
+      ...
+  end)
+```
 事件发生时，Merry 会去调用定义的事件处理函数。例如：Merry 关闭（或重新载入配置时）时会调用一个名为 onClose 的函数。addEventHandler 用于为某个事件添加事件处理函数。Merry 已有的事件如下：
 
 ### 1. onClose
