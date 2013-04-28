@@ -80,7 +80,7 @@ int MerryListBoxPanel::SetSelection(int index,int top = 0)
 	if (index < 0 || index >= (int)m_commands.size())
 		return 0;
 	if (index == m_selectionCommandIndex)
-		return 0;
+		return 1;
 
 	m_selectionCommandIndex = index;
 	if (m_selectionCommandIndex < m_topCommandIndex)

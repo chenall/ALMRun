@@ -40,6 +40,7 @@ MerryLua::MerryLua()
 	lua_register(L, "ListDir",							  LuaDir);
 	lua_register(L, "SetEnv",							  LuaSetEnv);
 	lua_register(L, "GetEnv",							  LuaGetEnv);
+	lua_register(L, "ReLoadConfig",						  LuaReLoadConfig);
 	lua_pushboolean(L, true);
 #ifdef __WXMSW__
 	lua_setglobal(L, "WINDOWS");

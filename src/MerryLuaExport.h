@@ -385,6 +385,11 @@ static int LuaSetEnv(lua_State* L)
 	return 1;
 }
 
+static int LuaReLoadConfig(lua_State* L)
+{
+	return 0;
+}
+
 static int LuaGetEnv(lua_State* L)
 {
 	wxString var(lua_tostring(L, 1), wxConvLocal);
