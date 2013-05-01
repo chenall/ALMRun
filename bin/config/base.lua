@@ -149,8 +149,12 @@ end
 
 -- 偷懒,直接调用ALTRUN的配置,^_^
 function altrun_config(file)
-	local altrun = read_csv(file,"|")
-	for i=1,#altrun do
-		addCommand{ name = altrun[i][3], desc = altrun[i][4],cmd = altrun[i][5]}
-	end
+    local FileName = file:match("[^\\]+$")
+    local DestDir = file:sub(1,-FileName:len()-1)
+    local altrun = read_csv(file,"|")
+    for i=1,#altrun do
+	addCommand{ name = altrun[i][3], desc = altrun[i][4],func = function(arg,flags)
+	    shellExecute(altrun[i][5],arg,DestDir)
+	end}
+    end
 end
