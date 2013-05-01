@@ -56,5 +56,6 @@
 // include the most common wx headers
 #include "wx/wx.h"
 #include "wx/clipbrd.h"
-
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #endif // WX_PRECOMP

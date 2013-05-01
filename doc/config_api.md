@@ -238,6 +238,8 @@ Merry 的配置和 API
 	例:config{CompareMode=0}
 	2.ROOT
 		设置相对根目录.
+	3.Explorer	设置默认的文件管理器(按Ctrl+D定位文件时)
+	例:使用Tc config( Explorer = [[C:\totalcmd\totalcmd.exe]] }
 ### 27. ListDir(path,ext,sub)
 	返回指定目录下的文件列表
 	path  路径,
@@ -249,7 +251,7 @@ Merry 的配置和 API
 	GetClipboardData()
 	获取剪贴板TEXT格式.获取失败时返回nil
     
-Merry 事件
+Event Merry 事件
 =========
 我们可以在 Merry 的基本配置中找到如下代码：
 ```lua
@@ -272,3 +274,18 @@ Merry 事件
 
 	执行 Merry 命令时，出现未定义命令时触发
 	onUndefinedCommand(commandName, commandArg)
+Other 其它说明
+==========
+1. 内置变量
+    * ALMRUN_HOME	(ALMRUN程序所在目录)
+    * ALMRUN_DRIVE 	(ALMRUN程序所在磁盘比如C:)
+    * ALMRUN_ROOT	(ALMRUN默认根目录,可用config和ROOT参数修改)
+    * ALMRUN_EXPLORER	(默认文件管理器,使用了config的Explorer参数之后有效)
+2. 关于文件路径说明
+    以下表达的都是同一个意思,
+   "C:\\WINDOWS"
+   [[c:\WINDOWS]]
+   [=[C:\WINDOWS]=]
+   [==[c:\windows]==]
+   第一个比较常见,由于Windows的文件路径是以"\"分隔的,但"\"以LUA脚本中是一个转义符,所以在使用中需要用丙个"\"即"\\"
+   第2,3,4个不会转义里面的字符内容.建议使用.

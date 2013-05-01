@@ -426,6 +426,15 @@ static int LuaConfig(lua_State* L)
 	lua_rawget(L, 1);
 	if (lua_isnumber(L,-1))
 		Ex_CompareMode = lua_tointeger(L,-1);
+#ifdef __WXMSW__
+	lua_pushstring(L, "Explorer");
+	lua_rawget(L, 1);
+	if (lua_isstring(L,-1))
+	{
+		Explorer = wxString(lua_tostring(L, -1), wxConvLocal);
+		::wxSetEnv(wxT("ALMRUN_EXPLORER"),Explorer.c_str());
+	}
+#endif
 	lua_pushstring(L, "ROOT");
 	lua_rawget(L, 1);
 	if (lua_isstring(L,-1))

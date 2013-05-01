@@ -9,8 +9,7 @@
 #include "MerryTimerManager.h"
 #include "MerryHotkey.h"
 #include "MerryController.h"
-#include  <wx/stdpaths.h>
-#include  <wx/filename.h>
+
 
 // #define DEBUG_ALWAYS_SHOW
 

@@ -6,7 +6,7 @@
 #include "MerryHelper.h"
 #include <vector>
 #include <Windows.h>
-
+wxString Explorer;
 MerryController::MerryController()
 {
 	
@@ -153,15 +153,6 @@ void* MerryController::FindWindow(const wxString& name, void* parentWindow) cons
 	return ::FindWindowEx((HWND)parentWindow, NULL, NULL, name.c_str());
 }
 
-wxString MerryController::GetClipboardData(void) const
-{
-	return "Test";
-}
-
-void MerryController::SetClipboardData(const wxString& text) const
-{
-}
-
 void MerryController::EnterKey(const wxArrayString& keys)
 {
 	const int WIN_MOD[] = { VK_LSHIFT, VK_RSHIFT, VK_LCONTROL, VK_RCONTROL, VK_LMENU, VK_RMENU, VK_LWIN, VK_RWIN };
@@ -252,6 +243,8 @@ bool MerryController::ShellExecute(const wxString& commandName,
 
 	LocationExec = false;//定位文件位置标志复位
 	wxString wdir = workingDir;
+	if (wdir.empty())
+		wdir = ::wxGetCwd();
 	//如果文件存在或包含路径信息就不再进行其它额外的判断
 	if (!::wxFileExists(cmdName) && !::wxDirExists(cmdName) && cmdName.find('/') == wxNOT_FOUND)
 	{
@@ -285,8 +278,8 @@ bool MerryController::ShellExecute(const wxString& commandName,
 				if (wExt.find(Ext.Upper()) != wxNOT_FOUND)//文件扩展名必须在PATHEXT变量里面
 				{
 					wFound = true;
-					cmdName = NameTmp;
 					wdir = mcwd[i];
+					cmdName = NameTmp;
 					break;
 				}
 				NameTmp = ::wxFindNextFile();
@@ -297,7 +290,11 @@ bool MerryController::ShellExecute(const wxString& commandName,
 		}
 		::wxSetWorkingDirectory(cwd);
 	}
-	return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
+	if (Explorer.empty())
+		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
+	if (::wxIsAbsolutePath(cmdName) == false)
+		cmdName.insert(0,wdir);
+	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
 }
 
 #endif
