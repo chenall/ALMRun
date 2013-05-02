@@ -153,8 +153,12 @@ function altrun_config(file)
     local DestDir = file:sub(1,-FileName:len()-1)
     local altrun = read_csv(file,"|")
     for i=1,#altrun do
-	addCommand{ name = altrun[i][3], desc = altrun[i][4],func = function(arg,flags)
-	    shellExecute(altrun[i][5],arg,DestDir)
-	end}
+	if altrun[i][5]:sub(1,1) == "." then
+	    altrun[i][5] = DestDir .. altrun[i][5]
+	end
+	if altrun[i][5]:sub(1,2) == "@." then
+	    altrun[i][5] = "@" .. DestDir .. altrun[i][5]:sub(2)
+	end
+	addCommand{ name = altrun[i][3],cmd = altrun[i][5]}
     end
 end
