@@ -294,7 +294,7 @@ bool MerryController::ShellExecute(const wxString& commandName,
 		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
 	if (::wxIsAbsolutePath(cmdName) == false)
 		cmdName.insert(0,wdir);
-	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
+	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),wdir.c_str(), SW_SHOW) > 32;
 }
 
 #endif
