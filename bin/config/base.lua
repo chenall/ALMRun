@@ -108,11 +108,7 @@ CmdCallFunc = function(cmdLine,cmdArg)
 	cmdArg = arg..' '..cmdArg
     end
 -- 提取可执行程序所在目录
-    local DestDir = ''
-    if cmd:match("^%a:") then
-	local FileName = cmd:match("[^\\]+$")
-	DestDir = cmd:sub(1,-FileName:len()-1)
-    end
+    local DestDir = cmd:match("^(.-)[^\\]+$")
     shellExecute(cmd,cmdArg,DestDir)
 end
 --本函数在每添加一个命令之后调用,获取对应命令的优先级,返回数值越大优先级越高.
