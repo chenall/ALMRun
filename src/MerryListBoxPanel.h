@@ -48,8 +48,9 @@ private:
 	struct ListBoxItem
 	{
 		wxRect rect;
+		wxRect LeftRect;
 		wxRect mainRect;
-		wxRect subRect;
+		wxRect RightRect;
 	};
 	ListBoxItem m_items[MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM+1];
 	wxBitmap m_selectionItemBackground;

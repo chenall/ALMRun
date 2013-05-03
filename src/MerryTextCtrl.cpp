@@ -193,7 +193,6 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 		}
 		listBoxPanel->Popup();
 	}
-
 	// Auto completion
 	/*
 	/if (keyCode != WXK_BACK && keyCode != WXK_DELETE )

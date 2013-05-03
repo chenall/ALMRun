@@ -25,15 +25,19 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 		item.rect.x = 0;
 		item.rect.y = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT * i + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
 		item.rect.width = this->GetClientSize().x;
-		item.rect.height = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT - MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
+		item.rect.height = MERRY_DEFAULT_LIST_BOX_ITEM_H;
 		item.mainRect.x = MERRY_DEFAULT_SEPERATOR_OFFSET + MERRY_DEFAULT_SEPERATOR_MARGIN + 1;
 		item.mainRect.y = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT * i + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
-		item.mainRect.width = this->GetClientSize().x - MERRY_DEFAULT_SEPERATOR_OFFSET - MERRY_DEFAULT_SEPERATOR_MARGIN - 1;
-		item.mainRect.height = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT - MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
-		item.subRect.x = 1;
-		item.subRect.y = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT * i + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
-		item.subRect.width = MERRY_DEFAULT_SEPERATOR_OFFSET - MERRY_DEFAULT_SEPERATOR_MARGIN - 2;
-		item.subRect.height = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT - MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
+		item.mainRect.width = MERRY_DEFAULT_LIST_BOX_MAIN_WIDTH;
+		item.mainRect.height = MERRY_DEFAULT_LIST_BOX_ITEM_H;
+		item.LeftRect.x = 1;
+		item.LeftRect.y = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT * i + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
+		item.LeftRect.width = MERRY_DEFAULT_SEPERATOR_OFFSET - MERRY_DEFAULT_SEPERATOR_MARGIN - 2;
+		item.LeftRect.height = MERRY_DEFAULT_LIST_BOX_ITEM_H;
+		item.RightRect.x = item.mainRect.x + item.mainRect.width;
+		item.RightRect.y = MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT * i + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN;
+		item.RightRect.width = item.rect.width - MERRY_DEFAULT_SEPERATOR_OFFSET - MERRY_DEFAULT_SEPERATOR_MARGIN - MERRY_DEFAULT_LIST_BOX_MAIN_WIDTH - 2;
+		item.RightRect.height = MERRY_DEFAULT_LIST_BOX_ITEM_H;
 	}
 
 	this->SetBackgroundColour(*wxWHITE);
@@ -87,7 +91,6 @@ int MerryListBoxPanel::SetSelection(int index,int top = 0)
 		m_topCommandIndex = m_selectionCommandIndex;
 	else if (m_selectionCommandIndex - m_topCommandIndex >= MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM)
 		m_topCommandIndex = m_selectionCommandIndex - MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM + 1;
-
 	this->Refresh();
 	return 1;
 }
@@ -153,7 +156,7 @@ void MerryListBoxPanel::DrawBorder(MerryPaintDC& dc) const
 	p[1].x = 0;
 	p[1].y = this->GetClientSize().y - 1;
 	p[2].x = this->GetClientSize().x - 1;
-	p[2].y = this->GetClientSize().y - 1;
+	p[2].y = this->GetClientSize().y - 2;
 	p[3].x = this->GetClientSize().x - 1;
 	p[3].y = 0;
 #ifdef __WXMSW__
@@ -169,10 +172,16 @@ void MerryListBoxPanel::DrawBackground(MerryPaintDC& dc) const
 {
     // dc.SetPen(wxPen(MERRY_DEFAULT_BORDER_COLOR));
 	// dc.DrawLine(MERRY_DEFAULT_SEPERATOR_OFFSET, 0, MERRY_DEFAULT_SEPERATOR_OFFSET, this->GetClientSize().y - 1);
-
+	const int h = this->GetVisibleItemNum() * MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
     dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxBrush(MERRY_DEFAULT_LIST_BOX_MAIN_COLOR));
-	dc.DrawRectangle(MERRY_DEFAULT_SEPERATOR_OFFSET + 1, 0, this->GetClientSize().x - MERRY_DEFAULT_SEPERATOR_OFFSET - 2, this->GetClientSize().y - 1);
+	dc.DrawRectangle(MERRY_DEFAULT_SEPERATOR_OFFSET + 2, 0, MERRY_DEFAULT_LIST_BOX_MAIN_WIDTH, this->GetClientSize().y - 1);
+	dc.SetBrush(wxBrush(MERRY_DEFAULT_LIST_BOX_SEPERATOR_COLOR));
+	dc.DrawRectangle(MERRY_DEFAULT_SEPERATOR_OFFSET,0,2,h);//第一框
+//	dc.DrawRectangle(MERRY_DEFAULT_SEPERATOR_OFFSET + MERRY_DEFAULT_LIST_BOX_MAIN_WIDTH,0,2,h);//第二框
+	dc.DrawRectangle(1,h,this->GetClientSize().x-1,MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN * 2);//命令列表底框
+	dc.SetBrush(wxBrush(MERRY_DEFAULT_LIST_BOX_HELP_COLOR));
+	dc.DrawRectangle(3,h + MERRY_DEFAULT_LIST_BOX_ITEM_MARGIN,this->GetClientSize().x-3,MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT-3);//备注框
 }
 
 void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
@@ -183,25 +192,22 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 	for (int i=0; i<ITEM_NUM; ++i)
 	{
 		const ListBoxItem& item = m_items[i];
-		char c_item[5];
 		assert(i + m_topCommandIndex < (int)m_commands.size());
 		const MerryCommand* command = m_commands[i + m_topCommandIndex];
 		assert(command);
-
 		if (m_selectionCommandIndex - m_topCommandIndex == i)
 		{
+			this->SetToolTip(command->GetCommandDesc());
 			dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
 		}
-		sprintf(c_item,"(%1d.",i);
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);
 		dc.DrawLabel(command->GetCommandName(), item.mainRect, wxALIGN_LEFT);
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_SUB_FONT_COLOR);
-		dc.DrawLabel(command->GetTriggerKey()+c_item, item.subRect, wxALIGN_RIGHT);
+		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),i), item.LeftRect, wxALIGN_RIGHT);
 	}
 	const MerryCommand* command = m_commands[m_selectionCommandIndex];
 	const ListBoxItem& item = m_items[ITEM_NUM];
-	dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
-	dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);
+	dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_HELP_FONT_COLOR);
 	const wxString& cmdLine = command->GetCommandLine();
 	const wxString& cmdDesc = command->GetCommandDesc();
 	if (this->flags > 0)
@@ -210,10 +216,10 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		this->flags = 0;
 		return;
 	}
-	 if (!cmdLine.empty())
-		dc.DrawLabel(wxString::Format(wxT("命令: %s"),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
+	if (!cmdLine.empty())
+		dc.DrawLabel(wxString::Format(wxT(" 命令: %s"),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
 	else if (!cmdDesc.empty())
-		dc.DrawLabel(wxString::Format(wxT("说明: %s"),cmdDesc.c_str()),item.rect, wxALIGN_LEFT);	
+		dc.DrawLabel(wxString::Format(wxT(" 说明: %s"),cmdDesc.c_str()),item.rect, wxALIGN_LEFT);	
 }
 
 void MerryListBoxPanel::SetHeight(int height)
