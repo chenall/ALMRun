@@ -206,48 +206,10 @@ void MerryController::EnterKey(const wxArrayString& keys)
 	::BlockInput(FALSE);
 }
 
-bool MerryController::ShellExecute(const wxString& commandName,
-	const wxString& commandArg,
-	const wxString& workingDir,
-	const wxString& show) const
+wxString GetFullCmdName(const wxString& commandName,const wxString& workingDir,const bool retOld = false)
 {
-	// wxLogNull logNo;
-	wxString cmdName = commandName;
-	int showCommand = SW_SHOW;
-	bool runas = false;
-	if (show.IsSameAs(wxT("hide"), false))
-		showCommand = SW_HIDE;
-	else if (show.IsSameAs(wxT("min"), false))
-		showCommand = SW_SHOWMINIMIZED;
-	else if (show.IsSameAs(wxT("max"), false))
-		showCommand = SW_SHOWMAXIMIZED;
-
-	while(true)
-	{
-		UCHAR T = cmdName.GetChar(0).GetValue();
-		if (T == '@')//前导'@'隐藏窗口运行
-			showCommand = SW_HIDE;
-		else if (T == '*')//前导'*' NT6以上请会管理员权限,NT5运行为
-			runas = true;
-		else if (T == '>')//前导'>'请求管理员权限(NT6以上有效)
-		{
-			if (::wxGetWinVersion() >= wxWinVersion_6)
-				runas = true;
-		}
-		else
-			break;
-		cmdName.erase(0,1);
-	}
-	if (!LocationExec)
-	{
-		if ((int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32)
-			return true;
-		::wxMessageBox(wxString::Format(wxT("无法运行 '%s'。请确定文件名是否正确后，再试一次。"),cmdName),cmdName,wxOK | wxICON_ERROR);
-		return false;
-	}
-
-	LocationExec = false;//定位文件位置标志复位
 	wxString wdir = workingDir;
+	wxString cmdName = commandName;
 	wxFileName fn = wxFileName(cmdName);
 	if (wdir.empty())
 		wdir = ::wxGetCwd();
@@ -293,15 +255,67 @@ bool MerryController::ShellExecute(const wxString& commandName,
 		}
 		::wxSetWorkingDirectory(cwd);
 	}
-	if (Explorer.empty())
-		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
 	if (wxFileName(cmdName).IsAbsolute() == false)//如果不是绝对路径,转换成绝对路径
 	{
 		if (cmdName.GetChar(0) != '\\')
 			cmdName.insert(0,"\\");
 		cmdName.insert(0,wdir);
 	}
-	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),wdir.c_str(), SW_SHOW) > 32;
+	if (wxFileName(cmdName).Exists() == false && retOld == false)
+		cmdName.Clear();
+	return cmdName;
+}
+
+bool MerryController::ShellExecute(const wxString& commandName,
+	const wxString& commandArg,
+	const wxString& workingDir,
+	const wxString& show) const
+{
+	// wxLogNull logNo;
+	wxString cmdName = commandName;
+	int showCommand = SW_SHOW;
+	bool runas = false;
+	if (show.IsSameAs(wxT("hide"), false))
+		showCommand = SW_HIDE;
+	else if (show.IsSameAs(wxT("min"), false))
+		showCommand = SW_SHOWMINIMIZED;
+	else if (show.IsSameAs(wxT("max"), false))
+		showCommand = SW_SHOWMAXIMIZED;
+
+	while(true)
+	{
+		UCHAR T = cmdName.GetChar(0).GetValue();
+		if (T == '@')//前导'@'隐藏窗口运行
+			showCommand = SW_HIDE;
+		else if (T == '*')//前导'*' NT6以上请会管理员权限,NT5运行为
+			runas = true;
+		else if (T == '>')//前导'>'请求管理员权限(NT6以上有效)
+		{
+			if (::wxGetWinVersion() >= wxWinVersion_6)
+				runas = true;
+		}
+		else
+			break;
+		cmdName.erase(0,1);
+	}
+	if (!LocationExec)
+	{
+		if ((int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32)
+			return true;
+		wxString tmpName = GetFullCmdName(cmdName,workingDir,false);
+		if (tmpName.empty())
+		{
+			::wxMessageBox(wxString::Format(wxT("无法运行 '%s'。请确定文件名是否正确后，再试一次。"),cmdName),cmdName,wxOK | wxICON_ERROR);
+			return false;
+		}
+		return (int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), tmpName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32;
+	}
+
+	LocationExec = false;//定位文件位置标志复位
+	cmdName = GetFullCmdName(cmdName,workingDir,true);
+	if (Explorer.empty())
+		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),workingDir.c_str(), SW_SHOW) > 32;
+	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),workingDir.c_str(), SW_SHOW) > 32;
 }
 
 #endif
