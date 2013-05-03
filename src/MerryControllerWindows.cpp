@@ -243,25 +243,24 @@ bool MerryController::ShellExecute(const wxString& commandName,
 
 	LocationExec = false;//定位文件位置标志复位
 	wxString wdir = workingDir;
+	wxFileName fn = wxFileName(cmdName);
 	if (wdir.empty())
 		wdir = ::wxGetCwd();
 	//如果文件存在或包含路径信息就不再进行其它额外的判断
-	if (!::wxFileExists(cmdName) && !::wxDirExists(cmdName) && cmdName.find('/') == wxNOT_FOUND)
+	if (fn.Exists() == false)
 	{
 		bool wFound = false;
 		wxString cwd = ::wxGetCwd();
 		wxArrayString mcwd;//根据PATH路径查询文件
-		wxString Ext,NameTmp,sxPath;
+		wxString NameTmp;
 		wxString wExt = ::wxGetenv("PATHEXT");
 		wExt.UpperCase();
-
-		::wxSplitPath(cmdName,&sxPath,NULL,&Ext);
-		if (Ext.empty())
+		if (!fn.HasExt())
 			cmdName.Append(".*");
-		if (cmdName.find('\\') == wxNOT_FOUND)//在PATH和当前目录中查询
+		if (cmdName.GetChar(0) == '\\')
+			mcwd.Add("\\");
+		else if (cmdName.find('\\') == wxNOT_FOUND)//在PATH和当前目录中查询
 			mcwd = ::wxSplit(::wxGetCwd().Append(';').Append(::wxGetenv("PATH")),';','\0');
-		else if (cmdName.GetChar(1) == ':')//有带盘符信息,只在对应目录下查找
-			mcwd.Add(sxPath);
 		else//只在当前目录中查询
 			mcwd.Add(::wxGetCwd());
 
@@ -274,11 +273,10 @@ bool MerryController::ShellExecute(const wxString& commandName,
 				continue;
 			do
 			{
-				::wxSplitPath(NameTmp,NULL,NULL,&Ext);
-				if (wExt.find(Ext.Upper()) != wxNOT_FOUND)//文件扩展名必须在PATHEXT变量里面
+				if (wExt.find(wxFileName(NameTmp).GetExt().Upper()) != wxNOT_FOUND)//文件扩展名必须在PATHEXT变量里面
 				{
 					wFound = true;
-					wdir = mcwd[i];
+					wdir = ::wxGetCwd();
 					cmdName = NameTmp;
 					break;
 				}
@@ -292,8 +290,12 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	}
 	if (Explorer.empty())
 		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),wdir.c_str(), SW_SHOW) > 32;
-	if (::wxIsAbsolutePath(cmdName) == false)
+	if (wxFileName(cmdName).IsAbsolute() == false)//如果不是绝对路径,转换成绝对路径
+	{
+		if (cmdName.GetChar(0) != '\\')
+			cmdName.insert(0,"\\");
 		cmdName.insert(0,wdir);
+	}
 	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),wdir.c_str(), SW_SHOW) > 32;
 }
 
