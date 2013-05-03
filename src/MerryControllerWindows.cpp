@@ -239,7 +239,12 @@ bool MerryController::ShellExecute(const wxString& commandName,
 		cmdName.erase(0,1);
 	}
 	if (!LocationExec)
-		return (int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand) > 32;
+	{
+		if ((int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32)
+			return true;
+		::wxMessageBox(wxString::Format(wxT("无法运行 '%s'。请确定文件名是否正确后，再试一次。"),cmdName),cmdName,wxOK | wxICON_ERROR);
+		return false;
+	}
 
 	LocationExec = false;//定位文件位置标志复位
 	wxString wdir = workingDir;
