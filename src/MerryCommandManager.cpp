@@ -5,6 +5,7 @@
 #include  <algorithm>
 
 MerryCommandManager* g_commands = NULL;
+static wxString cmdPrefix;
 int Ex_CompareMode;
 MerryCommandManager::~MerryCommandManager()
 {
@@ -76,10 +77,27 @@ const MerryCommand* MerryCommandManager::GetCommand(int commandID) const
 	*/
 }
 
-
+/*
+	命令排序
+	1.根据排序值m_order,值越大排在越前面.
+	2.前缀匹配优先
+	3.命令名排序
+*/
 static bool mysort(MerryCommand *s1,MerryCommand  *s2)
 {
-	return s1->m_order > s2->m_order;
+	int cmp  = s1->m_order - s2->m_order;
+	if (cmp == 0)//排序值一样时
+	{
+		if (s1->m_compare == 0)//前缀匹配优先
+		{
+			if (s2->m_compare != 0)
+				return true;
+		}
+		else if (s2->m_compare == 0)
+			return false;
+		return s2->GetCommandName() > s1->GetCommandName();
+	}
+	return cmp > 0;
 }
 
 const int MerryCommandManager::SetCmdOrder(int commandID)
@@ -109,6 +127,8 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 {
 	MerryCommandArray commands;
 	bool test_cmp = false;
+	int cmp_find = -1;
+	cmdPrefix = commandPrefix.Upper();
 	for (size_t i=0; i<m_commands.size(); ++i)
 	{
 		MerryCommand* command = m_commands[i];
@@ -121,17 +141,28 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 		switch(Ex_CompareMode)
 		{
 			case 1:
-				test_cmp = (commandName.Upper().compare(0, commandPrefix.size(), commandPrefix.Upper()) == 0);
+				test_cmp = (commandName.Upper().compare(0, commandPrefix.size(), cmdPrefix) == 0);
 				break;
 			case 2:
 				test_cmp = g_lua->onCompare(commandName.c_str(),commandPrefix.c_str());
 				break;
 			default:
-				test_cmp = (commandName.Upper().find(commandPrefix.Upper()) != wxNOT_FOUND);
+				cmp_find = commandName.Upper().find(cmdPrefix);
+				if (cmp_find == wxNOT_FOUND)
+				{
+					test_cmp = false;
+					break;
+				}
+				test_cmp = true;
+				if (cmp_find > 0 && commandName.GetChar(cmp_find-1) == '\n')
+					cmp_find = 0;
 				break;
 		}
 		if (test_cmp)
+		{
+			command->m_compare = cmp_find;
 			commands.push_back(command);
+		}
 	}
 	sort(commands.begin(),commands.end(),mysort);
 	return commands;

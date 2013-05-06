@@ -201,7 +201,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 			dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
 		}
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);
-		dc.DrawLabel(command->GetCommandName(), item.mainRect, wxALIGN_LEFT);
+		dc.DrawLabel(command->GetCommandName(), item.mainRect, wxALIGN_LEFT,command->m_compare);
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_SUB_FONT_COLOR);
 		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),i), item.LeftRect, wxALIGN_RIGHT);
 	}

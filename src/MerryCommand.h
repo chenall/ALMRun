@@ -16,6 +16,7 @@ public:
 	const wxString& GetCommandLine() const { return m_commandLine; }
 	void ExecuteCommand(const wxString& commandArg) const;
 	int m_order;
+	int m_compare;
 private:
 	int m_commandID;
 	wxString m_commandName;
