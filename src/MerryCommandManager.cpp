@@ -149,13 +149,14 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 			default:
 				cmp_find = commandName.Upper().find(cmdPrefix);
 				if (cmp_find == wxNOT_FOUND)
-				{
 					test_cmp = false;
-					break;
+				else
+				{
+					test_cmp = true;
+					int cmdLen = command->GetCommandName().Len();
+					if (cmp_find > cmdLen)
+						cmp_find -= cmdLen + 1;
 				}
-				test_cmp = true;
-				if (cmp_find > 0 && commandName.GetChar(cmp_find-1) == '\n')
-					cmp_find = 0;
 				break;
 		}
 		if (test_cmp)
