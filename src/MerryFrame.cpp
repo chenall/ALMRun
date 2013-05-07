@@ -47,8 +47,7 @@ MerryFrame::MerryFrame():
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = new MerryTaskBarIcon();
-	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun 便捷启动工具"));
-
+	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun V1.1.1.2\n便捷启动工具"));
 	m_isCentred = false;
 
 #ifdef DEBUG_ALWAYS_SHOW

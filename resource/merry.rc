@@ -1,1 +1,34 @@
-MerryIcon ICON "merry_icon.ico"
+MERRYICON               ICON                    "merry_icon.ico"
+#define VERSIONINT  1,1,1,2
+#define VERSIONSTR  "1,1,1,2"
+1 VERSIONINFO
+ FILEVERSION VERSIONINT
+ PRODUCTVERSION VERSIONINT
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x0L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "CompanyName", "http://chenall.net"
+            VALUE "FileDescription", "ALMRun ±ã½ÝÆô¶¯¹¤¾ß"
+            VALUE "FileVersion", VERSIONSTR
+            VALUE "InternalName", "ALMRun 2013.05.07"
+            VALUE "LegalCopyright", "Copyright (C) 2013"
+            VALUE "OriginalFilename", "ALMRun.exe"
+            VALUE "ProductName", "ALMRun"
+            VALUE "ProductVersion", VERSIONSTR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
