@@ -366,6 +366,30 @@ static int LuaDir(lua_State* L)
 	files.Clear();
 	return 1;
 }
+#ifdef __WXMSW__
+static int LuaSHSpecialFolders(lua_State* L)
+{
+	lua_pushstring(L,wxStandardPaths::MSWGetShellDir(lua_tointeger(L,-1)));
+	return 1;
+}
+#endif
+
+static int LuaSetEnv(lua_State* L)
+{
+	wxString var(lua_tostring(L, 1), wxConvLocal);
+	wxString value(lua_tostring(L, 2), wxConvLocal);
+	lua_pushboolean(L,::wxSetEnv(var,value));
+	return 1;
+}
+
+static int LuaGetEnv(lua_State* L)
+{
+	wxString var(lua_tostring(L, 1), wxConvLocal);
+	if (!::wxGetEnv(var,&var))
+		var.Clear();
+	lua_pushstring(L,var.c_str());
+	return 1;
+}
 
 static int LuaSetClipboardData(lua_State* L)
 {
@@ -396,26 +420,10 @@ static int LuaGetClipboardData(lua_State* L)
 	return ret;
 }
 
-static int LuaSetEnv(lua_State* L)
-{
-	wxString var(lua_tostring(L, 1), wxConvLocal);
-	wxString value(lua_tostring(L, 2), wxConvLocal);
-	lua_pushboolean(L,::wxSetEnv(var,value));
-	return 1;
-}
 
 static int LuaReLoadConfig(lua_State* L)
 {
 	return 0;
-}
-
-static int LuaGetEnv(lua_State* L)
-{
-	wxString var(lua_tostring(L, 1), wxConvLocal);
-	if (!::wxGetEnv(var,&var))
-		var.Clear();
-	lua_pushstring(L,var.c_str());
-	return 1;
 }
 
 static int LuaConfig(lua_State* L)

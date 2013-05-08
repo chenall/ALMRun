@@ -1,6 +1,6 @@
 MERRYICON               ICON                    "merry_icon.ico"
-#define VERSIONINT  1,1,1,2
-#define VERSIONSTR  "1,1,1,2"
+#define VERSIONINT  1,1,1,3
+#define VERSIONSTR  "1,1,1,3"
 1 VERSIONINFO
  FILEVERSION VERSIONINT
  PRODUCTVERSION VERSIONINT
@@ -20,7 +20,7 @@ BEGIN
             VALUE "CompanyName", "http://chenall.net"
             VALUE "FileDescription", "ALMRun ±ã½ÝÆô¶¯¹¤¾ß"
             VALUE "FileVersion", VERSIONSTR
-            VALUE "InternalName", "ALMRun 2013.05.07"
+            VALUE "InternalName", "ALMRun 2013.05.08"
             VALUE "LegalCopyright", "Copyright (C) 2013"
             VALUE "OriginalFilename", "ALMRun.exe"
             VALUE "ProductName", "ALMRun"

@@ -1,14 +1,16 @@
+--ALMRun隐藏显示热键ALT+R
 addCommand{ key = 'A-R', func = toggleMerry }
 
+--最大化/恢复当前窗口
 addCommand{ key = 'A-M', func = function()
-	local window = getForegroundWindow()
-	if isWindowMax(window) then
-		showWindow(window, 'restore')
-	else
-		showWindow(window, 'max')
-	end
+    local window = GetForegroundWindow()
+    if IsWindowMax(window) then
+	ShowWindow(window, 'restore')
+    else
+	ShowWindow(window, 'max')
+    end
 end }
-
+--关闭当前窗口
 --addCommand{ key = 'A-Q', func = function()
 --	closeWindow(getForegroundWindow())
 --end }
@@ -16,10 +18,10 @@ end }
 local curHideWindow
 addCommand{ key = 'A-H', func = function()
     if not curHideWindow then
-        curHideWindow = getForegroundWindow()
-        showWindow(curHideWindow, 'hide')
+        curHideWindow = GetForegroundWindow()
+        ShowWindow(curHideWindow, 'hide')
     else
-        showWindow(curHideWindow, 'normal')
+        ShowWindow(curHideWindow, 'normal')
         curHideWindow = nil
     end
 end }
@@ -53,6 +55,3 @@ addCommand{ name = 'google',desc = "用Google搜索", func = function(str) shellExe
 addCommand{ name = 'googlecode',func = function(str) shellExecute('http://code.google.com/query/#q=' .. str) end }
 addCommand{ name = 'baidu', func = function(str) shellExecute('http://www.baidu.com/s?wd=' .. str) end }
 addCommand{ name = 'youku', func = function(str) shellExecute('http://www.soku.com/search_video/q_' .. str) end }
-addCommand{ name = 'doubanbook', func = function(str) shellExecute('http://book.douban.com/subject_search?search_text=' .. str) end }
-addCommand{ name = 'doubanmovie', func = function(str) shellExecute('http://movie.douban.com/subject_search?search_text=' .. str) end }
-addCommand{ name = 'name5566', func = function(str) shellExecute('http://name5566.com/?s=' .. str) end }

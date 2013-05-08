@@ -28,11 +28,30 @@ MerryLua::MerryLua()
 	lua_register(L, "setWindowSize",                      LuaSetWindowSize);
 	lua_register(L, "getWindowPosition",                  LuaGetWindowPosition);
 	lua_register(L, "setWindowPosition",                  LuaSetWindowPosition);
-	lua_register(L, "GetClipboardData",					  LuaGetClipboardData);
-	lua_register(L, "SetClipboardData",					  LuaSetClipboardData);
 	lua_register(L, "findWindow",                         LuaFindWindow);
 	lua_register(L, "getMousePosition",                   LuaGetMousePosition);
 	lua_register(L, "setMousePosition",                   LuaSetMousePosition);
+	lua_register(L, "GetClipboardData",					  LuaGetClipboardData);
+	lua_register(L, "SetClipboardData",					  LuaSetClipboardData);
+#ifdef __WXMSW__
+	lua_register(L, "GetForegroundWindow",                LuaGetForegroundWindow);
+	lua_register(L, "SetForegroundWindow",                LuaSetForegroundWindow);
+	lua_register(L, "ShowWindow",                         LuaShowWindow);
+	lua_register(L, "CloseWindow",                        LuaCloseWindow);
+	lua_register(L, "IsWindowMax",                        LuaIsWindowMax);
+	lua_register(L, "IsWindowMin",                        LuaIsWindowMin);
+	lua_register(L, "IsWindowShown",                      LuaIsWindowShown);
+	lua_register(L, "GetWindowText",                      LuaGetWindowText);
+	lua_register(L, "SetWindowText",                      LuaSetWindowText);
+	lua_register(L, "GetWindowSize",                      LuaGetWindowSize);
+	lua_register(L, "SetWindowSize",                      LuaSetWindowSize);
+	lua_register(L, "GetWindowPosition",                  LuaGetWindowPosition);
+	lua_register(L, "SetWindowPosition",                  LuaSetWindowPosition);
+	lua_register(L, "FindWindow",                         LuaFindWindow);
+	lua_register(L, "GetMousePosition",                   LuaGetMousePosition);
+	lua_register(L, "SetMousePosition",                   LuaSetMousePosition);
+	lua_register(L, "GetShellFolder",					  LuaSHSpecialFolders);
+#endif
 	lua_register(L, "message",                            LuaMessage);
 	lua_register(L, "enterKey",                           LuaEnterKey);
 	lua_register(L, "enterText",                          LuaEnterText);

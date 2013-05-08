@@ -18,6 +18,11 @@ addCommand{ name = "test_notepad", desc = "Notepad",cmd = [[%WinDir%\notepad.exe
 ]]
 scan_dir([[E:\绿色软件]],"*.exe")
 
+-- 自动添加程序菜单内容
+scan_dir(GetShellFolder(2),"*.lnk")
+-- 自动添加桌面快捷方式
+scan_dir(GetShellFolder(0),"*.lnk")
+
 -- 调用altrun的配置
 altrun_config("ShortCutList.txt")
 

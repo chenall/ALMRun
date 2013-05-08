@@ -3,7 +3,7 @@ Merry 的配置和 API
 只要稍学习一下 lua 编程语言，就可以灵活的配置 Merry。配置文件位于 config 目录中，common.lua 为 Merry 提供了默认的配置。
 这里介绍一下 Merry 配置文件的 API：
 
-### 0. addCommand{name=命令名,desc=备注,key=热键,cmd=执行命令,func=函数}
+### 0. addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}
     添加一个命令
 	其中,cmd和func二选一,优先使用cmd参数.desc和key都是可选的.
 	desc用于在使用func时显示备注信息.使用cmd参数时desc没有效果.
@@ -21,7 +21,7 @@ Merry 的配置和 API
 	W 或者 M 表示 Win 键
 	S 表示 Shift 键
 
-  可用的表示按键的字符串请参考[key_string.txt](key_string.txt)（部分按键字符串在 Windows 下无效）。
+  可用的表示按键的字符串请参考[key_string.txt][HOT_KEY]（部分按键字符串在 Windows 下无效）。
 
 ### 1. shellExecute
 	用于执行一个 shell 命令
@@ -39,106 +39,105 @@ Merry 的配置和 API
 	shellExecute('cmd', '', '', 'max')
 ```
 
-### 2. getForegroundWindow()
+### 2. GetForegroundWindow()
 	获取前台窗口
 	函数返回前台窗口
 
-### 3. setForegroundWindow
+### 3. SetForegroundWindow
 	设置窗口 window 为前台窗口
-	setForegroundWindow(window)
+	SetForegroundWindow(window)
 
-### 4. showWindow
+### 4. ShowWindow
 	显示窗口 window
 	show 表示显示的方式，包括 'normal'、'max'、'min'、'hide'、'restore'（常规显示、最大化、最小化、隐藏、还原）
-	showWindow(window, show)
+	ShowWindow(window, show)
 
 	范例，最大化或还原窗口
 ```lua
-	if isWindowMax(window) then
-		  showWindow(window, 'restore')
+	if IsWindowMax(window) then
+		  ShowWindow(window, 'restore')
 	else
-		  showWindow(window, 'max')
+		  ShowWindow(window, 'max')
 	end
-	closeWindow
+	CloseWindow
 ```
-### 5. closeWindow(window)
+### 5. CloseWindow(window)
 	关闭窗口 window
 	范例，关闭前台窗口
-	closeWindow(getForegroundWindow())
+	CloseWindow(getForegroundWindow())
 
-### 6. isWindowMax
+### 6. IsWindowMax
 
 	窗口 window 是否为最大化
 	函数返回 true / false 表示 window 是否最大化
-	isWindowMax(window)
+	IsWindowMax(window)
 
-### 7. isWindowMin
+### 7. IsWindowMin
 
 	窗口 window 是否为最小化
 	函数返回 true / false 表示 window 是否最小化
-	isWindowMin(window)
+	IsWindowMin(window)
 
-### 8. isWindowShown
+### 8. IsWindowShown
 
 	窗口 window 是否在显示
 	函数返回 true / false 表示 window 是否在显示
-	isWindowShown(window)
+	IsWindowShown(window)
 
-### 9. getWindowText
+### 9. GetWindowText
 
 	获取窗口 window 的标题栏文字
 	函数返回窗口 window 的标题栏文字
-	getWindowText(window)
+	GetWindowText(window)
 
-### 10. setWindowText
+### 10. SetWindowText
 
 	设置窗口 window 的标题栏文字
-	setWindowText(window, text)
+	SetWindowText(window, text)
 
-### 11. getWindowSize
+### 11. GetWindowSize
 
 	获取窗口 window 的大小
 	函数返回两个值 width 和 height
-	getWindowSize(window)
+	GetWindowSize(window)
 
 	范例，获取前台窗口的大小
-	local width, height = getWindowSize(getForegroundWindow())
-	setWindowSize
+	local width, height = GetWindowSize(GetForegroundWindow())
 
-### 12. setWindowSize(window, width, height)
+### 12. SetWindowSize(window, width, height)
 	设置窗口 window 的大小
 
-### 13. getWindowPosition
+### 13. GetWindowPosition
 
 	获取窗口 window 的位置
 	函数返回两个值 x 和 y 为窗口左上角的位置
-	getWindowPosition(window)
+	GetWindowPosition(window)
 
 	范例，获取前台窗口的位置
-	local x, y = getWindowPosition(getForegroundWindow())
+	local x, y = GetWindowPosition(getForegroundWindow())
 
-### 14. setWindowPosition
+### 14. SetWindowPosition
 
 	设置窗口 window 的位置
 	设置的位置为窗口左上角的位置
 	setWindowPosition(window, x, y)
 
-### 15. findWindow
+### 15. FindWindow
 
 	通过窗口名称查找窗口
 	参数 parentWindow 为可选参数，用于表示被查找窗口的父窗口
-	findWindow(name, parentWindow)
+	FindWindow(name, parentWindow)
 
-### 16. getMousePosition
+### 16. GetMousePosition
 
 	获取当前鼠标的位置
 	函数返回两个值 x 和 y 为鼠标的位置
-	getMousePosition()
+	GetMousePosition()
 
-### 17. setMousePosition
+### 17. SetMousePosition
 
 	设置当前鼠标的位置
-	setMousePosition(x, y)
+	SetMousePosition(x, y)
 
 ### 18. enterKey
 
@@ -214,8 +213,6 @@ Merry 的配置和 API
 ### 23. clearTimer(timer)
 	清理定时器
 
-	如果有更多 API 需求，请给我发邮件。
-
 ### 24. GetEnv
 	获取一个环境变量
 	比如:
@@ -228,29 +225,34 @@ Merry 的配置和 API
 	设置一个变量test
 
 ### 26. config
-  程序序设置
-  目前支持以下设置
-	1.CompareMode
-	  命令匹配模式
+  程序序设置,目前支持以下设置
+ 
+    * CompareMode  命令匹配模式
+   		0 默认,任意位置匹配
 		1 匹配开头
 		2 使用lua函数HookCompre自定义匹配
-		0 默认,任意位置匹配
-	例:config{CompareMode=0}
-	2.ROOT
-		设置相对根目录.
-	3.Explorer	设置默认的文件管理器(按Ctrl+D定位文件时)
-	例:使用Tc config( Explorer = [[C:\totalcmd\totalcmd.exe]] }
+		例:config{CompareMode=0}
+	* ROOT
+		设置默认相对根目录.
+	* Explorer	设置默认的文件管理器(按Ctrl+D定位文件时)
+		例:使用Tc config( Explorer = [[C:\totalcmd\totalcmd.exe]] }
 ### 27. ListDir(path,ext,sub)
 	返回指定目录下的文件列表
 	path  路径,
 	ext	扩展名限制
 	sub	子目录限制
 	例: ListDir([[C:\WINDOWS]],".exe",0)
-### 28. SetClipboardData(TEXT)
+### 28. SetClipboardData(TEXT)  /  GetClipboardData()
 	设剪贴板内容为TEXT.
 	GetClipboardData()
 	获取剪贴板TEXT格式.获取失败时返回nil
-    
+### 29. GetShellFolder([CSIDL])
+  根据`CSIDL`获取系统文件夹路径,例子: 
+ 
+```lua  
+   --获取桌面文件夹位置 
+   GetShellFolder(0)
+```
 Event Merry 事件
 =========
 我们可以在 Merry 的基本配置中找到如下代码：
@@ -282,10 +284,14 @@ Other 其它说明
     * ALMRUN_ROOT	(ALMRUN默认根目录,可用config和ROOT参数修改)
     * ALMRUN_EXPLORER	(默认文件管理器,使用了config的Explorer参数之后有效)
 2. 关于文件路径说明
-    以下表达的都是同一个意思,
-   "C:\\WINDOWS"
-   [[c:\WINDOWS]]
-   [=[C:\WINDOWS]=]
-   [==[c:\windows]==]
-   第一个比较常见,由于Windows的文件路径是以"\"分隔的,但"\"以LUA脚本中是一个转义符,所以在使用中需要用丙个"\"即"\\"
-   第2,3,4个不会转义里面的字符内容.建议使用.
+    以下表达的都是同一个意思,:
+
+		"C:\\WINDOWS"
+		[[c:\WINDOWS]]
+		[=[C:\WINDOWS]=]
+		[==[c:\windows]==]
+		第一个比较常见,由于Windows的文件路径是以"\"分隔的,但"\"以LUA脚本中是一个转义符,所以在使用中需要用丙个"\"即"\\"
+		第2,3,4个不会转义里面的字符内容.建议使用.
+
+[CSIDL]: CSIDL.TXT "Windows 系统特殊文件夹CSIDL参考"
+[HOT_KEY]: key_string.txt "部份热键字符表,像A-Z之类的直接使用字符本身表示"

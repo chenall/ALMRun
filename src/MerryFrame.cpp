@@ -27,27 +27,10 @@ MerryFrame::MerryFrame():
 	)
 {
 	this->SetClientSize(MERRY_DEFAULT_WIDTH, MERRY_DEFAULT_HEIGHT);
-	#ifdef __WXMSW__
-	wxStandardPaths std; //<wx/stdpaths.h>
-	wxFileName fname = wxFileName(std.GetExecutablePath());
-	wxString volume;
-	wxString pathTmp = fname.GetPathWithSep(); //<wx/filename.h>
-	::wxSetEnv(wxT("ALMRUN_HOME"),pathTmp.c_str());
-	wxFileName::SplitVolume(pathTmp,&volume,NULL);
-	if (!volume.empty())
-	{
-		volume.Append(':');
-		::wxSetEnv(wxT("ALMRUN_DRIVE"),volume.c_str());
-	}
-	::wxSetEnv(wxT("ALMRUN_ROOT"),pathTmp.c_str());
-	::wxSetWorkingDirectory(pathTmp);
-	pathTmp.Clear();
-	volume.Clear();
-	#endif
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = new MerryTaskBarIcon();
-	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun V1.1.1.2\n便捷启动工具"));
+	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun V1.1.1.3\n便捷启动工具"));
 	m_isCentred = false;
 
 #ifdef DEBUG_ALWAYS_SHOW
