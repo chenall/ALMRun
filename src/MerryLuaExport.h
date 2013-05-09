@@ -6,6 +6,7 @@
 #include "MerryController.h"
 #include "MerryTimerManager.h"
 #include "MerryMacHelper.h"
+#include "ALMRunConfig.h"
 
 static int LuaAddCommand(lua_State* L)
 {
@@ -428,31 +429,18 @@ static int LuaReLoadConfig(lua_State* L)
 
 static int LuaConfig(lua_State* L)
 {
-	if (!lua_istable(L, 1))
-		return 0;
-	lua_pushstring(L, "CompareMode");
-	lua_rawget(L, 1);
-	if (lua_isnumber(L,-1))
-		Ex_CompareMode = lua_tointeger(L,-1);
-#ifdef __WXMSW__
-	lua_pushstring(L, "Explorer");
-	lua_rawget(L, 1);
-	if (lua_isstring(L,-1))
-	{
-		Explorer = wxString(lua_tostring(L, -1), wxConvLocal);
-		::wxSetEnv(wxT("ALMRUN_EXPLORER"),Explorer.c_str());
-	}
-#endif
-	lua_pushstring(L, "ROOT");
-	lua_rawget(L, 1);
-	if (lua_isstring(L,-1))
-	{
-		wxString root(wxString(lua_tostring(L, -1), wxConvLocal));
-		if (::wxDirExists(root))
-		{
-			::wxSetEnv(wxT("ALMRUN_ROOT"),root.c_str());
-			::wxSetWorkingDirectory(root);
-		}
+	int nIndex = lua_gettop(L);
+	lua_pushnil(L);
+	while( 0 != lua_next(L, nIndex ) )
+	{		
+		// 现在栈顶（-1）是 value，-2 位置是对应的 key
+		if (lua_isnumber(L,-2))
+			return 0;
+		if (lua_isnumber(L,-1))//数值型/布尔型的配置
+			g_config->set(lua_tostring(L,-2),lua_tointeger(L,-1));
+		else//字符串的配置
+			g_config->set(lua_tostring(L,-2),wxString(lua_tostring(L, -1), wxConvLocal));
+		lua_pop(L, 1 );  // 弹出 value，让 key 留在栈顶
 	}
 	return 0;
 }

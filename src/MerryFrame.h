@@ -14,6 +14,7 @@ public:
 	void OnInit();
 	void OnClose();
 	void OpenConfigDir();
+	void ShowTrayIcon(const bool show);
 
 	MerryListBoxPanel* GetListBoxPanel();
 

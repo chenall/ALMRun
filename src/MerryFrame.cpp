@@ -9,6 +9,7 @@
 #include "MerryTimerManager.h"
 #include "MerryHotkey.h"
 #include "MerryController.h"
+#include "ALMRunConfig.h"
 
 
 // #define DEBUG_ALWAYS_SHOW
@@ -32,7 +33,6 @@ MerryFrame::MerryFrame():
 	m_taskBarIcon = new MerryTaskBarIcon();
 	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun V1.1.1.3\n±ã½ÝÆô¶¯¹¤¾ß"));
 	m_isCentred = false;
-
 #ifdef DEBUG_ALWAYS_SHOW
 	this->Show();
 #endif
@@ -56,6 +56,9 @@ void MerryFrame::OnInit()
 
 	assert(!g_commands);
 	g_commands = new MerryCommandManager();
+
+	assert(!g_config);
+	g_config = new ALMRunConfig();
 
 	assert(!g_lua);
 	g_lua = new MerryLua();
@@ -84,6 +87,12 @@ void MerryFrame::OnClose()
 	{
 		delete g_commands;
 		g_commands = NULL;
+	}
+
+	if (g_config)
+	{
+		delete g_config;
+		g_config = NULL;
 	}
 
 	if (g_hotkey)

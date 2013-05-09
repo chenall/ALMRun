@@ -2,11 +2,11 @@
 #include "MerryError.h"
 #include "MerryLua.h"
 #include "MerryInformationDialog.h"
+#include "ALMRunConfig.h"
 #include  <algorithm>
 
 MerryCommandManager* g_commands = NULL;
 static wxString cmdPrefix;
-int Ex_CompareMode;
 MerryCommandManager::~MerryCommandManager()
 {
 	for (size_t i=0; i<m_commands.size(); ++i)
@@ -138,7 +138,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 			continue;
 		if (commandName.size() < commandPrefix.size())
 			continue;
-		switch(Ex_CompareMode)
+		switch(g_config->CompareMode)
 		{
 			case 1:
 				test_cmp = (commandName.Upper().compare(0, commandPrefix.size(), cmdPrefix) == 0);

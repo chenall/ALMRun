@@ -67,7 +67,4 @@ private:
 
 extern MerryController* g_controller;
 
-#ifdef __WXMSW__
-	extern wxString Explorer;
-#endif
 #endif

@@ -1,12 +1,12 @@
 #include "MerryController.h"
 
 #ifdef __WXMSW__
-
+#include "ALMRunConfig.h"
 #include "MerryInformationDialog.h"
 #include "MerryHelper.h"
 #include <vector>
 #include <Windows.h>
-wxString Explorer;
+
 MerryController::MerryController()
 {
 	
@@ -313,9 +313,9 @@ bool MerryController::ShellExecute(const wxString& commandName,
 
 	LocationExec = false;//定位文件位置标志复位
 	cmdName = GetFullCmdName(cmdName,workingDir,true);
-	if (Explorer.empty())
+	if (g_config->Explorer.empty())
 		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),workingDir.c_str(), SW_SHOW) > 32;
-	return (int)::ShellExecute(NULL,NULL,Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),workingDir.c_str(), SW_SHOW) > 32;
+	return (int)::ShellExecute(NULL,NULL,g_config->Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),workingDir.c_str(), SW_SHOW) > 32;
 }
 
 #endif
