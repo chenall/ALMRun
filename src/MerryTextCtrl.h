@@ -7,6 +7,7 @@ class MerryTextCtrl : public wxTextCtrl
 {
 public:
 	unsigned int EnterArgs;
+	void ExecuteCmd();
 	MerryTextCtrl(wxWindow* parent);
 
 private:

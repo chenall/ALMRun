@@ -5,6 +5,7 @@
 #include "MerryLua.h"
 #include "MerryApp.h"
 #include "MerryListBoxPanel.h"
+#include "ALMRunConfig.h"
 
 #ifdef __WXOSX__
 #include "MerryMacHelper.h"
@@ -45,6 +46,7 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	this->EnterArgs = 0;
 }
 
+
 void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 {
 	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
@@ -53,7 +55,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	m_lastKeyDownCode = keyCode;
 	if (listBoxPanel->IsPopup())
 	{
-		if (e.AltDown() && keyCode >= '0' && keyCode <= '9')
+		if ((e.AltDown() || e.ControlDown()) && keyCode >= '0' && keyCode <= '9')
 		{
 			if (!listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
 				return;
@@ -69,20 +71,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	{
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
-			{
-				wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxT('');
-				if (!listBoxPanel->IsPopup())
-				{
-					wxString commandName = (this->EnterArgs>0)?this->GetValue().substr(0,this->EnterArgs-2):this->GetValue();
-					::wxGetApp().GetFrame().Hide();
-					g_lua->OnUndefinedCommand(commandName, commandArg);
-					break;
-				}
-				const MerryCommand* command = listBoxPanel->GetSelectionCommand();
-				const wxString& commandName = command->GetCommandName();
-				::wxGetApp().GetFrame().Hide();
-				command->ExecuteCommand(commandArg);
-			}
+			this->ExecuteCmd();
 			break;
 		case WXK_ESCAPE:
 			if (this->EnterArgs == 0)
@@ -166,6 +155,22 @@ void MerryTextCtrl::OnTextEvent(wxCommandEvent& e)
 		return this->AutoCompletion(m_lastKeyDownCode);
 }
 #endif
+void MerryTextCtrl::ExecuteCmd()
+{
+	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
+	wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxT('');
+	if (!listBoxPanel->IsPopup())
+	{
+		wxString commandName = (this->EnterArgs>0)?this->GetValue().substr(0,this->EnterArgs-2):this->GetValue();
+		::wxGetApp().GetFrame().Hide();
+		g_lua->OnUndefinedCommand(commandName, commandArg);
+		return;
+	}
+	const MerryCommand* command = listBoxPanel->GetSelectionCommand();
+	const wxString& commandName = command->GetCommandName();
+	::wxGetApp().GetFrame().Hide();
+	command->ExecuteCommand(commandArg);
+}
 
 void MerryTextCtrl::AutoCompletion(int keyCode)
 {
@@ -185,6 +190,12 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 	else if (keyCode != WXK_TAB)
 	{
 		MerryCommandArray commands = g_commands->Collect(name);
+		//Êý×ÖÈÈ¼üÆôÓÃ
+		if (g_config->NumberKey && commands.size() == 0 && keyCode >= '0' && keyCode <= '9')
+		{
+			if (listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
+				return this->ExecuteCmd();
+		}
 		listBoxPanel->SetCommandArray(commands);
 		if (commands.size() == 0)
 		{

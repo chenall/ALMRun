@@ -227,7 +227,7 @@ Merry 的配置和 API
 ### 26. config
   程序序设置,目前支持以下设置
  
-    * CompareMode  命令匹配模式
+	* CompareMode  命令匹配模式
    		0 默认,任意位置匹配
 		1 匹配开头
 		2 使用lua函数HookCompre自定义匹配
@@ -236,6 +236,8 @@ Merry 的配置和 API
 		设置默认相对根目录.
 	* Explorer	设置默认的文件管理器(按Ctrl+D定位文件时)
 		例:使用Tc config( Explorer = [[C:\totalcmd\totalcmd.exe]] }
+	* NumberKey 允许数字键快捷键(类似ALTRUN)
+		0,禁用(默认);1,启用
 ### 27. ListDir(path,ext,sub)
 	返回指定目录下的文件列表
 	path  路径,

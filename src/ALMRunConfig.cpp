@@ -4,6 +4,7 @@ ALMRunConfig* g_config = NULL;
 ALMRunConfig::ALMRunConfig(void)
 {
 	CompareMode = 0;
+	NumberKey = 0;
 }
 
 bool ALMRunConfig::set(const wxString& name,const wxString &value)
@@ -24,6 +25,8 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 {
 	if (name.CmpNoCase("CompareMode") == 0)
 		CompareMode = value;
+	else if (name.CmpNoCase("NumberKey") == 0)
+		NumberKey = value != 0;
 	else
 		return false;
 
@@ -32,8 +35,7 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 
 void ALMRunConfig::get(const wxString& name)
 {
-	if (name.CmpNoCase("CompareMode") == 0)
-		return (void)CompareMode;
+
 }
 
 ALMRunConfig::~ALMRunConfig(void)

@@ -7,6 +7,7 @@ class ALMRunConfig
 {
 public:
 	int CompareMode;
+	bool NumberKey;
 	wxString Explorer;
 	wxString Root;
 	void get(const wxString& name);
