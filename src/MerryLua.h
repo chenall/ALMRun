@@ -20,6 +20,7 @@ public:
 public:
 	// events
 	void OnClose();
+	void DoConfig();
 	void OnUndefinedCommand(const wxString& commandName, const wxString& commandArg);
 	bool onCompare(const wxString& commandName,const wxString& commandPrefix);
 private:

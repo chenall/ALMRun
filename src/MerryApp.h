@@ -9,7 +9,6 @@ public:
     virtual bool OnInit();
 	void NewFrame();
 	MerryFrame& GetFrame();
-
 private:
 	MerryFrame* m_frame;
 };

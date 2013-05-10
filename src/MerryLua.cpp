@@ -74,15 +74,7 @@ MerryLua::MerryLua()
 	lua_pushstring(L, "gtk");
 #endif
 	lua_setglobal(L, "PLATFORM");
-
-	if (luaL_dofile(L, MERRY_DEFAULT_CONFIG_FILE))
-	{
-		new MerryInformationDialog(
-			wxT("Configure failed"),
-			wxString(lua_tostring(L, -1), wxConvLocal)
-		);
-		lua_pop(L, 1);
-	}
+	this->DoConfig();
 }
 
 MerryLua::~MerryLua()
@@ -94,6 +86,18 @@ MerryLua::~MerryLua()
 lua_State* MerryLua::GetLua()
 {
 	return L;
+}
+
+void MerryLua::DoConfig()
+{
+	if (luaL_dofile(L, MERRY_DEFAULT_CONFIG_FILE))
+	{
+		new MerryInformationDialog(
+			wxT("Configure failed"),
+			wxString(lua_tostring(L, -1), wxConvLocal)
+		);
+		lua_pop(L, 1);
+	}
 }
 
 void MerryLua::OnClose()

@@ -2,6 +2,7 @@
 #define _MERRY_FRAME_H_
 
 #include "MerryWx.h"
+#include "ALMRunConfig.h"
 
 class MerryMainPanel;
 class MerryListBoxPanel;
@@ -14,11 +15,13 @@ public:
 	void OnInit();
 	void OnClose();
 	void OpenConfigDir();
+	void NewConfig();
 	void ShowTrayIcon(const bool show);
 
 	MerryListBoxPanel* GetListBoxPanel();
 
 private:
+	void onContextMenu(wxContextMenuEvent& e);
 	void OnCloseEvent(wxCloseEvent& e);
 	void OnActivateEvent(wxActivateEvent& e);
 	void OnShowEvent(wxShowEvent& e);

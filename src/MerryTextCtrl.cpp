@@ -191,7 +191,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 	{
 		MerryCommandArray commands = g_commands->Collect(name);
 		//Êý×ÖÈÈ¼üÆôÓÃ
-		if (g_config->NumberKey && commands.size() == 0 && keyCode >= '0' && keyCode <= '9')
+		if (g_config->NumberKey && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
 		{
 			if (listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
 				return this->ExecuteCmd();

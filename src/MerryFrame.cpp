@@ -9,15 +9,18 @@
 #include "MerryTimerManager.h"
 #include "MerryHotkey.h"
 #include "MerryController.h"
-#include "ALMRunConfig.h"
 
-
-// #define DEBUG_ALWAYS_SHOW
+//#define DEBUG_ALWAYS_SHOW
 
 BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 	EVT_CLOSE(MerryFrame::OnCloseEvent)
 	EVT_ACTIVATE(MerryFrame::OnActivateEvent)
 	EVT_SHOW(MerryFrame::OnShowEvent)
+	EVT_CONTEXT_MENU(MerryFrame::onContextMenu)
+	EVT_MENU(MENU_ITEM_OPEN_CONFIG, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_CONFIG, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_ABOUT, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::onPopMenu)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
@@ -30,8 +33,8 @@ MerryFrame::MerryFrame():
 	this->SetClientSize(MERRY_DEFAULT_WIDTH, MERRY_DEFAULT_HEIGHT);
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
-	m_taskBarIcon = new MerryTaskBarIcon();
-	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), wxT("ALMRun V1.1.1.3\n便捷启动工具"));
+	m_taskBarIcon = NULL;
+	this->ShowTrayIcon(true);
 	m_isCentred = false;
 #ifdef DEBUG_ALWAYS_SHOW
 	this->Show();
@@ -40,7 +43,51 @@ MerryFrame::MerryFrame():
 
 MerryFrame::~MerryFrame()
 {
+	if (m_taskBarIcon)
 	delete m_taskBarIcon;
+}
+
+void MerryFrame::onContextMenu(wxContextMenuEvent& e)
+{
+	wxMenu* menu = new wxMenu;
+	menu->Append(MENU_ITEM_OPEN_CONFIG, wxT("显示配置(&S)"));
+	menu->Append(MENU_ITEM_CONFIG, wxT("刷新配置(R)"));
+	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
+	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));
+	PopupMenu(menu);
+    return;
+}
+
+void MerryFrame::NewConfig()
+{
+	if (g_config)
+	{
+		delete g_config;
+		g_config = new ALMRunConfig();
+	}
+
+	if (g_hotkey)
+	{
+		g_hotkey->OnDelete();
+		delete g_hotkey;
+		g_hotkey = NewMerryHotkey();
+	}
+
+	if (g_timers)
+	{
+		delete g_timers;
+		g_timers = new MerryTimerManager();
+	}
+
+	if (g_commands)
+	{
+		delete g_commands;
+		g_commands = new MerryCommandManager();
+	}
+	if (g_lua)
+		g_lua->DoConfig();
+	else
+		g_lua = new MerryLua();
 }
 
 void MerryFrame::OnInit()
@@ -72,6 +119,20 @@ void MerryFrame::OpenConfigDir()
 	pathTmp.Append("config");
 	::ShellExecute(NULL,_T("explore"),pathTmp.c_str(),NULL, NULL,true);
 #endif
+}
+
+void MerryFrame::ShowTrayIcon(const bool show)
+{
+	if (!show && m_taskBarIcon)
+	{
+		m_taskBarIcon->Destroy();
+		m_taskBarIcon = NULL;
+	}
+	else if (show && !m_taskBarIcon)
+	{
+		m_taskBarIcon = new MerryTaskBarIcon();
+		m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), TASKBARICON_TIP);
+	}
 }
 
 void MerryFrame::OnClose()

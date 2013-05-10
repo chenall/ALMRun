@@ -4,7 +4,8 @@ ALMRunConfig* g_config = NULL;
 ALMRunConfig::ALMRunConfig(void)
 {
 	CompareMode = 0;
-	NumberKey = 0;
+	NumberKey = false;
+	ShowTrayIcon = true;
 }
 
 bool ALMRunConfig::set(const wxString& name,const wxString &value)
@@ -27,6 +28,11 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 		CompareMode = value;
 	else if (name.CmpNoCase("NumberKey") == 0)
 		NumberKey = value != 0;
+	else if (name.CmpNoCase("ShowTrayIcon") == 0)
+	{
+		ShowTrayIcon = value != 0;
+		::wxGetApp().GetFrame().ShowTrayIcon(ShowTrayIcon);
+	}
 	else
 		return false;
 

@@ -2,21 +2,12 @@
 #include "MerryApp.h"
 #include "MerryInformationDialog.h"
 
-enum
-{
-	MENU_ITEM_OPEN = 10001,
-	MENU_ITEM_OPEN_CONFIG,
-	MENU_ITEM_CONFIG,
-	MENU_ITEM_ABOUT,
-	MENU_ITEM_EXIT,
-};
-
 BEGIN_EVENT_TABLE(MerryTaskBarIcon, wxTaskBarIcon)
-	EVT_MENU(MENU_ITEM_OPEN, MerryTaskBarIcon::OnOpenEvent)
-	EVT_MENU(MENU_ITEM_OPEN_CONFIG, MerryTaskBarIcon::OnOpenConfigEvent)
-	EVT_MENU(MENU_ITEM_CONFIG, MerryTaskBarIcon::OnConfigEvent)
-	EVT_MENU(MENU_ITEM_ABOUT, MerryTaskBarIcon::OnAboutEvent)
-	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::OnExitEvent)
+	EVT_MENU(MENU_ITEM_OPEN, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_OPEN_CONFIG, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_CONFIG, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_ABOUT, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::onPopMenu)
 	EVT_TASKBAR_LEFT_DCLICK(MerryTaskBarIcon::OnLeftButtonDClickEvent)
 END_EVENT_TABLE()
 
@@ -33,29 +24,26 @@ wxMenu* MerryTaskBarIcon::CreatePopupMenu()
 	return menu;
 }
 
-void MerryTaskBarIcon::OnOpenEvent(wxCommandEvent& e)
+void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 {
-	::wxGetApp().GetFrame().Show();
-}
-
-void MerryTaskBarIcon::OnOpenConfigEvent(wxCommandEvent& e)
-{
-	::wxGetApp().GetFrame().OpenConfigDir();
-}
-
-void MerryTaskBarIcon::OnConfigEvent(wxCommandEvent& e)
-{
-	::wxGetApp().NewFrame();
-}
-
-void MerryTaskBarIcon::OnAboutEvent(wxCommandEvent& e)
-{
-	new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.1.1 --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s"),__DATE__,__TIME__));
-}
-
-void MerryTaskBarIcon::OnExitEvent(wxCommandEvent& e)
-{
-	::wxGetApp().GetFrame().Close();
+	switch(e.GetId())
+	{
+		case MENU_ITEM_ABOUT:
+			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.1.1 --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s"),__DATE__,__TIME__));
+			break;
+		case MENU_ITEM_OPEN:
+			::wxGetApp().GetFrame().Show();
+			break;
+		case MENU_ITEM_OPEN_CONFIG:
+			::wxGetApp().GetFrame().OpenConfigDir();
+			break;
+		case MENU_ITEM_CONFIG:
+			::wxGetApp().GetFrame().NewConfig();
+			break;
+		case MENU_ITEM_EXIT:
+			::wxGetApp().GetFrame().Close();
+			break;
+	}
 }
 
 void MerryTaskBarIcon::OnLeftButtonDClickEvent(wxTaskBarIconEvent& e)

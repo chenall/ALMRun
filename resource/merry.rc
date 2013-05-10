@@ -1,6 +1,6 @@
 MERRYICON               ICON                    "merry_icon.ico"
-#define VERSIONINT  1,1,1,3
-#define VERSIONSTR  "1,1,1,3"
+#define VERSIONINT  1,1,1,4
+#define VERSIONSTR  "1,1,1,4"
 1 VERSIONINFO
  FILEVERSION VERSIONINT
  PRODUCTVERSION VERSIONINT
