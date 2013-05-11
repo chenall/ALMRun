@@ -20,7 +20,7 @@ public:
 	void SelectNext();
 	void SelectPrev();
 	int flags;
-	int SetSelection(int index,int top);
+	int SetSelection(int index,const int top = -1);
 	const MerryCommand* GetSelectionCommand() const;
 
 	bool IsPopup() const;

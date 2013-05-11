@@ -69,20 +69,22 @@ void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
 
 void MerryListBoxPanel::SelectNext()
 {
-	this->SetSelection(m_selectionCommandIndex + 1,0);
+	this->SetSelection(m_selectionCommandIndex + 1);
 }
 
 void MerryListBoxPanel::SelectPrev()
 {
-	this->SetSelection(m_selectionCommandIndex - 1,0);
+	this->SetSelection(m_selectionCommandIndex - 1);
 }
 
-int MerryListBoxPanel::SetSelection(int index,int top = 0)
+int MerryListBoxPanel::SetSelection(int index,const int top)
 {
 	if (index == -1 && top >= 0)
 		index = m_topCommandIndex + top;
-	if (index < 0 || index >= (int)m_commands.size())
-		return 0;
+	else if (index < 0 )
+		index = m_commands.size() - 1;
+	else if (index >= (int)m_commands.size())
+		index = 0;
 	if (index == m_selectionCommandIndex)
 		return 1;
 
