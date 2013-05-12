@@ -11,6 +11,7 @@ public:
 	bool NumberKey;
 	bool ShowTrayIcon;
 	bool ShowTopTen;
+	bool ExecuteIfOnlyOne;
 	wxString Explorer;
 	wxString Root;
 	void get(const wxString& name);

@@ -7,6 +7,7 @@ ALMRunConfig::ALMRunConfig(void)
 	NumberKey = false;
 	ShowTrayIcon = true;
 	ShowTopTen = true;
+	ExecuteIfOnlyOne = false;
 }
 
 bool ALMRunConfig::set(const wxString& name,const wxString &value)
@@ -36,6 +37,8 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 	}
 	else if (name.CmpNoCase("ShowTopTen") == 0)
 		ShowTopTen = value != 0;
+	else if (name.CmpNoCase("ExecuteIfOnlyOne") == 0)
+		ExecuteIfOnlyOne = value != 0;
 	else
 		return false;
 

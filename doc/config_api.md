@@ -241,6 +241,7 @@ Merry 的配置和 API
 	* ShowTrayIcon 是否显示托盘图标
 		0,不显示;1,显示(默认)
 	* ShowTopTen 仅显示前10项
+	* ExecuteIfOnlyOne 当仅剩一项匹配项时立即执行
 ### 27. ListDir(path,ext,sub)
 	返回指定目录下的文件列表
 	path  路径,

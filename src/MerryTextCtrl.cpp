@@ -203,6 +203,8 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 			return;
 		}
 		listBoxPanel->Popup();
+		if (g_config->ExecuteIfOnlyOne && commands.size() == 1)
+			return this->ExecuteCmd();
 	}
 	// Auto completion
 	/*
