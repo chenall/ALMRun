@@ -1,11 +1,12 @@
 MERRYICON               ICON                    "merry_icon.ico"
 #ifdef __WXMSW__
 #include <wx/msw/wx.rc>
-#define VERSIONINT  1,1,1,4
-#define VERSIONSTR  "1,1,1,4"
+#endif
+#include "../src/ALMRunVersion.h"
+#define VER_DATE "ALMRun "##VERSION_DATE
 1 VERSIONINFO
- FILEVERSION VERSIONINT
- PRODUCTVERSION VERSIONINT
+ FILEVERSION VERSION_INT
+ PRODUCTVERSION VERSION_INT
 #ifdef _DEBUG
  FILEFLAGS 0x1L
 #else
@@ -20,13 +21,13 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "CompanyName", "http://chenall.net"
-            VALUE "FileDescription", "ALMRun 便捷启动工具"
-            VALUE "FileVersion", VERSIONSTR
-            VALUE "InternalName", "ALMRun 2013.05.08"
+            VALUE "FileDescription", "ALMRun 便捷启动工具,集热键管理,快速启动于一身"
+            VALUE "FileVersion", VERSION_STR
+            VALUE "InternalName", VER_DATE
             VALUE "LegalCopyright", "Copyright (C) 2013"
             VALUE "OriginalFilename", "ALMRun.exe"
             VALUE "ProductName", "ALMRun"
-            VALUE "ProductVersion", VERSIONSTR
+            VALUE "ProductVersion", VERSION_STR
         END
     END
     BLOCK "VarFileInfo"
@@ -34,4 +35,3 @@ BEGIN
         VALUE "Translation", 0x804, 1200
     END
 END
-#endif

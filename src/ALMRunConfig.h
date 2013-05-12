@@ -1,7 +1,8 @@
 #pragma once
 #ifndef _ALMRUN_CONFIG_H_
 #define _ALMRUN_CONFIG_H_
-#define TASKBARICON_TIP wxT("ALMRun v1.1.1.4\n便捷启动工具")
+#include "ALMRunVersion.h"
+#define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n便捷启动工具"
 #include "MerryWx.h"
 
 class ALMRunConfig
