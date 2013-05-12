@@ -238,6 +238,8 @@ Merry 的配置和 API
 		例:使用Tc config( Explorer = [[C:\totalcmd\totalcmd.exe]] }
 	* NumberKey 是否允许数字键快捷键(类似ALTRUN)
 		0,禁用(默认);1,启用
+		启用之后可以按数字0-9和空格快速启动条目.
+		注意: 如果按下的数字刚好可以匹配列表条目时则不会启动.
 	* ShowTrayIcon 是否显示托盘图标
 		0,不显示;1,显示(默认)
 	* ShowTopTen 仅显示前10项

@@ -1,0 +1,14 @@
+2013-05-12
+    1.新增配置项.
+    	* ShowTopTen 仅显示前10项
+	* ExecuteIfOnlyOne 当仅剩一项匹配项时立即执行
+2013-05-11
+    列表框循环上下移动.
+    BUG修正(ShowTrayIcon配置无效)
+2013-05-10
+    新增配置项
+	* ShowTrayIcon 是否显示托盘图标
+	* NumberKey 	是否允许数字键快捷键(同时允许空格快捷键)
+2013-05-09
+    新增API
+	* GetShellFolder 获取系统特殊文件夹位置.
