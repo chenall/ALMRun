@@ -163,7 +163,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 		{
 			command->m_compare = cmp_find;
 			commands.push_back(command);
-			if (commands.size()>9)
+			if (g_config->ShowTopTen && commands.size()>9)
 				break;
 		}
 	}

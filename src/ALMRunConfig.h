@@ -10,6 +10,7 @@ public:
 	int CompareMode;
 	bool NumberKey;
 	bool ShowTrayIcon;
+	bool ShowTopTen;
 	wxString Explorer;
 	wxString Root;
 	void get(const wxString& name);

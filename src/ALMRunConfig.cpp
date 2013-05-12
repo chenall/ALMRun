@@ -6,6 +6,7 @@ ALMRunConfig::ALMRunConfig(void)
 	CompareMode = 0;
 	NumberKey = false;
 	ShowTrayIcon = true;
+	ShowTopTen = true;
 }
 
 bool ALMRunConfig::set(const wxString& name,const wxString &value)
@@ -33,6 +34,8 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 		ShowTrayIcon = value != 0;
 		::wxGetApp().GetFrame().ShowTrayIcon(ShowTrayIcon);
 	}
+	else if (name.CmpNoCase("ShowTopTen") == 0)
+		ShowTopTen = value != 0;
 	else
 		return false;
 

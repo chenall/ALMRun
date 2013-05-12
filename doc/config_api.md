@@ -240,6 +240,7 @@ Merry 的配置和 API
 		0,禁用(默认);1,启用
 	* ShowTrayIcon 是否显示托盘图标
 		0,不显示;1,显示(默认)
+	* ShowTopTen 仅显示前10项
 ### 27. ListDir(path,ext,sub)
 	返回指定目录下的文件列表
 	path  路径,

@@ -1,4 +1,6 @@
 MERRYICON               ICON                    "merry_icon.ico"
+#ifdef __WXMSW__
+#include <wx/msw/wx.rc>
 #define VERSIONINT  1,1,1,4
 #define VERSIONSTR  "1,1,1,4"
 1 VERSIONINFO
@@ -32,3 +34,4 @@ BEGIN
         VALUE "Translation", 0x804, 1200
     END
 END
+#endif
