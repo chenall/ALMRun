@@ -261,6 +261,10 @@ Merry 的配置和 API
    --获取桌面文件夹位置 
    GetShellFolder(0)
 ```
+### 30. InputBox(MESSAGE,CAPTION,DEFVALUE)
+    显示一个文本输入框
+    MESSAGE 提示信息,CAPTION 标题,DEFVALUE 默认值
+    注: 所有参数都是可选的,其中DEFVALUE如果以"*"开头,将作为密码输入框,输入的密码显示为'*'
 Event Merry 事件
 =========
 我们可以在 Merry 的基本配置中找到如下代码：

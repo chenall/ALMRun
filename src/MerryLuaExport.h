@@ -273,9 +273,30 @@ static int LuaMessage(lua_State* L)
 		title = wxString(lua_tostring(L, 1),wxConvLocal);
 		message = wxString(lua_tostring(L, 2),wxConvLocal);
 	}
-
 	new MerryInformationDialog(title, message);
 	return 0;
+}
+
+static int LuaInputBox(lua_State* L)
+{
+	wxString message(wxString(lua_tostring(L, 1), wxConvLocal));
+	wxString caption(wxString(lua_tostring(L, 2), wxConvLocal));
+	wxString value(wxString(lua_tostring(L, 3), wxConvLocal));
+	long style = wxCENTRE | wxOK;
+	if (caption.empty())
+		caption = wxT("ALMRun");
+	if (value.GetChar(0) == '*')
+	{
+		style |= wxTE_PASSWORD;
+		value.Clear();
+	}
+	wxTextEntryDialog* dlg = new wxTextEntryDialog(NULL,message,caption,value,style);
+	if (dlg->ShowModal() == wxID_OK)
+		lua_pushstring(L,dlg->GetValue().c_str());
+	else
+		lua_pushstring(L,NULL);
+	dlg->Destroy();
+	return 1;
 }
 
 static int LuaEnterKey(lua_State* L)
