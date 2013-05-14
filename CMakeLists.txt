@@ -42,6 +42,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
 # add executable
 aux_source_directory(src SRCS)
+aux_source_directory(src/Dialog SRCS)
+include_directories(src/Dialog)
+include_directories(src)
 if(NOT APPLE)
 	file(GLOB OBJC_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.mm)
 	list(REMOVE_ITEM SRCS ${OBJC_SRCS})
