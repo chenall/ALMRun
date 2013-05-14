@@ -1,3 +1,7 @@
+2013-05-14
+    1.新增API
+	* MessageBox 显示一个提示对话框.和message不同,对话框就是要等待用户输入的.
+    2.修改message的参数新的为message(message,title),统一
 2013-05-13
     1.新增API
 	* InputBox 显示文本或密码输入框,返回输入的内容.

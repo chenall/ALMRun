@@ -72,7 +72,7 @@ Merry 的特点和功能
 
 #### 7. message支持标题
 ```lua
-	message(title,message)
+	message(message,title)
 	--或兼容原版
 	message(message)
 ```

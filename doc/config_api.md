@@ -265,6 +265,27 @@ Merry 的配置和 API
     显示一个文本输入框
     MESSAGE 提示信息,CAPTION 标题,DEFVALUE 默认值
     注: 所有参数都是可选的,其中DEFVALUE如果以"*"开头,将作为密码输入框,输入的密码显示为'*'
+
+### 31. MessageBox(MESSAGE,CAPTION,STYLE)
+    显示一个信息提示和message不一样的是这个会暂停脚本/程序的运行,并返回一个数值,在脚本中可以使用这个的控制程序的运行.
+    MESSAGE 提示信息,CAPTION 标题,STYLE messagebox样式值
+    样式(style)值参考,例: 显示是/否按钮和警告的图标 就是0x108 
+    按钮:
+    是/否         0x00000008
+    确定/取消     0x00000030
+    OK            0x00000004(默认)
+    HELP	  0x1000(可以和上面组合)
+
+    图标:
+    警告(WARNING)       0x00000100
+    错误(ERROR)         0x00000200
+    提示(INFORMATION)  0x00000800(默认)
+
+    对应返回值:
+    是/确定   0x4
+    否        0x8
+    取沙      0x10
+    HELP      0x1000
 Event Merry 事件
 =========
 我们可以在 Merry 的基本配置中找到如下代码：
