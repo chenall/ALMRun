@@ -13,6 +13,14 @@ MerryCommandManager::~MerryCommandManager()
 		delete m_commands[i];
 }
 
+const void MerryCommandManager::AddFiles(const wxArrayString& files)
+{
+	for(int i=files.GetCount()-1;i >= 0;--i)
+	{
+		m_commands.push_back(new MerryCommand(m_commands.size(),wxFileNameFromPath(files[i]),files[i],files[i]));
+	}
+}
+
 const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
 {
 	int order_id = 0;

@@ -357,28 +357,6 @@ static int LuaClearTimer(lua_State* L)
 	return 0;
 }
 
-static void GetSubDir(const wxString& dirname,wxArrayString *files,const wxString& filespec = wxEmptyString,const int sub = -1)
-{
-	static int cur_sub_dir = 0;
-	wxDir dir(dirname);
-	if (!dir.IsOpened())
-		return;
-	dir.GetAllFiles(dirname,files,filespec,wxDIR_HIDDEN|wxDIR_FILES);
-	if (cur_sub_dir == sub)
-		return;
-	++cur_sub_dir;//子目录级别+1
-	wxString file;
-	bool test = dir.GetFirst(&file,wxEmptyString,wxDIR_DIRS|wxDIR_HIDDEN);
-	wxString path = dir.GetNameWithSep();
-	while(test)
-	{
-		GetSubDir(path+file,files,filespec,sub);
-		test = dir.GetNext(&file);
-	}
-	--cur_sub_dir;//子目录级别-1
-	return;
-}
-
 static int LuaDir(lua_State* L)
 {
 	wxString ls_path,filespec;
@@ -398,7 +376,7 @@ static int LuaDir(lua_State* L)
 			break;
 	}
 	wxArrayString files;
-	GetSubDir(ls_path,&files,filespec,sub);
+	g_config->ListFiles(ls_path,&files,filespec,sub);
 	lua_newtable(L);
 	int i = files.Count();
 	for(int j = 0;j<i;++j)

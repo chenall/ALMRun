@@ -89,6 +89,41 @@ bool ALMRunConfig::Changed()
 	return (cfg_time  && cfg_time != wxFileModificationTime(cfg_file));
 }
 
+void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const int sub)
+{
+	wxArrayString specs = wxSplit(filespec,'|');
+	if (specs.GetCount() == 0)
+		specs.Add(wxEmptyString);
+	return this->ListFiles(dirname,files,specs,sub);
+}
+
+void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub)
+{
+	static int cur_sub_dir = 0;
+	int flags = wxDIR_HIDDEN|wxDIR_FILES;
+	wxDir dir(dirname);
+	if (!dir.IsOpened())
+		return;
+	if (sub == -1)
+		flags |= wxDIR_DIRS;
+	for(int i=filespec.GetCount() - 1; i >= 0;--i)
+		dir.GetAllFiles(dirname,files,filespec[i],flags);
+
+	if (sub == -1 || cur_sub_dir == sub)
+		return;
+	++cur_sub_dir;//子目录级别+1
+	wxString file;
+	bool test = dir.GetFirst(&file,wxEmptyString,wxDIR_DIRS|wxDIR_HIDDEN);
+	wxString path = dir.GetNameWithSep();
+	while(test)
+	{
+		ListFiles(path+file,files,filespec,sub);
+		test = dir.GetNext(&file);
+	}
+	--cur_sub_dir;//子目录级别-1
+	return;
+}
+
 void ALMRunConfig::ConfigCommand()
 {
 	conf->SetPath("/Command");
@@ -98,7 +133,7 @@ void ALMRunConfig::ConfigCommand()
 	wxString cmd;
 	wxString desc;
 	wxString cmds;
-	int cmdId;
+	int cmdId,defsub;
 	sizes = conf->ReadLong("cmds.size",0);
 	while(sizes)
 	{
@@ -116,15 +151,23 @@ void ALMRunConfig::ConfigCommand()
 		g_hotkey->RegisterHotkey(cmdId);
 	}
 	conf->SetPath("/directories");
-	sizes = conf->ReadLong("cmds.size",0);
+	sizes = conf->ReadLong("dirs.size",0);
+	defsub = conf->ReadLong("dirs.def.sub",0);
+	key = conf->Read("dirs.def.specs");
 	while(sizes)
 	{
-		cmds = wxString::Format("cmds.%d.",sizes);
+		wxArrayString files;
+		cmds = wxString::Format("dirs.%d.",sizes);
 		--sizes;
-		name = conf->Read(cmds + "dir");
+		name = conf->Read(cmds + "path");
 		if (name.empty())
 			continue;
+		desc = conf->Read(cmds + "specs",key);
+		cmdId = conf->ReadLong(cmds + "sub",defsub);
+		this->ListFiles(name,&files,desc,cmdId);
+		g_commands->AddFiles(files);
 	}
+	conf->SetPath("/Config");
 }
 
 void ALMRunConfig::get(const wxString& name)

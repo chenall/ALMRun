@@ -1,6 +1,8 @@
 2013-05-17
     1.新增ALMRun.ini配置文件,可以通过这个来进行一些基本的配置.
     2.热键功能优化,以前必须A-R现在用"+"也可以,同时允许中间有空格,像"A + R",也可以用比较直观的"Alt + R"
+    3.为了方便使用,新增4个环境变量Desktop,CommonDesktop,Programs,CommonPrograms
+    4.ALMRun.ini支持添加命令和自动扫描的目录
 
 2013-05-14
     1.新增API

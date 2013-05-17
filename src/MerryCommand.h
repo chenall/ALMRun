@@ -5,7 +5,7 @@
 class MerryCommand
 {
 public:
-	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order);
+	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc = wxEmptyString,const wxString& commandLine = wxEmptyString, int funcRef = 0, const wxString& triggerKey = wxEmptyString,int order = 0);
 	~MerryCommand();
 
 	int GetCommandID() const { return m_commandID; }

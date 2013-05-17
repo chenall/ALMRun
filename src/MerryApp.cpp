@@ -12,6 +12,10 @@ bool MerryApp::OnInit()
 	wxString volume;
 	wxString pathTmp = fname.GetPathWithSep(); //<wx/filename.h>
 	::wxSetEnv(wxT("ALMRUN_HOME"),pathTmp.c_str());
+	::wxSetEnv(wxT("Desktop"),std.MSWGetShellDir(0));//CSIDL_DESKTOP 
+	::wxSetEnv(wxT("Programs"),std.MSWGetShellDir(2));//CSIDL_PROGRAMS 
+	::wxSetEnv(wxT("CommonDesktop"),std.MSWGetShellDir(0x19));//CSIDL_COMMON_DESKTOPDIRECTORY 
+	::wxSetEnv(wxT("CommonPrograms"),std.MSWGetShellDir(0x17));//COMMON_PROGRAMS
 	wxFileName::SplitVolume(pathTmp,&volume,NULL);
 	if (!volume.empty())
 	{

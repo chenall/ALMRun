@@ -311,11 +311,15 @@ Event Merry 事件
 	onUndefinedCommand(commandName, commandArg)
 Other 其它说明
 ==========
-1. 内置变量
+1. 内置环境变量
     * ALMRUN_HOME	(ALMRUN程序所在目录)
     * ALMRUN_DRIVE 	(ALMRUN程序所在磁盘比如C:)
     * ALMRUN_ROOT	(ALMRUN默认根目录,可用config和ROOT参数修改)
     * ALMRUN_EXPLORER	(默认文件管理器,使用了config的Explorer参数之后有效)
+    * Desktop		当前用户桌面文件夹路径
+    * Programs		当前用户程序文件夹路径
+    * CommonDesktop	所有用户(All Users)桌面文件夹路径
+    * CommonPrograms 	所有用户(All Users)程序文件夹路径
 2. 关于文件路径说明
     以下表达的都是同一个意思,:
 

@@ -10,7 +10,7 @@ class MerryCommandManager
 {
 public:
 	~MerryCommandManager();
-
+	const void AddFiles(const wxArrayString& files);
 	const int AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order);
 	const MerryCommand* GetCommand(int commandID) const;
 	MerryCommandArray Collect(const wxString& commandPrefix) const;

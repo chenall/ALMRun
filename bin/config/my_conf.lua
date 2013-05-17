@@ -16,12 +16,13 @@ addCommand{ name = "test_notepad", desc = "Notepad",cmd = [[%WinDir%\notepad.exe
        0  不管子目录
        N  N级子目录
 ]]
-scan_dir([[E:\绿色软件]],"*.exe")
+--新版建议在ALMRun.ini中添加.速度会比较快.
+--scan_dir([[E:\绿色软件]],"*.exe")
 
 -- 自动添加程序菜单内容
-scan_dir(GetShellFolder(2),"*.lnk")
+--scan_dir(GetShellFolder(2),"*.lnk")
 -- 自动添加桌面快捷方式
-scan_dir(GetShellFolder(0),"*.lnk")
+--scan_dir(GetShellFolder(0),"*.lnk")
 
 -- 调用altrun的配置
 --altrun_config("ShortCutList.txt")

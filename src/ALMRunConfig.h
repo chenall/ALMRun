@@ -26,6 +26,8 @@ public:
 	void get(const wxString& name);
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
+	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
+	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const int sub = -1);
 	void WriteConfig(const wxString& name,const wxString& value);
 	void ConfigCommand();
 	ALMRunConfig(void);
