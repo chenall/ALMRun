@@ -66,8 +66,11 @@ bool MerryParseKeyStr(const wxString& keyStr, int& modifiers, int& keyCode)
 		switch (c)
 		{
 		case wxT('-'):
+		case wxT('+'):
 			modTokens.push_back(token);
 			token.clear();
+			break;
+		case wxT(' '):
 			break;
 		default:
 			token += c;
@@ -80,13 +83,13 @@ bool MerryParseKeyStr(const wxString& keyStr, int& modifiers, int& keyCode)
 	for (size_t i=0; i<modTokens.size(); ++i)
 	{
 		const wxString& token = modTokens[i];
-		if (token.IsSameAs(wxT("A"), false))
+		if (token.IsSameAs(wxT("A"), false) || token.IsSameAs(wxT("Alt"),false))
 			modifiers |= wxMOD_ALT;
-		else if (token.IsSameAs(wxT("C"), false))
+		else if (token.IsSameAs(wxT("C"), false) || token.IsSameAs(wxT("Ctrl"),false))
 			modifiers |= wxMOD_CONTROL;
-		else if (token.IsSameAs(wxT("W"), false))
+		else if (token.IsSameAs(wxT("W"), false) || token.IsSameAs(wxT("Win"),false))
 			modifiers |= wxMOD_WIN;
-		else if (token.IsSameAs(wxT("S"), false))
+		else if (token.IsSameAs(wxT("S"), false) || token.IsSameAs(wxT("Shift"),false))
 			modifiers |= wxMOD_SHIFT;
 		else if (token.IsSameAs(wxT("M"), false))
 			modifiers |= wxMOD_META;
