@@ -38,7 +38,7 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 			::wxGetApp().GetFrame().OpenConfigDir();
 			break;
 		case MENU_ITEM_CONFIG:
-			::wxGetApp().GetFrame().NewConfig();
+			::wxGetApp().NewFrame();
 			break;
 		case MENU_ITEM_EXIT:
 			::wxGetApp().GetFrame().Close();

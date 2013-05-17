@@ -114,8 +114,9 @@ void MerryFrame::OnInit()
 void MerryFrame::OpenConfigDir()
 {
 #ifdef __WXMSW__
-	wxString pathTmp;
-	::wxGetEnv("ALMRUN_HOME",&pathTmp);
+	if (!g_config)
+		return;
+	wxString pathTmp = g_config->Home;
 	pathTmp.Append("config");
 	::ShellExecute(NULL,_T("explore"),pathTmp.c_str(),NULL, NULL,true);
 #endif

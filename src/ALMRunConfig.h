@@ -2,8 +2,11 @@
 #ifndef _ALMRUN_CONFIG_H_
 #define _ALMRUN_CONFIG_H_
 #include "ALMRunVersion.h"
-#define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n便捷启动工具"
 #include "MerryWx.h"
+#include <wx/fileconf.h>
+
+#define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n便捷启动工具"
+
 
 class ALMRunConfig
 {
@@ -15,11 +18,22 @@ public:
 	bool ExecuteIfOnlyOne;
 	wxString Explorer;
 	wxString Root;
+	wxString Home;
+	wxString HotKey;
+	wxString HotKeyReLoad;
+	void Check();
+	bool Changed();
 	void get(const wxString& name);
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
+	void WriteConfig(const wxString& name,const wxString& value);
+	void ConfigCommand();
 	ALMRunConfig(void);
 	virtual ~ALMRunConfig(void);
+private:
+	wxString cfg_file;
+	time_t cfg_time;
+	wxFileConfig *conf;
 };
 
 extern ALMRunConfig* g_config;

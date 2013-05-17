@@ -64,7 +64,6 @@ static int LuaAddCommand(lua_State* L)
 		}
 		lua_pop(L, 1);
 	}
-
 	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,order);
 	if (commandID == -2)
 	{
@@ -130,6 +129,7 @@ static int LuaSetForegroundWindow(lua_State* L)
 	g_controller->SetForegroundWindow(lua_touserdata(L, 1));
 	return 0;
 }
+
 
 static int LuaToggleMerry(lua_State* L)
 {
@@ -462,12 +462,6 @@ static int LuaGetClipboardData(lua_State* L)
 		wxTheClipboard->Close();
 	}
 	return ret;
-}
-
-
-static int LuaReLoadConfig(lua_State* L)
-{
-	return 0;
 }
 
 static int LuaConfig(lua_State* L)

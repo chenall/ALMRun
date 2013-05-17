@@ -61,7 +61,6 @@ MerryLua::MerryLua()
 	lua_register(L, "ListDir",							  LuaDir);
 	lua_register(L, "SetEnv",							  LuaSetEnv);
 	lua_register(L, "GetEnv",							  LuaGetEnv);
-	lua_register(L, "ReLoadConfig",						  LuaReLoadConfig);
 	lua_register(L, "MessageBox",						  LuaMessageBox);
 	lua_register(L, "InputBox",							  LuaInputBox);
 	lua_pushboolean(L, true);

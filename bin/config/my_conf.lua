@@ -24,13 +24,13 @@ scan_dir(GetShellFolder(2),"*.lnk")
 scan_dir(GetShellFolder(0),"*.lnk")
 
 -- 调用altrun的配置
-altrun_config("ShortCutList.txt")
+--altrun_config("ShortCutList.txt")
 
--- 命令匹配模式
+-- 命令匹配模式(可以在ALMRUN.INI里面设置)
 -- 1 匹配开头
 -- 2 使用lua函数HookCompre自定义匹配
 -- 0 默认,任意位置匹配
-config{CompareMode=0}
+--config{CompareMode=0}
 -- 命令匹配函数,可以自己扩展,当CompareMode为2时调用
 --function HookCompare(commandName,Prefix)
 --	return commandName:lower():find(Prefix:lower())
