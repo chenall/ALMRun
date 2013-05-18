@@ -43,6 +43,10 @@ MerryFrame::MerryFrame():
 
 MerryFrame::~MerryFrame()
 {
+	if (m_mainPanel)
+		m_mainPanel->Destroy();
+	if (m_listBoxPanel)
+		m_listBoxPanel->Destroy();
 	if (m_taskBarIcon)
 	delete m_taskBarIcon;
 }
@@ -84,10 +88,12 @@ void MerryFrame::NewConfig()
 		delete g_commands;
 		g_commands = new MerryCommandManager();
 	}
-	if (g_lua)
-		g_lua->DoConfig();
-	else
-		g_lua = new MerryLua();
+
+	if (lua_bak)
+		delete lua_bak;
+
+	lua_bak = g_lua;
+	g_lua = new MerryLua();
 }
 
 void MerryFrame::OnInit()
@@ -138,6 +144,8 @@ void MerryFrame::ShowTrayIcon(const bool show)
 
 void MerryFrame::OnClose()
 {
+	if (lua_bak)
+		delete lua_bak;
 	if (g_lua)
 	{
 		g_lua->OnClose();

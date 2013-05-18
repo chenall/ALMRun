@@ -30,8 +30,15 @@ bool MerryApp::OnInit()
 	m_frame = NULL;
 	this->NewFrame();
 	assert(m_frame);
-
+	this->Connect(wxEVT_ACTIVATE_APP,wxObjectEventFunction(&MerryApp::EvtActive));
 	return true;
+}
+
+void MerryApp::EvtActive(wxActivateEvent &e)
+{
+	if (g_config && g_config->Changed())
+		m_frame->NewConfig();
+	e.Skip();
 }
 
 void MerryApp::NewFrame()

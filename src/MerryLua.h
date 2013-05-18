@@ -28,5 +28,6 @@ private:
 };
 
 extern MerryLua* g_lua;
+extern MerryLua* lua_bak;
 
 #endif

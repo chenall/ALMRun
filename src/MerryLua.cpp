@@ -3,6 +3,7 @@
 #include "MerryConfig.h"
 
 MerryLua* g_lua = NULL;
+MerryLua* lua_bak = NULL;
 
 MerryLua::MerryLua()
 {
