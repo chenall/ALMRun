@@ -1,5 +1,5 @@
---ALMRun隐藏显示热键ALT+R
-addCommand{ key = 'A-R', func = toggleMerry }
+--ALMRun隐藏显示热键(可以ALMRun.ini中设置)
+--addCommand{ key = 'A-R', func = toggleMerry }
 
 --最大化/恢复当前窗口
 addCommand{ key = 'A-M', func = function()

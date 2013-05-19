@@ -123,14 +123,18 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 	}
 	else
 	{
-		lua_rawgeti(L, LUA_REGISTRYINDEX, m_commandFunc);
+		if (m_commandFunc == -1)
+			lua_getglobal(L, m_commandLine.c_str());
+		else
+			lua_rawgeti(L, LUA_REGISTRYINDEX, m_commandFunc);
 		assert(lua_isfunction(L, -1));
 		lua_pushstring(L, commandArg.c_str());
 		lua_pushnumber(L, m_commandID);
 	}
 
 	lua_pushnumber(L,0);
-
+	if (!m_commandName.empty())
+		g_commands->SetCmdOrder(m_commandID);
 	if (lua_pcall(L, 3, 0, 0))
 	{
 		new MerryInformationDialog(
@@ -139,6 +143,4 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 		);
 		lua_pop(L, 1);
 	}
-	if (!m_commandName.empty())
-		g_commands->SetCmdOrder(m_commandID);
 }

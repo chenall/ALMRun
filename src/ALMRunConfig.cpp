@@ -18,7 +18,6 @@ ALMRunConfig::ALMRunConfig(void)
 		cfg_time = 0;
 		return;
 	}
-
 	conf = new wxFileConfig("ALMRun",wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
@@ -26,11 +25,15 @@ ALMRunConfig::ALMRunConfig(void)
 	NumberKey = conf->ReadBool("NumberKey",false);
 	ShowTopTen = conf->ReadBool("ShowTopTen",true);
 	ExecuteIfOnlyOne = conf->ReadBool("ExecuteIfOnlyOne",false);
+	HotKey = conf->Read("HotKey");
+	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
-	this->set("HotKey",conf->Read("HotKey"));
-	this->set("HotKeyReLoad",conf->Read("HotKeyReLoad"));
 	this->set("ShowTrayIcon",conf->ReadBool("ShowTrayIcon",true));
+	if (!HotKey.empty())
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0));
+	if (!HotKeyReLoad.empty())
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",-1,HotKeyReLoad,0));
 	this->ConfigCommand();
 	conf->SetPath("/Config");
 	cfg_time = wxFileModificationTime(cfg_file);

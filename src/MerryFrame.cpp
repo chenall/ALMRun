@@ -64,12 +64,6 @@ void MerryFrame::onContextMenu(wxContextMenuEvent& e)
 
 void MerryFrame::NewConfig()
 {
-	if (g_config)
-	{
-		delete g_config;
-		g_config = new ALMRunConfig();
-	}
-
 	if (g_hotkey)
 	{
 		g_hotkey->OnDelete();
@@ -89,10 +83,20 @@ void MerryFrame::NewConfig()
 		g_commands = new MerryCommandManager();
 	}
 
+	if (g_config)
+	{
+		delete g_config;
+		g_config = new ALMRunConfig();
+	}
+
 	if (lua_bak)
 		delete lua_bak;
 
 	lua_bak = g_lua;
+
+	if (g_lua)
+		g_lua->OnClose();
+
 	g_lua = new MerryLua();
 }
 
