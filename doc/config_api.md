@@ -1,9 +1,53 @@
-API ALMRun配置和API
-=================
-只要稍学习一下 lua 编程语言，就可以灵活的配置 Merry。配置文件位于 config 目录中，common.lua 为 Merry 提供了默认的配置。
-这里介绍一下 Merry 配置文件的 API：
++ [配置API介绍](#almrunapi)
+	+ 常用基本配置API
+		* [addCommand] 添加命令 
+		* [shellExecute] 运行程序
+		* [message] 显示提示 
+		* [MessageBox] 提示对话框
+		* [InputBox] 输入对话框
+		* [enterKey] 模拟按键
+		* [enableCommandKey] 激活对应命令热键 
+		* [disableCommandKey] 禁用对应命令热键 
+		* [setTimer] 添加定时器
+		* [clearTimer] 清除定时器
+		* [config] 程序配置
+		* [ReConfig] 刷新配置 
+	+ 系统界面相关API
+		* [GetForegroundWindow]
+		* [SetForegroundWindow]
+		* [ShowWindow]
+		* [CloseWindow]
+		* [IsWindowMax]	
+		* [IsWindowMin]
+		* [IsWindowShown]
+		* [GetWindowText]
+		* [SetWindowText]
+		* [GetWindowSize]
+		* [SetWindowSize]
+		* [GetWindowPosition]
+		* [SetWindowPosition]
+		* [FindWindow]
+		* [GetMousePosition]
+		* [SetMousePosition]
+	+ 操作系统相关
+		* [GetEnv] 读取环境变量 
+		* [SetEnv] 设置环境变量 
+		* [ListDir] 获取文件列表 
+		* [SetClipboardData] 设置剪贴板内容
+		* [GetClipboardData] 读取剪贴板内容 
+		* [GetShellFolder] 获取系统文件夹路径 
++ [触发事件机制](#almrunevent)
+	* [onClose]
+	* [onUndefinedCommand]
 
-### 0. addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}
+ALMRunAPI
+=================
+只要稍学习一下 lua 编程语言，就可以灵活的配置 ALMRun。配置文件位于 config 目录中，common.lua 为 ALMRun 提供了默认的配置。
+这里介绍一下 ALMRun 配置文件的 API：
+[addCommand]: #0-addcommand
+### 0. addCommand
+	addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}
+
     添加一个命令
 	其中,cmd和func二选一,优先使用cmd参数.desc和key都是可选的.
 	desc用于在使用func时显示备注信息.使用cmd参数时desc没有效果.
@@ -22,35 +66,43 @@ API ALMRun配置和API
 	S 表示 Shift 键
 
   可用的表示按键的字符串请参考[key_string.txt][HOT_KEY]（部分按键字符串在 Windows 下无效）。
-
+ 
+[shellExecute]: #1-shellexecute
 ### 1. shellExecute
+
+```lua
+shellExecute(commandName, commandArg, workingDir, show)
+```
 	用于执行一个 shell 命令
 	commandName 为 shell 命令名
 	commandArg 为 shell 命令需要的参数
 	workingDir 为 shell 命令的工作路径
 	show 表示显示的方式，包括 'normal'、'max'、'min'、'hide'（常规显示、最大化、最小化、隐藏）
 	函数返回 true / false 表示是否执行是否成功
-```lua
-	shellExecute(commandName, commandArg, workingDir, show)
-```
 	
 	范例，打开 cmd 窗口并且最大化
 ```lua
 	shellExecute('cmd', '', '', 'max')
 ```
 
-### 2. GetForegroundWindow()
+[GetForegroundWindow]: #2-getforegroundwindow
+### 2. GetForegroundWindow
+	 GetForegroundWindow()  
 	获取前台窗口
 	函数返回前台窗口
 
+[SetForegroundWindow]: #3-setforegroundwindow
 ### 3. SetForegroundWindow
+	SetForegroundWindow(window)
 	设置窗口 window 为前台窗口
 	SetForegroundWindow(window)
 
+[ShowWindow]: #4-showwindow
 ### 4. ShowWindow
+	ShowWindow(window,show)
+
 	显示窗口 window
 	show 表示显示的方式，包括 'normal'、'max'、'min'、'hide'、'restore'（常规显示、最大化、最小化、隐藏、还原）
-	ShowWindow(window, show)
 
 	范例，最大化或还原窗口
 ```lua
@@ -61,118 +113,148 @@ API ALMRun配置和API
 	end
 	CloseWindow
 ```
-### 5. CloseWindow(window)
+
+[CloseWindow]: #5-closewindow
+### 5. CloseWindow
+	CloseWindow(window)
+
 	关闭窗口 window
 	范例，关闭前台窗口
 	CloseWindow(getForegroundWindow())
 
+[IsWindowMax]: #6-iswindowmax
 ### 6. IsWindowMax
+	IsWindowMax(window)
 
 	窗口 window 是否为最大化
 	函数返回 true / false 表示 window 是否最大化
-	IsWindowMax(window)
 
+[IsWindowMin]: #7-iswindowmin
 ### 7. IsWindowMin
+	IsWindowMin(window)
 
 	窗口 window 是否为最小化
 	函数返回 true / false 表示 window 是否最小化
-	IsWindowMin(window)
 
+
+[IsWindowShown]: #8-iswindowshown
 ### 8. IsWindowShown
+	IsWindowShown(window)
 
 	窗口 window 是否在显示
 	函数返回 true / false 表示 window 是否在显示
-	IsWindowShown(window)
 
+
+[GetWindowText]: #9-getwindowtext
 ### 9. GetWindowText
+	GetWindowText(window)
 
 	获取窗口 window 的标题栏文字
 	函数返回窗口 window 的标题栏文字
-	GetWindowText(window)
 
+
+[SetWindowText]: #10-setwindowtext
 ### 10. SetWindowText
-
-	设置窗口 window 的标题栏文字
 	SetWindowText(window, text)
 
-### 11. GetWindowSize
+	设置窗口 window 的标题栏文字
 
+
+[GetWindowSize]: #11-getwindowsize
+### 11. GetWindowSize
+	GetWindowSize(window)
 	获取窗口 window 的大小
 	函数返回两个值 width 和 height
-	GetWindowSize(window)
-
-	范例，获取前台窗口的大小
+```lua
+	--范例，获取前台窗口的大小
 	local width, height = GetWindowSize(GetForegroundWindow())
+```
 
-### 12. SetWindowSize(window, width, height)
+[SetWindowSize]: #12-setwindowsize
+### 12. SetWindowSize
+	SetWindowSize(window, width, height)
+
 	设置窗口 window 的大小
 
+[GetWindowPosition]: #13-getwindowposition
 ### 13. GetWindowPosition
+	GetWindowPosition(window)
 
 	获取窗口 window 的位置
 	函数返回两个值 x 和 y 为窗口左上角的位置
-	GetWindowPosition(window)
 
-	范例，获取前台窗口的位置
+```LUA
+	--获取前台窗口的位置
 	local x, y = GetWindowPosition(getForegroundWindow())
+```
 
+[SetWindowPosition]: #14-setwindowposition
 ### 14. SetWindowPosition
+	setWindowPosition(window, x, y)
 
 	设置窗口 window 的位置
 	设置的位置为窗口左上角的位置
-	setWindowPosition(window, x, y)
 
+
+[FindWindow]: #15-findwindow
 ### 15. FindWindow
+	FindWindow(name, parentWindow)
 
 	通过窗口名称查找窗口
 	参数 parentWindow 为可选参数，用于表示被查找窗口的父窗口
-	FindWindow(name, parentWindow)
 
+
+[GetMousePosition]: #16-getmouseposition
 ### 16. GetMousePosition
+	GetMousePosition()
 
 	获取当前鼠标的位置
 	函数返回两个值 x 和 y 为鼠标的位置
-	GetMousePosition()
 
+
+[SetMousePosition]: #17-setmouseposition
 ### 17. SetMousePosition
-
-	设置当前鼠标的位置
 	SetMousePosition(x, y)
 
-### 18. enterKey
+	设置当前鼠标的位置
 
-	模拟敲击一个按键
+[enterKey]: #18-enterkey
+### 18. enterKey
 	enterKey(keyStr)
+	模拟敲击一个按键
 
 	范例，模拟快捷键 Shift + F10 来打开右键菜单
 	enterKey('S-F10')
 
+[message]: #19-message
 ### 19. message
 
 	将用对话框输出消息
 	message(str)
 
-	范例，输出 Hello Merry
-	message('Hello Merry')
+	范例，输出 Hello ALMRun
+	message('Hello ALMRun')
 
+[enableCommandKey]: #20-enablecommandkey
 ### 20. enableCommandKey
-
+	enableCommandKey(keyID)
 	激活快捷键
 	参数 keyID 由 addCommand 函数返回
 	创建一个命令后，其快捷键是默认激活的
 	若执行了 disableCommandKey 禁用了某个命令的快捷键，可调用此函数激活此命令的快捷键
-	enableCommandKey(keyID)
 
+
+[disableCommandKey]: #21-disablecommandkey
 ### 21. disableCommandKey
-
+	disableCommandKey(keyID)
 	禁用快捷键
 	参数 keyID 由 addCommand 函数返回
 	创建一个命令后，其快捷键是默认激活的
 	调用此函数可以禁用某个命令的快捷键
-	disableCommandKey(keyID)
 
-	范例，按 HOME 键禁用某快捷键
+
 ```lua
+	--范例，按 HOME 键禁用某快捷键
 	local keyID = addCommand{ key = 'C-1', func = function() enterKey('S-F10', 'V', '', 'Return') end }
 	local enabled = true
 	addCommand{ key = 'HOME', func = function()
@@ -185,14 +267,17 @@ API ALMRun配置和API
 			  end
 	end }
 ```
+
+[setTimer]: #22-settimer
 ### 22. setTimer
+	setTimer(milliseconds, oneShot, callback)
 
 	开启一个定时器
 	参数 milliseconds 表示定时器每隔 milliseconds 触发一次
 	参数 oneShot 表示定时器是否只触发一次
 	参数 callback 为一个 Lua 函数，定时器每次触发时都会被调用
 	函数返回成功创建的定时器
-	setTimer(milliseconds, oneShot, callback)
+
 
 	范例，实现功能：使用 Windows 照片查看器时，定时翻看下一张图片
 	--
@@ -210,21 +295,33 @@ API ALMRun配置和API
 	end }
 	clearTimer
 ```
-### 23. clearTimer(timer)
+
+[clearTimer]: #23-cleartimer
+### 23. clearTimer
+	clearTimer(timer)
 	清理定时器
 
+[GetEnv]: #24-getenv
 ### 24. GetEnv
-	获取一个环境变量
+	GetEnv(NAME) 
+	获取一个环境变量`NAME`的值
 	比如:
 	GetEnv('WinDir') 结果 "C:\WINDOWS"
 
+[SetEnv]: #25-setenv
 ### 25. SetEnv
+	SetEnv(var,value)
+
 	设置一个环境变量
 	例:
 	SetEnv('test','mytest')
-	设置一个变量test
+	设置一个变量test值mytest
+	如果value为空,则删作该变量.
 
+[config]: #26-config
 ### 26. config
+	config{CONFIG1=value1,CONFIG2=value2...}
+
   程序序设置,目前支持以下设置
  
 	* CompareMode  命令匹配模式
@@ -244,29 +341,47 @@ API ALMRun配置和API
 		0,不显示;1,显示(默认)
 	* ShowTopTen 仅显示前10项
 	* ExecuteIfOnlyOne 当仅剩一项匹配项时立即执行
-### 27. ListDir(path,ext,sub)
+
+[ListDir]: #27-listdir
+### 27. ListDir
+	ListDir(path,spec,sub)
+
 	返回指定目录下的文件列表
 	path  路径,
-	ext	扩展名限制
+	spec  文件名匹配
 	sub	子目录限制
 	例: ListDir([[C:\WINDOWS]],".exe",0)
-### 28. SetClipboardData(TEXT)  /  GetClipboardData()
+
+[SetClipboardData]: #28-setclipboarddata
+[GetClipboardData]: #28-getclipboarddata
+### 28. SetClipboardData
+	SetClipboardData(TEXT)
 	设剪贴板内容为TEXT.
 	GetClipboardData()
 	获取剪贴板TEXT格式.获取失败时返回nil
-### 29. GetShellFolder([CSIDL])
+
+[GetShellFolder]: #29-getshellfolder
+### 29. GetShellFolder
+	GetShellFolder([CSIDL])
+
   根据`CSIDL`获取系统文件夹路径,例子: 
  
 ```lua  
    --获取桌面文件夹位置 
    GetShellFolder(0)
 ```
-### 30. InputBox(MESSAGE,CAPTION,DEFVALUE)
+[InputBox]: #30-inputbox
+### 30. InputBox
+	InputBox(MESSAGE,CAPTION,DEFVALUE)
+
     显示一个文本输入框
     MESSAGE 提示信息,CAPTION 标题,DEFVALUE 默认值
     注: 所有参数都是可选的,其中DEFVALUE如果以"*"开头,将作为密码输入框,输入的密码显示为'*'
 
-### 31. MessageBox(MESSAGE,CAPTION,STYLE)
+[MessageBox]: #31-messagebox
+### 31. MessageBox
+	MessageBox(MESSAGE,CAPTION,STYLE)
+
     显示一个信息提示和message不一样的是这个会暂停脚本/程序的运行,并返回一个数值,在脚本中可以使用这个的控制程序的运行.
     MESSAGE 提示信息,CAPTION 标题,STYLE messagebox样式值
     样式(style)值参考,例: 显示是/否按钮和警告的图标 就是0x108 
@@ -286,12 +401,17 @@ API ALMRun配置和API
     否        0x8
     取沙      0x10
     HELP      0x1000
-### 32. ReConfig()
+
+[ReConfig]: #32-reconfig
+### 32. ReConfig
+	ReConfig()
     刷新配置,重新加载配置文件
 
-Event Merry 事件
-=========
-我们可以在 Merry 的基本配置中找到如下代码：
+
+ALMRunEvent
+===============
+事件发生时，ALMRun 会去调用定义的事件处理函数。例如：ALMRun 关闭（或重新载入配置时）时会调用一个名为 onClose 的函数。addEventHandler 用于为某个事件添加事件处理函数。
+我们可以在 ALMRun 的基本配置中找到如下代码：
 ```lua
   addEventHandler('onClose', function()
       ...
@@ -301,16 +421,17 @@ Event Merry 事件
       ...
   end)
 ```
-事件发生时，Merry 会去调用定义的事件处理函数。例如：Merry 关闭（或重新载入配置时）时会调用一个名为 onClose 的函数。addEventHandler 用于为某个事件添加事件处理函数。Merry 已有的事件如下：
-
+ALMRun 已有的事件如下:
+[onClose]: #1-onclose
 ### 1. onClose
 
-	Merry 关闭或者重新载入配置时触发
+	ALMRun 关闭或者重新载入配置时触发
 	onClose()
 
+[onUndefinedCommand]: #2-onundefinedcommand
 ### 2. onUndefinedCommand
 
-	执行 Merry 命令时，出现未定义命令时触发
+	执行 ALMRun 命令时，出现未定义命令时触发
 	onUndefinedCommand(commandName, commandArg)
 
 Other 其它说明
