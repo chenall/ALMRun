@@ -5,11 +5,13 @@
 Fork from <http://code.google.com/p/name5566-merry>
 
 
-* [Merry 的特点和功能](#main)
-* [增加或修改功能](#modify)
-* [使用方法](#usage)
-* [相关资源](#resource)
-* [编译方法](#build)
+* [Merry 的特点和功能](#merry-)
+* [增加或修改功能](#modify-)
+* [使用方法](#usage-)
+* [相关资源](#resource-)
+* [编译方法](#build-)
+* [更新记录](doc/update.log)
+* [API 参考](doc/config_api.md)
 
 Merry 的特点和功能
 ==================
@@ -21,7 +23,7 @@ Merry 的特点和功能
 *	通过 Merry 命令可以来进行自动化的操作，例如：打开某应用程序，自动输入用户密码进行登录等
 *	Merry 采用完全开放的体系，可以使用 Lua 的扩展库或者外部程序来扩展 Merry 的功能
 
-增加或修改功能
+Modify 增加或修改功能
 ==============
 **************
 #### 1. 添加命令方法修改
@@ -34,11 +36,11 @@ Merry 的特点和功能
 	desc用于在使用func时显示备注信息.使用cmd参数时desc没有效果.
 
 #### 1. 支持自动扫描目录添加命令
-    scan_dir(PATH,EXT,SUB)
+    scan_dir(PATH,SPEC,SUB)
 >   	PATH  要扫描的目录
-    EXT   条件
-          例: *.exe(所有.exe的文件),k*.exe(所有以k开头的exe文件)
-    SUB   扫描级别,默认(-1)
+    SPEC   过滤
+          例: *.exe(所有.exe的文件),k*.exe(所有以k开头的exe文件),多个条件使用"|"分隔,"*.exe|*.txt"
+    SUB   子目录级别,默认(-1)
           -1 不限.
           0  不管子目录
           N  N级子目录
@@ -53,15 +55,7 @@ Merry 的特点和功能
 ```
 	提示: 可以ALTRUN的配置文件复制到ALMRun.exe目录下,使用上面的命令,或指定路径(同上)
 
-#### 4. 可以设置命令匹配模式
-```lua
-	config{CompareMode=0}
-```
->
-	命令匹配模式
-	1 匹配开头
-	2 使用lua函数HookCompre自定义匹配(需自己编写,具体请参考my_conf.lua)
-	0 默认,任意位置匹配
+#### 4. 可以进行各种配置([config](doc/config_api.md#26-config)命令)
 
 #### 5.类似于altrun的功能
 	1). 按Ctrl+D打开对应命令的文件夹
@@ -91,8 +85,6 @@ Merry 的特点和功能
 	2).提供两个接口GetCmdOrder和SetCmdOrder允许自定义排序.
 
 #### 10. 支持系统环境变量扩展
-	1).在命令中可以使用变量比如"%WinDir%\\Notepad.exe"
-	2).程序内置变量ALMRUN_HOME和ALMRUN_DRIVE
 
 #### 11. 支持使用拼音检索(使用中文区位表查询法,只支持GB2312,可能会有一些错误,欢迎报错).
 	像比如命令列表中有"宽带连接",则可以输入"KDLJ".
@@ -103,7 +95,11 @@ Merry 的特点和功能
 	也可以组合使用
 	例子(以管理员权限隐藏执行): addCommand{ name="test", cmd=[[>@notepad.exe]]}
 
-使用方法:
+#### 13. 新增支持INI文件格式配置.
+
+#### 14. 更多功能请参考[API 介绍](doc/config_api.md)
+
+Usage 使用方法:
 =========
 *******************************
 #### 1. 添加命令(用记事本打开my_conf.lua)
@@ -135,10 +131,10 @@ Merry 的特点和功能
 	altrun_config("E:\\ALTRun\\ShortCutList.txt")
 ```
 
-#### 2. 更多功能请查看原版的说明
+#### 2. 更多功能请查看[原版说明](http://code.google.com/p/name5566-merry/)或[API命令介绍](doc/config_api.md)
 		
 *******************************
-相关资源:
+Resource 相关资源:
 =========
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 修改: <https://github.com/chenall/ALMRun>  
@@ -146,7 +142,7 @@ Merry 的特点和功能
 
 [Merry]:http://code.google.com/p/name5566-merry/
 
-Build ALMRun(编译)
+Build 编译方法
 ===================
 	cd Build
 	cmake ..
