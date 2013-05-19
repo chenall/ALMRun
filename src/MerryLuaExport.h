@@ -459,3 +459,9 @@ static int LuaConfig(lua_State* L)
 	}
 	return 0;
 }
+
+static int LuaReConfig(lua_State* L)
+{
+	::wxGetApp().GetFrame().NewConfig();
+	return 0;
+}

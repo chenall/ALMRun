@@ -1,4 +1,4 @@
-Merry 的配置和 API
+API ALMRun配置和API
 =================
 只要稍学习一下 lua 编程语言，就可以灵活的配置 Merry。配置文件位于 config 目录中，common.lua 为 Merry 提供了默认的配置。
 这里介绍一下 Merry 配置文件的 API：
@@ -286,6 +286,9 @@ Merry 的配置和 API
     否        0x8
     取沙      0x10
     HELP      0x1000
+### 32. ReConfig()
+    刷新配置,重新加载配置文件
+
 Event Merry 事件
 =========
 我们可以在 Merry 的基本配置中找到如下代码：
@@ -309,6 +312,7 @@ Event Merry 事件
 
 	执行 Merry 命令时，出现未定义命令时触发
 	onUndefinedCommand(commandName, commandArg)
+
 Other 其它说明
 ==========
 1. 内置环境变量
