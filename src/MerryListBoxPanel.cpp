@@ -77,10 +77,20 @@ void MerryListBoxPanel::SelectPrev()
 	this->SetSelection(m_selectionCommandIndex - 1);
 }
 
-int MerryListBoxPanel::SetSelection(int index,const int top)
+int MerryListBoxPanel::SetSelection(int index,int top)
 {
 	if (index == -1 && top >= 0)
+	{
+		if (!g_config->IndexFrom0to9)
+		{
+			if (top == 0)
+				top = 9;
+			else
+				--top;
+		}
+
 		index = m_topCommandIndex + top;
+	}
 	else if (index < 0 )
 		index = m_commands.size() - 1;
 	else if (index >= (int)m_commands.size())
@@ -205,7 +215,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);
 		dc.DrawLabel(command->GetCommandName(), item.mainRect, wxALIGN_LEFT,command->m_compare);
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_SUB_FONT_COLOR);
-		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),i), item.LeftRect, wxALIGN_RIGHT);
+		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),(g_config->IndexFrom0to9) ?i:(i==9?0:i+1) ), item.LeftRect, wxALIGN_RIGHT);
 	}
 	const MerryCommand* command = m_commands[m_selectionCommandIndex];
 	const ListBoxItem& item = m_items[ITEM_NUM];

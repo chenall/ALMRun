@@ -1,6 +1,7 @@
 #ifndef _MERRY_COMMAND_H_
 #define _MERRY_COMMAND_H_
 #include "MerryWx.h"
+#include "ALMRunConfig.h"
 
 class MerryCommand
 {

@@ -14,6 +14,7 @@ ALMRunConfig::ALMRunConfig(void)
 		ShowTrayIcon = true;
 		ShowTopTen = true;
 		ExecuteIfOnlyOne = false;
+		IndexFrom0to9 = false;
 		conf = NULL;
 		cfg_time = 0;
 		return;
@@ -25,7 +26,8 @@ ALMRunConfig::ALMRunConfig(void)
 	NumberKey = conf->ReadBool("NumberKey",false);
 	ShowTopTen = conf->ReadBool("ShowTopTen",true);
 	ExecuteIfOnlyOne = conf->ReadBool("ExecuteIfOnlyOne",false);
-	HotKey = conf->Read("HotKey");
+	IndexFrom0to9 = conf->ReadBool("IndexFrom0to9",true);
+	HotKey = conf->Read("HotKey","A-R");
 	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));

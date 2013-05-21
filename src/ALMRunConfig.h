@@ -16,6 +16,7 @@ public:
 	bool ShowTrayIcon;
 	bool ShowTopTen;
 	bool ExecuteIfOnlyOne;
+	bool IndexFrom0to9;
 	wxString Explorer;
 	wxString Root;
 	wxString Home;
