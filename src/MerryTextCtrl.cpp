@@ -5,7 +5,6 @@
 #include "MerryLua.h"
 #include "MerryApp.h"
 #include "MerryListBoxPanel.h"
-#include "ALMRunConfig.h"
 
 #ifdef __WXOSX__
 #include "MerryMacHelper.h"
@@ -14,6 +13,7 @@
 bool LocationExec;
 
 BEGIN_EVENT_TABLE(MerryTextCtrl, wxTextCtrl)
+	EVT_CONTEXT_MENU(MerryTextCtrl::onContextMenu)
 	EVT_KEY_DOWN(MerryTextCtrl::OnKeyDownEvent)
 #ifdef __WXGTK__
 	EVT_IDLE(MerryTextCtrl::OnIdleEvent)
@@ -46,6 +46,11 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	this->EnterArgs = 0;
 }
 
+void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
+{
+	e.StopPropagation();
+	e.Skip();
+}
 
 void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 {

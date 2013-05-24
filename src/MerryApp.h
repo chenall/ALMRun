@@ -2,6 +2,7 @@
 #define _MERRY_APP_H_
 
 #include "MerryFrame.h"
+#include "ALMRunConfig.h"
 class MerryApp : public wxApp
 {
 public:

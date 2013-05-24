@@ -148,6 +148,8 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 		assert(command);
 		command->ExecuteCommand(wxT(''));
 	}
+	else
+		return;
 	e.Skip();
 }
 

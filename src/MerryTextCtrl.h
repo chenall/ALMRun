@@ -6,11 +6,12 @@
 class MerryTextCtrl : public wxTextCtrl
 {
 public:
-	unsigned int EnterArgs;
+	long EnterArgs;
 	void ExecuteCmd();
 	MerryTextCtrl(wxWindow* parent);
 
 private:
+	void onContextMenu(wxContextMenuEvent& e);
 	void OnKeyDownEvent(wxKeyEvent& e);
 #ifdef __WXGTK__
 	void OnIdleEvent(wxIdleEvent& e);

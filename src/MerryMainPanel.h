@@ -13,7 +13,7 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent& e);
 	void OnPaintEvent(wxPaintEvent& e);
-
+	void onContextMenu(wxContextMenuEvent& e);
 private:
 	MerryTextCtrl* m_textCtrl;
 	wxPoint m_mousePosition;

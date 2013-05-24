@@ -2,7 +2,6 @@
 #define _MERRY_FRAME_H_
 
 #include "MerryWx.h"
-#include "ALMRunConfig.h"
 
 class MerryMainPanel;
 class MerryListBoxPanel;

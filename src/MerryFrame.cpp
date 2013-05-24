@@ -16,11 +16,6 @@ BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 	EVT_CLOSE(MerryFrame::OnCloseEvent)
 	EVT_ACTIVATE(MerryFrame::OnActivateEvent)
 	EVT_SHOW(MerryFrame::OnShowEvent)
-	EVT_CONTEXT_MENU(MerryFrame::onContextMenu)
-	EVT_MENU(MENU_ITEM_OPEN_CONFIG, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_CONFIG, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_ABOUT, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::onPopMenu)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
@@ -43,27 +38,24 @@ MerryFrame::MerryFrame():
 
 MerryFrame::~MerryFrame()
 {
+	if (g_lua)
+		OnClose();
 	if (m_mainPanel)
 		m_mainPanel->Destroy();
 	if (m_listBoxPanel)
 		m_listBoxPanel->Destroy();
 	if (m_taskBarIcon)
-	delete m_taskBarIcon;
-}
-
-void MerryFrame::onContextMenu(wxContextMenuEvent& e)
-{
-	wxMenu* menu = new wxMenu;
-	menu->Append(MENU_ITEM_OPEN_CONFIG, wxT("显示配置(&S)"));
-	menu->Append(MENU_ITEM_CONFIG, wxT("刷新配置(R)"));
-	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
-	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));
-	PopupMenu(menu);
-    return;
+		delete m_taskBarIcon;
 }
 
 void MerryFrame::NewConfig()
 {
+	bool show = m_listBoxPanel->IsShown();
+	m_listBoxPanel->Dismiss();
+
+	if (g_lua)
+		g_lua->OnClose();
+
 	if (g_hotkey)
 	{
 		g_hotkey->OnDelete();
@@ -94,10 +86,9 @@ void MerryFrame::NewConfig()
 
 	lua_bak = g_lua;
 
-	if (g_lua)
-		g_lua->OnClose();
-
 	g_lua = new MerryLua();
+	if (show)
+		m_mainPanel->GetTextCtrl()->AppendText("");
 }
 
 void MerryFrame::OnInit()
@@ -148,8 +139,10 @@ void MerryFrame::ShowTrayIcon(const bool show)
 
 void MerryFrame::OnClose()
 {
+	this->Hide();
 	if (lua_bak)
 		delete lua_bak;
+
 	if (g_lua)
 	{
 		g_lua->OnClose();
