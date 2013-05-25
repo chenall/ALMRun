@@ -21,6 +21,24 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files)
 	}
 }
 
+const void MerryCommandManager::AddFiles(const wxArrayString& files,const wxArrayString& excludes)
+{
+	if (excludes.empty())
+		return AddFiles(files);
+	for(int i=files.GetCount()-1;i >= 0;--i)
+	{
+		int j;
+		for(j = excludes.size()-1;j >= 0;--j)
+		{//过滤符合条件的内容
+			if (files[i].Matches(excludes[j]))
+				break;
+		}
+		if (j == -1)
+			m_commands.push_back(new MerryCommand(m_commands.size(),wxFileNameFromPath(files[i]),files[i],files[i]));
+	}
+}
+
+
 const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
 {
 	int order_id = 0;

@@ -138,6 +138,8 @@ void ALMRunConfig::ConfigCommand()
 	wxString cmd;
 	wxString desc;
 	wxString cmds;
+	wxString def_incl;
+	wxString def_excl;
 	int cmdId,defsub;
 	sizes = conf->ReadLong("cmds.size",0);
 	while(sizes)
@@ -158,19 +160,23 @@ void ALMRunConfig::ConfigCommand()
 	conf->SetPath("/directories");
 	sizes = conf->ReadLong("dirs.size",0);
 	defsub = conf->ReadLong("dirs.def.sub",0);
-	key = conf->Read("dirs.def.specs");
+	def_incl = conf->Read("dirs.def.include");
+	def_excl = conf->Read("dirs.def.exclude");
+	wxArrayString files;
+	wxArrayString paths;
 	while(sizes)
 	{
-		wxArrayString files;
 		cmds = wxString::Format("dirs.%d.",sizes);
 		--sizes;
-		name = conf->Read(cmds + "path");
-		if (name.empty())
+		paths = wxSplit(conf->Read(cmds + "path"),'|');
+		if (paths.empty())
 			continue;
-		desc = conf->Read(cmds + "specs",key);
+		key = conf->Read(cmds + "include",def_incl);
 		cmdId = conf->ReadLong(cmds + "sub",defsub);
-		this->ListFiles(name,&files,desc,cmdId);
-		g_commands->AddFiles(files);
+		for(int i=paths.size()-1;i>=0;--i)
+			this->ListFiles(paths[i],&files,key,cmdId);
+		key = conf->Read(cmds + "exclude",def_excl);
+		g_commands->AddFiles(files,wxSplit(key,'|'));
 	}
 	conf->SetPath("/Config");
 }
