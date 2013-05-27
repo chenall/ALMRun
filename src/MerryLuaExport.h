@@ -64,7 +64,7 @@ static int LuaAddCommand(lua_State* L)
 		}
 		lua_pop(L, 1);
 	}
-	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,order);
+	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,order,CMDS_FLAG_ALMRUN_LUA);
 	if (commandID == -2)
 	{
 		luaL_unref(L, LUA_REGISTRYINDEX, funcRef);

@@ -6,7 +6,8 @@
  
  MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
 {
-	m_commandID = commandID;
+	m_commandID = commandID & 0xFFFF;
+	m_flags = commandID >> 16;
 	m_commandName = commandName;
 	m_commandFunc = funcRef;
 	m_triggerKey = triggerKey;

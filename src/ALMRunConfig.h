@@ -4,7 +4,9 @@
 #include "ALMRunVersion.h"
 #include "MerryWx.h"
 #include <wx/fileconf.h>
-
+#define CMDS_FLAG_ALMRUN_CMDS 1
+#define CMDS_FLAG_ALMRUN_DIRS 2
+#define CMDS_FLAG_ALMRUN_LUA 4
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
 
 

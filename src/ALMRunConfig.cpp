@@ -152,7 +152,7 @@ void ALMRunConfig::ConfigCommand()
 		name = conf->Read(cmds + "name");
 		key = conf->Read(cmds + "key");
 		desc = conf->Read(cmds + "desc");
-		cmdId = g_commands->AddCommand(name,desc,cmd,0,key,0);
+		cmdId = g_commands->AddCommand(name,desc,cmd,0,key,0,CMDS_FLAG_ALMRUN_CMDS<<16);
 		if (cmdId < 0 || key.empty())
 			continue;
 		g_hotkey->RegisterHotkey(cmdId);
@@ -162,10 +162,10 @@ void ALMRunConfig::ConfigCommand()
 	defsub = conf->ReadLong("dirs.def.sub",0);
 	def_incl = conf->Read("dirs.def.include");
 	def_excl = conf->Read("dirs.def.exclude");
-	wxArrayString files;
 	wxArrayString paths;
 	while(sizes)
 	{
+		wxArrayString files;
 		cmds = wxString::Format("dirs.%d.",sizes);
 		--sizes;
 		paths = wxSplit(conf->Read(cmds + "path"),'|');

@@ -17,7 +17,7 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files)
 {
 	for(int i=files.GetCount()-1;i >= 0;--i)
 	{
-		m_commands.push_back(new MerryCommand(m_commands.size(),wxFileNameFromPath(files[i]),files[i],files[i]));
+		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),files[i],files[i]));
 	}
 }
 
@@ -34,12 +34,12 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files,const wxArra
 				break;
 		}
 		if (j == -1)
-			m_commands.push_back(new MerryCommand(m_commands.size(),wxFileNameFromPath(files[i]),files[i],files[i]));
+			m_commands.push_back(new MerryCommand(m_commands.size() |(CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),files[i],files[i]));
 	}
 }
 
 
-const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
+const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order,int flags)
 {
 	int order_id = 0;
 	if (m_commands.size() >= 1000)
@@ -72,7 +72,7 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 		if (command->m_order > order_id)
 			order_id = i;
 	}
-	MerryCommand* command = new MerryCommand(m_commands.size(), commandName,commandDesc,commandLine, funcRef, triggerKey,order);
+	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine, funcRef, triggerKey,order);
 #if 1
 	m_commands.push_back(command);
 #else

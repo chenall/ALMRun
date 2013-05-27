@@ -9,6 +9,7 @@ public:
 	~MerryCommand();
 
 	int GetCommandID() const { return m_commandID; }
+	int GetFlags() const { return m_flags; }
 	const wxString& GetCommandName() const { return m_commandName; }
 	const wxString& GetCommandName(const int) const { return m_commandFName; }
 	const wxString& GetTriggerKey() const { return m_triggerKey; }
@@ -24,6 +25,7 @@ private:
 	wxString m_commandLine;
 	wxString m_commandFName;
 	int m_commandFunc;
+	int m_flags;
 	wxString m_triggerKey;
 		
 };
