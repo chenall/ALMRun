@@ -32,7 +32,9 @@ public:
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const int sub = -1);
 	void WriteConfig(const wxString& name,const wxString& value);
+	bool DeleteCmd(const int id);
 	void ConfigCommand();
+	void OldToNew();
 	ALMRunConfig(void);
 	virtual ~ALMRunConfig(void);
 private:

@@ -14,12 +14,12 @@
 
 BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 	EVT_CLOSE(MerryFrame::OnCloseEvent)
-	EVT_ACTIVATE(MerryFrame::OnActivateEvent)
+//	EVT_ACTIVATE(MerryFrame::OnActivateEvent)
 	EVT_SHOW(MerryFrame::OnShowEvent)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
-	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE
+	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE | wxSTAY_ON_TOP
 #ifdef __WXOSX__
 		| wxSTAY_ON_TOP
 #endif
@@ -192,15 +192,15 @@ void MerryFrame::OnCloseEvent(wxCloseEvent& e)
 	this->OnClose();
 	this->Destroy();
 }
-
+/*
 void MerryFrame::OnActivateEvent(wxActivateEvent& e)
 {
 #ifndef DEBUG_ALWAYS_SHOW
-	if (!e.GetActive())
+	if (!e.GetActive() && !this->IsShownOnScreen())
 		this->Hide();
 #endif
 }
-
+*/
 void MerryFrame::OnShowEvent(wxShowEvent& e)
 {
 	MerryTextCtrl* textCtrl = m_mainPanel->GetTextCtrl();

@@ -21,6 +21,7 @@ public:
 	void SelectPrev();
 	int flags;
 	int SetSelection(int index,int top = -1);
+	bool DelSelectedItem();
 	const MerryCommand* GetSelectionCommand() const;
 
 	bool IsPopup() const;
@@ -30,6 +31,8 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent& e);
 	void OnPaintEvent(wxPaintEvent& e);
+	void onContextMenu(wxContextMenuEvent& e);
+	void OnKeyDownEvent(wxKeyEvent& e);
 
 private:
 	void DrawBorder(MerryPaintDC& dc) const;

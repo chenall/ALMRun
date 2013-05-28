@@ -71,6 +71,12 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			LocationExec = true;
 			keyCode = WXK_RETURN;
 		}
+		else if (keyCode == WXK_DELETE && this->GetInsertionPoint() == this->GetValue().size())
+		{
+			if (listBoxPanel->DelSelectedItem())
+				this->AppendText("");
+			e.Skip();
+		}
 	}
 	switch (keyCode)
 	{

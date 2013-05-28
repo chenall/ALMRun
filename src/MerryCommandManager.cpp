@@ -38,6 +38,15 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files,const wxArra
 	}
 }
 
+bool MerryCommandManager::DelCommand(int commandID)
+{
+	if (GetCommand(commandID))
+	{
+		m_commands[commandID] = new MerryCommand(-1,wxEmptyString);
+		return true;
+	}
+	return false;
+}
 
 const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order,int flags)
 {

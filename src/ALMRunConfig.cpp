@@ -32,10 +32,10 @@ ALMRunConfig::ALMRunConfig(void)
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
 	this->set("ShowTrayIcon",conf->ReadBool("ShowTrayIcon",true));
-	if (!HotKey.empty())
-		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0));
+	g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0));
 	if (!HotKeyReLoad.empty())
 		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",-1,HotKeyReLoad,0));
+	this->OldToNew();
 	this->ConfigCommand();
 	conf->SetPath("/Config");
 	cfg_time = wxFileModificationTime(cfg_file);
@@ -89,6 +89,17 @@ void ALMRunConfig::WriteConfig(const wxString& name,const wxString& value)
 	}
 }
 
+bool ALMRunConfig::DeleteCmd(const int id)
+{
+	if (conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
+	{
+		conf->Flush();
+		cfg_time = wxFileModificationTime(cfg_file);
+		return true;
+	}
+	return false;
+}
+
 bool ALMRunConfig::Changed()
 {
 	return (cfg_time  && cfg_time != wxFileModificationTime(cfg_file));
@@ -129,6 +140,8 @@ void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const 
 	return;
 }
 
+/*
+旧版的配置方法
 void ALMRunConfig::ConfigCommand()
 {
 	conf->SetPath("/Command");
@@ -180,6 +193,112 @@ void ALMRunConfig::ConfigCommand()
 	}
 	conf->SetPath("/Config");
 }
+*/
+
+//新版的配置文件
+void ALMRunConfig::ConfigCommand()
+{
+	wxString name;
+	wxString key;
+	wxString cmd;
+	wxString desc;
+	wxString cmds;
+	long cmdId;
+	long index = 0;
+	//命令
+	conf->SetPath("/cmds");
+	for(bool test = conf->GetFirstGroup(cmds,index); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,index))
+    {
+		if (!cmds.IsNumber())
+			continue;
+		conf->SetPath(cmds);
+		cmd = conf->Read("cmd");
+		if (cmd.empty() && key.empty())
+			continue;
+		name = conf->Read("name");
+		key = conf->Read("key");
+		desc = conf->Read("desc");
+		cmds.ToLong(&cmdId,10);
+		cmdId = g_commands->AddCommand(name,desc,cmd,0,key,0,(cmdId << 4) | CMDS_FLAG_ALMRUN_CMDS);
+		if (cmdId < 0 || key.empty())
+			continue;
+		g_hotkey->RegisterHotkey(cmdId);
+    }
+	//自动扫描目录配置
+	conf->SetPath("/dirs");
+	int defsub = conf->ReadLong("sub",0);
+	wxString def_incl = conf->Read("include");
+	wxString def_excl = conf->Read("exclude");
+	wxArrayString paths;
+	for(bool test = conf->GetFirstGroup(cmds,index); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,index))
+	{
+		wxArrayString files;
+		conf->SetPath(cmds);
+		paths = wxSplit(conf->Read("path"),'|');
+		if (paths.empty())
+			continue;
+		key = conf->Read("include",def_incl);
+		cmdId = conf->ReadLong("sub",defsub);
+		for(int i=paths.size()-1;i>=0;--i)
+			this->ListFiles(paths[i],&files,key,cmdId);
+		key = conf->Read("exclude",def_excl);
+		g_commands->AddFiles(files,wxSplit(key,'|'));
+	}
+	conf->SetPath("/Config");
+}
+
+//旧版自动转换为新版本
+void ALMRunConfig::OldToNew()
+{
+	size_t sizes;
+	wxString name;
+	wxString key;
+	wxString cmd;
+	wxString desc;
+	wxString cmds;
+	conf->SetExpandEnvVars(false);
+	if (conf->HasGroup("/Command"))
+	{
+		sizes = conf->ReadLong("/Command/cmds.size",0);
+		while(sizes)
+		{
+			conf->SetPath(wxString::Format("/cmds/%d",1000+sizes));
+			cmds = wxString::Format("/Command/cmds.%d.",sizes);
+			--sizes;
+			cmd = conf->Read(cmds + "cmd");
+			if (cmd.empty() && key.empty())
+				continue;
+			conf->Write("cmd",cmd);
+			conf->Write("name",conf->Read(cmds + "name"));
+			conf->Write("key",conf->Read(cmds + "key"));
+			conf->Write("desc",conf->Read(cmds + "desc"));
+		}
+		conf->DeleteGroup("/Command");
+		conf->Flush();
+	}
+	if (conf->HasGroup("/directories"))
+	{
+		conf->SetPath("/directories");
+		sizes = conf->ReadLong("dirs.size",0);
+		conf->Write("/dirs/sub",conf->ReadLong("dirs.def.sub",0));
+		conf->Write("/dirs/include",conf->Read("dirs.def.include"));
+		conf->Write("/dirs/exclude",conf->Read("dirs.def.exclude"));
+		while(sizes)
+		{
+			conf->SetPath(wxString::Format("/dirs/%d",1000+sizes));
+			cmds = wxString::Format("/directories/dirs.%d.",sizes);
+			--sizes;
+			conf->Write("path",conf->Read(cmds + "path"));
+			conf->Write("include",conf->Read(cmds + "include"));
+			conf->Write("exclude", conf->Read(cmds + "exclude"));
+			conf->Write("sub",conf->ReadLong(cmds + "sub",0));
+		}
+		conf->DeleteGroup("/directories");
+		conf->Flush();
+	}
+	conf->SetExpandEnvVars(true);
+	conf->SetPath("/Config");
+}
 
 void ALMRunConfig::get(const wxString& name)
 {
@@ -189,8 +308,5 @@ void ALMRunConfig::get(const wxString& name)
 ALMRunConfig::~ALMRunConfig(void)
 {
 	if (conf)
-	{
-		conf->Flush();
 		delete conf;
-	}
 }

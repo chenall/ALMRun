@@ -3,6 +3,7 @@
 BEGIN_EVENT_TABLE(MerryListBoxPanel, wxPanel)
 	EVT_MOUSE_EVENTS(MerryListBoxPanel::OnMouseEvent)
 	EVT_PAINT(MerryListBoxPanel::OnPaintEvent)
+	EVT_CONTEXT_MENU(MerryListBoxPanel::onContextMenu)
 END_EVENT_TABLE()
 
 MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
@@ -107,6 +108,20 @@ int MerryListBoxPanel::SetSelection(int index,int top)
 	return 1;
 }
 
+
+bool MerryListBoxPanel::DelSelectedItem()
+{
+	const MerryCommand* cmd = this->GetSelectionCommand();
+	assert(cmd);
+	int flags = cmd->GetFlags();
+	if ((flags & CMDS_FLAG_ALMRUN_CMDS) && (wxMessageBox(wxString::Format("É¾³ý ID:[%d] %s\nÃüÁî:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCommandLine()),"ÌáÊ¾",wxYES_NO|wxICON_WARNING) == wxYES))
+	{
+		if (g_config->DeleteCmd(flags>>4))
+			return g_commands->DelCommand(cmd->GetCommandID());
+	}
+	return false;
+}
+
 const MerryCommand* MerryListBoxPanel::GetSelectionCommand() const
 {
 	assert(0 <= m_selectionCommandIndex && m_selectionCommandIndex < (int)m_commands.size());
@@ -125,6 +140,12 @@ void MerryListBoxPanel::Dismiss()
 {
 	m_isPopup = false;
 	this->SetHeight(0);
+}
+
+void  MerryListBoxPanel::onContextMenu(wxContextMenuEvent& e)
+{
+	e.StopPropagation();
+	e.Skip();
 }
 
 void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
