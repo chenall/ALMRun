@@ -134,6 +134,26 @@ static bool mysort(MerryCommand *s1,MerryCommand  *s2)
 	}
 	return cmp > 0;
 }
+/*
+	命令排序
+	1.前缀匹配优先
+	2.根据排序值m_order,值越大排在越前面.
+	3.命令名排序
+*/
+static bool SortPreOrder(MerryCommand *s1,MerryCommand  *s2)
+{
+	if (s1->m_compare == 0)//前缀匹配
+	{
+		if (s2->m_compare != 0)//前缀不匹配
+			return true;
+		int cmp = s1->m_order - s2->m_order;
+		if (cmp != 0)
+			return cmp >0 ;
+	}
+	else if (s2->m_compare == 0)
+		return false;
+	return s2->GetCommandName() > s1->GetCommandName();
+}
 
 const int MerryCommandManager::SetCmdOrder(int commandID)
 {
@@ -202,6 +222,6 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 				break;
 		}
 	}
-	sort(commands.begin(),commands.end(),mysort);
+	sort(commands.begin(),commands.end(),g_config->OrderByPre?SortPreOrder:mysort);
 	return commands;
 }

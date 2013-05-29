@@ -15,6 +15,7 @@ ALMRunConfig::ALMRunConfig(void)
 		ShowTopTen = true;
 		ExecuteIfOnlyOne = false;
 		IndexFrom0to9 = false;
+		OrderByPre = false;
 		conf = NULL;
 		cfg_time = 0;
 		return;
@@ -22,6 +23,7 @@ ALMRunConfig::ALMRunConfig(void)
 	conf = new wxFileConfig("ALMRun",wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
+	OrderByPre = conf->ReadBool("OrderByPre",false);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	NumberKey = conf->ReadBool("NumberKey",false);
 	ShowTopTen = conf->ReadBool("ShowTopTen",true);

@@ -19,6 +19,7 @@ public:
 	bool ShowTopTen;
 	bool ExecuteIfOnlyOne;
 	bool IndexFrom0to9;
+	bool OrderByPre;
 	wxString Explorer;
 	wxString Root;
 	wxString Home;
