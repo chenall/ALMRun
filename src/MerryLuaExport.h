@@ -114,6 +114,14 @@ static int LuaShellExecute(lua_State* L)
 	return 1;
 }
 
+static void* GetWindow(lua_State* L)
+{
+	void* window = lua_touserdata(L, 1);
+	if (!window)
+		window = g_controller->GetForegroundWindow();
+	return window;
+}
+
 static int LuaGetForegroundWindow(lua_State* L)
 {
 	void* window = g_controller->GetForegroundWindow();
@@ -152,7 +160,7 @@ static int LuaShowWindow(lua_State* L)
 
 static int LuaCloseWindow(lua_State* L)
 {
-	g_controller->CloseWindow(lua_touserdata(L, 1));
+	g_controller->CloseWindow(GetWindow(L));
 	return 0;
 }
 
@@ -179,25 +187,22 @@ static int LuaIsWindowShown(lua_State* L)
 
 static int LuaGetWindowText(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
-	wxString windowText = g_controller->GetWindowText(window);
+	wxString windowText = g_controller->GetWindowText(GetWindow(L));
 	lua_pushstring(L, windowText.c_str());
 	return 1;
 }
 
 static int LuaSetWindowText(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
 	wxString windowText(wxString(lua_tostring(L, 2), wxConvLocal));
-	g_controller->SetWindowText(window, windowText);
+	g_controller->SetWindowText(GetWindow(L), windowText);
 	return 0;
 }
 
 static int LuaGetWindowSize(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
 	int width, height;
-	g_controller->GetWindowSize(window, width, height);
+	g_controller->GetWindowSize(GetWindow(L), width, height);
 	lua_pushnumber(L, width);
 	lua_pushnumber(L, height);
 	return 2;
@@ -205,18 +210,16 @@ static int LuaGetWindowSize(lua_State* L)
 
 static int LuaSetWindowSize(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
 	int width = lua_tonumber(L, 2);
 	int height = lua_tonumber(L, 3);
-	g_controller->SetWindowSize(window, width, height);
+	g_controller->SetWindowSize(GetWindow(L), width, height);
 	return 0;
 }
 
 static int LuaGetWindowPosition(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
 	int x, y;
-	g_controller->GetWindowPosition(window, x, y);
+	g_controller->GetWindowPosition(GetWindow(L), x, y);
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
 	return 2;
@@ -224,7 +227,7 @@ static int LuaGetWindowPosition(lua_State* L)
 
 static int LuaSetWindowPosition(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
+	void* window = GetWindow(L);
 	int x = lua_tonumber(L, 2);
 	int y = lua_tonumber(L, 3);
 	g_controller->SetWindowPosition(window, x, y);
