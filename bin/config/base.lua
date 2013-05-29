@@ -102,10 +102,32 @@ function SplitCmd(cmdLine)
 end
 -- 默认的命令调用函数
 CmdCallFunc = function(cmdLine,cmdArg)
+    -- 自动参数替换{%p}
+    if cmdLine:match("{%%p}") then
+	cmdLine = cmdLine:gsub("{%%p}",cmdArg)
+	cmdArg = nil
+    end
+
+    -- 替换{%c}为剪贴板内容
+    if cmdLine:match("{%%c}") then
+	cmdLine = cmdLine:gsub("{%%c}",GetClipboardData())
+    end
+
+    -- 替换{%wt}为窗体标题
+    if cmdLine:match("{%%wt}") then
+	cmdLine = cmdLine:gsub("{%%wt}",GetWindowText(getForegroundWindow()))
+    end
+
+    -- 以上{%p},{%c},{%wt}是为了兼容ALTRUN参数设置
+
     cmdLine = cmdLine:gsub("%%(%S+)%%",os.getenv) --系统环境变量扩展
     local cmd,arg = SplitCmd(cmdLine)
     if arg then
-	cmdArg = arg..' '..cmdArg
+	if cmdArg then
+	    cmdArg = arg..' '..cmdArg
+	else
+	    cmdArg = arg
+	end
     end
 -- 提取可执行程序所在目录
     local DestDir = cmd:match("^(.-)[^\\]+$")
