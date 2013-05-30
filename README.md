@@ -95,14 +95,34 @@ Modify 增加或修改功能
 	也可以组合使用
 	例子(以管理员权限隐藏执行): addCommand{ name="test", cmd=[[>@notepad.exe]]}
 
-#### 13. 新增支持INI文件格式配置.
+#### 13. 新增支持INI文件格式配置,添加删除命令更加简单方便
 
 #### 14. 更多功能请参考[API 介绍](doc/config_api.md)
 
 Usage 使用方法:
 =========
 *******************************
-#### 1. 添加命令(用记事本打开my_conf.lua)
+#### 1. 直接运行ALMrun.exe就可以开始使用了,默认已经配置了自动扫描开始菜单和桌面程序
+    默认热键说明:
+	1.Alt+R 显隐本程序热键(在ALMRUN.INI中可修改)
+	2.Alt+H 显示或隐藏当前前台窗口(在common.lua中,不用可删除)
+	3.Alt+M 最大化/恢复当前窗口
+	4.Alt+T 打开CMD窗口
+    文件说明:
+	ALMRun.exe 主程序
+	ALMRun.ini 新版配置文件
+	Config	    旧版配置文件目录(暂时还不可删除)
+	config\merry.lua 基本文件不可删除
+	config\base.lua 不可删除,基本功能扩展
+	config\common.lua 可删除,需要修改merry.lua相应行
+	config\order.lua  命令排序自动产生的
+	config\histroy.lua 不存在的命令记录也会自动生成
+	config\my_conf.lua 用户扩展配置,可删,需修改merry.lua中相应行
+    配置说明:
+	打开ALMRun.ini里面有详细的介绍.
+	
+
+#### 2. 添加命令(高级方法)(用记事本打开my_conf.lua)
 ```lua
   addCommand{ name=命令名, desc=备注, key=热键, cmd=执行命令, func=函数}
 ```
@@ -131,7 +151,7 @@ Usage 使用方法:
 	altrun_config("E:\\ALTRun\\ShortCutList.txt")
 ```
 
-#### 2. 更多功能请查看[原版说明](http://code.google.com/p/name5566-merry/)或[API命令介绍](doc/config_api.md)
+#### 3. 更多功能请查看[原版说明](http://code.google.com/p/name5566-merry/)或[API命令介绍](doc/config_api.md)
 		
 *******************************
 Resource 相关资源:
