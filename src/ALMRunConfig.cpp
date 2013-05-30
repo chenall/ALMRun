@@ -221,6 +221,13 @@ void ALMRunConfig::ConfigCommand()
 		key = conf->Read("key");
 		desc = conf->Read("desc");
 		cmds.ToLong(&cmdId,10);
+		if (name.empty() && key.empty())
+		{
+			name = wxFileName(cmd).GetName();
+			::wxMessageBox(::wxFileNameFromPath(cmd));
+			if (!name.empty())
+				name.Append(".ALMRun");
+		}
 		cmdId = g_commands->AddCommand(name,desc,cmd,0,key,0,(cmdId << 4) | CMDS_FLAG_ALMRUN_CMDS);
 		if (cmdId < 0 || key.empty())
 			continue;

@@ -44,7 +44,7 @@ ALMRunAPI
 =================
 只要稍学习一下 lua 编程语言，就可以灵活的配置 ALMRun。配置文件位于 config 目录中，common.lua 为 ALMRun 提供了默认的配置。
 这里介绍一下 ALMRun 配置文件的 API：
-[addCommand]: #0-addcommand
+[addCommand]: #0-addcommand "addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}"
 ### 0. addCommand
 	addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}
 
@@ -67,7 +67,7 @@ ALMRunAPI
 
   可用的表示按键的字符串请参考[key_string.txt][HOT_KEY]（部分按键字符串在 Windows 下无效）。
  
-[shellExecute]: #1-shellexecute
+[shellExecute]: #1-shellexecute "shellExecute(commandName, commandArg, workingDir, show)"
 ### 1. shellExecute
 
 ```lua
@@ -85,19 +85,19 @@ shellExecute(commandName, commandArg, workingDir, show)
 	shellExecute('cmd', '', '', 'max')
 ```
 
-[GetForegroundWindow]: #2-getforegroundwindow
+[GetForegroundWindow]: #2-getforegroundwindow "GetForegroundWindow()"
 ### 2. GetForegroundWindow
 	 GetForegroundWindow()  
 	获取前台窗口
 	函数返回前台窗口
 
-[SetForegroundWindow]: #3-setforegroundwindow
+[SetForegroundWindow]: #3-setforegroundwindow "SetForegroundWindow(window)"
 ### 3. SetForegroundWindow
 	SetForegroundWindow(window)
 	设置窗口 window 为前台窗口
 	SetForegroundWindow(window)
 
-[ShowWindow]: #4-showwindow
+[ShowWindow]: #4-showwindow "ShowWindow(window,show)"
 ### 4. ShowWindow
 	ShowWindow(window,show)
 
@@ -114,7 +114,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	CloseWindow
 ```
 
-[CloseWindow]: #5-closewindow
+[CloseWindow]: #5-closewindow "CloseWindow(window)"
 ### 5. CloseWindow
 	CloseWindow(window)
 
@@ -122,14 +122,14 @@ shellExecute(commandName, commandArg, workingDir, show)
 	范例，关闭前台窗口
 	CloseWindow(getForegroundWindow())
 
-[IsWindowMax]: #6-iswindowmax
+[IsWindowMax]: #6-iswindowmax "IsWindowMax(window)"
 ### 6. IsWindowMax
 	IsWindowMax(window)
 
 	窗口 window 是否为最大化
 	函数返回 true / false 表示 window 是否最大化
 
-[IsWindowMin]: #7-iswindowmin
+[IsWindowMin]: #7-iswindowmin "IsWindowMin(window)"
 ### 7. IsWindowMin
 	IsWindowMin(window)
 
@@ -137,7 +137,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	函数返回 true / false 表示 window 是否最小化
 
 
-[IsWindowShown]: #8-iswindowshown
+[IsWindowShown]: #8-iswindowshown "IsWindowShown(window)"
 ### 8. IsWindowShown
 	IsWindowShown(window)
 
@@ -145,7 +145,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	函数返回 true / false 表示 window 是否在显示
 
 
-[GetWindowText]: #9-getwindowtext
+[GetWindowText]: #9-getwindowtext "GetWindowText(window)"
 ### 9. GetWindowText
 	GetWindowText(window)
 
@@ -153,14 +153,14 @@ shellExecute(commandName, commandArg, workingDir, show)
 	函数返回窗口 window 的标题栏文字
 
 
-[SetWindowText]: #10-setwindowtext
+[SetWindowText]: #10-setwindowtext "SetWindowText(window, text)"
 ### 10. SetWindowText
 	SetWindowText(window, text)
 
 	设置窗口 window 的标题栏文字
 
 
-[GetWindowSize]: #11-getwindowsize
+[GetWindowSize]: #11-getwindowsize "GetWindowSize(window)"
 ### 11. GetWindowSize
 	GetWindowSize(window)
 	获取窗口 window 的大小
@@ -170,13 +170,13 @@ shellExecute(commandName, commandArg, workingDir, show)
 	local width, height = GetWindowSize(GetForegroundWindow())
 ```
 
-[SetWindowSize]: #12-setwindowsize
+[SetWindowSize]: #12-setwindowsize "SetWindowSize(window, width, height)"
 ### 12. SetWindowSize
 	SetWindowSize(window, width, height)
 
 	设置窗口 window 的大小
 
-[GetWindowPosition]: #13-getwindowposition
+[GetWindowPosition]: #13-getwindowposition "GetWindowPosition(window)"
 ### 13. GetWindowPosition
 	GetWindowPosition(window)
 
@@ -188,7 +188,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	local x, y = GetWindowPosition(getForegroundWindow())
 ```
 
-[SetWindowPosition]: #14-setwindowposition
+[SetWindowPosition]: #14-setwindowposition "setWindowPosition(window, x, y)"
 ### 14. SetWindowPosition
 	setWindowPosition(window, x, y)
 
@@ -196,7 +196,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	设置的位置为窗口左上角的位置
 
 
-[FindWindow]: #15-findwindow
+[FindWindow]: #15-findwindow "FindWindow(name, parentWindow)"
 ### 15. FindWindow
 	FindWindow(name, parentWindow)
 
@@ -204,7 +204,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	参数 parentWindow 为可选参数，用于表示被查找窗口的父窗口
 
 
-[GetMousePosition]: #16-getmouseposition
+[GetMousePosition]: #16-getmouseposition "GetMousePosition()"
 ### 16. GetMousePosition
 	GetMousePosition()
 
@@ -212,13 +212,13 @@ shellExecute(commandName, commandArg, workingDir, show)
 	函数返回两个值 x 和 y 为鼠标的位置
 
 
-[SetMousePosition]: #17-setmouseposition
+[SetMousePosition]: #17-setmouseposition "SetMousePosition(x, y)"
 ### 17. SetMousePosition
 	SetMousePosition(x, y)
 
 	设置当前鼠标的位置
 
-[enterKey]: #18-enterkey
+[enterKey]: #18-enterkey "enterKey(keyStr)"
 ### 18. enterKey
 	enterKey(keyStr)
 	模拟敲击一个按键
@@ -226,7 +226,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	范例，模拟快捷键 Shift + F10 来打开右键菜单
 	enterKey('S-F10')
 
-[message]: #19-message
+[message]: #19-message "message(msg[,title])"
 ### 19. message
 
 	将用对话框输出消息
@@ -235,7 +235,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	范例，输出 Hello ALMRun
 	message('Hello ALMRun')
 
-[enableCommandKey]: #20-enablecommandkey
+[enableCommandKey]: #20-enablecommandkey "enableCommandKey(keyID)"
 ### 20. enableCommandKey
 	enableCommandKey(keyID)
 	激活快捷键
@@ -244,7 +244,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	若执行了 disableCommandKey 禁用了某个命令的快捷键，可调用此函数激活此命令的快捷键
 
 
-[disableCommandKey]: #21-disablecommandkey
+[disableCommandKey]: #21-disablecommandkey "disableCommandKey(keyID)"
 ### 21. disableCommandKey
 	disableCommandKey(keyID)
 	禁用快捷键
@@ -268,7 +268,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	end }
 ```
 
-[setTimer]: #22-settimer
+[setTimer]: #22-settimer "setTimer(milliseconds, oneShot, callback)"
 ### 22. setTimer
 	setTimer(milliseconds, oneShot, callback)
 
@@ -296,19 +296,19 @@ shellExecute(commandName, commandArg, workingDir, show)
 	clearTimer
 ```
 
-[clearTimer]: #23-cleartimer
+[clearTimer]: #23-cleartimer "clearTimer(timer)"
 ### 23. clearTimer
 	clearTimer(timer)
 	清理定时器
 
-[GetEnv]: #24-getenv
+[GetEnv]: #24-getenv "GetEnv(NAME) "
 ### 24. GetEnv
 	GetEnv(NAME) 
 	获取一个环境变量`NAME`的值
 	比如:
 	GetEnv('WinDir') 结果 "C:\WINDOWS"
 
-[SetEnv]: #25-setenv
+[SetEnv]: #25-setenv "SetEnv(var,value)"
 ### 25. SetEnv
 	SetEnv(var,value)
 
@@ -318,7 +318,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	设置一个变量test值mytest
 	如果value为空,则删作该变量.
 
-[config]: #26-config
+[config]: #26-config "config{CONFIG1=value1,CONFIG2=value2...}"
 ### 26. config
 	config{CONFIG1=value1,CONFIG2=value2...}
 
@@ -342,7 +342,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	* ShowTopTen 仅显示前10项
 	* ExecuteIfOnlyOne 当仅剩一项匹配项时立即执行
 
-[ListDir]: #27-listdir
+[ListDir]: #27-listdir "ListDir(path,spec,sub)"
 ### 27. ListDir
 	ListDir(path,spec,sub)
 
@@ -352,15 +352,15 @@ shellExecute(commandName, commandArg, workingDir, show)
 	sub	子目录限制
 	例: ListDir([[C:\WINDOWS]],".exe",0)
 
-[SetClipboardData]: #28-setclipboarddata
-[GetClipboardData]: #28-getclipboarddata
+[SetClipboardData]: #28-setclipboarddata "SetClipboardData(TEXT)"
+[GetClipboardData]: #28-getclipboarddata "GetClipboardData()"
 ### 28. SetClipboardData
 	SetClipboardData(TEXT)
 	设剪贴板内容为TEXT.
 	GetClipboardData()
 	获取剪贴板TEXT格式.获取失败时返回nil
 
-[GetShellFolder]: #29-getshellfolder
+[GetShellFolder]: #29-getshellfolder "GetShellFolder([CSIDL])"
 ### 29. GetShellFolder
 	GetShellFolder([CSIDL])
 
@@ -370,7 +370,7 @@ shellExecute(commandName, commandArg, workingDir, show)
    --获取桌面文件夹位置 
    GetShellFolder(0)
 ```
-[InputBox]: #30-inputbox
+[InputBox]: #30-inputbox "InputBox(MESSAGE,CAPTION,DEFVALUE)"
 ### 30. InputBox
 	InputBox(MESSAGE,CAPTION,DEFVALUE)
 
@@ -378,7 +378,7 @@ shellExecute(commandName, commandArg, workingDir, show)
     MESSAGE 提示信息,CAPTION 标题,DEFVALUE 默认值
     注: 所有参数都是可选的,其中DEFVALUE如果以"*"开头,将作为密码输入框,输入的密码显示为'*'
 
-[MessageBox]: #31-messagebox
+[MessageBox]: #31-messagebox "MessageBox(MESSAGE[,CAPTION,STYLE])"
 ### 31. MessageBox
 	MessageBox(MESSAGE,CAPTION,STYLE)
 
@@ -402,7 +402,7 @@ shellExecute(commandName, commandArg, workingDir, show)
     取沙      0x10
     HELP      0x1000
 
-[ReConfig]: #32-reconfig
+[ReConfig]: #32-reconfig "ReConfig()"
 ### 32. ReConfig
 	ReConfig()
     刷新配置,重新加载配置文件
@@ -454,6 +454,9 @@ Other 其它说明
 		[==[c:\windows]==]
 		第一个比较常见,由于Windows的文件路径是以"\"分隔的,但"\"以LUA脚本中是一个转义符,所以在使用中需要用两个"\"即"\\"
 		第2,3,4个不会转义里面的字符内容.建议使用.
+3.以下窗口操作的window参数都可以为0或空值,这时自动使用前台窗口
+>
+[CloseWindow],[GetWindowText],[SetWindowText],[GetWindowSize], [SetWindowSize],[GetWindowPosition],[SetWindowPosition]
 
 [CSIDL]: CSIDL.TXT "Windows 系统特殊文件夹CSIDL参考"
 [HOT_KEY]: key_string.txt "部份热键字符表,像A-Z之类的直接使用字符本身表示"

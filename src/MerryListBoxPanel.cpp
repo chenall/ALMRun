@@ -232,7 +232,10 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		assert(command);
 		if (m_selectionCommandIndex - m_topCommandIndex == i)
 		{
-			this->SetToolTip(command->GetCommandDesc());
+			if (command->GetCommandDesc().empty())
+				this->SetToolTip(command->GetCommandLine());
+			else
+				this->SetToolTip(command->GetCommandDesc());
 			dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
 		}
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);
