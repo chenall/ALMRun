@@ -178,7 +178,19 @@ void MerryTextCtrl::ExecuteCmd()
 		return;
 	}
 	const MerryCommand* command = listBoxPanel->GetSelectionCommand();
-	const wxString& commandName = command->GetCommandName();
+	#ifdef __WXMSW__
+	if (command->GetCommandLine().Find("{%p+}") != wxNOT_FOUND && this->EnterArgs <= 0)
+	{
+		INPUT input;
+		memset(&input,0,sizeof(input));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = WXK_TAB;
+		SendInput(1,&input,sizeof(INPUT));
+		input.ki.dwFlags =  KEYEVENTF_KEYUP;
+		SendInput(1,&input,sizeof(INPUT));
+		return;
+	}
+	#endif
 	::wxGetApp().GetFrame().Hide();
 	command->ExecuteCommand(commandArg);
 }

@@ -103,8 +103,8 @@ end
 -- 默认的命令调用函数
 CmdCallFunc = function(cmdLine,cmdArg)
     -- 自动参数替换{%p}
-    if cmdLine:match("{%%p}") then
-	cmdLine = cmdLine:gsub("{%%p}",cmdArg)
+    if cmdLine:match("{%%[pP]%+?}") then
+	cmdLine = cmdLine:gsub("{%%[pP]%+?}",cmdArg)
 	cmdArg = nil
     end
 
