@@ -181,13 +181,8 @@ void MerryTextCtrl::ExecuteCmd()
 	#ifdef __WXMSW__
 	if (command->GetCommandLine().Find("{%p+}") != wxNOT_FOUND && this->EnterArgs <= 0)
 	{
-		INPUT input;
-		memset(&input,0,sizeof(input));
-		input.type = INPUT_KEYBOARD;
-		input.ki.wVk = WXK_TAB;
-		SendInput(1,&input,sizeof(INPUT));
-		input.ki.dwFlags =  KEYEVENTF_KEYUP;
-		SendInput(1,&input,sizeof(INPUT));
+		SendMessage(this->GetHWND(),WM_KEYDOWN,VK_TAB,0);
+		SendMessage(this->GetHWND(),WM_KEYUP,VK_TAB,0);
 		return;
 	}
 	#endif
