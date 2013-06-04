@@ -5,7 +5,7 @@
 ALMRunConfig* g_config = NULL;
 ALMRunConfig::ALMRunConfig(void)
 {
-	if (::wxGetEnv("ALMRUN_HOME",&Home))
+	if (wxGetEnv("ALMRUN_HOME",&Home))
 		cfg_file = Home + wxGetApp().GetAppName().Append(".ini");
 	if (wxFileExists(cfg_file) == false)
 	{
@@ -34,7 +34,11 @@ ALMRunConfig::ALMRunConfig(void)
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
 	this->set("ShowTrayIcon",conf->ReadBool("ShowTrayIcon",true));
-	g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0));
+	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0)))
+	{
+		this->set("ShowTrayIcon",true);
+		wxMessageBox(wxString::Format("ÈÈ¼ü %s ×¢²áÊ§°Ü!",HotKey),"´íÎóÌáÊ¾",0x00000100);
+	}
 	if (!HotKeyReLoad.empty())
 		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",-1,HotKeyReLoad,0));
 	this->OldToNew();
