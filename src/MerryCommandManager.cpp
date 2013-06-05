@@ -17,7 +17,7 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files)
 {
 	for(int i=files.GetCount()-1;i >= 0;--i)
 	{
-		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,files[i]));
+		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
 	}
 }
 
@@ -34,7 +34,7 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files,const wxArra
 				break;
 		}
 		if (j == -1)
-			m_commands.push_back(new MerryCommand(m_commands.size() |(CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,files[i]));
+			m_commands.push_back(new MerryCommand(m_commands.size() |(CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
 	}
 }
 
