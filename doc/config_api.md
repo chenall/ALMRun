@@ -36,6 +36,8 @@
 		* [SetClipboardData] 设置剪贴板内容
 		* [GetClipboardData] 读取剪贴板内容 
 		* [GetShellFolder] 获取系统文件夹路径 
+		* [FileExists] 判断文件是否存在
+		* [DirExists] 判断目录是否存在
 + [触发事件机制](#almrunevent)
 	* [onClose]
 	* [onUndefinedCommand]
@@ -407,6 +409,13 @@ shellExecute(commandName, commandArg, workingDir, show)
 	ReConfig()
     刷新配置,重新加载配置文件
 
+[DirExists]: #33-direxists "DirExists(path)"
+### 33. DirExists
+	DirExists(path) 判断目录path是否存在.
+
+[FileExists]: #34-fileexists "FileExists(file)"
+### 34. FileExists
+	FileExists(file) 判断文件file是否存在.
 
 ALMRunEvent
 ===============

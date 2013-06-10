@@ -13,7 +13,7 @@
 //#define DEBUG_ALWAYS_SHOW
 
 BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
-	EVT_CLOSE(MerryFrame::OnCloseEvent)
+//	EVT_CLOSE(MerryFrame::OnCloseEvent)
 //	EVT_ACTIVATE(MerryFrame::OnActivateEvent)
 	EVT_SHOW(MerryFrame::OnShowEvent)
 END_EVENT_TABLE()
@@ -141,7 +141,10 @@ void MerryFrame::OnClose()
 {
 	this->Hide();
 	if (lua_bak)
+	{
 		delete lua_bak;
+		lua_bak = NULL;
+	}
 
 	if (g_lua)
 	{

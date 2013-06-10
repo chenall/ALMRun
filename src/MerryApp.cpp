@@ -38,7 +38,7 @@ void MerryApp::EvtActive(wxActivateEvent &e)
 {
 	if (!e.GetActive())
 		m_frame->Hide();
-	if (g_config && g_config->Changed())
+	else if (g_config && g_config->Changed())
 		m_frame->NewConfig();
 //	e.Skip();
 }

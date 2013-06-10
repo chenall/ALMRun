@@ -70,7 +70,9 @@ addEventHandler('onClose', function()
 	end
 	f:close()
 -- 保存命令优先级设置完成
+    if curHideWindow then
 	showWindow(curHideWindow, 'normal')
+    end
 end)
 function SplitCmd(cmdLine)
    cmdLine = trim(cmdLine)

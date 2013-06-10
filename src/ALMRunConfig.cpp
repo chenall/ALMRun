@@ -20,6 +20,7 @@ ALMRunConfig::ALMRunConfig(void)
 		cfg_time = 0;
 		return;
 	}
+	lastId = 0;
 	conf = new wxFileConfig("ALMRun",wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
@@ -95,15 +96,96 @@ void ALMRunConfig::WriteConfig(const wxString& name,const wxString& value)
 	}
 }
 
-bool ALMRunConfig::DeleteCmd(const int id)
+bool ALMRunConfig::SaveCfg()
 {
-	if (conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
+	if (conf)
 	{
 		conf->Flush();
 		cfg_time = wxFileModificationTime(cfg_file);
 		return true;
 	}
 	return false;
+}
+
+bool ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const int id)
+{
+	wxString cmdName = name;
+	if (cmdName.empty() && key.empty())
+	{
+		cmdName = wxFileName(cmd).GetName();
+		if (!cmdName.empty())
+			cmdName.Append(".ALMRun");
+	}
+	int cmdId = id;
+	if (cmdId == -1)
+		cmdId = lastId;
+	cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(cmdId << 4) | CMDS_FLAG_ALMRUN_CMDS);
+	if (cmdId < 0)
+	{
+		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->ÃüÁî[%d]:%s",id,name),"²ÎÊý´íÎó");
+		return false;
+	}
+	if (!key.empty() && !g_hotkey->RegisterHotkey(cmdId))
+	{
+		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->×¢²áÈÈ¼üÊ§°Ü:%s\n,ÃüÁî[%d]:%s",key,id,name),"´íÎó!");
+		g_commands->DelCommand(cmdId);
+		return false;
+	}
+	if (id == -1)
+	{
+		wxString oldPath = conf->GetPath();
+		conf->SetPath(wxString::Format("/cmds/%d",lastId++));
+		conf->Write("cmd",cmd);
+		if (!name.empty())
+			conf->Write("name",name);
+		if (!key.empty())
+			conf->Write("key",key);
+		if (!desc.empty())
+			conf->Write("desc",desc);
+		conf->SetPath(oldPath);
+		return this->SaveCfg();
+	}
+	return true;
+}
+
+bool ALMRunConfig::DeleteCmd(const int id)
+{
+	if (conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
+		return this->SaveCfg();
+	return false;
+}
+
+bool ALMRunConfig::DeleteDir(const int id)
+{
+	if (conf->DeleteGroup(wxString::Format("/dirs/%d",id)))
+	{
+		conf->Flush();
+		return true;
+	}
+	return false;
+}
+
+int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString& exc,const int sub)
+{
+	int i = 0;
+	wxString entry;
+	do
+	{
+		entry.Printf("/dirs/%d",i++);
+		if (i == 1000)
+			return -1;
+		
+	} while (conf->HasGroup(entry));
+	wxString oldPath = conf->GetPath();
+	conf->SetPath(entry);
+	conf->Write("path",path);
+	conf->Write("sub",sub);
+	if (!inc.empty())
+		conf->Write("include",inc);
+	if (!exc.empty())
+		conf->Write("exclude",exc);
+	conf->Flush();
+	return i;
 }
 
 bool ALMRunConfig::Changed()
@@ -225,17 +307,9 @@ void ALMRunConfig::ConfigCommand()
 		key = conf->Read("key");
 		desc = conf->Read("desc");
 		cmds.ToLong(&cmdId,10);
-		if (name.empty() && key.empty())
-		{
-			name = wxFileName(cmd).GetName();
-			::wxMessageBox(::wxFileNameFromPath(cmd));
-			if (!name.empty())
-				name.Append(".ALMRun");
-		}
-		cmdId = g_commands->AddCommand(name,desc,cmd,0,key,0,(cmdId << 4) | CMDS_FLAG_ALMRUN_CMDS);
-		if (cmdId < 0 || key.empty())
-			continue;
-		g_hotkey->RegisterHotkey(cmdId);
+		if (cmdId < 1000 && cmdId > lastId)
+			lastId = cmdId + 1;
+		this->AddCmd(cmd,name,key,desc,cmdId);
     }
 	//×Ô¶¯É¨ÃèÄ¿Â¼ÅäÖÃ
 	conf->SetPath("/dirs");

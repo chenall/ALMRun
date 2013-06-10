@@ -1,5 +1,12 @@
 ALMRUN_CONFIG_PATH = GetEnv('ALMRUN_ROOT') .. "config\\"
 MERRY_ORDER_FILE = ALMRUN_CONFIG_PATH .. 'order.lua'
+
+function DoFile(file)
+    if FileExists(file) then
+	dofile(file)
+    end
+end
+
 CmdOrder = {}--命令排序表
 --[[
 	order.lua 内容格式  排序号|命令名
@@ -25,6 +32,9 @@ if f then
 	f:close()
 end
 
-dofile(ALMRUN_CONFIG_PATH .. 'common.lua')
-dofile(ALMRUN_CONFIG_PATH .. 'histroy.lua')
-dofile(ALMRUN_CONFIG_PATH .. 'my_conf.lua')
+DoFile(ALMRUN_CONFIG_PATH .. 'common.lua')
+DoFile(ALMRUN_CONFIG_PATH .. 'histroy.lua')
+DoFile(ALMRUN_CONFIG_PATH .. 'my_conf.lua')
+-- 你可以添加自己的LUA脚本扩展,比如你的文件扩展文件名是 my_ext.lua,可以自己添加下面一行
+-- DoFile(ALMRUN_CONFIG_PATH .. 'my_ext.lua')
+

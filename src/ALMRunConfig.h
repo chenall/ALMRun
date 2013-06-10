@@ -33,12 +33,17 @@ public:
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const int sub = -1);
 	void WriteConfig(const wxString& name,const wxString& value);
+	bool SaveCfg();
 	bool DeleteCmd(const int id);
+	bool DeleteDir(const int id);
+	int AddDir(const wxString& path,const wxString& inc = wxEmptyString,const wxString& exc = wxEmptyString ,const int sub = 0);
+	bool AddCmd(const wxString& cmd,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString,const int id = -1);
 	void ConfigCommand();
 	void OldToNew();
 	ALMRunConfig(void);
 	virtual ~ALMRunConfig(void);
 private:
+	int lastId;
 	wxString cfg_file;
 	time_t cfg_time;
 	wxFileConfig *conf;

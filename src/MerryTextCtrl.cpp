@@ -5,6 +5,7 @@
 #include "MerryLua.h"
 #include "MerryApp.h"
 #include "MerryListBoxPanel.h"
+#include "DlgAddNewCmd.h"
 
 #ifdef __WXOSX__
 #include "MerryMacHelper.h"
@@ -76,6 +77,12 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			if (listBoxPanel->DelSelectedItem())
 				this->AppendText("");
 			e.Skip();
+		}
+		else if (keyCode == WXK_INSERT)
+		{
+			DlgAddNewCmd* dlg = new DlgAddNewCmd(this);
+			dlg->ShowModal();
+			return;
 		}
 	}
 	switch (keyCode)
