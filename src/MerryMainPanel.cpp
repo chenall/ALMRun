@@ -26,6 +26,7 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 	
 void MerryMainPanel::onContextMenu(wxContextMenuEvent& e)
 {
+	e.StopPropagation();
 	wxMenu* menu = new wxMenu;
 	menu->Append(MENU_ITEM_OPEN_CONFIG, wxT("ÏÔÊ¾ÅäÖÃ(&S)"));
 	menu->Append(MENU_ITEM_CONFIG, wxT("Ë¢ÐÂÅäÖÃ(R)"));

@@ -32,6 +32,7 @@ private:
 	void OnMouseEvent(wxMouseEvent& e);
 	void OnPaintEvent(wxPaintEvent& e);
 	void onContextMenu(wxContextMenuEvent& e);
+	void onPopMenu(wxCommandEvent& e);
 	void OnKeyDownEvent(wxKeyEvent& e);
 
 private:
@@ -47,6 +48,7 @@ private:
 	MerryCommandArray m_commands;
 	int m_topCommandIndex;
 	int m_selectionCommandIndex;
+	wxMenu* menu;
 
 	struct ListBoxItem
 	{

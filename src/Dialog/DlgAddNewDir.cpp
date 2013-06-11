@@ -138,6 +138,7 @@ void DlgAddNewDir::CreateControls()
     dirName->Enable(false);
     itemBoxSizer3->Add(dirName, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
+
     wxButton* itemButton6 = new wxButton( itemDialog1, ID_BUTTON, wxGetTranslation(wxString() + (wxChar) 0x6D4F + (wxChar) 0x89C8 + wxT("(&B)")), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
     itemBoxSizer3->Add(itemButton6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
@@ -149,6 +150,9 @@ void DlgAddNewDir::CreateControls()
 
     dirInclude = new wxTextCtrl( itemDialog1, ID_DIR_INCLUDE, wxEmptyString, wxDefaultPosition, wxSize(250, -1), 0 );
     itemBoxSizer7->Add(dirInclude, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	dirInclude->SetHelpText("包含文件,支持通配符*和?,多个使用'|'分隔,例子:*.exe|*.lnk");
+    if (ShowToolTips())
+        dirInclude->SetToolTip("包含文件,支持通配符*和?,多个使用'|'分隔,例子:*.exe|*.lnk");
 
     wxBoxSizer* itemBoxSizer10 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer10, 0, wxGROW|wxLEFT|wxRIGHT, 5);
@@ -158,6 +162,9 @@ void DlgAddNewDir::CreateControls()
 
     dirExclude = new wxTextCtrl( itemDialog1, ID_DIR_EXCLUDE, wxEmptyString, wxDefaultPosition, wxSize(250, -1), 0 );
     itemBoxSizer10->Add(dirExclude, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	dirExclude->SetHelpText("排除文件,支持通配符*和?,多个使用'|'分隔,例子:*.exe|*.lnk");
+    if (ShowToolTips())
+        dirExclude->SetToolTip("排除文件,支持通配符*和?,多个使用'|'分隔,例子:j*.exe|*.lnk");
 
     wxBoxSizer* itemBoxSizer13 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer13, 0, wxGROW|wxLEFT|wxRIGHT|wxBOTTOM, 5);
@@ -167,6 +174,9 @@ void DlgAddNewDir::CreateControls()
 
     dirSub = new wxSpinCtrl( itemDialog1, ID_DIR_SUB, _T("0"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -1, 100, 0 );
     itemBoxSizer13->Add(dirSub, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	dirSub->SetHelpText("要扫描子目录层数,-1不限,0不扫描子目录.其它数字,N级子目录");
+    if (ShowToolTips())
+        dirSub->SetToolTip("要扫描子目录层数,-1不限,0不扫描子目录.其它数字,N级子目录");
 
     wxStdDialogButtonSizer* itemStdDialogButtonSizer16 = new wxStdDialogButtonSizer;
 
@@ -188,7 +198,10 @@ void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
 	{
 		wxString name = wxDirSelector("请选择一个目录");
 		if (!name.empty())
+		{
+			name.Replace("\\","/");
 			dirName->SetValue(name);
+		}
 		return;
 	}
 	if (!g_config)

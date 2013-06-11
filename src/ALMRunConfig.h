@@ -38,6 +38,7 @@ public:
 	bool DeleteDir(const int id);
 	int AddDir(const wxString& path,const wxString& inc = wxEmptyString,const wxString& exc = wxEmptyString ,const int sub = 0);
 	bool AddCmd(const wxString& cmd,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString,const int id = -1);
+	bool ModifyCmd(const int id,const wxString& cmd = wxEmptyString,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString);
 	void ConfigCommand();
 	void OldToNew();
 	ALMRunConfig(void);
@@ -50,7 +51,7 @@ private:
 };
 
 extern ALMRunConfig* g_config;
-
+extern bool LocationExec;
 enum
 {
 	MENU_ITEM_OPEN = 10001,
@@ -58,6 +59,10 @@ enum
 	MENU_ITEM_CONFIG,
 	MENU_ITEM_ABOUT,
 	MENU_ITEM_EXIT,
+	MENU_CMD_DEL,
+	MENU_CMD_ADD,
+	MENU_CMD_OPENDIR,
+	MENU_CMD_EDIT,
 };
 
 #endif

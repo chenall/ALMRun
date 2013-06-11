@@ -117,6 +117,7 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 		cmd = wxDirSelector("Ñ¡ÔñÄ¿Â¼");
 		if (cmd.empty())
 			return;
+		cmd.Replace("\\","/");
 		DlgAddNewDir *dlg = new DlgAddNewDir(this);
 		dlg->dirName->SetValue(cmd);
 		dlg->ShowModal();
@@ -127,7 +128,10 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 	else
 		cmd = wxFileSelector("ÇëÑ¡Ôñ",wxEmptyString,wxEmptyString,wxEmptyString,"*.exe;*.bat;*.cmd");
 	if (cmd.Len())
+	{
+		cmd.Replace("\\","/");
 		cmdLine->SetValue(cmd);
+	}
 }
 
 void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
@@ -141,7 +145,8 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		return;
 	}
 	cmdLine->SetValue(cmd);
-	if (g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
+	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
+		|| g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
 		this->EndModal(wxID_OK);
 }
 

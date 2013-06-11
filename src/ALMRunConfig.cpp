@@ -132,20 +132,27 @@ bool ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxStrin
 		return false;
 	}
 	if (id == -1)
-	{
-		wxString oldPath = conf->GetPath();
-		conf->SetPath(wxString::Format("/cmds/%d",lastId++));
-		conf->Write("cmd",cmd);
-		if (!name.empty())
-			conf->Write("name",name);
-		if (!key.empty())
-			conf->Write("key",key);
-		if (!desc.empty())
-			conf->Write("desc",desc);
-		conf->SetPath(oldPath);
-		return this->SaveCfg();
-	}
+		return this->ModifyCmd(lastId++,cmd,name,key,desc);
+
 	return true;
+}
+
+bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc)
+{
+	if (cmd.empty() && !conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
+		return false;
+
+	wxString oldPath = conf->GetPath();
+	conf->SetPath(wxString::Format("/cmds/%d",id));
+	conf->Write("cmd",cmd);
+	if (!name.empty())
+		conf->Write("name",name);
+	if (!key.empty())
+		conf->Write("key",key);
+	if (!desc.empty())
+		conf->Write("desc",desc);
+	conf->SetPath(oldPath);
+	return this->SaveCfg();
 }
 
 bool ALMRunConfig::DeleteCmd(const int id)

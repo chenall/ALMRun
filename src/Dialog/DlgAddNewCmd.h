@@ -98,6 +98,8 @@ public:
 	wxTextCtrl* cmdDesc;
 	wxTextCtrl* cmdKey;
 	wxTextCtrl* cmdLine;
+	int flags;
+	int cmdID;
 ////@end DlgAddNewCmd member variables
 private:
 };

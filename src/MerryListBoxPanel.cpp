@@ -1,9 +1,11 @@
 #include "MerryListBoxPanel.h"
+#include "DlgAddNewCmd.h"
 
 BEGIN_EVENT_TABLE(MerryListBoxPanel, wxPanel)
 	EVT_MOUSE_EVENTS(MerryListBoxPanel::OnMouseEvent)
 	EVT_PAINT(MerryListBoxPanel::OnPaintEvent)
 	EVT_CONTEXT_MENU(MerryListBoxPanel::onContextMenu)
+	EVT_MENU_RANGE(MENU_CMD_DEL,MENU_CMD_EDIT,onPopMenu)
 END_EVENT_TABLE()
 
 MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
@@ -50,6 +52,12 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 		font.SetPixelSize(wxSize(0, MERRY_DEFAULT_LIST_BOX_ITEM_FONT_HEIGHT));
 		this->SetOwnFont(font);
 	}
+	menu = new wxMenu;
+	menu->Append(MENU_CMD_ADD, wxT("添加(&I)"));
+	menu->Append(MENU_CMD_EDIT, wxT("编辑(&E)"));
+	menu->Append(MENU_CMD_DEL, wxT("删除(&D)"));
+	menu->Append(MENU_CMD_OPENDIR, wxT("定位(&L)"));
+    return;
 }
 
 void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
@@ -119,6 +127,8 @@ bool MerryListBoxPanel::DelSelectedItem()
 		if (g_config->DeleteCmd(flags>>4))
 			return g_commands->DelCommand(cmd->GetCommandID());
 	}
+	else
+		wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
 	return false;
 }
 
@@ -145,12 +155,50 @@ void MerryListBoxPanel::Dismiss()
 void  MerryListBoxPanel::onContextMenu(wxContextMenuEvent& e)
 {
 	e.StopPropagation();
-	e.Skip();
+	PopupMenu(menu);
+}
+
+void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
+{
+	int id = e.GetId();
+	switch(id)
+	{
+		case MENU_CMD_DEL:
+			DelSelectedItem();
+			break;
+		case MENU_CMD_EDIT:
+		case MENU_CMD_ADD:
+			{
+				DlgAddNewCmd* dlg = new DlgAddNewCmd(this,10000,"修改命令参数");
+				const MerryCommand* cmd = GetSelectionCommand();
+				if (id == MENU_CMD_EDIT)
+				{
+					if (!(cmd->GetFlags() & CMDS_FLAG_ALMRUN_CMDS)) 
+					{
+						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
+						return;
+					}
+					dlg->flags = MENU_CMD_EDIT;
+					dlg->cmdID = cmd->GetFlags()>>4;
+					dlg->cmdName->SetValue(cmd->GetCommandName());
+					dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
+					dlg->cmdKey->SetValue(cmd->GetTriggerKey());
+					dlg->cmdLine->SetValue(cmd->GetCommandLine());
+				}
+				dlg->ShowModal();
+			}
+			break;
+		case MENU_CMD_OPENDIR:
+			LocationExec = true;
+			GetSelectionCommand()->ExecuteCommand(wxEmptyString);
+			break;
+
+	}
 }
 
 void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 {
-	if (e.Moving())
+	if (e.Moving() || e.RightDown())
 	{
 		wxPoint pos = e.GetPosition();
 		int itemIndex = pos.y / MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
@@ -169,8 +217,8 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 		assert(command);
 		command->ExecuteCommand(wxT(''));
 	}
-	else
-		return;
+//	else
+//		return;
 	e.Skip();
 }
 
