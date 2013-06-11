@@ -6,6 +6,7 @@ end}
 -- 普通模式,直接调用cmd参数指定的程序
 addCommand{ name = "test_cmd", desc = "单独命令测试",cmd = [[cmd.exe /c pause >nul|echo 参数:]]}
 addCommand{ name = "test_notepad", desc = "Notepad",cmd = [[%WinDir%\notepad.exe]]}
+addCommand{ name = "EmptyRecycle", desc = "清空回收站",func = function () EmptyRecycleBin() end }
 --[[
  扫描指定目录自动添加命令
  scan_dir(PATH,EXT,SUB)

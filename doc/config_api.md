@@ -38,6 +38,7 @@
 		* [GetShellFolder] 获取系统文件夹路径 
 		* [FileExists] 判断文件是否存在
 		* [DirExists] 判断目录是否存在
+		* [EmptyRecycleBin] 清空回收站
 + [触发事件机制](#almrunevent)
 	* [onClose]
 	* [onUndefinedCommand]
@@ -416,6 +417,16 @@ shellExecute(commandName, commandArg, workingDir, show)
 [FileExists]: #34-fileexists "FileExists(file)"
 ### 34. FileExists
 	FileExists(file) 判断文件file是否存在.
+
+[EmptyRecycleBin]: #35-emptyrecyclebin "EmptyRecycleBin(Bool Force)"
+### 35. EmptyRecycleBin
+	EmptyRecycleBin(Force)
+	用法:
+	EmptyRecycleBin() 或 EmptyRecycleBin(1)
+	Force参数为1时直接清空没有任何提示,否则会有提示.
+	其它说明:
+	若有特殊需要还可以使用SHEmptyRecycleBin,具体请参考Windows API的介绍.
+	EmptyRecycleBin()相当于SHEmptyRecycleBin(nil,nil,nil)
 
 ALMRunEvent
 ===============
