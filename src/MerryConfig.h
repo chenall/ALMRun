@@ -16,7 +16,7 @@ const int		MERRY_DEFAULT_TEXT_CTRL_FONT_HEIGHT = 13;
 #else
 const int		MERRY_DEFAULT_TEXT_CTRL_FONT_HEIGHT = 15;
 #endif
-const char		MERRY_DEFAULT_CONFIG_FILE[] = "config/merry.lua";
+const char		MERRY_DEFAULT_CONFIG_FILE[] = "LuaEx/ALMRun.lua";
 const wxChar	MERRY_DEFAULT_BACKGROUND_FILE[] = wxT("skin/merry.png");
 const wxColor	MERRY_DEFAULT_BORDER_COLOR = wxColor(210, 210, 210);
 const int		MERRY_DEFAULT_SEPERATOR_OFFSET = 80;

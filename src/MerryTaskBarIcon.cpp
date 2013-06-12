@@ -29,7 +29,7 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 	switch(e.GetId())
 	{
 		case MENU_ITEM_ABOUT:
-			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.1.2 --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s"),__DATE__,__TIME__));
+			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.2.0 --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s"),__DATE__,__TIME__));
 			break;
 		case MENU_ITEM_OPEN:
 			::wxGetApp().GetFrame().Show();
@@ -42,6 +42,9 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 			break;
 		case MENU_ITEM_EXIT:
 			::wxGetApp().GetFrame().Close();
+			break;
+		case MENU_ITEM_GUI_CONFIG:
+			g_config->GuiConfig();
 			break;
 	}
 }

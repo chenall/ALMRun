@@ -218,10 +218,10 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 		{
 			command->m_compare = cmp_find;
 			commands.push_back(command);
-			if (g_config->ShowTopTen && commands.size()>9)
+			if (g_config->config[ShowTopTen] && commands.size()>9)
 				break;
 		}
 	}
-	sort(commands.begin(),commands.end(),g_config->OrderByPre?SortPreOrder:mysort);
+	sort(commands.begin(),commands.end(),g_config->config[OrderByPre]?SortPreOrder:mysort);
 	return commands;
 }

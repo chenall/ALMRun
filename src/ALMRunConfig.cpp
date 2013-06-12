@@ -2,20 +2,31 @@
 #include "MerryHotkey.h"
 #include "ALMRunConfig.h"
 #include "MerryApp.h"
+#include "DlgConfig.h"
 ALMRunConfig* g_config = NULL;
 ALMRunConfig::ALMRunConfig(void)
 {
+	config_tip[NumberKey] = "选中时敲0-9键执行对应编号的快捷项";
+	config_tip[ShowTrayIcon] = "选中时在系统托盘显示图标";
+	config_tip[ShowTopTen] = "选中时仅显示前10项快捷项";
+	config_tip[ExecuteIfOnlyOne] = "选中时列表只剩一项时无需按键立即执行";
+	config_tip[IndexFrom0to9] = "如果未选中，编号顺序为 1, 2, ..., 9, 0";
+	config_tip[OrderByPre] = "如果选中, 命令列表中前辍匹配的排前面";
 	if (wxGetEnv("ALMRUN_HOME",&Home))
-		cfg_file = Home + wxGetApp().GetAppName().Append(".ini");
+	{	
+		cfg_file = Home + "config/ALMRun.ini";
+		if (!wxFileExists(cfg_file))
+			MoveFile(Home + wxGetApp().GetAppName().Append(".ini"),cfg_file);
+	}
 	if (wxFileExists(cfg_file) == false)
 	{
 		CompareMode = 0;
-		NumberKey = false;
-		ShowTrayIcon = true;
-		ShowTopTen = true;
-		ExecuteIfOnlyOne = false;
-		IndexFrom0to9 = false;
-		OrderByPre = false;
+		config[NumberKey] = false;
+		config[ShowTrayIcon] = true;
+		config[ShowTopTen] = true;
+		config[ExecuteIfOnlyOne] = false;
+		config[IndexFrom0to9] = false;
+		config[OrderByPre] = false;
 		conf = NULL;
 		cfg_time = 0;
 		return;
@@ -24,12 +35,12 @@ ALMRunConfig::ALMRunConfig(void)
 	conf = new wxFileConfig("ALMRun",wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
-	OrderByPre = conf->ReadBool("OrderByPre",false);
+	config[OrderByPre] = conf->ReadBool("OrderByPre",false);
+	config[NumberKey] = conf->ReadBool("NumberKey",false);
+	config[ShowTopTen] = conf->ReadBool("ShowTopTen",true);
+	config[ExecuteIfOnlyOne] = conf->ReadBool("ExecuteIfOnlyOne",false);
+	config[IndexFrom0to9] = conf->ReadBool("IndexFrom0to9",true);
 	CompareMode = conf->ReadLong("CompareMode",0);
-	NumberKey = conf->ReadBool("NumberKey",false);
-	ShowTopTen = conf->ReadBool("ShowTopTen",true);
-	ExecuteIfOnlyOne = conf->ReadBool("ExecuteIfOnlyOne",false);
-	IndexFrom0to9 = conf->ReadBool("IndexFrom0to9",true);
 	HotKey = conf->Read("HotKey","A-R");
 	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	this->set("Explorer",conf->Read("Explorer"));
@@ -55,8 +66,9 @@ bool ALMRunConfig::set(const wxString& name,const wxString &value)
 	else if (name.Cmp("Root") == 0)
 	{
 		Root = value;
-		if (!Root.empty())
-			::wxSetWorkingDirectory(Root);
+		if (Root.empty())
+			return false;
+		wxSetWorkingDirectory(Root);
 	}
 	else if(name.Cmp("HotKey") == 0)
 		HotKey = value;
@@ -72,16 +84,16 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 	if (name.Cmp("CompareMode") == 0)
 		CompareMode = value;
 	else if (name.Cmp("NumberKey") == 0)
-		NumberKey = value != 0;
+		config[NumberKey] = (value != 0);
 	else if (name.Cmp("ShowTrayIcon") == 0)
 	{
-		ShowTrayIcon = value != 0;
-		::wxGetApp().GetFrame().ShowTrayIcon(ShowTrayIcon);
+		config[ShowTrayIcon] = value != 0;
+		::wxGetApp().GetFrame().ShowTrayIcon(config[ShowTrayIcon]);
 	}
 	else if (name.Cmp("ShowTopTen") == 0)
-		ShowTopTen = value != 0;
+		config[ShowTopTen] = value != 0;
 	else if (name.Cmp("ExecuteIfOnlyOne") == 0)
-		ExecuteIfOnlyOne = value != 0;
+		config[ExecuteIfOnlyOne] = value != 0;
 	else
 		return false;
 	return true;
@@ -94,6 +106,34 @@ void ALMRunConfig::WriteConfig(const wxString& name,const wxString& value)
 		conf->Write(name,value);
 		conf->Flush();
 	}
+}
+
+void ALMRunConfig::GuiConfig()
+{
+	if (!conf)
+		return;
+	wxString config_str[] = {"NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre",};
+	DlgConfig* dlg = new DlgConfig(0);
+	dlg->config_hotkey->SetValue(HotKey);
+	for(int i=sizeof(config)-1;i>=0;--i)
+	{
+		if (config[i])
+			dlg->config->Check(i);
+	}
+	if (dlg->ShowModal() == wxID_OK)
+	{
+		conf->SetPath("/Config");
+		if (!dlg->config_hotkey->GetValue().IsSameAs(HotKey))
+			conf->Write("HotKey",dlg->config_hotkey->GetValue());
+		for(int i=sizeof(config)-1;i>=0;--i)
+		{
+			if (config[i] != dlg->config->IsChecked(i))
+				conf->Write(config_str[i],!config[i]);
+		}
+		conf->Flush();
+		::wxGetApp().GetFrame().NewConfig();
+	}
+	dlg->Destroy();
 }
 
 bool ALMRunConfig::SaveCfg()
@@ -139,6 +179,8 @@ bool ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxStrin
 
 bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc)
 {
+	if (!conf)
+		return false;
 	if (cmd.empty() && !conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
 		return false;
 
@@ -157,14 +199,14 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 
 bool ALMRunConfig::DeleteCmd(const int id)
 {
-	if (conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
+	if (conf && conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
 		return this->SaveCfg();
 	return false;
 }
 
 bool ALMRunConfig::DeleteDir(const int id)
 {
-	if (conf->DeleteGroup(wxString::Format("/dirs/%d",id)))
+	if (conf && conf->DeleteGroup(wxString::Format("/dirs/%d",id)))
 	{
 		conf->Flush();
 		return true;
@@ -174,6 +216,8 @@ bool ALMRunConfig::DeleteDir(const int id)
 
 int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString& exc,const int sub)
 {
+	if (!conf)
+		return -1;
 	int i = 0;
 	wxString entry;
 	do

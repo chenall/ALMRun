@@ -9,17 +9,29 @@
 #define CMDS_FLAG_ALMRUN_LUA 4
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
 
+enum config_item
+{
+	NumberKey,
+	ShowTrayIcon,
+	ShowTopTen,
+	ExecuteIfOnlyOne,
+	IndexFrom0to9,
+	OrderByPre,
+};
 
 class ALMRunConfig
 {
 public:
 	int CompareMode;
+	bool config[6];
+	/*
 	bool NumberKey;
 	bool ShowTrayIcon;
 	bool ShowTopTen;
 	bool ExecuteIfOnlyOne;
 	bool IndexFrom0to9;
 	bool OrderByPre;
+	*/
 	wxString Explorer;
 	wxString Root;
 	wxString Home;
@@ -41,7 +53,9 @@ public:
 	bool ModifyCmd(const int id,const wxString& cmd = wxEmptyString,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString);
 	void ConfigCommand();
 	void OldToNew();
+	void GuiConfig();
 	ALMRunConfig(void);
+	wxString config_tip[6];
 	virtual ~ALMRunConfig(void);
 private:
 	int lastId;
@@ -57,6 +71,7 @@ enum
 	MENU_ITEM_OPEN = 10001,
 	MENU_ITEM_OPEN_CONFIG,
 	MENU_ITEM_CONFIG,
+	MENU_ITEM_GUI_CONFIG,
 	MENU_ITEM_ABOUT,
 	MENU_ITEM_EXIT,
 	MENU_CMD_DEL,

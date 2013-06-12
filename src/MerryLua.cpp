@@ -82,6 +82,8 @@ MerryLua::MerryLua()
 	lua_pushstring(L, "gtk");
 #endif
 	lua_setglobal(L, "PLATFORM");
+	lua_pushstring(L,wxGetenv("ALMRUN_HOME"));
+	lua_setglobal(L, "ALMRUN_HOME");
 	this->DoConfig();
 }
 

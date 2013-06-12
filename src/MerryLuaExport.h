@@ -7,9 +7,7 @@
 #include "MerryTimerManager.h"
 #include "MerryMacHelper.h"
 #include "ALMRunConfig.h"
-#include "DlgAddNewCmd.h"
-#include "DlgParam.h"
-
+#include "dlgconfig.h"
 static int LuaAddCommand(lua_State* L)
 {
 	if (!lua_istable(L, 1))
@@ -486,10 +484,8 @@ static int LuaConfig(lua_State* L)
 
 static int LuaTestConfig(lua_State* L)
 {
-	DlgAddNewCmd* test = new DlgAddNewCmd(0);
-	lua_pushnumber(L,test->ShowModal());
-	test->Destroy();
-	return 1;
+	g_config->GuiConfig();
+	return 0;
 }
 
 static int LuaFileExists(lua_State* L)

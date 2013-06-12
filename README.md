@@ -110,14 +110,16 @@ Usage 使用方法:
 	4.Alt+T 打开CMD窗口
     文件说明:
 	ALMRun.exe 主程序
-	ALMRun.ini 新版配置文件
-	Config	    旧版配置文件目录(暂时还不可删除)
-	config\merry.lua 基本文件不可删除
-	config\base.lua 不可删除,基本功能扩展
-	config\common.lua 可删除,需要修改merry.lua相应行
-	config\order.lua  命令排序自动产生的
+	ALMRun.ini 新版配置文件(优先使用Config目录下的ALMRun.ini文件)
+	LuaEx\ALMRun.lua Lua扩展,基本文件不可删除
+	LuaEx\base.lua 不可删除,基本功能扩展
+	Config	    用户配置文件目录,这个目录里面的lua文件(包括子目录)会被自动调用,属于高级扩展
+	Config\ALMRun.ini 用户INI配置
+	config\order.txt  命令排序自动产生的
 	config\histroy.lua 不存在的命令记录也会自动生成
-	config\my_conf.lua 用户扩展配置,可删,需修改merry.lua中相应行
+	config\sample	LUA扩展使用例子
+
+
     配置说明:
 	打开ALMRun.ini里面有详细的介绍.
 	

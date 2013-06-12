@@ -64,7 +64,7 @@ addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 end)
 addEventHandler('onClose', function()
 -- 保存命令优先级设置开始
-	local f = io.open(MERRY_ORDER_FILE,'w+')
+	local f = io.open(ALMRUN_ORDER_FILE,'w+')
 	for i,v in pairs(CmdOrder) do
 		f:write(v..'|'..i.."\n")
 	end

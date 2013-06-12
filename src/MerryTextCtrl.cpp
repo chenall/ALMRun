@@ -216,7 +216,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 	{
 		MerryCommandArray commands = g_commands->Collect(name);
 		//Êý×ÖÈÈ¼üÆôÓÃ
-		if (g_config->NumberKey && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
+		if (g_config->config[NumberKey] && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
 		{
 			if (keyCode != ' ' && !listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
 				return;
@@ -229,7 +229,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 			return;
 		}
 		listBoxPanel->Popup();
-		if (g_config->ExecuteIfOnlyOne && commands.size() == 1)
+		if (g_config->config[ExecuteIfOnlyOne] && commands.size() == 1)
 			return this->ExecuteCmd();
 	}
 	// Auto completion
