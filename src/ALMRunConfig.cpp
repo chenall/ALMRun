@@ -447,4 +447,5 @@ ALMRunConfig::~ALMRunConfig(void)
 {
 	if (conf)
 		delete conf;
+	conf = NULL;
 }

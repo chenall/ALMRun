@@ -1,4 +1,4 @@
-﻿#include "DlgParam.h"
+#include "DlgParam.h"
 #include <wx/wfstream.h>
 
 BEGIN_EVENT_TABLE(DlgParam, wxDialog)
@@ -14,7 +14,7 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->SetSizer(bSizer2 );
 	comboBox = new wxComboBox( this, wxID_ANY,wxEmptyString, wxDefaultPosition,wxSize(this->GetSize().GetWidth()-80,this->GetSize().GetHeight()-5), 0, NULL, 0 ); 
 	bSizer2->Add( comboBox, 0, wxALL, 5 );
-	wxButton* ButtonOk = new wxButton(this,wxID_OK,"确定(&O)",wxDefaultPosition,wxDefaultSize);
+	wxButton* ButtonOk = new wxButton(this,wxID_OK,"ȷ��(&O)",wxDefaultPosition,wxDefaultSize);
 	bSizer2->Add(ButtonOk,0,wxALL,5);
 	this->Layout();	
 	this->Centre( wxBOTH );

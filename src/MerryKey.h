@@ -3,6 +3,18 @@
 
 #include "MerryWx.h"
 #include <map>
+#include <algorithm>
+class map_value_finder
+{
+public:
+       map_value_finder(const int key):code(key){}
+       bool operator ()(const std::map<wxString, int>::value_type &pair)
+       {
+            return pair.second == code;
+       }
+private:
+        const int code;
+};
 
 class MerryKey
 {
@@ -11,6 +23,7 @@ public:
 	int GetWxKeyCode(const wxString& key) const;
 #ifdef __WXMSW__
 	int GetWindowsKeyCode(const wxString& key) const;
+	wxString GetKeyString(int key) const;
 #endif
 
 private:

@@ -21,6 +21,7 @@
  */
 
 ////@begin includes
+#include "HotkeyCtrl.h"
 ////@end includes
 
 /*!
@@ -79,7 +80,7 @@ public:
 ////@begin DlgAddNewCmd event handler declarations
 	void OnOkButtonClick(wxCommandEvent& e);
 	void OnBrowseClick(wxCommandEvent& e);
-	void HotKeyText(wxKeyEvent& e);
+
 ////@end DlgAddNewCmd event handler declarations
 
 ////@begin DlgAddNewCmd member function declarations
@@ -96,8 +97,8 @@ public:
 ////@begin DlgAddNewCmd member variables
 	wxTextCtrl* cmdName;
 	wxTextCtrl* cmdDesc;
-	wxTextCtrl* cmdKey;
 	wxTextCtrl* cmdLine;
+	HotkeyCtrl* cmdKey;
 	int flags;
 	int cmdID;
 ////@end DlgAddNewCmd member variables

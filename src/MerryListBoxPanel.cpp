@@ -60,6 +60,13 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
     return;
 }
 
+MerryListBoxPanel::~MerryListBoxPanel()
+{
+	if (menu)
+		delete menu;
+	menu = NULL;
+}
+
 void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
 {
 	m_commands = commands;

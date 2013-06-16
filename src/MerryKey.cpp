@@ -211,4 +211,18 @@ int MerryKey::GetWindowsKeyCode(const wxString& key) const
 		return 0;
 	return it->second;
 }
+
+wxString MerryKey::GetKeyString(int key) const
+{
+	if (key >= WXK_NUMPAD0 && key <= WXK_NUMPAD9)
+		return wxString::Format("NUMPAD%d",key - WXK_NUMPAD0);
+	if (key >= WXK_F1 && key <= WXK_F24)
+		return wxString::Format("F%d",key - WXK_F1 + 1);
+	std::map<wxString, int>::const_iterator it = m_wxKeys.end();
+    it = std::find_if(m_wxKeys.begin(), m_wxKeys.end(), map_value_finder(key));
+    if (it == m_wxKeys.end())
+       return wxEmptyString;
+	return it->first;
+}
+
 #endif

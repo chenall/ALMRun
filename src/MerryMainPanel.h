@@ -6,6 +6,7 @@
 class MerryMainPanel : public wxPanel
 {
 public:
+	~MerryMainPanel();
 	MerryMainPanel(wxWindow* parent);
 
 	MerryTextCtrl* GetTextCtrl();
@@ -18,7 +19,7 @@ private:
 	MerryTextCtrl* m_textCtrl;
 	wxPoint m_mousePosition;
 	wxBitmap m_background;
-
+	wxMenu* menu;
 private:
 	DECLARE_EVENT_TABLE()
 };

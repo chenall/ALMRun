@@ -31,6 +31,7 @@
 #include "DlgAddNewDir.h"
 #include "ALMRunConfig.h"
 
+
 ////@begin XPM images
 ////@end XPM images
 
@@ -100,13 +101,8 @@ bool DlgAddNewCmd::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 DlgAddNewCmd::~DlgAddNewCmd()
 {
 ////@begin DlgAddNewCmd destruction
-	this->Disconnect(ID_CMD_KEY);
-////@end DlgAddNewCmd destruction
-}
 
-void DlgAddNewCmd::HotKeyText(wxKeyEvent& e)
-{
-	wxMessageBox("Test");
+////@end DlgAddNewCmd destruction
 }
 
 void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
@@ -180,32 +176,37 @@ void DlgAddNewCmd::CreateControls()
     itemBoxSizer2->Add(itemStaticBoxSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
 
     wxBoxSizer* itemBoxSizer4 = new wxBoxSizer(wxHORIZONTAL);
+	 wxBoxSizer* itemBoxSizer_hotkey = new wxBoxSizer(wxHORIZONTAL);
     itemStaticBoxSizer3->Add(itemBoxSizer4, 0, wxGROW|wxLEFT, 5);
+	itemStaticBoxSizer3->Add(itemBoxSizer_hotkey, 0, wxGROW|wxLEFT, 5);
 
-    wxStaticText* itemStaticText5 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x540D + (wxChar) 0x79F0 + wxT(":")), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText* itemStaticText5 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, "名称:", wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer4->Add(itemStaticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-    cmdName = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_NAME, wxEmptyString, wxDefaultPosition, wxSize(150, -1), 0 );
+    cmdName = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_NAME, wxEmptyString, wxDefaultPosition, wxSize(300, -1), 0 );
     cmdName->SetMaxLength(30);
    cmdName->SetHelpText("快捷命令,列表显示的内容.");
     if (DlgAddNewCmd::ShowToolTips())
         cmdName->SetToolTip("快捷命令,列表显示的内容.");
-    itemBoxSizer4->Add(cmdName, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    itemBoxSizer4->Add(cmdName, 0, wxGROW|wxALL, 5);
 
-    wxStaticText* itemStaticText7 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x70ED + (wxChar) 0x952E + wxT(":")), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer4->Add(itemStaticText7, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    wxStaticText* itemStaticText7 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, "热键:", wxDefaultPosition, wxDefaultSize, 0 );
+    itemBoxSizer_hotkey->Add(itemStaticText7, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-    cmdKey = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_KEY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    //cmdKey = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_KEY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+
+	//    itemBoxSizer4->Add(cmdKey, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, 5);
+	cmdKey = new HotkeyCtrl(itemStaticBoxSizer3->GetStaticBox(),ID_CMD_KEY,wxEmptyString,wxDefaultPosition,wxSize(300, -1));
     cmdKey->SetHelpText("可选参数,命令对应全局热键");
     if (DlgAddNewCmd::ShowToolTips())
         cmdKey->SetToolTip("可选参数,命令对应全局热键");
-    itemBoxSizer4->Add(cmdKey, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, 5);
+	itemBoxSizer_hotkey->Add(cmdKey, 0, wxGROW|wxALL, 5);
 
     wxBoxSizer* itemBoxSizer9 = new wxBoxSizer(wxHORIZONTAL);
     itemStaticBoxSizer3->Add(itemBoxSizer9, 0, wxGROW|wxLEFT, 5);
 
-    wxStaticText* itemStaticText10 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x5907 + (wxChar) 0x6CE8 + wxT(":")), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer9->Add(itemStaticText10, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+    wxStaticText* itemStaticText10 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, "备注:", wxDefaultPosition, wxDefaultSize, 0 );
+    itemBoxSizer9->Add(itemStaticText10, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     cmdDesc = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_DESC, wxEmptyString, wxDefaultPosition, wxSize(300, -1), 0 );
     cmdDesc->SetHelpText("可选参数,命令备注或提示信息");
@@ -214,19 +215,19 @@ void DlgAddNewCmd::CreateControls()
     itemBoxSizer9->Add(cmdDesc, 0, wxGROW|wxALL, 5);
 
     wxStaticText* itemStaticText12 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer9->Add(itemStaticText12, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+    itemBoxSizer9->Add(itemStaticText12, 0,wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     wxBoxSizer* itemBoxSizer13 = new wxBoxSizer(wxHORIZONTAL);
     itemStaticBoxSizer3->Add(itemBoxSizer13, 0, wxGROW|wxLEFT, 5);
 
-    wxStaticText* itemStaticText14 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x547D + (wxChar) 0x4EE4 + (wxChar) 0x884C + wxT(":")), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer13->Add(itemStaticText14, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+    wxStaticText* itemStaticText14 = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, "命令:", wxDefaultPosition, wxDefaultSize, 0 );
+    itemBoxSizer13->Add(itemStaticText14, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     cmdLine = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_CMDLINE, wxEmptyString, wxDefaultPosition, wxSize(220, -1), 0 );
     cmdLine->SetHelpText("必要参数,要执行的命令行");
     if (DlgAddNewCmd::ShowToolTips())
         cmdLine->SetToolTip("必要参数,要执行的命令行");
-    itemBoxSizer13->Add(cmdLine, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5);
+    itemBoxSizer13->Add(cmdLine, 0, wxGROW|wxALL, 5);
 
     wxButton* itemButton16 = new wxButton( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_BROWSE, "浏览(&B)", wxDefaultPosition, wxSize(60, -1), 0 );
     itemBoxSizer13->Add(itemButton16, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);

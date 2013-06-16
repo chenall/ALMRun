@@ -150,7 +150,7 @@ void DlgConfig::CreateControls()
     wxStaticText* itemStaticText4 = new wxStaticText( itemStaticBoxSizer4->GetStaticBox(), wxID_STATIC, _("ÏÔÒþÈÈ¼ü:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_TOP|wxALL, 5);
 
-    config_hotkey = new wxTextCtrl( itemStaticBoxSizer4->GetStaticBox(), ID_TEXTCTRL, wxEmptyString, wxDefaultPosition,wxSize(150, -1), 0 );
+    config_hotkey = new HotkeyCtrl( itemStaticBoxSizer4->GetStaticBox(), ID_TEXTCTRL, wxEmptyString, wxDefaultPosition,wxSize(150, -1), 0 );
     itemBoxSizer3->Add(config_hotkey, 0, wxALIGN_TOP|wxALL, 5);
 
     itemBoxSizer2->Add(itemStaticBoxSizer4, 0, wxGROW|wxALL, 5);

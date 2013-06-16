@@ -100,7 +100,9 @@ lua_State* MerryLua::GetLua()
 
 void MerryLua::DoConfig()
 {
-	if (luaL_dofile(L, MERRY_DEFAULT_CONFIG_FILE))
+	if (!wxFileExists(ALMRUN_DEFAULT_CONFIG_FILE))
+		return;
+	if (luaL_dofile(L, ALMRUN_DEFAULT_CONFIG_FILE))
 	{
 		new MerryInformationDialog(
 			wxT("Configure failed"),

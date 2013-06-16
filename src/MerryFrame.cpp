@@ -40,12 +40,11 @@ MerryFrame::~MerryFrame()
 {
 	if (g_lua)
 		OnClose();
-	if (m_mainPanel)
-		m_mainPanel->Destroy();
-	if (m_listBoxPanel)
-		m_listBoxPanel->Destroy();
 	if (m_taskBarIcon)
 		delete m_taskBarIcon;
+	m_taskBarIcon = NULL;
+	m_listBoxPanel = NULL;
+	m_mainPanel = NULL;
 }
 
 void MerryFrame::NewConfig()
@@ -193,7 +192,7 @@ MerryListBoxPanel* MerryFrame::GetListBoxPanel()
 void MerryFrame::OnCloseEvent(wxCloseEvent& e)
 {
 	this->OnClose();
-	this->Destroy();
+	e.Skip();
 }
 /*
 void MerryFrame::OnActivateEvent(wxActivateEvent& e)

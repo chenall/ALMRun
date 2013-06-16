@@ -15,6 +15,7 @@ class MerryListBoxPanel : public wxPanel
 {
 public:
 	MerryListBoxPanel(wxWindow* parent);
+	~MerryListBoxPanel();
 
 	void SetCommandArray(const MerryCommandArray& commands);
 	void SelectNext();

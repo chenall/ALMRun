@@ -21,6 +21,7 @@
  */
 
 ////@begin includes
+#include "HotkeyCtrl.h"
 ////@end includes
 
 /*!
@@ -92,7 +93,7 @@ public:
 
 ////@begin DlgConfig member variables
     wxCheckListBox* config;
-	wxTextCtrl* config_hotkey;
+	HotkeyCtrl* config_hotkey;
 	wxStaticText* config_tip;
 ////@end DlgConfig member variables
 };

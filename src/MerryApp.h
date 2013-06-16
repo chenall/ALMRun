@@ -6,6 +6,7 @@
 class MerryApp : public wxApp
 {
 public:
+	virtual int OnExit();
     virtual bool OnInit();
 	void NewFrame();
 	MerryFrame& GetFrame();

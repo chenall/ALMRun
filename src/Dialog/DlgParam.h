@@ -1,4 +1,4 @@
-﻿#ifndef __ALMRUN_DlgParam__
+#ifndef __ALMRUN_DlgParam__
 #define __ALMRUN_DlgParam__
 #include "MerryWx.h"
 
