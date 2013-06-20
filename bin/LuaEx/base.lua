@@ -150,16 +150,17 @@ function SetCmdOrder(cmdName,order)
 	CmdOrder[cmdName] = order
 	return order
 end
-function read_csv (file,delims)
+function read_altrun_config (file)
   local fp = assert(io.open (file))
   local csv = {}
   for line in fp:lines() do
     local row = {}
-    for value in line:gmatch("[^"..delims.."]+") do
+    for value in line:gmatch("[^|]+") do
       row[#row+1] = trim(value)
     end
     if not (row[1] == nil or row[1] == "") then
-		csv[#csv+1] = row
+	row[5] = line:gsub("[^|]+|","",4)
+	csv[#csv+1] = row
     end
   end
 	fp:close()
@@ -169,7 +170,7 @@ end
 function altrun_config(file)
     local FileName = file:match("[^\\]+$")
     local DestDir = file:sub(1,-FileName:len()-1)
-    local altrun = read_csv(file,"|")
+    local altrun = read_altrun_config(file)
     for i=1,#altrun do
 	if altrun[i][5]:sub(1,1) == "." then
 	    altrun[i][5] = DestDir .. altrun[i][5]
