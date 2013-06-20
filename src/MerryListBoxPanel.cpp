@@ -171,7 +171,11 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 	switch(id)
 	{
 		case MENU_CMD_DEL:
-			DelSelectedItem();
+			if (DelSelectedItem())
+			{
+				m_commands.erase(m_commands.begin() + m_selectionCommandIndex);
+				this->Refresh();
+			}
 			break;
 		case MENU_CMD_EDIT:
 		case MENU_CMD_ADD:

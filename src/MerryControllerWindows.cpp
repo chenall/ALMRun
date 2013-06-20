@@ -258,8 +258,10 @@ wxString GetFullCmdName(const wxString& commandName,const wxString& workingDir,c
 	if (wxFileName(cmdName).IsAbsolute() == false)//如果不是绝对路径,转换成绝对路径
 	{
 		if (cmdName.GetChar(0) != '\\')
+		{
 			cmdName.insert(0,"\\");
-		cmdName.insert(0,wdir);
+			cmdName.insert(0,wdir);
+		}
 	}
 	if (wxFileName(cmdName).Exists() == false && retOld == false)
 		cmdName.Clear();

@@ -158,7 +158,14 @@ bool ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxStrin
 	}
 	int cmdId = id;
 	if (cmdId == -1)
+	{
+		for(;;++lastId)
+		{
+			if (!conf->Exists(wxString::Format("/cmds/%d",lastId)))
+				break;
+		}
 		cmdId = lastId;
+	}
 	cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(cmdId << 4) | CMDS_FLAG_ALMRUN_CMDS);
 	if (cmdId < 0)
 	{
