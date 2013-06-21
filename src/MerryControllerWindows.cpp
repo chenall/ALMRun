@@ -316,8 +316,9 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	LocationExec = false;//定位文件位置标志复位
 	cmdName = GetFullCmdName(cmdName,workingDir,true);
 	if (g_config->Explorer.empty())
-		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),workingDir.c_str(), SW_SHOW) > 32;
-	return (int)::ShellExecute(NULL,NULL,g_config->Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),workingDir.c_str(), SW_SHOW) > 32;
+		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),NULL, SW_SHOW) > 32;
+	return (int)::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,cmdName),SW_SHOW) > 32;
+	//return (int)::ShellExecute(NULL,NULL,g_config->Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),NULL, SW_SHOW) > 32;
 }
 
 #endif
