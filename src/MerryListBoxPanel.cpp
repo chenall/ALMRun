@@ -213,7 +213,7 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 	{
 		wxPoint pos = e.GetPosition();
 		int itemIndex = pos.y / MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
-		if (itemIndex >= this->GetVisibleItemNum())
+		if (itemIndex >= this->GetVisibleItemNum() || itemIndex == (m_selectionCommandIndex - m_topCommandIndex))
 			return;
 		const ListBoxItem& item = m_items[itemIndex];
 		if (item.rect.Contains(pos))
