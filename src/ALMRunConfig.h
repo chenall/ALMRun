@@ -17,13 +17,17 @@ enum config_item
 	ExecuteIfOnlyOne,
 	IndexFrom0to9,
 	OrderByPre,
+	ShowTip,
+	CONFIG_MAX,
 };
 
 class ALMRunConfig
 {
 public:
+	~ALMRunConfig();
+	ALMRunConfig();
 	int CompareMode;
-	bool config[6];
+	bool config[CONFIG_MAX];
 	/*
 	bool NumberKey;
 	bool ShowTrayIcon;
@@ -49,19 +53,17 @@ public:
 	bool DeleteCmd(const int id);
 	bool DeleteDir(const int id);
 	int AddDir(const wxString& path,const wxString& inc = wxEmptyString,const wxString& exc = wxEmptyString ,const int sub = 0);
-	bool AddCmd(const wxString& cmd,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString,const int id = -1);
+	int AddCmd(const wxString& cmd,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString,const int id = -1);
 	bool ModifyCmd(const int id,const wxString& cmd = wxEmptyString,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString);
 	void ConfigCommand();
 	void OldToNew();
 	void GuiConfig();
-	ALMRunConfig(void);
-	wxString config_tip[6];
-	virtual ~ALMRunConfig(void);
+	wxString config_tip[CONFIG_MAX];
+	wxFileConfig *conf;
 private:
 	int lastId;
 	wxString cfg_file;
 	time_t cfg_time;
-	wxFileConfig *conf;
 };
 
 extern ALMRunConfig* g_config;
@@ -74,10 +76,10 @@ enum
 	MENU_ITEM_GUI_CONFIG,
 	MENU_ITEM_ABOUT,
 	MENU_ITEM_EXIT,
-	MENU_CMD_DEL,
+	MENU_ITEM_CMDMGR,
 	MENU_CMD_ADD,
-	MENU_CMD_OPENDIR,
+	MENU_CMD_DEL,
 	MENU_CMD_EDIT,
+	MENU_CMD_OPENDIR,
 };
-
 #endif

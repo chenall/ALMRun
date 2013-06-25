@@ -36,10 +36,12 @@ bool MerryApp::OnInit()
 
 int MerryApp::OnExit()
 {
-	this->Disconnect(wxEVT_ACTIVATE_APP,wxObjectEventFunction(&MerryApp::EvtActive));
+	__DEBUG_BEGIN("")
+	this->Disconnect(wxEVT_ACTIVATE_APP);
 	if (m_frame)
 		delete m_frame;
 	m_frame = NULL;
+	__DEBUG_END("")
 	return wxApp::OnExit();
 }
 

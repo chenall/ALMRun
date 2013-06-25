@@ -32,5 +32,6 @@ wxString DlgParam::getvalue()
 
 DlgParam::~DlgParam()
 {
-
+	__DEBUG_BEGIN("")
+	__DEBUG_END("")
 }

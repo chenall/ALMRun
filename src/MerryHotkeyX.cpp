@@ -22,6 +22,7 @@ MerryHotkeyX::MerryHotkeyX()
 MerryHotkeyX::~MerryHotkeyX()
 {
 	XCloseDisplay(m_display);
+	this->OnDelete();
 }
 
 bool MerryHotkeyX::OnRegisterHotkey(int commandID, int modifiers, int keyCode)

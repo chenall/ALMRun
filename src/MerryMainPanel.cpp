@@ -8,6 +8,7 @@ BEGIN_EVENT_TABLE(MerryMainPanel, wxPanel)
 	EVT_MENU(MENU_ITEM_CONFIG, MerryTaskBarIcon::onPopMenu)
 	EVT_MENU(MENU_ITEM_ABOUT, MerryTaskBarIcon::onPopMenu)
 	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::onPopMenu)
+	EVT_MENU(MENU_ITEM_CMDMGR,MerryTaskBarIcon::onPopMenu)
 	EVT_MOUSE_EVENTS(MerryMainPanel::OnMouseEvent)
 	EVT_PAINT(MerryMainPanel::OnPaintEvent)
 END_EVENT_TABLE()
@@ -19,6 +20,7 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 
 	menu = new wxMenu;
 	menu->Append(MENU_ITEM_GUI_CONFIG, wxT("参数配置(&S)"));
+	menu->Append(MENU_ITEM_CMDMGR, wxT("命令管理(&M)"));
 	menu->Append(MENU_ITEM_CONFIG, wxT("刷新配置(R)"));
 	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
 	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));
@@ -31,12 +33,14 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 
 MerryMainPanel::~MerryMainPanel()
 {
+	__DEBUG_BEGIN("")
 	if (menu)
 		delete menu;
 	menu = NULL;
 	if (m_textCtrl)
 		delete m_textCtrl;
 	m_textCtrl = NULL;
+	__DEBUG_END("")
 }
 	
 void MerryMainPanel::onContextMenu(wxContextMenuEvent& e)

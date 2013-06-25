@@ -7,6 +7,7 @@
 class MerryTaskBarIcon : public wxTaskBarIcon
 {
 public:
+	~MerryTaskBarIcon();
 	void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e);
 private:
 	void OnLeftButtonDClickEvent(wxTaskBarIconEvent& e);

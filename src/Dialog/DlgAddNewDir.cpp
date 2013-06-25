@@ -100,8 +100,10 @@ bool DlgAddNewDir::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 
 DlgAddNewDir::~DlgAddNewDir()
 {
+	__DEBUG_BEGIN("")
 ////@begin DlgAddNewDir destruction
 ////@end DlgAddNewDir destruction
+	__DEBUG_END("")
 }
 
 

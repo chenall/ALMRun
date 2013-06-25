@@ -9,8 +9,10 @@ MerryCommandManager* g_commands = NULL;
 static wxString cmdPrefix;
 MerryCommandManager::~MerryCommandManager()
 {
+	__DEBUG_BEGIN("")
 	for (size_t i=0; i<m_commands.size(); ++i)
 		delete m_commands[i];
+	__DEBUG_END("")
 }
 
 const void MerryCommandManager::AddFiles(const wxArrayString& files)

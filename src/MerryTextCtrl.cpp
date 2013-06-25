@@ -82,6 +82,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 		{
 			DlgAddNewCmd* dlg = new DlgAddNewCmd(this);
 			dlg->ShowModal();
+			dlg->Destroy();
 			return;
 		}
 	}

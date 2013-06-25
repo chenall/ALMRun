@@ -62,9 +62,11 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 
 MerryListBoxPanel::~MerryListBoxPanel()
 {
+	__DEBUG_BEGIN("")
 	if (menu)
 		delete menu;
 	menu = NULL;
+	__DEBUG_END("")
 }
 
 void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
@@ -190,13 +192,14 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 						return;
 					}
 					dlg->flags = MENU_CMD_EDIT;
-					dlg->cmdID = cmd->GetFlags()>>4;
+					dlg->SetCmdID(cmd->GetFlags()>>4);
 					dlg->cmdName->SetValue(cmd->GetCommandName());
 					dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
 					dlg->cmdKey->SetValue(cmd->GetTriggerKey());
 					dlg->cmdLine->SetValue(cmd->GetCommandLine());
 				}
 				dlg->ShowModal();
+				dlg->Destroy();
 			}
 			break;
 		case MENU_CMD_OPENDIR:
@@ -211,6 +214,7 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 {
 	if (e.Moving() || e.RightDown())
 	{
+		e.StopPropagation();
 		wxPoint pos = e.GetPosition();
 		int itemIndex = pos.y / MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
 		if (itemIndex >= this->GetVisibleItemNum() || itemIndex == (m_selectionCommandIndex - m_topCommandIndex))
@@ -228,9 +232,8 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 		assert(command);
 		command->ExecuteCommand(wxT(''));
 	}
-//	else
-//		return;
-	e.Skip();
+	else
+		e.Skip();
 }
 
 void MerryListBoxPanel::OnPaintEvent(wxPaintEvent& e)
@@ -291,10 +294,13 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		assert(command);
 		if (m_selectionCommandIndex - m_topCommandIndex == i)
 		{
-			if (command->GetCommandDesc().empty())
-				this->SetToolTip(command->GetCommandLine());
-			else
-				this->SetToolTip(command->GetCommandDesc());
+			if (g_config->config[ShowTip])
+			{
+				if (command->GetCommandDesc().empty())
+					this->SetToolTip(command->GetCommandLine());
+				else
+					this->SetToolTip(command->GetCommandDesc());
+			} 
 			dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
 		}
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);

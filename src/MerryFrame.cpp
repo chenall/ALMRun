@@ -19,7 +19,7 @@ BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
-	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE //| wxSTAY_ON_TOP
+	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE | wxSTAY_ON_TOP
 #ifdef __WXOSX__
 		| wxSTAY_ON_TOP
 #endif
@@ -38,6 +38,7 @@ MerryFrame::MerryFrame():
 
 MerryFrame::~MerryFrame()
 {
+	__DEBUG_BEGIN("")
 	if (g_lua)
 		OnClose();
 	if (m_taskBarIcon)
@@ -45,19 +46,19 @@ MerryFrame::~MerryFrame()
 	m_taskBarIcon = NULL;
 	m_listBoxPanel = NULL;
 	m_mainPanel = NULL;
+	__DEBUG_END("")
 }
 
 void MerryFrame::NewConfig()
 {
 	bool show = m_listBoxPanel->IsShown();
 	m_listBoxPanel->Dismiss();
-
 	if (g_lua)
 		g_lua->OnClose();
 
 	if (g_hotkey)
 	{
-		g_hotkey->OnDelete();
+//		g_hotkey->OnDelete();
 		delete g_hotkey;
 		g_hotkey = NewMerryHotkey();
 	}
@@ -88,6 +89,8 @@ void MerryFrame::NewConfig()
 	g_lua = new MerryLua();
 	if (show)
 		m_mainPanel->GetTextCtrl()->AppendText("");
+	if (!g_config->config[ShowTip])
+		m_listBoxPanel->SetToolTip(NULL);
 }
 
 void MerryFrame::OnInit()
@@ -124,16 +127,17 @@ void MerryFrame::OpenConfigDir()
 
 void MerryFrame::ShowTrayIcon(const bool show)
 {
-	if (!show && m_taskBarIcon)
+	if (!show)
 	{
-		m_taskBarIcon->Destroy();
-		m_taskBarIcon = NULL;
+		if (m_taskBarIcon)
+			m_taskBarIcon->RemoveIcon();
+		return;
 	}
-	else if (show && !m_taskBarIcon)
-	{
+	if (!m_taskBarIcon)
 		m_taskBarIcon = new MerryTaskBarIcon();
-		m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), TASKBARICON_TIP);
-	}
+	if (m_taskBarIcon->IsIconInstalled())
+		return;
+	m_taskBarIcon->SetIcon(wxIcon(MerryIcon_xpm), TASKBARICON_TIP);
 }
 
 void MerryFrame::OnClose()
@@ -166,7 +170,7 @@ void MerryFrame::OnClose()
 
 	if (g_hotkey)
 	{
-		g_hotkey->OnDelete();
+//		g_hotkey->OnDelete();
 		delete g_hotkey;
 		g_hotkey = NULL;
 	}

@@ -22,6 +22,8 @@ HotkeyCtrl::HotkeyCtrl(wxWindow *parent,
 
 HotkeyCtrl::~HotkeyCtrl()
 {
+	__DEBUG_BEGIN("")
+	__DEBUG_END("")
 }
 
 void HotkeyCtrl::onContextMenu(wxContextMenuEvent& e)

@@ -4,7 +4,7 @@
 #include "MerryApp.h"
 #include "DlgConfig.h"
 ALMRunConfig* g_config = NULL;
-ALMRunConfig::ALMRunConfig(void)
+ALMRunConfig::ALMRunConfig()
 {
 	config_tip[NumberKey] = "选中时敲0-9键执行对应编号的快捷项";
 	config_tip[ShowTrayIcon] = "选中时在系统托盘显示图标";
@@ -12,6 +12,7 @@ ALMRunConfig::ALMRunConfig(void)
 	config_tip[ExecuteIfOnlyOne] = "选中时列表只剩一项时无需按键立即执行";
 	config_tip[IndexFrom0to9] = "如果未选中，编号顺序为 1, 2, ..., 9, 0";
 	config_tip[OrderByPre] = "如果选中, 命令列表中前辍匹配的排前面";
+	config_tip[ShowTip] = "如果选中,鼠标移动列表框项目时会显示备注信息或命令行";
 	if (wxGetEnv("ALMRUN_HOME",&Home))
 	{	
 		cfg_file = Home + "config/ALMRun.ini";
@@ -40,6 +41,7 @@ ALMRunConfig::ALMRunConfig(void)
 	config[ShowTopTen] = conf->ReadBool("ShowTopTen",true);
 	config[ExecuteIfOnlyOne] = conf->ReadBool("ExecuteIfOnlyOne",false);
 	config[IndexFrom0to9] = conf->ReadBool("IndexFrom0to9",true);
+	config[ShowTip] = conf->ReadBool("ShowTip",true);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	HotKey = conf->Read("HotKey","A-R");
 	HotKeyReLoad = conf->Read("HotKeyReLoad");
@@ -112,7 +114,7 @@ void ALMRunConfig::GuiConfig()
 {
 	if (!conf)
 		return;
-	wxString config_str[] = {"NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre",};
+	wxString config_str[] = {"NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip"};
 	DlgConfig* dlg = new DlgConfig(0);
 	dlg->config_hotkey->SetValue(HotKey);
 	for(int i=sizeof(config)-1;i>=0;--i)
@@ -147,7 +149,7 @@ bool ALMRunConfig::SaveCfg()
 	return false;
 }
 
-bool ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const int id)
+int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const int id)
 {
 	wxString cmdName = name;
 	if (cmdName.empty() && key.empty())
@@ -156,37 +158,42 @@ bool ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxStrin
 		if (!cmdName.empty())
 			cmdName.Append(".ALMRun");
 	}
-	int cmdId = id;
-	if (cmdId == -1)
+	int Id = id;
+	if (id == -1)
 	{
 		for(;;++lastId)
 		{
-			if (!conf->Exists(wxString::Format("/cmds/%d",lastId)))
+			if (!conf->HasGroup(wxString::Format("/cmds/%d",lastId)))
 				break;
 		}
-		cmdId = lastId;
+		Id = lastId;
 	}
-	cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(cmdId << 4) | CMDS_FLAG_ALMRUN_CMDS);
+	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(Id << 4) | CMDS_FLAG_ALMRUN_CMDS);
 	if (cmdId < 0)
 	{
 		wxMessageBox(wxString::Format("添加命令失败->命令[%d]:%s",id,name),"参数错误");
-		return false;
+		return -1;
 	}
 	if (!key.empty() && !g_hotkey->RegisterHotkey(cmdId))
 	{
 		wxMessageBox(wxString::Format("添加命令失败->注册热键失败:%s\n,命令[%d]:%s",key,id,name),"错误!");
 		g_commands->DelCommand(cmdId);
-		return false;
+		return -1;
 	}
 	if (id == -1)
-		return this->ModifyCmd(lastId++,cmd,name,key,desc);
+	{
+		if (this->ModifyCmd(lastId,cmd,name,key,desc))
+			++lastId;
+		else
+			return -1;
+	}
 
-	return true;
+	return Id;
 }
 
 bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc)
 {
-	if (!conf)
+	if (!conf || id < 0)
 		return false;
 	if (cmd.empty() && !conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
 		return false;
@@ -196,10 +203,19 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 	conf->Write("cmd",cmd);
 	if (!name.empty())
 		conf->Write("name",name);
+	else
+		conf->DeleteEntry("name");
+
 	if (!key.empty())
 		conf->Write("key",key);
+	else
+		conf->DeleteEntry("key");
+
 	if (!desc.empty())
 		conf->Write("desc",desc);
+	else
+		conf->DeleteEntry("desc");
+
 	conf->SetPath(oldPath);
 	return this->SaveCfg();
 }
@@ -450,9 +466,11 @@ void ALMRunConfig::get(const wxString& name)
 
 }
 
-ALMRunConfig::~ALMRunConfig(void)
+ALMRunConfig::~ALMRunConfig()
 {
+	__DEBUG_BEGIN("")
 	if (conf)
 		delete conf;
 	conf = NULL;
+	__DEBUG_END("")
 }

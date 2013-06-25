@@ -20,6 +20,7 @@ class MerryKey
 {
 public:
 	MerryKey();
+	~MerryKey();
 	int GetWxKeyCode(const wxString& key) const;
 #ifdef __WXMSW__
 	int GetWindowsKeyCode(const wxString& key) const;

@@ -9,6 +9,7 @@ class MerryHotkeyWx : public MerryHotkey, private wxTopLevelWindow
 {
 public:
 	MerryHotkeyWx();
+	virtual ~MerryHotkeyWx();
 
 private:
 	virtual bool OnRegisterHotkey(int commandID, int modifiers, int keyCode);

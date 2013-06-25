@@ -89,8 +89,10 @@ MerryLua::MerryLua()
 
 MerryLua::~MerryLua()
 {
+	__DEBUG_BEGIN("")
 	assert(lua_gettop(L) == 0);
 	lua_close(L);
+	__DEBUG_END("")
 }
 
 lua_State* MerryLua::GetLua()

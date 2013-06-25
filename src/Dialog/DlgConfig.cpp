@@ -95,9 +95,11 @@ bool DlgConfig::Create( wxWindow* parent, wxWindowID id, const wxString& caption
 
 DlgConfig::~DlgConfig()
 {
+	__DEBUG_BEGIN("")
 ////@begin DlgConfig destruction
 	this->Disconnect(ID_CHECKLISTBOX,wxEVT_COMMAND_LISTBOX_SELECTED,wxObjectEventFunction(&DlgConfig::OnConfigCheck));
 ////@end DlgConfig destruction
+	__DEBUG_END("")
 }
 
 
@@ -150,8 +152,8 @@ void DlgConfig::CreateControls()
     wxStaticText* itemStaticText4 = new wxStaticText( itemStaticBoxSizer4->GetStaticBox(), wxID_STATIC, _("显隐热键:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_TOP|wxALL, 5);
 
-    config_hotkey = new HotkeyCtrl( itemStaticBoxSizer4->GetStaticBox(), ID_TEXTCTRL, wxEmptyString, wxDefaultPosition,wxSize(150, -1), 0 );
-    itemBoxSizer3->Add(config_hotkey, 0, wxALIGN_TOP|wxALL, 5);
+    config_hotkey = new HotkeyCtrl( itemStaticBoxSizer4->GetStaticBox(), ID_TEXTCTRL, wxEmptyString, wxDefaultPosition,wxSize(150, -1));
+    itemBoxSizer3->Add(config_hotkey, 0, wxGROW|wxALL, 5);
 
     itemBoxSizer2->Add(itemStaticBoxSizer4, 0, wxGROW|wxALL, 5);
 
@@ -165,8 +167,9 @@ void DlgConfig::CreateControls()
     configStrings.Add("仅剩一项时立即执行");
     configStrings.Add("数字序列顺序 = 0, 1, ..., 8, 9");
     configStrings.Add("前辍匹配优先");
+	configStrings.Add("显示命令提示信息");
     config = new wxCheckListBox(itemStaticBoxSizer3->GetStaticBox(), ID_CHECKLISTBOX, wxDefaultPosition, wxDefaultSize, configStrings, 0 );
-	config_tip = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC,wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTRE|wxST_NO_AUTORESIZE );
+	config_tip = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC,wxEmptyString, wxDefaultPosition, wxSize(-1,50), wxALIGN_LEFT|wxST_NO_AUTORESIZE|wxNO_BORDER);
 	config_tip->SetForegroundColour(wxColour(255, 0, 255));
     itemStaticBoxSizer3->Add(config, 0, wxGROW|wxALL, 5);
 	itemStaticBoxSizer3->Add(config_tip, 0, wxGROW|wxALL, 5);

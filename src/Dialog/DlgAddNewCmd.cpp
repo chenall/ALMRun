@@ -100,9 +100,10 @@ bool DlgAddNewCmd::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 
 DlgAddNewCmd::~DlgAddNewCmd()
 {
+	__DEBUG_BEGIN("")
 ////@begin DlgAddNewCmd destruction
-
 ////@end DlgAddNewCmd destruction
+	__DEBUG_END("")
 }
 
 void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
@@ -142,7 +143,7 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 	}
 	cmdLine->SetValue(cmd);
 	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
-		|| g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
+		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))>0 )
 		this->EndModal(wxID_OK);
 }
 
@@ -153,7 +154,8 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 void DlgAddNewCmd::Init()
 {
 ////@begin DlgAddNewCmd member initialisation
-
+	flags = 0;
+	cmdID = -1;
 ////@end DlgAddNewCmd member initialisation
 }
 

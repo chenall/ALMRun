@@ -5,6 +5,13 @@
 
 MerryKey g_keys;
 
+MerryKey::~MerryKey()
+{
+	__DEBUG_BEGIN("")
+	m_wxKeys.clear();
+	__DEBUG_END("")
+}
+
 MerryKey::MerryKey()
 {
 	m_wxKeys[wxT("BACK")] = WXK_BACK;

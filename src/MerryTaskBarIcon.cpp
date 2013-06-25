@@ -1,6 +1,7 @@
 #include "MerryTaskBarIcon.h"
 #include "MerryApp.h"
 #include "MerryInformationDialog.h"
+#include "cmdmgr.h"
 
 BEGIN_EVENT_TABLE(MerryTaskBarIcon, wxTaskBarIcon)
 	EVT_MENU(MENU_ITEM_OPEN, MerryTaskBarIcon::onPopMenu)
@@ -10,6 +11,12 @@ BEGIN_EVENT_TABLE(MerryTaskBarIcon, wxTaskBarIcon)
 	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::onPopMenu)
 	EVT_TASKBAR_LEFT_DCLICK(MerryTaskBarIcon::OnLeftButtonDClickEvent)
 END_EVENT_TABLE()
+
+MerryTaskBarIcon::~MerryTaskBarIcon()
+{
+	__DEBUG_BEGIN("")
+	__DEBUG_END("")
+}
 
 wxMenu* MerryTaskBarIcon::CreatePopupMenu()
 {
@@ -29,7 +36,7 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 	switch(e.GetId())
 	{
 		case MENU_ITEM_ABOUT:
-			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format(wxT("version 1.2.0 --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s"),__DATE__,__TIME__));
+			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format("version " VERSION_STR " --- http://chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s",__DATE__,__TIME__));
 			break;
 		case MENU_ITEM_OPEN:
 			::wxGetApp().GetFrame().Show();
@@ -46,6 +53,14 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 		case MENU_ITEM_GUI_CONFIG:
 			g_config->GuiConfig();
 			break;
+	#ifdef _CMDMGR_H_
+		case MENU_ITEM_CMDMGR:
+			cmdMgr *dlg = new cmdMgr(0);
+			dlg->ShowModal();
+			dlg->Destroy();
+			::wxGetApp().GetFrame().NewConfig();
+			break;
+	#endif
 	}
 }
 

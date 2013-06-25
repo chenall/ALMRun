@@ -11,7 +11,7 @@ public:
                const wxString& value = wxEmptyString,
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxSize(110,-1),
-               long style = wxTE_CHARWRAP,
+               long style = wxTE_CHARWRAP|wxWANTS_CHARS,
                const wxValidator& validator = wxDefaultValidator,
                const wxString& name = wxTextCtrlNameStr);
 	~HotkeyCtrl();

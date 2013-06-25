@@ -13,6 +13,13 @@ MerryHotkeyWx::MerryHotkeyWx():
 	
 }
 
+MerryHotkeyWx::~MerryHotkeyWx()
+{
+	__DEBUG_BEGIN("")
+	this->OnDelete();
+	__DEBUG_END("")
+}
+
 bool MerryHotkeyWx::OnRegisterHotkey(int commandID, int modifiers, int keyCode)
 {
 	if (!this->RegisterHotKey(commandID, modifiers, keyCode))

@@ -7,17 +7,21 @@ MerryHotkey* g_hotkey = NULL;
 
 MerryHotkey::~MerryHotkey()
 {
-
+	__DEBUG_BEGIN("")
+	__DEBUG_END("")
 }
 
 void MerryHotkey::OnDelete()
 {
+	__DEBUG_BEGIN("")
 	std::set<int>::const_iterator it = m_registerCommands.begin();
 	for (; it != m_registerCommands.end(); ++it)
 	{
 		int commandID = *it;
 		this->OnUnregisterHotkey(commandID);
 	}
+	std::set<int>().swap(m_registerCommands);
+	__DEBUG_END("")
 }
 
 bool MerryHotkey::RegisterHotkey(int commandID)
