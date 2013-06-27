@@ -135,8 +135,8 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			if (item == -1)
 				break;
 			{
-				DlgAddNewCmd* dlg = new DlgAddNewCmd(NULL,wxID_ANY,"ÐÞ¸ÄÃüÁî²ÎÊý");
-				dlg->flags = MENU_CMD_EDIT;
+				DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
+//				dlg->flags = MENU_CMD_EDIT;
 				dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
 				dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
 				dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));

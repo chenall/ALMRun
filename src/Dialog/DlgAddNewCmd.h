@@ -63,6 +63,7 @@ class DlgAddNewCmd: public wxDialog
 public:
     /// Constructors
     DlgAddNewCmd();
+	DlgAddNewCmd(const int flags);
     DlgAddNewCmd( wxWindow* parent, wxWindowID id = SYMBOL_DLGADDNEWCMD_IDNAME, const wxString& caption = SYMBOL_DLGADDNEWCMD_TITLE, const wxPoint& pos = SYMBOL_DLGADDNEWCMD_POSITION, const wxSize& size = SYMBOL_DLGADDNEWCMD_SIZE, long style = SYMBOL_DLGADDNEWCMD_STYLE );
 
     /// Creation

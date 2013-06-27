@@ -66,6 +66,12 @@ DlgAddNewCmd::DlgAddNewCmd()
     Init();
 }
 
+DlgAddNewCmd::DlgAddNewCmd(const int flags)
+{
+	this->flags = flags;
+	this->Create(NULL);
+}
+
 DlgAddNewCmd::DlgAddNewCmd( wxWindow* parent, wxWindowID id, const wxString& caption, const wxPoint& pos, const wxSize& size, long style )
 {
     Init();
@@ -111,13 +117,16 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 	wxString cmd;
 	if (e.GetId() == ID_CMD_ADD_DIR)
 	{
-		cmd = wxDirSelector("选择目录");
+		cmd = wxDirSelector("选择目录",wxEmptyString,536877120L,wxDefaultPosition,this);
 		if (cmd.empty())
 			return;
 		cmd.Replace("\\","/");
 		DlgAddNewDir *dlg = new DlgAddNewDir(this);
 		dlg->dirName->SetValue(cmd);
-		dlg->ShowModal();
+		if (dlg->ShowModal() == wxID_OK)
+		{
+			;			;
+		}
 		dlg->Destroy();
 		this->EndModal(ID_CMD_ADD_DIR);
 		return;
@@ -172,7 +181,7 @@ void DlgAddNewCmd::CreateControls()
     wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
     itemDialog1->SetSizer(itemBoxSizer2);
 
-    wxStaticBox* itemStaticBoxSizer3Static = new wxStaticBox(itemDialog1, wxID_ANY, wxGetTranslation(wxString() + (wxChar) 0x547D + (wxChar) 0x4EE4 + (wxChar) 0x53C2 + (wxChar) 0x6570));
+    wxStaticBox* itemStaticBoxSizer3Static = new wxStaticBox(itemDialog1, wxID_ANY, "命令参数");
     wxStaticBoxSizer* itemStaticBoxSizer3 = new wxStaticBoxSizer(itemStaticBoxSizer3Static, wxVERTICAL);
 //    itemStaticBoxSizer3Static->SetFont(wxFont(9, wxSWISS, wxNORMAL, wxNORMAL, false, wxT("Tahoma")));
     itemBoxSizer2->Add(itemStaticBoxSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
@@ -236,12 +245,18 @@ void DlgAddNewCmd::CreateControls()
 
     wxBoxSizer* itemBoxSizer17 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer17, 0, wxGROW|wxALL, 5);
-
-    wxButton* itemButton20 = new wxButton( itemDialog1, ID_CMD_ADD_DIR,"批量添加" , wxDefaultPosition, wxDefaultSize,wxBU_EXACTFIT);
-    itemButton20->SetHelpText("自动扫描目录批量添加");
-    if (DlgAddNewCmd::ShowToolTips())
-        itemButton20->SetToolTip("自动扫描目录批量添加");
-    itemBoxSizer17->Add(itemButton20, 0, wxALIGN_TOP|wxALL, 5);
+	if (this->flags == MENU_CMD_EDIT)
+	{
+		this->SetTitle("修改命令参数");
+	}
+	else
+	{
+		wxButton* itemButton20 = new wxButton( itemDialog1, ID_CMD_ADD_DIR,"批量添加" , wxDefaultPosition, wxDefaultSize,wxBU_EXACTFIT);
+		itemButton20->SetHelpText("自动扫描目录批量添加");
+		if (DlgAddNewCmd::ShowToolTips())
+			itemButton20->SetToolTip("自动扫描目录批量添加");
+		itemBoxSizer17->Add(itemButton20, 0, wxALIGN_TOP|wxALL, 5);
+	}
 
     wxStdDialogButtonSizer* itemStdDialogButtonSizer = new wxStdDialogButtonSizer;
 

@@ -5,7 +5,7 @@ BEGIN_EVENT_TABLE(MerryListBoxPanel, wxPanel)
 	EVT_MOUSE_EVENTS(MerryListBoxPanel::OnMouseEvent)
 	EVT_PAINT(MerryListBoxPanel::OnPaintEvent)
 	EVT_CONTEXT_MENU(MerryListBoxPanel::onContextMenu)
-	EVT_MENU_RANGE(MENU_CMD_DEL,MENU_CMD_EDIT,onPopMenu)
+	EVT_MENU_RANGE(10000,10010,onPopMenu)
 END_EVENT_TABLE()
 
 MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
@@ -182,7 +182,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 		case MENU_CMD_EDIT:
 		case MENU_CMD_ADD:
 			{
-				DlgAddNewCmd* dlg = new DlgAddNewCmd(this,10000,"修改命令参数");
+				DlgAddNewCmd* dlg;
 				const MerryCommand* cmd = GetSelectionCommand();
 				if (id == MENU_CMD_EDIT)
 				{
@@ -191,13 +191,16 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
 						return;
 					}
-					dlg->flags = MENU_CMD_EDIT;
+					dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
+//					dlg->flags = MENU_CMD_EDIT;
 					dlg->SetCmdID(cmd->GetFlags()>>4);
 					dlg->cmdName->SetValue(cmd->GetCommandName());
 					dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
 					dlg->cmdKey->SetValue(cmd->GetTriggerKey());
 					dlg->cmdLine->SetValue(cmd->GetCommandLine());
 				}
+				else
+					dlg = new DlgAddNewCmd(NULL,wxID_ANY);
 				dlg->ShowModal();
 				dlg->Destroy();
 			}
