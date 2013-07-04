@@ -54,6 +54,7 @@ BEGIN_EVENT_TABLE( DlgAddNewCmd, wxDialog )
 	EVT_BUTTON(wxID_OK, OnOkButtonClick)
 	EVT_BUTTON(ID_CMD_BROWSE,OnBrowseClick)
 	EVT_BUTTON(ID_CMD_ADD_DIR,OnBrowseClick)
+	EVT_SHOW(OnShow)
 END_EVENT_TABLE()
 
 
@@ -117,18 +118,35 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 	wxString cmd;
 	if (e.GetId() == ID_CMD_ADD_DIR)
 	{
-		cmd = wxDirSelector("选择目录",wxEmptyString,536877120L,wxDefaultPosition,this);
+		cmd = wxDirSelector("选择目录",wxEmptyString,0,wxDefaultPosition,this);
 		if (cmd.empty())
 			return;
+		this->Hide();
 		cmd.Replace("\\","/");
 		DlgAddNewDir *dlg = new DlgAddNewDir(this);
 		dlg->dirName->SetValue(cmd);
+		dlg->SetMode(ADDDIR_FLAG_CMDS);
+		//默认参数设置
+		dlg->dirExclude->SetValue(g_config->GetDefaultDirExclude());
+		dlg->dirInclude->SetValue(g_config->GetDefaultDirInclude());
+		dlg->dirSub->SetValue(g_config->GetDefaultDirSub());
+
 		if (dlg->ShowModal() == wxID_OK)
 		{
-			;			;
+			wxArrayString files;
+			wxString Exclude = dlg->dirExclude->GetValue();
+			g_config->ListFiles(dlg->dirName->GetValue(),&files,dlg->dirInclude->GetValue(),dlg->dirExclude->GetValue(),dlg->dirSub->GetValue());
+			if (!files.empty())
+			{
+				for(int i = files.Count() - 1 ;i>=0;--i)
+				{
+					files[i].Replace("\\","/");
+					g_config->AddCmd(files[i],wxFileNameFromPath(files[i]));
+				}
+			}
 		}
 		dlg->Destroy();
-		this->EndModal(ID_CMD_ADD_DIR);
+		this->EndModal(wxID_OK);
 		return;
 	}
 	else
@@ -138,6 +156,24 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 		cmd.Replace("\\","/");
 		cmdLine->SetValue(cmd);
 	}
+}
+
+void DlgAddNewCmd::OnShow(wxShowEvent& e)
+{
+	if (!e.GetShow())
+		return;
+	wxString cmd = cmdLine->GetValue();
+	while(true)
+	{
+		if (cmd[0] == '@')//前导'@'隐藏窗口运行
+			this->HideRun->SetValue(true);
+		else if (cmd[0] == '>')//前导'>'请求管理员权限(NT6以上有效)
+			this->RunAs->SetValue(true);
+		else
+			break;
+		cmd.erase(0,1);
+	}
+	cmdLine->SetValue(cmd);
 }
 
 void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
@@ -151,6 +187,10 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		return;
 	}
 	cmdLine->SetValue(cmd);
+	if (RunAs->GetValue())
+		cmd.insert(0,'>');
+	if (HideRun->GetValue())
+		cmd.insert(0,'@');
 	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
 		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))>0 )
 		this->EndModal(wxID_OK);
@@ -242,12 +282,28 @@ void DlgAddNewCmd::CreateControls()
 
     wxButton* itemButton16 = new wxButton( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_BROWSE, "浏览(&B)", wxDefaultPosition, wxSize(60, -1), 0 );
     itemBoxSizer13->Add(itemButton16, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	//高级选项
+	wxBoxSizer* itemBoxSizer_checkbox = new wxBoxSizer(wxHORIZONTAL);
+    itemStaticBoxSizer3->Add(itemBoxSizer_checkbox, 0, wxGROW|wxALL, 5);
+	wxStaticText* itemBoxSizer_checkbox_text = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, "高级选项:", wxDefaultPosition, wxDefaultSize, 0 );
+    itemBoxSizer_checkbox->Add(itemBoxSizer_checkbox_text, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+
+	HideRun = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("隐藏执行"), wxDefaultPosition, wxDefaultSize, 0 );
+    HideRun->SetValue(false);
+	itemBoxSizer_checkbox->Add(HideRun,0,wxALIGN_CENTER_VERTICAL|wxALL);
+	if (wxGetWinVersion() >= wxWinVersion_6)
+	{
+		RunAs = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("管理员权限"), wxDefaultPosition, wxDefaultSize, 0 );
+		RunAs->SetValue(false);
+		itemBoxSizer_checkbox->Add(RunAs,0,wxALIGN_CENTER_VERTICAL|wxALL);
+	}
+
 
     wxBoxSizer* itemBoxSizer17 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer17, 0, wxGROW|wxALL, 5);
 	if (this->flags == MENU_CMD_EDIT)
 	{
-		this->SetTitle("修改命令参数");
+		this->SetTitle("编辑命令参数");
 	}
 	else
 	{

@@ -114,6 +114,8 @@ DlgAddNewDir::~DlgAddNewDir()
 void DlgAddNewDir::Init()
 {
 ////@begin DlgAddNewDir member initialisation
+	flags = 0;
+	DirId = -1;
 ////@end DlgAddNewDir member initialisation
 }
 
@@ -141,7 +143,7 @@ void DlgAddNewDir::CreateControls()
     itemBoxSizer3->Add(dirName, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 
-    wxButton* itemButton6 = new wxButton( itemDialog1, ID_BUTTON, wxGetTranslation(wxString() + (wxChar) 0x6D4F + (wxChar) 0x89C8 + wxT("(&B)")), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+    wxButton* itemButton6 = new wxButton( itemDialog1, ID_BUTTON, _T("浏览(&B)"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
     itemBoxSizer3->Add(itemButton6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     wxBoxSizer* itemBoxSizer7 = new wxBoxSizer(wxHORIZONTAL);
@@ -198,7 +200,7 @@ void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
 {
 	if (e.GetId() == ID_BUTTON)
 	{
-		wxString name = wxDirSelector("请选择一个目录");
+		wxString name = wxDirSelector("请选择一个目录",wxEmptyString,0,wxDefaultPosition,this);
 		if (!name.empty())
 		{
 			name.Replace("\\","/");
@@ -211,14 +213,31 @@ void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
 	wxString dName = dirName->GetValue();
 	if (dName.empty())
 		return;
-	if (g_config->AddDir(dName,dirInclude->GetValue(),dirExclude->GetValue(),dirSub->GetValue()) == -1)
+	if (flags < 2 && g_config->AddDir(dName,dirInclude->GetValue(),dirExclude->GetValue(),dirSub->GetValue(),this->DirId) == -1)
 	{
-		wxMessageBox("添加目录失败,可能是参数错误","提示");
+		wxMessageBox("添加/修改目录失败,可能是参数错误","提示");
 		return;
 	}
 	this->EndDialog(wxID_OK);
 }
 
+int DlgAddNewDir::SetMode(const int mode)
+{
+	flags = mode;
+	switch(mode)
+	{
+		case ADDDIR_FLAG_EDIT:
+			this->SetTitle("扫描参数修改");
+			break;
+		case ADDDIR_FLAG_CMDS:
+			this->SetTitle("批量添加命令");
+			break;
+		default:
+			this->SetTitle(SYMBOL_DLGADDNEWDIR_TITLE);
+			flags = ADDDIR_FLAG_NORMAL;
+	}
+	return flags;
+}
 /*!
  * Should we show tooltips?
  */

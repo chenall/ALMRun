@@ -15,6 +15,15 @@ wxListCtrl(parent,id,pos,size,style)
 	this->InsertColumn(CMDLIST_COL_CMD,_T("命令行"),wxLIST_AUTOSIZE,250);
 	this->InsertColumn(CMDLIST_COL_KEY,_T("热键"),wxLIST_AUTOSIZE,100);
 	this->InsertColumn(CMDLIST_COL_DESC,_T("备注"),wxLIST_AUTOSIZE,100);
+	this->ReLoadCmds();
+//	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
+//	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
+	this->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,wxObjectEventFunction(&cmdListCtrl::onRightClick));
+//	this->Connect(wxEVT_COMMAND_LIST_DELETE_ITEM,wxObjectEventFunction(&cmdListCtrl::onDelete));
+}
+
+void cmdListCtrl::ReLoadCmds()
+{
 	if (g_config && g_commands)
 	{
 		wxString cmds;
@@ -23,6 +32,7 @@ wxListCtrl(parent,id,pos,size,style)
 		const wxString oldPath = g_config->conf->GetPath();
 		wxFileConfig *conf = g_config->conf;
 		conf->SetPath("/cmds");
+		this->DeleteAllItems();
 		for(bool test = conf->GetFirstGroup(cmds,id); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,id))
 		{
 			if (!cmds.IsNumber())
@@ -36,10 +46,6 @@ wxListCtrl(parent,id,pos,size,style)
 			this->SetItem(index, CMDLIST_COL_DESC ,conf->Read("desc"));
 		}
 	}
-//	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
-//	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
-	this->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,wxObjectEventFunction(&cmdListCtrl::onRightClick));
-//	this->Connect(wxEVT_COMMAND_LIST_DELETE_ITEM,wxObjectEventFunction(&cmdListCtrl::onDelete));
 }
 
 cmdListCtrl::~cmdListCtrl()
@@ -121,13 +127,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			{
 				DlgAddNewCmd* dlg=new DlgAddNewCmd(NULL);
 				if (dlg->ShowModal() == wxID_OK)
-				{
-					long index = ctrl->InsertItem(dlg->cmdID,dlg->GetCmdID());
-					ctrl->SetItem(index,CMDLIST_COL_NAME,dlg->cmdName->GetValue());
-					ctrl->SetItem(index,CMDLIST_COL_KEY,dlg->cmdKey->GetValue());
-					ctrl->SetItem(index,CMDLIST_COL_DESC,dlg->cmdDesc->GetValue());
-					ctrl->SetItem(index,CMDLIST_COL_CMD,dlg->cmdLine->GetValue());
-				}
+					ctrl->ReLoadCmds();
 				dlg->Destroy();
 			}
 			break;
@@ -143,12 +143,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
 				dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
 				if (dlg->ShowModal() == wxID_OK)
-				{
-					ctrl->SetItem(item,CMDLIST_COL_NAME,dlg->cmdName->GetValue());
-					ctrl->SetItem(item,CMDLIST_COL_KEY,dlg->cmdKey->GetValue());
-					ctrl->SetItem(item,CMDLIST_COL_DESC,dlg->cmdDesc->GetValue());
-					ctrl->SetItem(item,CMDLIST_COL_CMD,dlg->cmdLine->GetValue());
-				}	
+					ctrl->ReLoadCmds();
 				dlg->Destroy();
 			}
 			break;
@@ -157,7 +152,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				break;
 			if (ctrl->GetSelectedItemCount() == 1)
 			{
-				if (wxMessageBox(wxString::Format("真的要删除该命令吗?\n名称:%s\n命令行:%s",ctrl->GetItemText(item,1),ctrl->GetItemText(item,3))	,"删除确认",wxYES_NO | wxICON_WARNING) != wxYES)
+				if (wxMessageBox(wxString::Format("真的要删除该命令吗?\n名称:%s\n命令行:%s",ctrl->GetItemText(item,CMDLIST_COL_NAME),ctrl->GetItemText(item,CMDLIST_COL_CMD))	,"删除确认",wxYES_NO | wxICON_WARNING) != wxYES)
 					break;
 				if (cmdListCtrl::onDelete(ctrl->GetItemText(item)))
 					ctrl->DeleteItem(item);

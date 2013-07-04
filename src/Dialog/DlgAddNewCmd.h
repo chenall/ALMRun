@@ -83,7 +83,7 @@ public:
 ////@begin DlgAddNewCmd event handler declarations
 	void OnOkButtonClick(wxCommandEvent& e);
 	void OnBrowseClick(wxCommandEvent& e);
-
+	void OnShow(wxShowEvent& e);
 ////@end DlgAddNewCmd event handler declarations
 
 ////@begin DlgAddNewCmd member function declarations
@@ -102,6 +102,8 @@ public:
 	wxTextCtrl* cmdDesc;
 	wxTextCtrl* cmdLine;
 	HotkeyCtrl* cmdKey;
+	wxCheckBox* HideRun;
+	wxCheckBox* RunAs;
 	int flags;
 	int cmdID;
 ////@end DlgAddNewCmd member variables

@@ -1,20 +1,18 @@
 --ALMRun隐藏显示热键(可以ALMRun.ini中设置)
 --addCommand{ key = 'A-R', func = toggleMerry }
-
---最大化/恢复当前窗口
-addCommand{ key = 'A-M', func = function()
-    local window = GetForegroundWindow()
-    if IsWindowMax(window) then
-	ShowWindow(window, 'restore')
+local DisableToggleMerryKey = false
+addCommand { key = "Alt+Shift+R", func = function()
+    if DisableToggleMerryKey then
+	enableCommandKey(0)
     else
-	ShowWindow(window, 'max')
+	disableCommandKey(0)
     end
+    DisableToggleMerryKey = not DisableToggleMerryKey
 end }
 --关闭当前窗口
 --addCommand{ key = 'A-Q', func = function()
 --	closeWindow(getForegroundWindow())
 --end }
-
 local curHideWindow
 addCommand{ key = 'A-H', func = function()
     if not curHideWindow then
@@ -25,7 +23,6 @@ addCommand{ key = 'A-H', func = function()
         curHideWindow = nil
     end
 end }
-
 if WINDOWS then
 	for i = string.byte('c'), string.byte('z') do
 		local disk = string.char(i).. ':'
@@ -36,7 +33,6 @@ if WINDOWS then
 			break
 		end
 	end
-
 	addCommand{ name = 'cmd', key = 'A-T', func = function(arg)
 		local window = getForegroundWindow()
 		local dir = getWindowText(window)

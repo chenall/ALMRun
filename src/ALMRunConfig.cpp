@@ -171,12 +171,12 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(Id << 4) | CMDS_FLAG_ALMRUN_CMDS);
 	if (cmdId < 0)
 	{
-		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->ÃüÁî[%d]:%s",id,name),"²ÎÊý´íÎó");
+		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->ÃüÁî[%d]:%s",Id,name),"²ÎÊý´íÎó");
 		return -1;
 	}
 	if (!key.empty() && !g_hotkey->RegisterHotkey(cmdId))
 	{
-		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->×¢²áÈÈ¼üÊ§°Ü:%s\n,ÃüÁî[%d]:%s",key,id,name),"´íÎó!");
+		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->×¢²áÈÈ¼üÊ§°Ü:%s\n,ÃüÁî[%d]:%s",key,Id,name),"´íÎó!");
 		g_commands->DelCommand(cmdId);
 		return -1;
 	}
@@ -237,19 +237,27 @@ bool ALMRunConfig::DeleteDir(const int id)
 	return false;
 }
 
-int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString& exc,const int sub)
+int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString& exc,const int sub,const UINT id)
 {
 	if (!conf)
 		return -1;
 	int i = 0;
 	wxString entry;
-	do
+	if (id == -1)
 	{
-		entry.Printf("/dirs/%d",i++);
-		if (i == 1000)
-			return -1;
+		do
+		{
+			entry.Printf("/dirs/%d",i++);
+			if (i == 1000)
+				return -1;
 		
-	} while (conf->HasGroup(entry));
+		} while (conf->HasGroup(entry));
+	}
+	else
+	{
+		i = id;
+		entry.Printf("/dirs/%d",i);
+	}
 	wxString oldPath = conf->GetPath();
 	conf->SetPath(entry);
 	conf->Write("path",path);
@@ -267,12 +275,26 @@ bool ALMRunConfig::Changed()
 	return (cfg_time  && cfg_time != wxFileModificationTime(cfg_file));
 }
 
-void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const int sub)
+void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude, const int sub)
 {
 	wxArrayString specs = wxSplit(filespec,'|');
+	wxArrayString exc = wxSplit(exclude,'|');
 	if (specs.GetCount() == 0)
 		specs.Add(wxEmptyString);
-	return this->ListFiles(dirname,files,specs,sub);
+	this->ListFiles(dirname,files,specs,sub);
+	for(int i = files->Count() - 1;i>=0;--i)
+	{
+		int j = -1;
+		for(j = exc.size()-1;j >= 0;--j)
+		{//¹ýÂË·ûºÏÌõ¼þµÄÄÚÈÝ
+			if (files->Item(i).Matches(exc[j]))
+				break;
+		}
+		if (j >= 0)
+			files->RemoveAt(i);
+	}
+	specs.Clear();
+	exc.Clear();
 }
 
 void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub)
@@ -387,9 +409,11 @@ void ALMRunConfig::ConfigCommand()
     }
 	//×Ô¶¯É¨ÃèÄ¿Â¼ÅäÖÃ
 	conf->SetPath("/dirs");
-	int defsub = conf->ReadLong("sub",0);
-	wxString def_incl = conf->Read("include");
-	wxString def_excl = conf->Read("exclude");
+	//¶ÁÈ¡Ä¬ÈÏ²ÎÊý
+	def_dir_cfg.sub = conf->ReadLong("sub",0);
+	def_dir_cfg.include = conf->Read("include");
+	def_dir_cfg.exclude = conf->Read("exclude");
+
 	wxArrayString paths;
 	for(bool test = conf->GetFirstGroup(cmds,index); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,index))
 	{
@@ -398,12 +422,9 @@ void ALMRunConfig::ConfigCommand()
 		paths = wxSplit(conf->Read("path"),'|');
 		if (paths.empty())
 			continue;
-		key = conf->Read("include",def_incl);
-		cmdId = conf->ReadLong("sub",defsub);
 		for(int i=paths.size()-1;i>=0;--i)
-			this->ListFiles(paths[i],&files,key,cmdId);
-		key = conf->Read("exclude",def_excl);
-		g_commands->AddFiles(files,wxSplit(key,'|'));
+			this->ListFiles(paths[i],&files, conf->Read("include",def_dir_cfg.include) , conf->Read("exclude",def_dir_cfg.exclude) , conf->ReadLong("sub",def_dir_cfg.sub));
+		g_commands->AddFiles(files);
 	}
 	conf->SetPath("/Config");
 }

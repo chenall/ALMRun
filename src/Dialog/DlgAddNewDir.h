@@ -43,10 +43,13 @@
 #define ID_DIR_EXCLUDE 10000
 #define ID_DIR_SUB 10016
 #define SYMBOL_DLGADDNEWDIR_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
-#define SYMBOL_DLGADDNEWDIR_TITLE wxGetTranslation(wxString() + (wxChar) 0x81EA + (wxChar) 0x52A8 + (wxChar) 0x626B + (wxChar) 0x63CF + (wxChar) 0x76EE + (wxChar) 0x5F55)
+#define SYMBOL_DLGADDNEWDIR_TITLE _T("添加自动扫描目录")
 #define SYMBOL_DLGADDNEWDIR_IDNAME ID_DLGADDNEWDIR
 #define SYMBOL_DLGADDNEWDIR_SIZE wxSize(360, 300)
 #define SYMBOL_DLGADDNEWDIR_POSITION wxDefaultPosition
+#define ADDDIR_FLAG_NORMAL 0
+#define ADDDIR_FLAG_EDIT  1
+#define ADDDIR_FLAG_CMDS  2
 ////@end control identifiers
 
 
@@ -90,13 +93,16 @@ public:
 
     /// Should we show tooltips?
     static bool ShowToolTips();
-
+	int SetMode(const int mode);
 ////@begin DlgAddNewDir member variables
 	wxTextCtrl* dirName;
 	wxTextCtrl* dirInclude;
 	wxTextCtrl* dirExclude;
 	wxSpinCtrl* dirSub;
+	UINT DirId;
 ////@end DlgAddNewDir member variables
+private:
+	int flags;
 };
 
 #endif

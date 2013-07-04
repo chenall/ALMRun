@@ -70,13 +70,15 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 		assert(command);
 		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
 		{
-			new MerryInformationDialog(wxT("Command name exists"),wxString::Format(wxT("以下命令名称重复:\r\n%s"),commandName));
+			if (!(flags & CMDS_FLAG_ALMRUN_CMDS))
+				new MerryInformationDialog(wxT("Command name exists"),wxString::Format(wxT("以下命令名称重复:\r\n%s"),commandName));
 			//::MerrySetLastError(wxString::Format(wxT("Command name \"%s\" already exists[%d]"), commandName,command->GetCommandID()));
 			return -1;
 		}
 		if (!triggerKey.empty() && triggerKey.IsSameAs(command->GetTriggerKey(), false))
 		{
-			new MerryInformationDialog(wxT("Command key exists"),wxString::Format(wxT("以下命令热键重复:\r\n%s"),triggerKey));
+			if (!(flags & CMDS_FLAG_ALMRUN_CMDS))
+				new MerryInformationDialog(wxT("Command key exists"),wxString::Format(wxT("以下命令热键重复:\r\n%s"),triggerKey));
 			//::MerrySetLastError(wxString::Format(wxT("Command key \"%s\" already exists[%d]"), triggerKey,command->GetCommandID()));
 			return -1;
 		}

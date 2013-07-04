@@ -379,7 +379,7 @@ static int LuaDir(lua_State* L)
 			break;
 	}
 	wxArrayString files;
-	g_config->ListFiles(ls_path,&files,filespec,sub);
+	g_config->ListFiles(ls_path,&files,filespec,wxEmptyString,sub);
 	lua_newtable(L);
 	int i = files.Count();
 	for(int j = 0;j<i;++j)

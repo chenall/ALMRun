@@ -20,6 +20,12 @@ enum config_item
 	ShowTip,
 	CONFIG_MAX,
 };
+struct DirCfg
+{
+	wxString include;
+	wxString exclude;
+	int sub;
+};
 
 class ALMRunConfig
 {
@@ -47,14 +53,17 @@ public:
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
-	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const int sub = -1);
+	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude  = wxEmptyString,const int sub = -1);
 	void WriteConfig(const wxString& name,const wxString& value);
 	bool SaveCfg();
 	bool DeleteCmd(const int id);
 	bool DeleteDir(const int id);
-	int AddDir(const wxString& path,const wxString& inc = wxEmptyString,const wxString& exc = wxEmptyString ,const int sub = 0);
+	int AddDir(const wxString& path,const wxString& inc = wxEmptyString,const wxString& exc = wxEmptyString ,const int sub = 0,const UINT id = -1);
 	int AddCmd(const wxString& cmd,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString,const int id = -1);
 	bool ModifyCmd(const int id,const wxString& cmd = wxEmptyString,const wxString& name = wxEmptyString,const wxString& key=wxEmptyString,const wxString& desc = wxEmptyString);
+	wxString& GetDefaultDirInclude() { return def_dir_cfg.include;};
+	wxString& GetDefaultDirExclude() { return def_dir_cfg.exclude;};
+	int GetDefaultDirSub() { return def_dir_cfg.sub;};
 	void ConfigCommand();
 	void OldToNew();
 	void GuiConfig();
@@ -63,6 +72,7 @@ public:
 private:
 	int lastId;
 	wxString cfg_file;
+	DirCfg def_dir_cfg;
 	time_t cfg_time;
 };
 
