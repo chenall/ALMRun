@@ -291,13 +291,9 @@ void DlgAddNewCmd::CreateControls()
 	HideRun = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("隐藏执行"), wxDefaultPosition, wxDefaultSize, 0 );
     HideRun->SetValue(false);
 	itemBoxSizer_checkbox->Add(HideRun,0,wxALIGN_CENTER_VERTICAL|wxALL);
-	if (wxGetWinVersion() >= wxWinVersion_6)
-	{
-		RunAs = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("管理员权限"), wxDefaultPosition, wxDefaultSize, 0 );
-		RunAs->SetValue(false);
-		itemBoxSizer_checkbox->Add(RunAs,0,wxALIGN_CENTER_VERTICAL|wxALL);
-	}
-
+	RunAs = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("管理员权限"), wxDefaultPosition, wxDefaultSize, 0 );
+	RunAs->SetValue(false);
+	itemBoxSizer_checkbox->Add(RunAs,0,wxALIGN_CENTER_VERTICAL|wxALL);
 
     wxBoxSizer* itemBoxSizer17 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer17, 0, wxGROW|wxALL, 5);
