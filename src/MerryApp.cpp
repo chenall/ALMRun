@@ -6,6 +6,16 @@ bool MerryApp::OnInit()
 {
 	if (!wxApp::OnInit())
 		return false;
+	#if _DEBUG_LOG
+        m_pLogFile = fopen( "log.txt", "w+" );
+		wxLogStderr *log = new wxLogStderr(m_pLogFile);
+        wxLog::SetActiveTarget(log);
+
+        wxLog::SetTimestamp(wxT("%Y-%m-%d %H:%M:%S"));
+		
+		wxLog::SetLogLevel(::wxLOG_Max);
+		wxLogMessage("ALMRun_INIT");
+	#endif
 	#ifdef __WXMSW__
 	wxStandardPaths std; //<wx/stdpaths.h>
 	wxFileName fname = wxFileName(std.GetExecutablePath());
@@ -38,19 +48,30 @@ int MerryApp::OnExit()
 {
 	__DEBUG_BEGIN("")
 	this->Disconnect(wxEVT_ACTIVATE_APP);
+
 	if (m_frame)
 		delete m_frame;
 	m_frame = NULL;
 	__DEBUG_END("")
-	return wxApp::OnExit();
+	#if _DEBUG_LOG
+	if (m_pLogFile)
+	{
+		fclose(m_pLogFile);
+		m_pLogFile = NULL;
+	}
+	#endif
+	::wxSleep(3);
+	return 0;
 }
 
 void MerryApp::EvtActive(wxActivateEvent &e)
 {
 	if (!e.GetActive())
 		m_frame->Hide();
+#ifdef _ALMRUN_CONFIG_H_
 	else if (g_config && g_config->Changed())
 		m_frame->NewConfig();
+#endif//ifdef _ALMRUN_CONFIG_H_
 //	e.Skip();
 }
 

@@ -197,6 +197,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 			continue;
 		if (commandName.size() < commandPrefix.size())
 			continue;
+	#ifdef _ALMRUN_CONFIG_H_
 		switch(g_config->CompareMode)
 		{
 			case 1:
@@ -206,6 +207,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 				test_cmp = g_lua->onCompare(commandName.c_str(),commandPrefix.c_str());
 				break;
 			default:
+	#endif//ifdef _ALMRUN_CONFIG_H_
 				cmp_find = commandName.Upper().find(cmdPrefix);
 				if (cmp_find == wxNOT_FOUND)
 					test_cmp = false;
@@ -216,16 +218,22 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 					if (cmp_find > cmdLen)
 						cmp_find -= cmdLen + 1;
 				}
+	#ifdef _ALMRUN_CONFIG_H_
 				break;
 		}
+	#endif//ifdef _ALMRUN_CONFIG_H_
 		if (test_cmp)
 		{
 			command->m_compare = cmp_find;
 			commands.push_back(command);
+		#ifdef _ALMRUN_CONFIG_H_
 			if (g_config->config[ShowTopTen] && commands.size()>9)
 				break;
+		#endif//ifdef _ALMRUN_CONFIG_H_
 		}
 	}
+#ifdef _ALMRUN_CONFIG_H_
 	sort(commands.begin(),commands.end(),g_config->config[OrderByPre]?SortPreOrder:mysort);
+#endif
 	return commands;
 }

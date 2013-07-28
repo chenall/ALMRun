@@ -27,9 +27,9 @@
 ////@begin includes
 ////@end includes
 
-#include "DlgAddNewDir.h"
 #include "ALMRunConfig.h"
-
+#ifdef _ALMRUN_CONFIG_H_
+#include "DlgAddNewDir.h"
 ////@begin XPM images
 
 #include "find.xpm"
@@ -277,3 +277,4 @@ wxIcon DlgAddNewDir::GetIconResource( const wxString& name )
     return wxNullIcon;
 ////@end DlgAddNewDir icon retrieval
 }
+#endif //#ifdef _ALMRUN_CONFIG_H_

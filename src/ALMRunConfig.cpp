@@ -4,15 +4,19 @@
 #include "MerryApp.h"
 #include "DlgConfig.h"
 ALMRunConfig* g_config = NULL;
+const char *ALMRunConfig::config_str[] = {"NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection"};
+const char *ALMRunConfig::config_tip[] = {
+	"选中时敲0-9键执行对应编号的快捷项",
+	"选中时在系统托盘显示图标",
+	"选中时仅显示前10项快捷项",
+	"选中时列表只剩一项时无需按键立即执行",
+	"如果未选中，编号顺序为 1, 2, ..., 9, 0",
+	"如果选中, 命令列表中前辍匹配的排前面",
+	"如果选中,鼠标移动列表框项目时会显示备注信息或命令行",
+	"运行程序之前禁用系统的WOW64重定向,解决在64位系统上部份64位程序无法运行的问题",
+};
 ALMRunConfig::ALMRunConfig()
 {
-	config_tip[NumberKey] = "选中时敲0-9键执行对应编号的快捷项";
-	config_tip[ShowTrayIcon] = "选中时在系统托盘显示图标";
-	config_tip[ShowTopTen] = "选中时仅显示前10项快捷项";
-	config_tip[ExecuteIfOnlyOne] = "选中时列表只剩一项时无需按键立即执行";
-	config_tip[IndexFrom0to9] = "如果未选中，编号顺序为 1, 2, ..., 9, 0";
-	config_tip[OrderByPre] = "如果选中, 命令列表中前辍匹配的排前面";
-	config_tip[ShowTip] = "如果选中,鼠标移动列表框项目时会显示备注信息或命令行";
 	if (wxGetEnv("ALMRUN_HOME",&Home))
 	{	
 		cfg_file = Home + "config/ALMRun.ini";
@@ -36,18 +40,19 @@ ALMRunConfig::ALMRunConfig()
 	conf = new wxFileConfig("ALMRun",wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
-	config[OrderByPre] = conf->ReadBool("OrderByPre",false);
-	config[NumberKey] = conf->ReadBool("NumberKey",false);
-	config[ShowTopTen] = conf->ReadBool("ShowTopTen",true);
-	config[ExecuteIfOnlyOne] = conf->ReadBool("ExecuteIfOnlyOne",false);
-	config[IndexFrom0to9] = conf->ReadBool("IndexFrom0to9",true);
-	config[ShowTip] = conf->ReadBool("ShowTip",true);
+	config[OrderByPre] = conf->ReadBool(config_str[OrderByPre],false);
+	config[NumberKey] = conf->ReadBool(config_str[NumberKey],false);
+	config[ShowTopTen] = conf->ReadBool(config_str[ShowTopTen],true);
+	config[ExecuteIfOnlyOne] = conf->ReadBool(config_str[ExecuteIfOnlyOne],false);
+	config[IndexFrom0to9] = conf->ReadBool(config_str[IndexFrom0to9],true);
+	config[ShowTip] = conf->ReadBool(config_str[ShowTip],true);
+	config[DisableWow64FsRedirection] = conf->ReadBool(config_str[DisableWow64FsRedirection],true);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	HotKey = conf->Read("HotKey","A-R");
 	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
-	this->set("ShowTrayIcon",conf->ReadBool("ShowTrayIcon",true));
+	this->set("ShowTrayIcon",conf->ReadBool(config_str[ShowTrayIcon],true));
 	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0)))
 	{
 		this->set("ShowTrayIcon",true);
@@ -114,7 +119,6 @@ void ALMRunConfig::GuiConfig()
 {
 	if (!conf)
 		return;
-	wxString config_str[] = {"NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip"};
 	DlgConfig* dlg = new DlgConfig(0);
 	dlg->config_hotkey->SetValue(HotKey);
 	for(int i=sizeof(config)-1;i>=0;--i)
@@ -324,62 +328,7 @@ void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const 
 	return;
 }
 
-/*
-旧版的配置方法
-void ALMRunConfig::ConfigCommand()
-{
-	conf->SetPath("/Command");
-	size_t sizes;
-	wxString name;
-	wxString key;
-	wxString cmd;
-	wxString desc;
-	wxString cmds;
-	wxString def_incl;
-	wxString def_excl;
-	int cmdId,defsub;
-	sizes = conf->ReadLong("cmds.size",0);
-	while(sizes)
-	{
-		cmds = wxString::Format("cmds.%d.",sizes);
-		--sizes;
-		cmd = conf->Read(cmds + "cmd");
-		if (cmd.empty() && key.empty())
-			continue;
-		name = conf->Read(cmds + "name");
-		key = conf->Read(cmds + "key");
-		desc = conf->Read(cmds + "desc");
-		cmdId = g_commands->AddCommand(name,desc,cmd,0,key,0,CMDS_FLAG_ALMRUN_CMDS<<16);
-		if (cmdId < 0 || key.empty())
-			continue;
-		g_hotkey->RegisterHotkey(cmdId);
-	}
-	conf->SetPath("/directories");
-	sizes = conf->ReadLong("dirs.size",0);
-	defsub = conf->ReadLong("dirs.def.sub",0);
-	def_incl = conf->Read("dirs.def.include");
-	def_excl = conf->Read("dirs.def.exclude");
-	wxArrayString paths;
-	while(sizes)
-	{
-		wxArrayString files;
-		cmds = wxString::Format("dirs.%d.",sizes);
-		--sizes;
-		paths = wxSplit(conf->Read(cmds + "path"),'|');
-		if (paths.empty())
-			continue;
-		key = conf->Read(cmds + "include",def_incl);
-		cmdId = conf->ReadLong(cmds + "sub",defsub);
-		for(int i=paths.size()-1;i>=0;--i)
-			this->ListFiles(paths[i],&files,key,cmdId);
-		key = conf->Read(cmds + "exclude",def_excl);
-		g_commands->AddFiles(files,wxSplit(key,'|'));
-	}
-	conf->SetPath("/Config");
-}
-*/
-
-//新版的配置文件
+//新版的配置文件?
 void ALMRunConfig::ConfigCommand()
 {
 	wxString name;

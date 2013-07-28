@@ -3,7 +3,7 @@
 
 #include "wx/listctrl.h"
 #include "ALMRunConfig.h"
-
+#ifdef _ALMRUN_CONFIG_H_
 class cmdListCtrl : public wxListCtrl
 {
 public:
@@ -37,4 +37,5 @@ enum
 	CMDLIST_COL_KEY,
 	CMDLIST_COL_DESC
 };
+#endif
 #endif // __MY_LIST_CTRL_H__

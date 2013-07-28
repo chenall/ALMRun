@@ -65,6 +65,10 @@ private:
 #endif
 };
 
+#ifdef __WXMSW__
+	bool Wow64Revert(PVOID old);
+	bool Wow64Disable(PVOID *old);
+#endif
 extern MerryController* g_controller;
 
 #endif

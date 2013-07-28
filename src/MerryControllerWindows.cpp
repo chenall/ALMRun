@@ -315,10 +315,38 @@ bool MerryController::ShellExecute(const wxString& commandName,
 
 	LocationExec = false;//定位文件位置标志复位
 	cmdName = GetFullCmdName(cmdName,workingDir,true);
-	if (g_config->Explorer.empty())
-		return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),NULL, SW_SHOW) > 32;
-	return (int)::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,cmdName),SW_SHOW) > 32;
+#ifdef _ALMRUN_CONFIG_H_
+	if (!g_config->Explorer.empty())
+		return (int)::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,cmdName),SW_SHOW) > 32;
+#endif//ifdef _ALMRUN_CONFIG_H_
+	return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),NULL, SW_SHOW) > 32;
+	
 	//return (int)::ShellExecute(NULL,NULL,g_config->Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),NULL, SW_SHOW) > 32;
+}
+typedef    int        (__stdcall  *  Wow)(LPVOID); 
+bool wowcall(wxString func,LPVOID old)
+{
+	HINSTANCE  hlibrary; 
+	typedef    bool        (__stdcall  *  Wow)(LPVOID); 
+	bool ret = false;
+	hlibrary  =  LoadLibrary(L"Kernel32.dll"); 
+	Wow f_wow =(Wow)GetProcAddress(hlibrary,func.c_str());
+	if (f_wow)
+	{
+		ret = f_wow(old);
+	}
+	FreeLibrary(hlibrary);
+	return ret;
+
+}
+bool Wow64Disable(PVOID *old)
+{
+	return wowcall(_T("Wow64DisableWow64FsRedirection"),old);
+}
+
+bool Wow64Revert(PVOID old)
+{
+	return wowcall(_T("Wow64RevertWow64FsRedirection"),old);
 }
 
 #endif

@@ -27,8 +27,9 @@
 ////@begin includes
 ////@end includes
 
-#include "DlgConfig.h"
 #include "ALMRunConfig.h"
+#ifdef _ALMRUN_CONFIG_H_
+#include "DlgConfig.h"
 ////@begin XPM images
 ////@end XPM images
 
@@ -168,6 +169,7 @@ void DlgConfig::CreateControls()
     configStrings.Add("数字序列顺序 = 0, 1, ..., 8, 9");
     configStrings.Add("前辍匹配优先");
 	configStrings.Add("显示命令提示信息");
+	configStrings.Add("禁用WOW64文件系统重定向");
     config = new wxCheckListBox(itemStaticBoxSizer3->GetStaticBox(), ID_CHECKLISTBOX, wxDefaultPosition, wxDefaultSize, configStrings, 0 );
 	config_tip = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC,wxEmptyString, wxDefaultPosition, wxSize(-1,50), wxALIGN_LEFT|wxST_NO_AUTORESIZE|wxNO_BORDER);
 	config_tip->SetForegroundColour(wxColour(255, 0, 255));
@@ -224,3 +226,4 @@ wxIcon DlgConfig::GetIconResource( const wxString& name )
     return wxNullIcon;
 ////@end DlgConfig icon retrieval
 }
+#endif//ifdef _ALMRUN_CONFIG_H_

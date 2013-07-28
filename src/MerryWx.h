@@ -14,9 +14,10 @@
 		#include "vld.h"
 	#endif
 #endif
-#if _DEBUG_CLEAR
-#define __DEBUG_BEGIN(str)	wxMessageBox(__FUNCTION__##"__START\n"##str);
-#define __DEBUG_END(str)	wxMessageBox(__FUNCTION__##"__END\n"##str);
+#if _DEBUG_LOG
+#include <wx/log.h>
+#define __DEBUG_BEGIN(str)	wxLogMessage("%s START %s",__FUNCTION__,str);
+#define __DEBUG_END(str)	wxLogMessage("%s END %s",__FUNCTION__,str);
 #else
 	#define __DEBUG_BEGIN(str)
 	#define __DEBUG_END(str)

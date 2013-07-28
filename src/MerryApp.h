@@ -13,6 +13,9 @@ public:
 	void EvtActive(wxActivateEvent& e);
 private:
 	MerryFrame* m_frame;
+#if _DEBUG_LOG
+	FILE *m_pLogFile;
+#endif
 };
 
 DECLARE_APP(MerryApp)

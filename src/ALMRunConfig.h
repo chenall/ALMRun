@@ -18,6 +18,7 @@ enum config_item
 	IndexFrom0to9,
 	OrderByPre,
 	ShowTip,
+	DisableWow64FsRedirection,
 	CONFIG_MAX,
 };
 struct DirCfg
@@ -34,14 +35,8 @@ public:
 	ALMRunConfig();
 	int CompareMode;
 	bool config[CONFIG_MAX];
-	/*
-	bool NumberKey;
-	bool ShowTrayIcon;
-	bool ShowTopTen;
-	bool ExecuteIfOnlyOne;
-	bool IndexFrom0to9;
-	bool OrderByPre;
-	*/
+	static const char *config_str[];
+	static const char *config_tip[];
 	wxString Explorer;
 	wxString Root;
 	wxString Home;
@@ -67,7 +62,7 @@ public:
 	void ConfigCommand();
 	void OldToNew();
 	void GuiConfig();
-	wxString config_tip[CONFIG_MAX];
+
 	wxFileConfig *conf;
 private:
 	int lastId;

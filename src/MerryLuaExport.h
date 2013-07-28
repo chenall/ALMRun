@@ -106,11 +106,27 @@ static int LuaDisableCommandKey(lua_State* L)
 
 static int LuaShellExecute(lua_State* L)
 {
+#ifdef __WXMSW__
+	static bool chkwow = (
+	#ifdef _ALMRUN_CONFIG_H_
+		g_config->config[DisableWow64FsRedirection] && 
+	#endif//ifdef _ALMRUN_CONFIG_H_
+		wxIsPlatform64Bit() && wxGetWinVersion() >= wxWinVersion_6);
+	PVOID wowOld = NULL;
+#endif
 	wxString commandName(wxString(lua_tostring(L, 1), wxConvLocal));
 	wxString commandArg(wxString(lua_tostring(L, 2), wxConvLocal));
 	wxString workingDir(wxString(lua_tostring(L, 3), wxConvLocal));
 	wxString show(wxString(lua_tostring(L, 4), wxConvLocal));
+#ifdef __WXMSW__
+	if (chkwow)
+		Wow64Disable(&wowOld);
+#endif
 	lua_pushboolean(L, g_controller->ShellExecute(commandName, commandArg, workingDir, show));
+#ifdef __WXMSW__
+	if (chkwow)
+		Wow64Revert(wowOld);
+#endif
 	return 1;
 }
 
@@ -379,7 +395,9 @@ static int LuaDir(lua_State* L)
 			break;
 	}
 	wxArrayString files;
+#ifdef _ALMRUN_CONFIG_H_
 	g_config->ListFiles(ls_path,&files,filespec,wxEmptyString,sub);
+#endif//ifdef _ALMRUN_CONFIG_H_
 	lua_newtable(L);
 	int i = files.Count();
 	for(int j = 0;j<i;++j)
@@ -466,6 +484,7 @@ static int LuaGetClipboardData(lua_State* L)
 
 static int LuaConfig(lua_State* L)
 {
+#ifdef _ALMRUN_CONFIG_H_
 	int nIndex = lua_gettop(L);
 	lua_pushnil(L);
 	while( 0 != lua_next(L, nIndex ) )
@@ -479,12 +498,15 @@ static int LuaConfig(lua_State* L)
 			g_config->set(lua_tostring(L,-2),wxString(lua_tostring(L, -1), wxConvLocal));
 		lua_pop(L, 1 );  // µ¯³ö value£¬ÈÃ key ÁôÔÚÕ»¶¥
 	}
+#endif//ifdef _ALMRUN_CONFIG_H_
 	return 0;
 }
 
 static int LuaTestConfig(lua_State* L)
 {
+#ifdef _ALMRUN_CONFIG_H_
 	g_config->GuiConfig();
+#endif//ifdef _ALMRUN_CONFIG_H_
 	return 0;
 }
 

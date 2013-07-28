@@ -216,13 +216,16 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 	else if (keyCode != WXK_TAB)
 	{
 		MerryCommandArray commands = g_commands->Collect(name);
+#ifdef _ALMRUN_CONFIG_H_
 		//Êý×ÖÈÈ¼üÆôÓÃ
+
 		if (g_config->config[NumberKey] && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
 		{
 			if (keyCode != ' ' && !listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
 				return;
 			return this->ExecuteCmd();
 		}
+#endif//#ifdef _ALMRUN_CONFIG_H_
 		listBoxPanel->SetCommandArray(commands);
 		if (commands.size() == 0)
 		{
@@ -230,8 +233,10 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 			return;
 		}
 		listBoxPanel->Popup();
+#ifdef _ALMRUN_CONFIG_H_
 		if (g_config->config[ExecuteIfOnlyOne] && commands.size() == 1)
 			return this->ExecuteCmd();
+#endif//#ifdef _ALMRUN_CONFIG_H_
 	}
 	// Auto completion
 	/*

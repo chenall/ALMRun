@@ -5,15 +5,11 @@ MerryTimerManager* g_timers = NULL;
 
 MerryTimerManager::~MerryTimerManager()
 {
-#if (_DESTORY_DEBUG)
-	wxMessageBox(__FUNCTION__ "_START");
-#endif
+	__DEBUG_BEGIN("")
 	std::set<MerryTimer*>::iterator it = m_timers.begin();
 	for (; it != m_timers.end(); ++it)
 		delete *it;
-#if (_DESTORY_DEBUG)
-	wxMessageBox(__FUNCTION__ "_END");
-#endif
+	__DEBUG_END("")
 }
 
 void* MerryTimerManager::SetTimer(int millisecond, bool oneShot, int funcRef)

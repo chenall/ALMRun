@@ -1,4 +1,5 @@
 #include "cmdListCtrl.h"
+#ifdef _ALMRUN_CONFIG_H_
 #include "MerryCommandManager.h"
 #include "cmdmgr.h"
 #include "DlgAddNewCmd.h"
@@ -194,3 +195,4 @@ void cmdListCtrl::OnSelected(wxListEvent& e)
 	wxMessageBox(wxString::Format("%d,%d,%s",e.GetId(),e.GetIndex(),e.GetText()));
 	e.Skip();
 }
+#endif

@@ -50,9 +50,11 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 		case MENU_ITEM_EXIT:
 			wxExit();
 			break;
+	#ifdef _ALMRUN_CONFIG_H_
 		case MENU_ITEM_GUI_CONFIG:
 			g_config->GuiConfig();
 			break;
+	#endif//#ifdef _ALMRUN_CONFIG_H_
 	#ifdef _CMDMGR_H_
 		case MENU_ITEM_CMDMGR:
 			cmdMgr *dlg = new cmdMgr(0);

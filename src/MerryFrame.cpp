@@ -51,6 +51,7 @@ MerryFrame::~MerryFrame()
 
 void MerryFrame::NewConfig()
 {
+	__DEBUG_BEGIN("::Ë¢ÐÂÅäÖÃ");
 	bool show = m_listBoxPanel->IsShown();
 	m_listBoxPanel->Dismiss();
 	if (g_lua)
@@ -74,13 +75,13 @@ void MerryFrame::NewConfig()
 		delete g_commands;
 		g_commands = new MerryCommandManager();
 	}
-
+#ifdef _ALMRUN_CONFIG_H_
 	if (g_config)
 	{
 		delete g_config;
 		g_config = new ALMRunConfig();
 	}
-
+#endif//#ifdef _ALMRUN_CONFIG_H_
 	if (lua_bak)
 		delete lua_bak;
 
@@ -89,8 +90,11 @@ void MerryFrame::NewConfig()
 	g_lua = new MerryLua();
 	if (show)
 		m_mainPanel->GetTextCtrl()->AppendText("");
+#ifdef _ALMRUN_CONFIG_H_
 	if (!g_config->config[ShowTip])
 		m_listBoxPanel->SetToolTip(NULL);
+#endif//#ifdef _ALMRUN_CONFIG_H_
+	__DEBUG_END("::Ë¢ÐÂÅäÖÃ");
 }
 
 void MerryFrame::OnInit()
@@ -106,10 +110,10 @@ void MerryFrame::OnInit()
 
 	assert(!g_commands);
 	g_commands = new MerryCommandManager();
-
+#ifdef _ALMRUN_CONFIG_H_
 	assert(!g_config);
 	g_config = new ALMRunConfig();
-
+#endif//#ifdef _ALMRUN_CONFIG_H_
 	assert(!g_lua);
 	g_lua = new MerryLua();
 }
@@ -117,11 +121,18 @@ void MerryFrame::OnInit()
 void MerryFrame::OpenConfigDir()
 {
 #ifdef __WXMSW__
+#ifdef _ALMRUN_CONFIG_H_
 	if (!g_config)
 		return;
 	wxString pathTmp = g_config->Home;
 	pathTmp.Append("config");
-	::ShellExecute(NULL,_T("explore"),pathTmp.c_str(),NULL, NULL,true);
+	if (g_config->Explorer.empty())
+		ShellExecute(NULL,_T("explore"),pathTmp.c_str(),NULL, NULL,SW_SHOW);
+	else
+		WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,pathTmp),SW_SHOW);
+#else//#ifdef _ALMRUN_CONFIG_H_
+	::ShellExecute(NULL,_T("explore"),wxGetenv("ALMRUN_HOME"),NULL, NULL,true);
+#endif//#ifdef _ALMRUN_CONFIG_H_
 #endif
 }
 
@@ -142,6 +153,7 @@ void MerryFrame::ShowTrayIcon(const bool show)
 
 void MerryFrame::OnClose()
 {
+	__DEBUG_BEGIN("")
 	this->Hide();
 	if (lua_bak)
 	{
@@ -161,13 +173,13 @@ void MerryFrame::OnClose()
 		delete g_commands;
 		g_commands = NULL;
 	}
-
+#ifdef _ALMRUN_CONFIG_H_
 	if (g_config)
 	{
 		delete g_config;
 		g_config = NULL;
 	}
-
+#endif//#ifdef _ALMRUN_CONFIG_H_
 	if (g_hotkey)
 	{
 //		g_hotkey->OnDelete();
@@ -186,6 +198,7 @@ void MerryFrame::OnClose()
 		delete g_controller;
 		g_controller = NULL;
 	}
+	__DEBUG_END("")
 }
 
 MerryListBoxPanel* MerryFrame::GetListBoxPanel()
@@ -193,11 +206,11 @@ MerryListBoxPanel* MerryFrame::GetListBoxPanel()
 	return m_listBoxPanel;
 }
 
-void MerryFrame::OnCloseEvent(wxCloseEvent& e)
-{
-	this->OnClose();
-	e.Skip();
-}
+//void MerryFrame::OnCloseEvent(wxCloseEvent& e)
+//{
+//	this->OnClose();
+//	e.Skip();
+//}
 /*
 void MerryFrame::OnActivateEvent(wxActivateEvent& e)
 {

@@ -99,6 +99,7 @@ int MerryListBoxPanel::SetSelection(int index,int top)
 {
 	if (index == -1 && top >= 0)
 	{
+	#ifdef _ALMRUN_CONFIG_H_
 		if (!g_config->config[IndexFrom0to9])
 		{
 			if (top == 0)
@@ -106,7 +107,7 @@ int MerryListBoxPanel::SetSelection(int index,int top)
 			else
 				--top;
 		}
-
+	#endif//#ifdef _ALMRUN_CONFIG_H_
 		index = m_topCommandIndex + top;
 	}
 	else if (index < 0 )
@@ -133,7 +134,9 @@ bool MerryListBoxPanel::DelSelectedItem()
 	int flags = cmd->GetFlags();
 	if ((flags & CMDS_FLAG_ALMRUN_CMDS) && (wxMessageBox(wxString::Format("É¾³ý ID:[%d] %s\nÃüÁî:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCommandLine()),"ÌáÊ¾",wxYES_NO|wxICON_WARNING) == wxYES))
 	{
+	#ifdef _ALMRUN_CONFIG_H_
 		if (g_config->DeleteCmd(flags>>4))
+	#endif//#ifdef _ALMRUN_CONFIG_H_
 			return g_commands->DelCommand(cmd->GetCommandID());
 	}
 	else
@@ -297,19 +300,23 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		assert(command);
 		if (m_selectionCommandIndex - m_topCommandIndex == i)
 		{
+		#ifdef _ALMRUN_CONFIG_H_
 			if (g_config->config[ShowTip])
 			{
 				if (command->GetCommandDesc().empty())
 					this->SetToolTip(command->GetCommandLine());
 				else
 					this->SetToolTip(command->GetCommandDesc());
-			} 
+			}
+		#endif//#ifdef _ALMRUN_CONFIG_H_
 			dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
 		}
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);
 		dc.DrawLabel(command->GetCommandName(), item.mainRect, wxALIGN_LEFT,command->m_compare);
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_SUB_FONT_COLOR);
+		#ifdef _ALMRUN_CONFIG_H_
 		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),(g_config->config[IndexFrom0to9]) ?i:(i==9?0:i+1) ), item.LeftRect, wxALIGN_RIGHT);
+		#endif//#ifdef _ALMRUN_CONFIG_H_
 	}
 	const MerryCommand* command = m_commands[m_selectionCommandIndex];
 	const ListBoxItem& item = m_items[ITEM_NUM];

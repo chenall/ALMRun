@@ -27,10 +27,10 @@
 ////@begin includes
 ////@end includes
 
+#include "ALMRunConfig.h"
 #include "DlgAddNewCmd.h"
 #include "DlgAddNewDir.h"
-#include "ALMRunConfig.h"
-
+#ifdef _ALMRUN_CONFIG_H_
 
 ////@begin XPM images
 ////@end XPM images
@@ -360,3 +360,4 @@ wxIcon DlgAddNewCmd::GetIconResource( const wxString& name )
     return wxNullIcon;
 ////@end DlgAddNewCmd icon retrieval
 }
+#endif
