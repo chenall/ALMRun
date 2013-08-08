@@ -4,6 +4,49 @@
 #include "cmdmgr.h"
 #include "DlgAddNewCmd.h"
 
+#ifndef _DISABLE_DND_
+	#include <wx/dnd.h>
+	class DnDialogFile : public wxFileDropTarget
+	{
+	public:
+		DnDialogFile(cmdListCtrl *pOwner) { m_pOwner = pOwner; }
+ 
+		virtual bool OnDropFiles(wxCoord x, wxCoord y,
+								 const wxArrayString& filenames);
+	private:
+		//对话框类，成员TextCtrlPath保存文件路径
+		cmdListCtrl *m_pOwner;
+ 
+	};
+	bool DnDialogFile::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
+	{
+		//只有一个文件时弹出添加命令窗口
+		if (filenames.Count() == 1)
+		{
+			wxString cmd = filenames[0];
+			cmd.Replace('\\','/');
+			DlgAddNewCmd* dlg=new DlgAddNewCmd(NULL);
+			dlg->cmdLine->SetValue(cmd);
+			dlg->cmdName->SetValue(wxFileNameFromPath(cmd));
+			cmd.Clear();
+			if (dlg->ShowModal() == wxID_OK)
+				m_pOwner->ReLoadCmds();
+			dlg->Destroy();
+			return true;
+		}
+		//多个文件时自动批量添加;
+		for(int i = filenames.Count() - 1 ;i>=0;--i)
+		{
+			wxString cmd = filenames[i];
+			cmd.Replace("\\","/");
+			g_config->AddCmd(cmd,wxFileNameFromPath(cmd));
+			m_pOwner->ReLoadCmds();
+		}
+		return true;
+		//多个文件时自动批量添加;
+	}
+#endif
+
 BEGIN_EVENT_TABLE(cmdListCtrl, wxListCtrl)
 	EVT_MENU(MENU_CMD_DEL,cmdListCtrl::onPopMenu)
 	EVT_MENU(MENU_CMD_EDIT,cmdListCtrl::onPopMenu)
@@ -20,6 +63,9 @@ wxListCtrl(parent,id,pos,size,style)
 //	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
 //	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
 	this->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,wxObjectEventFunction(&cmdListCtrl::onRightClick));
+#ifndef _DISABLE_DND_
+	this->SetDropTarget(new DnDialogFile(this));
+#endif
 //	this->Connect(wxEVT_COMMAND_LIST_DELETE_ITEM,wxObjectEventFunction(&cmdListCtrl::onDelete));
 }
 
@@ -53,6 +99,9 @@ cmdListCtrl::~cmdListCtrl()
 {
 	__DEBUG_BEGIN("")
 	this->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED);
+#ifndef _DISABLE_DND_
+	this->SetDropTarget(NULL);
+#endif
 	__DEBUG_END("")
 }
 
