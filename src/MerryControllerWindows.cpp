@@ -302,18 +302,23 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	}
 	if (!LocationExec)
 	{
-		if ((int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32)
+		__DEBUG_BEGIN(cmdName.c_str());
+		int ret = (int)::ShellExecute(NULL,(runas?_T("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand);
+		if (ret > 32)
 			return true;
-		wxString tmpName = GetFullCmdName(cmdName,workingDir,false);
-		if (tmpName.empty())
-		{
-			::wxMessageBox(wxString::Format(wxT("无法运行 '%s'。请确定文件名是否正确后，再试一次。"),cmdName),cmdName,wxOK | wxICON_ERROR);
-			return false;
-		}
-		return (int)::ShellExecute(NULL,(runas?wxT("RunAs"):NULL), tmpName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32;
+		__DEBUG_BEGIN(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg));
+		return (int)::WinExec(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg),SW_HIDE) > 32;
+		//wxString tmpName = GetFullCmdName(cmdName,workingDir,false);
+		//if (tmpName.empty())
+		//{
+		//	::wxMessageBox(wxString::Format(wxT("无法运行 '%s'。请确定文件名是否正确后，再试一次。"),cmdName),cmdName,wxOK | wxICON_ERROR);
+		//	return false;
+		//}
+		//return (int)::ShellExecute(NULL,(runas?_T("RunAs"):NULL), tmpName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand)>32;
 	}
 
 	LocationExec = false;//定位文件位置标志复位
+	cmdName.Replace('/','\\');
 	cmdName = GetFullCmdName(cmdName,workingDir,true);
 #ifdef _ALMRUN_CONFIG_H_
 	if (!g_config->Explorer.empty())
