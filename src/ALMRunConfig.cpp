@@ -4,8 +4,9 @@
 #include "MerryApp.h"
 #include "DlgConfig.h"
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection"};
+const char *ALMRunConfig::config_str[] = {"StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection"};
 const char *ALMRunConfig::config_tip[] = {
+	"保持程序窗口置顶,默认禁用.",
 	"选中时敲0-9键执行对应编号的快捷项",
 	"选中时在系统托盘显示图标",
 	"选中时仅显示前10项快捷项",
@@ -32,6 +33,7 @@ ALMRunConfig::ALMRunConfig()
 		config[ExecuteIfOnlyOne] = false;
 		config[IndexFrom0to9] = false;
 		config[OrderByPre] = false;
+		config[StayOnTop] = false;
 		conf = NULL;
 		cfg_time = 0;
 		return;
@@ -46,6 +48,7 @@ ALMRunConfig::ALMRunConfig()
 	config[ExecuteIfOnlyOne] = conf->ReadBool(config_str[ExecuteIfOnlyOne],false);
 	config[IndexFrom0to9] = conf->ReadBool(config_str[IndexFrom0to9],true);
 	config[ShowTip] = conf->ReadBool(config_str[ShowTip],true);
+
 	config[DisableWow64FsRedirection] = conf->ReadBool(config_str[DisableWow64FsRedirection],true);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	HotKey = conf->Read("HotKey","A-R");
@@ -53,6 +56,7 @@ ALMRunConfig::ALMRunConfig()
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
 	this->set("ShowTrayIcon",conf->ReadBool(config_str[ShowTrayIcon],true));
+	this->set("StayOnTop",conf->ReadBool("StayOnTop",false));
 	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0)))
 	{
 		this->set("ShowTrayIcon",true);
@@ -101,6 +105,16 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 		config[ShowTopTen] = value != 0;
 	else if (name.Cmp("ExecuteIfOnlyOne") == 0)
 		config[ExecuteIfOnlyOne] = value != 0;
+	else if (name.Cmp("StayOnTop") == 0)
+	{
+		config[StayOnTop] = value != 0;
+		MerryFrame& frm = wxGetApp().GetFrame();
+		long style = frm.GetWindowStyle();
+		if (config[StayOnTop])
+			frm.SetWindowStyle(style|wxSTAY_ON_TOP);
+		else if (style & wxSTAY_ON_TOP)
+			frm.SetWindowStyle(style^wxSTAY_ON_TOP);
+	}
 	else
 		return false;
 	return true;

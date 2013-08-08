@@ -11,6 +11,7 @@
 
 enum config_item
 {
+	StayOnTop,
 	NumberKey,
 	ShowTrayIcon,
 	ShowTopTen,

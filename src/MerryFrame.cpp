@@ -19,7 +19,7 @@ BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
-	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE | wxSTAY_ON_TOP
+	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE// | wxSTAY_ON_TOP
 #ifdef __WXOSX__
 		| wxSTAY_ON_TOP
 #endif

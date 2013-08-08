@@ -162,6 +162,7 @@ void DlgConfig::CreateControls()
     wxStaticBoxSizer* itemStaticBoxSizer3 = new wxStaticBoxSizer(itemStaticBoxSizer3Static, wxVERTICAL);
     itemBoxSizer2->Add(itemStaticBoxSizer3, 0, wxGROW|wxALL, 5);
     wxArrayString configStrings;
+	configStrings.Add("保持窗口置顶");
     configStrings.Add("允许数字快捷键");
     configStrings.Add("显示托盘图标");
     configStrings.Add("仅显示前10项");
