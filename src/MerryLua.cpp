@@ -34,7 +34,7 @@ MerryLua::MerryLua()
 	lua_register(L, "setMousePosition",                   LuaSetMousePosition);
 	lua_register(L, "GetClipboardData",					  LuaGetClipboardData);
 	lua_register(L, "SetClipboardData",					  LuaSetClipboardData);
-#ifdef __WXMSW__
+
 	lua_register(L, "GetForegroundWindow",                LuaGetForegroundWindow);
 	lua_register(L, "SetForegroundWindow",                LuaSetForegroundWindow);
 	lua_register(L, "ShowWindow",                         LuaShowWindow);
@@ -51,9 +51,11 @@ MerryLua::MerryLua()
 	lua_register(L, "FindWindow",                         LuaFindWindow);
 	lua_register(L, "GetMousePosition",                   LuaGetMousePosition);
 	lua_register(L, "SetMousePosition",                   LuaSetMousePosition);
+#ifdef __WXMSW__
 	lua_register(L, "GetShellFolder",					  LuaSHSpecialFolders);
 	lua_register(L, "EmptyRecycleBin",					  LuaEmptyRecycleBin);
 	lua_register(L, "SHEmptyRecycleBin",				  LuaSHEmptyRecycleBin);
+	lua_register(L, "SetWindowPos",						  LuaSetWindowPos);
 #endif
 	lua_register(L, "message",                            LuaMessage);
 	lua_register(L, "enterKey",                           LuaEnterKey);

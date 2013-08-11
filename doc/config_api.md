@@ -29,6 +29,7 @@
 		* [FindWindow]
 		* [GetMousePosition]
 		* [SetMousePosition]
+		* [SetWindowPos]
 	+ 操作系统相关
 		* [GetEnv] 读取环境变量 
 		* [SetEnv] 设置环境变量 
@@ -427,7 +428,26 @@ shellExecute(commandName, commandArg, workingDir, show)
 	其它说明:
 	若有特殊需要还可以使用SHEmptyRecycleBin,具体请参考Windows API的介绍.
 	EmptyRecycleBin()相当于SHEmptyRecycleBin(nil,nil,nil)
+[SetWindowPos]: #36-setwindowpos "BOOL SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int x, int y,int cx, int cy, UINT nFlags)"
+### 36. SetWindowPos
+    SetWindowPos(HWND hWnd, HWND hWndInsertAfter, int x, int y,int cx, int cy, UINT nFlags)
+    
+	该函数改变一个子窗口，弹出式窗口或顶层窗口的尺寸，位置和Z序。****
+	子窗口，弹出式窗口，及顶层窗口根据它们在屏幕上出现的顺序排序、顶层窗口设置的级别最高，并且被设置为Z序的第一个窗口。
 
+	说明: 这个调用WINDOWS API SetWindowPos,但修改了一下,除了第一个参数之个,其它的都是可选的(使用默认值).
+		hWndInsertAfter  窗口排序
+		x,y 窗口位置.
+		cx,cy 窗口大小.
+	例子:
+	   1.SetWindowpos(GetForegroundWindow(),-1) 当前窗口置顶
+	   2.SetWindowpos(GetForegroundWindow(),0,100,200) 把当前窗口移到屏幕100,200处
+
+>参考资料:  
+	1. <http://baike.baidu.com/view/1080349.htm>   
+	2. <http://msdn.microsoft.com/en-us/library/windows/desktop/ms633545(v=vs.85).aspx> 
+    
+    
 ALMRunEvent
 ===============
 事件发生时，ALMRun 会去调用定义的事件处理函数。例如：ALMRun 关闭（或重新载入配置时）时会调用一个名为 onClose 的函数。addEventHandler 用于为某个事件添加事件处理函数。

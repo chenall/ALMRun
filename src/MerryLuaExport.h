@@ -434,6 +434,40 @@ static int LuaEmptyRecycleBin(lua_State* L)
 	return 1;
 }
 
+static int LuaSetWindowPos(lua_State* L)
+{
+	UINT uFlags = SWP_NOSIZE | SWP_NOMOVE;// | SWP_NOZORDER;
+	int x = 0,y = 0,cx = 0,cy = 0;
+	HWND hWnd,hWndInsertAfter = (HWND)0;
+	int top = lua_gettop(L);
+	switch(top)
+	{
+		case 7:
+			uFlags = lua_tointeger(L,7);
+		case 6:
+			cy = lua_tointeger(L,6);
+		case 5:
+			cx = lua_tointeger(L,5);
+			if (top < 7)
+				uFlags ^= SWP_NOSIZE;
+		case 4:
+			y = lua_tointeger(L,4);
+		case 3:
+			x = lua_tointeger(L,3);
+			if (top < 7)
+				uFlags ^= SWP_NOMOVE;
+		case 2:
+			hWndInsertAfter = (HWND)lua_touserdata(L,2);
+			hWnd = (HWND)lua_touserdata(L,1);
+			break;
+		default:
+			lua_pushboolean(L,false);
+			return 1;
+	}
+	lua_pushboolean(L,SetWindowPos(hWnd,hWndInsertAfter,x,y,cx,cy,uFlags));
+	return 1;
+}
+
 #endif
 
 static int LuaSetEnv(lua_State* L)
