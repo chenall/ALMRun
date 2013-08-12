@@ -410,6 +410,11 @@ static int LuaDir(lua_State* L)
 	return 1;
 }
 #ifdef __WXMSW__
+static HWND lua_tohwnd(lua_State* L,int index)
+{
+	return lua_isnumber(L, index)?(HWND)lua_tointeger(L,index):(HWND)lua_touserdata(L,index);
+}
+
 static int LuaSHSpecialFolders(lua_State* L)
 {
 	lua_pushstring(L,wxStandardPaths::MSWGetShellDir(lua_tointeger(L,-1)));
@@ -420,7 +425,7 @@ static int LuaSHEmptyRecycleBin(lua_State* L)
 {
 	DWORD Flags = lua_tointeger(L,3);
 	wxString RootPath = wxString(lua_tostring(L,2),wxConvLocal);
-	HWND hwnd = (HWND)lua_touserdata(L,1);
+	HWND hwnd = lua_tohwnd(L,1);
 	lua_pushinteger(L,SHEmptyRecycleBin(hwnd,RootPath.c_str(),Flags));
 	return 1;
 }
@@ -457,8 +462,8 @@ static int LuaSetWindowPos(lua_State* L)
 			if (top < 7)
 				uFlags ^= SWP_NOMOVE;
 		case 2:
-			hWndInsertAfter = (HWND)lua_touserdata(L,2);
-			hWnd = (HWND)lua_touserdata(L,1);
+			hWndInsertAfter = lua_tohwnd(L,2);
+			hWnd = lua_tohwnd(L,1);
 			break;
 		default:
 			lua_pushboolean(L,false);
