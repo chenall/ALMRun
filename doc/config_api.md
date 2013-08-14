@@ -27,6 +27,7 @@
 		* [GetWindowPosition]
 		* [SetWindowPosition]
 		* [FindWindow]
+		* [FindWindowEx]
 		* [GetMousePosition]
 		* [SetMousePosition]
 		* [SetWindowPos]
@@ -202,11 +203,35 @@ shellExecute(commandName, commandArg, workingDir, show)
 
 [FindWindow]: #15-findwindow "FindWindow(name, parentWindow)"
 ### 15. FindWindow
+
 	FindWindow(name, parentWindow)
 
 	通过窗口名称查找窗口
 	参数 parentWindow 为可选参数，用于表示被查找窗口的父窗口
+	注:
+	新版本的FindWindow使用了和Windows API一样的语法,即
+	FindWindow(className,windowName)
+	当然了为了保持兼容性,使用旧的方法也同样支持,程序内部自动会判断.
 
+>参考资料:  
+	1. <http://baike.baidu.com/view/373605.htm>   
+	2. <http://msdn.microsoft.com/en-us/library/windows/desktop/ms633499(v=vs.85).aspx> 
+
+[FindWindowEx]: findwindowex "FindWindowEx(parent,child,classname,windowname)"
+#### FindWindowEx
+
+    FindWindowEx(HWND hwndParent, // handle to parent window
+		    HWND hwndChildAfter, // handle to child window
+		    LPCTSTR lpszClass, // class name
+		    LPCTSTR lpszWindow // window name
+		)
+
+    在窗口列表中寻找与指定条件相符的第一个子窗口。
+    该函数获得一个窗口的句柄，该窗口的类名和窗口名与给定的字符串相匹配。这个函数查找子窗口，从排在给定的子窗口后面的下一个子窗口开始。在查找时不区分大小写。
+
+>参考资料:  
+	1. <http://baike.baidu.com/view/1080313.htm>   
+	2. <http://msdn.microsoft.com/en-us/library/windows/desktop/ms633500(v=vs.85).aspx> 
 
 [GetMousePosition]: #16-getmouseposition "GetMousePosition()"
 ### 16. GetMousePosition

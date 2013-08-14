@@ -28,7 +28,9 @@ public:
 	void SetWindowSize(void* window, int width, int height) const;
 	void GetWindowPosition(void* window, int& x, int& y) const;
 	void SetWindowPosition(void* window, int x, int y) const;
-	void* FindWindow(const wxString& name, void* parentWindow) const;
+	void* FindWindow(const wxString& ClassName,const wxString& WindowName) const;
+	void* FindWindowEx(void* Parent,void *Child,const wxString& ClassName,const wxString&  WindowName) const;
+	BOOL SetWindowPos(void *hWnd,void *hWndInsertAfter,int X,int Y,int cx,int cy,UINT uFlags) const;
 	wxString GetClipboardData(void) const;
 	void SetClipboardData(const wxString& text) const;
 	void GetMousePosition(int& x, int& y) const;

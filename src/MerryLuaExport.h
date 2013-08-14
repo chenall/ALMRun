@@ -8,6 +8,12 @@
 #include "MerryMacHelper.h"
 #include "ALMRunConfig.h"
 #include "dlgconfig.h"
+
+static void* lua_tohwnd(lua_State* L,int index)
+{
+	return lua_isnumber(L, index)?(void*)lua_tointeger(L,index):lua_touserdata(L,index);
+}
+
 static int LuaAddCommand(lua_State* L)
 {
 	if (!lua_istable(L, 1))
@@ -132,7 +138,7 @@ static int LuaShellExecute(lua_State* L)
 
 static void* GetWindow(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
+	void* window = lua_tohwnd(L, 1);
 	if (!window)
 		window = g_controller->GetForegroundWindow();
 	return window;
@@ -150,7 +156,7 @@ static int LuaGetForegroundWindow(lua_State* L)
 
 static int LuaSetForegroundWindow(lua_State* L)
 {
-	g_controller->SetForegroundWindow(lua_touserdata(L, 1));
+	g_controller->SetForegroundWindow(lua_tohwnd(L, 1));
 	return 0;
 }
 
@@ -168,7 +174,7 @@ static int LuaToggleMerry(lua_State* L)
 
 static int LuaShowWindow(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
+	void* window = lua_tohwnd(L, 1);
 	wxString show(wxString(lua_tostring(L, 2), wxConvLocal));
 	g_controller->ShowWindow(window, show);
 	return 0;
@@ -182,21 +188,21 @@ static int LuaCloseWindow(lua_State* L)
 
 static int LuaIsWindowMax(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
+	void* window = lua_tohwnd(L, 1);
 	lua_pushboolean(L, g_controller->IsWindowMax(window));
 	return 1;
 }
 
 static int LuaIsWindowMin(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
+	void* window = lua_tohwnd(L, 1);
 	lua_pushboolean(L, g_controller->IsWindowMin(window));
 	return 1;
 }
 
 static int LuaIsWindowShown(lua_State* L)
 {
-	void* window = lua_touserdata(L, 1);
+	void* window = lua_tohwnd(L, 1);
 	lua_pushboolean(L, g_controller->IsWindowShown(window));
 	return 1;
 }
@@ -250,13 +256,78 @@ static int LuaSetWindowPosition(lua_State* L)
 	return 0;
 }
 
+static int LuaSetWindowPos(lua_State* L)
+{
+	UINT uFlags = SWP_NOSIZE | SWP_NOMOVE;// | SWP_NOZORDER;
+	int x = 0,y = 0,cx = 0,cy = 0;
+	void *hWnd,*hWndInsertAfter = (void*)0;
+	int top = lua_gettop(L);
+	switch(top)
+	{
+		case 7:
+			uFlags = lua_tointeger(L,7);
+		case 6:
+			cy = lua_tointeger(L,6);
+		case 5:
+			cx = lua_tointeger(L,5);
+			if (top < 7)
+				uFlags ^= SWP_NOSIZE;
+		case 4:
+			y = lua_tointeger(L,4);
+		case 3:
+			x = lua_tointeger(L,3);
+			if (top < 7)
+				uFlags ^= SWP_NOMOVE;
+		case 2:
+			hWndInsertAfter = lua_tohwnd(L,2);
+			hWnd = lua_tohwnd(L,1);
+			break;
+		default:
+			lua_pushboolean(L,false);
+			return 1;
+	}
+	lua_pushinteger(L,g_controller->SetWindowPos(hWnd,hWndInsertAfter,x,y,cx,cy,uFlags));
+	return 1;
+}
+
 static int LuaFindWindow(lua_State* L)
 {
-	wxString windowName(wxString(lua_tostring(L, 1), wxConvLocal));
-	void* parentWindow = lua_touserdata(L, 2);
-	void* window = g_controller->FindWindow(windowName, parentWindow);
+	wxString className,windowName;
+	void *parentWindow = NULL,*window = NULL;
+	if (lua_type(L,2) == LUA_TSTRING)
+	{//新的参数和WINDOWS API保持一致
+	//	FindWindow(className,WindowName);
+		className = wxString(lua_tostring(L,1),wxConvLocal);
+		windowName = wxString(lua_tostring(L,2),wxConvLocal);
+	}
+	else
+	{
+		//兼容旧版本的FindWindow(name,parentWindow);
+		windowName = wxString(lua_tostring(L,1),wxConvLocal);
+		parentWindow = lua_tohwnd(L,2);
+	}
+	window = g_controller->FindWindowEx(parentWindow,NULL,className,windowName);
 	if (window)
-		lua_pushlightuserdata(L, g_controller->FindWindow(windowName, parentWindow));
+		lua_pushlightuserdata(L,window);
+	else
+		lua_pushnil(L);
+	return 1;
+}
+
+static int LuaFindWindowEx(lua_State* L)
+{
+	int top = lua_gettop(L);
+	void *window = NULL;
+	if (top == 4)
+	{
+		void *Parent = lua_tohwnd(L,1);
+		void *Child = lua_tohwnd(L,2);
+		wxString ClassName(wxString(lua_tostring(L, 1), wxConvLocal));
+		wxString WindowName(wxString(lua_tostring(L, 1), wxConvLocal));
+		window = g_controller->FindWindowEx(Parent,Child,ClassName,WindowName);
+	}
+	if (window)
+		lua_pushlightuserdata(L,window);
 	else
 		lua_pushnil(L);
 	return 1;
@@ -410,10 +481,6 @@ static int LuaDir(lua_State* L)
 	return 1;
 }
 #ifdef __WXMSW__
-static HWND lua_tohwnd(lua_State* L,int index)
-{
-	return lua_isnumber(L, index)?(HWND)lua_tointeger(L,index):(HWND)lua_touserdata(L,index);
-}
 
 static int LuaSHSpecialFolders(lua_State* L)
 {
@@ -425,7 +492,7 @@ static int LuaSHEmptyRecycleBin(lua_State* L)
 {
 	DWORD Flags = lua_tointeger(L,3);
 	wxString RootPath = wxString(lua_tostring(L,2),wxConvLocal);
-	HWND hwnd = lua_tohwnd(L,1);
+	HWND hwnd = (HWND)lua_tohwnd(L,1);
 	lua_pushinteger(L,SHEmptyRecycleBin(hwnd,RootPath.c_str(),Flags));
 	return 1;
 }
@@ -436,40 +503,6 @@ static int LuaEmptyRecycleBin(lua_State* L)
 	if (lua_tointeger(L,-1) == 1)
 		Flags = SHERB_NOCONFIRMATION;
 	lua_pushinteger(L,SHEmptyRecycleBin(NULL,NULL,Flags));
-	return 1;
-}
-
-static int LuaSetWindowPos(lua_State* L)
-{
-	UINT uFlags = SWP_NOSIZE | SWP_NOMOVE;// | SWP_NOZORDER;
-	int x = 0,y = 0,cx = 0,cy = 0;
-	HWND hWnd,hWndInsertAfter = (HWND)0;
-	int top = lua_gettop(L);
-	switch(top)
-	{
-		case 7:
-			uFlags = lua_tointeger(L,7);
-		case 6:
-			cy = lua_tointeger(L,6);
-		case 5:
-			cx = lua_tointeger(L,5);
-			if (top < 7)
-				uFlags ^= SWP_NOSIZE;
-		case 4:
-			y = lua_tointeger(L,4);
-		case 3:
-			x = lua_tointeger(L,3);
-			if (top < 7)
-				uFlags ^= SWP_NOMOVE;
-		case 2:
-			hWndInsertAfter = lua_tohwnd(L,2);
-			hWnd = lua_tohwnd(L,1);
-			break;
-		default:
-			lua_pushboolean(L,false);
-			return 1;
-	}
-	lua_pushboolean(L,SetWindowPos(hWnd,hWndInsertAfter,x,y,cx,cy,uFlags));
 	return 1;
 }
 

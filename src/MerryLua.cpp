@@ -49,13 +49,14 @@ MerryLua::MerryLua()
 	lua_register(L, "GetWindowPosition",                  LuaGetWindowPosition);
 	lua_register(L, "SetWindowPosition",                  LuaSetWindowPosition);
 	lua_register(L, "FindWindow",                         LuaFindWindow);
+	lua_register(L, "FindWindowEx",						  LuaFindWindowEx);
+	lua_register(L, "SetWindowPos",						  LuaSetWindowPos);
 	lua_register(L, "GetMousePosition",                   LuaGetMousePosition);
 	lua_register(L, "SetMousePosition",                   LuaSetMousePosition);
 #ifdef __WXMSW__
 	lua_register(L, "GetShellFolder",					  LuaSHSpecialFolders);
 	lua_register(L, "EmptyRecycleBin",					  LuaEmptyRecycleBin);
 	lua_register(L, "SHEmptyRecycleBin",				  LuaSHEmptyRecycleBin);
-	lua_register(L, "SetWindowPos",						  LuaSetWindowPos);
 #endif
 	lua_register(L, "message",                            LuaMessage);
 	lua_register(L, "enterKey",                           LuaEnterKey);

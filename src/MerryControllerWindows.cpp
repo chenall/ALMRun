@@ -148,9 +148,26 @@ void MerryController::SetWindowPosition(void* window, int x, int y) const
 	::MoveWindow((HWND)window, x, y, r.right - r.left, r.bottom - r.top, ::IsWindowVisible((HWND)window));
 }
 
-void* MerryController::FindWindow(const wxString& name, void* parentWindow) const
+void* MerryController::FindWindow(const wxString& ClassName,const wxString& WindowName) const
 {
-	return ::FindWindowEx((HWND)parentWindow, NULL, NULL, name.c_str());
+	return this->FindWindowEx(NULL,NULL,ClassName,WindowName);
+//	return ::FindWindow(ClassName.c_str(),WindowName.c_str());
+}
+
+void*  MerryController::FindWindowEx(void* Parent,void *Child,const wxString& ClassName,const wxString&  WindowName) const
+{
+    const wchar_t *className = NULL;
+	const wchar_t *windowName = NULL;
+	if (!ClassName.IsEmpty())
+		className = ClassName.c_str();
+	if (!WindowName.IsEmpty())
+		windowName = WindowName.c_str();
+	return ::FindWindowEx((HWND)Parent,(HWND)Child,className,windowName);
+}
+
+BOOL MerryController::SetWindowPos(void *hWnd,void *hWndInsertAfter,int X,int Y,int cx,int cy,UINT uFlags) const
+{
+	return ::SetWindowPos((HWND)hWnd,(HWND)hWndInsertAfter,X,Y,cx,cy,uFlags);
 }
 
 void MerryController::EnterKey(const wxArrayString& keys)

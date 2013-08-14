@@ -210,9 +210,19 @@ void MerryController::SetWindowPosition(void* window, int x, int y) const
 
 }
 
-void* MerryController::FindWindow(const wxString& name, void* parentWindow) const
+void* MerryController::FindWindow(const wxString& ClassName,const wxString& WindowName) const
 {
 	return NULL;
+}
+
+void* MerryController::FindWindowEx(void* Parent,void *Child,const wxString& ClassName,const wxString&  WindowName) const
+{
+	return NULL;
+}
+
+BOOL MerryController::SetWindowPos(void *hWnd,void *hWndInsertAfter,int X,int Y,int cx,int cy,UINT uFlags) const
+{
+	return False;
 }
 
 void MerryController::EnterKey(const wxArrayString& keys)
