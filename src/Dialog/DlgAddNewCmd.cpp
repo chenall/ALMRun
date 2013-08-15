@@ -30,6 +30,37 @@
 #include "ALMRunConfig.h"
 #include "DlgAddNewCmd.h"
 #include "DlgAddNewDir.h"
+
+#ifndef _DISABLE_DND_
+	#include <wx/dnd.h>
+	class NewCmdDnd : public wxFileDropTarget
+	{
+	public:
+		NewCmdDnd(DlgAddNewCmd *pOwner) { m_pOwner = pOwner; }
+ 
+		virtual bool OnDropFiles(wxCoord x, wxCoord y,
+								 const wxArrayString& filenames);
+	private:
+		//对话框类，成员TextCtrlPath保存文件路径
+		DlgAddNewCmd *m_pOwner;
+ 
+	};
+	bool NewCmdDnd::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
+	{
+		//只有一个文件时弹出添加命令窗口
+		if (filenames.Count() == 1)
+		{
+			wxString cmd = filenames[0];
+			cmd.Replace('\\','/');
+			m_pOwner->cmdLine->SetValue(cmd);
+			m_pOwner->cmdName->SetValue(wxFileNameFromPath(cmd));
+			cmd.Clear();
+			return true;
+		}
+		return false;
+	}
+#endif
+
 #ifdef _ALMRUN_CONFIG_H_
 
 ////@begin XPM images
@@ -108,6 +139,9 @@ bool DlgAddNewCmd::Create( wxWindow* parent, wxWindowID id, const wxString& capt
 DlgAddNewCmd::~DlgAddNewCmd()
 {
 	__DEBUG_BEGIN("")
+#ifndef _DISABLE_DND_
+		this->SetDropTarget(NULL);
+#endif
 ////@begin DlgAddNewCmd destruction
 ////@end DlgAddNewCmd destruction
 	__DEBUG_END("")
@@ -322,6 +356,9 @@ void DlgAddNewCmd::CreateControls()
 
     itemStdDialogButtonSizer->Realize();
 	cmdName->SetFocus();
+#ifndef _DISABLE_DND_
+	this->SetDropTarget(new NewCmdDnd(this));
+#endif
 ////@end DlgAddNewCmd content construction
 }
 

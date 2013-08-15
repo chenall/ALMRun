@@ -25,16 +25,49 @@
 #endif
 
 ////@begin includes
+
 ////@end includes
 
 #include "ALMRunConfig.h"
 #ifdef _ALMRUN_CONFIG_H_
 #include "DlgAddNewDir.h"
+
 ////@begin XPM images
 
 #include "find.xpm"
 ////@end XPM images
 
+#ifndef _DISABLE_DND_
+	#include <wx/dnd.h>
+	class NewDirDnd : public wxFileDropTarget
+	{
+	public:
+		NewDirDnd(DlgAddNewDir *pOwner) { m_pOwner = pOwner; }
+ 
+		virtual bool OnDropFiles(wxCoord x, wxCoord y,
+								 const wxArrayString& filenames);
+	private:
+		//对话框类，成员TextCtrlPath保存文件路径
+		DlgAddNewDir *m_pOwner;
+ 
+	};
+	bool NewDirDnd::OnDropFiles(wxCoord, wxCoord, const wxArrayString& filenames)
+	{
+		//只有一个文件时弹出添加命令窗口
+		if (filenames.Count() == 1)
+		{
+			wxString cmd = filenames[0];
+			if (wxDirExists(cmd))
+			{
+				cmd.Replace('\\','/');
+				m_pOwner->dirName->SetValue(cmd);
+				cmd.Clear();
+				return true;
+			}
+		}
+		return false;
+	}
+#endif
 
 /*!
  * DlgAddNewDir type definition
@@ -102,6 +135,9 @@ DlgAddNewDir::~DlgAddNewDir()
 {
 	__DEBUG_BEGIN("")
 ////@begin DlgAddNewDir destruction
+#ifndef _DISABLE_DND_
+	this->SetDropTarget(NULL);
+#endif
 ////@end DlgAddNewDir destruction
 	__DEBUG_END("")
 }
@@ -139,9 +175,7 @@ void DlgAddNewDir::CreateControls()
     itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     dirName = new wxTextCtrl( itemDialog1, ID_DLG_DIR_DIR, wxEmptyString, wxDefaultPosition, wxSize(220, -1), wxTE_READONLY );
-    dirName->Enable(false);
     itemBoxSizer3->Add(dirName, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-
 
     wxButton* itemButton6 = new wxButton( itemDialog1, ID_BUTTON, _T("浏览(&B)"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
     itemBoxSizer3->Add(itemButton6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
@@ -192,7 +226,9 @@ void DlgAddNewDir::CreateControls()
     itemStdDialogButtonSizer16->AddButton(itemButton18);
 
     itemStdDialogButtonSizer16->Realize();
-
+#ifndef _DISABLE_DND_
+	this->SetDropTarget(new NewDirDnd(this));
+#endif
 ////@end DlgAddNewDir content construction
 }
 

@@ -48,6 +48,7 @@
 #endif
 
 BEGIN_EVENT_TABLE(cmdListCtrl, wxListCtrl)
+	EVT_LEFT_DCLICK(cmdListCtrl::onDclick)
 	EVT_MENU(MENU_CMD_DEL,cmdListCtrl::onPopMenu)
 	EVT_MENU(MENU_CMD_EDIT,cmdListCtrl::onPopMenu)
 END_EVENT_TABLE()
@@ -93,6 +94,11 @@ void cmdListCtrl::ReLoadCmds()
 			this->SetItem(index, CMDLIST_COL_DESC ,conf->Read("desc"));
 		}
 	}
+}
+
+void cmdListCtrl::onDclick(wxMouseEvent& e)
+{
+	this->RunMenu(MENU_CMD_EDIT,this);
 }
 
 cmdListCtrl::~cmdListCtrl()
