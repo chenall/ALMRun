@@ -6,6 +6,7 @@
 	和WINDOWS API的调用方法保持一致
 	FindWindow(className,WindowName)
 	同时兼容旧的方法FindWindow(WindowName,ParentHwnd)
+
 2013-08-11
     1.新增API
 	* SetWindowPos 设置窗口位置大小等

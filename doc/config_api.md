@@ -217,7 +217,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 	1. <http://baike.baidu.com/view/373605.htm>   
 	2. <http://msdn.microsoft.com/en-us/library/windows/desktop/ms633499(v=vs.85).aspx> 
 
-[FindWindowEx]: findwindowex "FindWindowEx(parent,child,classname,windowname)"
+[FindWindowEx]: #findwindowex "FindWindowEx(parent,child,classname,windowname)"
 #### FindWindowEx
 
     FindWindowEx(HWND hwndParent, // handle to parent window
