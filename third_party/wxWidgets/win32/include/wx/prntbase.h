@@ -40,6 +40,8 @@ class WXDLLIMPEXP_FWD_CORE wxPreviewFrame;
 class WXDLLIMPEXP_FWD_CORE wxPrintFactory;
 class WXDLLIMPEXP_FWD_CORE wxPrintNativeDataBase;
 class WXDLLIMPEXP_FWD_CORE wxPrintPreview;
+class WXDLLIMPEXP_FWD_CORE wxPrintAbortDialog;
+class WXDLLIMPEXP_FWD_CORE wxStaticText;
 class wxPrintPageMaxCtrl;
 class wxPrintPageTextCtrl;
 
@@ -188,7 +190,7 @@ public:
     wxPrinterBase(wxPrintDialogData *data = NULL);
     virtual ~wxPrinterBase();
 
-    virtual wxWindow *CreateAbortWindow(wxWindow *parent, wxPrintout *printout);
+    virtual wxPrintAbortDialog *CreateAbortWindow(wxWindow *parent, wxPrintout *printout);
     virtual void ReportError(wxWindow *parent, wxPrintout *printout, const wxString& message);
 
     virtual wxPrintDialogData& GetPrintDialogData() const;
@@ -228,7 +230,7 @@ public:
     wxPrinter(wxPrintDialogData *data = NULL);
     virtual ~wxPrinter();
 
-    virtual wxWindow *CreateAbortWindow(wxWindow *parent, wxPrintout *printout);
+    virtual wxPrintAbortDialog *CreateAbortWindow(wxWindow *parent, wxPrintout *printout);
     virtual void ReportError(wxWindow *parent, wxPrintout *printout, const wxString& message);
 
     virtual bool Setup(wxWindow *parent);
@@ -733,18 +735,20 @@ class WXDLLIMPEXP_CORE wxPrintAbortDialog: public wxDialog
 {
 public:
     wxPrintAbortDialog(wxWindow *parent,
-                       const wxString& title,
+                       const wxString& documentTitle,
                        const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize,
-                       long style = 0,
-                       const wxString& name = wxT("dialog"))
-        : wxDialog(parent, wxID_ANY, title, pos, size, style, name)
-        {
-        }
+                       long style = wxDEFAULT_DIALOG_STYLE,
+                       const wxString& name = wxT("dialog"));
+
+    void SetProgress(int currentPage, int totalPages,
+                     int currentCopy, int totalCopies);
 
     void OnCancel(wxCommandEvent& event);
 
 private:
+    wxStaticText *m_progress;
+
     DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxPrintAbortDialog);
 };

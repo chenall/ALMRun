@@ -7,6 +7,8 @@
 #include "MerryTimerManager.h"
 #include "MerryMacHelper.h"
 #include "ALMRunConfig.h"
+#include <wx/clipbrd.h>
+#include <wx/stdpaths.h>
 #include "dlgconfig.h"
 
 static void* lua_tohwnd(lua_State* L,int index)

@@ -22,6 +22,8 @@
 
 #if wxUSE_SPINBTN
 
+#include "wx/compositewin.h"
+
 class WXDLLIMPEXP_FWD_CORE wxSpinButton;
 class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
 
@@ -40,7 +42,8 @@ class wxSpinCtrlTextGeneric; // wxTextCtrl used for the wxSpinCtrlGenericBase
 // function ambiguity.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSpinCtrlGenericBase : public wxSpinCtrlBase
+class WXDLLIMPEXP_CORE wxSpinCtrlGenericBase
+                : public wxNavigationEnabled<wxCompositeWindow<wxSpinCtrlBase> >
 {
 public:
     wxSpinCtrlGenericBase() { Init(); }
@@ -85,6 +88,8 @@ public:
     virtual void DoSetToolTip(wxToolTip *tip);
 #endif // wxUSE_TOOLTIPS
 
+    virtual bool SetBackgroundColour(const wxColour& colour);
+
     // get the subcontrols
     wxTextCtrl   *GetText() const       { return m_textCtrl; }
     wxSpinButton *GetSpinButton() const { return m_spinButton; }
@@ -105,6 +110,7 @@ public:
 protected:
     // override the base class virtuals involved into geometry calculations
     virtual wxSize DoGetBestSize() const;
+    virtual wxSize DoGetSizeFromTextSize(int xlen, int ylen = -1) const;
     virtual void DoMoveWindow(int x, int y, int width, int height);
 
 #ifdef __WXMSW__
@@ -129,6 +135,10 @@ protected:
     // Send the correct event type
     virtual void DoSendEvent() = 0;
 
+    // Convert the text to/from the corresponding value.
+    virtual bool DoTextToValue(const wxString& text, double *val) = 0;
+    virtual wxString DoValueToText(double val) = 0;
+
     // check if the value is in range
     bool InRange(double n) const { return (n >= m_min) && (n <= m_max); }
 
@@ -141,7 +151,6 @@ protected:
     double m_max;
     double m_increment;
     bool   m_snap_to_ticks;
-    wxString m_format;
 
     int m_spin_value;
 
@@ -152,6 +161,9 @@ protected:
 private:
     // common part of all ctors
     void Init();
+
+    // Implement pure virtual function inherited from wxCompositeWindow.
+    virtual wxWindowList GetCompositeWindowParts() const;
 
     DECLARE_EVENT_TABLE()
 };
@@ -257,7 +269,7 @@ protected:
 class WXDLLIMPEXP_CORE wxSpinCtrl : public wxSpinCtrlGenericBase
 {
 public:
-    wxSpinCtrl() {}
+    wxSpinCtrl() { Init(); }
     wxSpinCtrl(wxWindow *parent,
                wxWindowID id = wxID_ANY,
                const wxString& value = wxEmptyString,
@@ -267,6 +279,8 @@ public:
                int min = 0, int max = 100, int initial = 0,
                const wxString& name = wxT("wxSpinCtrl"))
     {
+        Init();
+
         Create(parent, id, value, pos, size, style, min, max, initial, name);
     }
 
@@ -296,8 +310,23 @@ public:
     void SetRange( int minVal, int maxVal ) { DoSetRange(minVal, maxVal); }
     void SetIncrement(int inc) { DoSetIncrement(inc); }
 
+    virtual int GetBase() const { return m_base; }
+    virtual bool SetBase(int base);
+
 protected:
     virtual void DoSendEvent();
+
+    virtual bool DoTextToValue(const wxString& text, double *val);
+    virtual wxString DoValueToText(double val);
+
+private:
+    // Common part of all ctors.
+    void Init()
+    {
+        m_base = 10;
+    }
+
+    int m_base;
 
     DECLARE_DYNAMIC_CLASS(wxSpinCtrl)
 };
@@ -311,7 +340,7 @@ protected:
 class WXDLLIMPEXP_CORE wxSpinCtrlDouble : public wxSpinCtrlGenericBase
 {
 public:
-    wxSpinCtrlDouble() : m_digits(0) { }
+    wxSpinCtrlDouble() { Init(); }
     wxSpinCtrlDouble(wxWindow *parent,
                      wxWindowID id = wxID_ANY,
                      const wxString& value = wxEmptyString,
@@ -322,7 +351,8 @@ public:
                      double inc = 1,
                      const wxString& name = wxT("wxSpinCtrlDouble"))
     {
-        m_digits = 0;
+        Init();
+
         Create(parent, id, value, pos, size, style,
                min, max, initial, inc, name);
     }
@@ -357,10 +387,28 @@ public:
     void SetIncrement(double inc)               { DoSetIncrement(inc); }
     void SetDigits(unsigned digits);
 
+    // We don't implement bases support for floating point numbers, this is not
+    // very useful in practice.
+    virtual int GetBase() const { return 10; }
+    virtual bool SetBase(int WXUNUSED(base)) { return 0; }
+
 protected:
     virtual void DoSendEvent();
 
+    virtual bool DoTextToValue(const wxString& text, double *val);
+    virtual wxString DoValueToText(double val);
+
     unsigned m_digits;
+
+private:
+    // Common part of all ctors.
+    void Init()
+    {
+        m_digits = 0;
+        m_format = wxS("%g");
+    }
+
+    wxString m_format;
 
     DECLARE_DYNAMIC_CLASS(wxSpinCtrlDouble)
 };

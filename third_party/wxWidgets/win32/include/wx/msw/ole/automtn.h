@@ -21,6 +21,7 @@
 
 typedef void            WXIDISPATCH;
 typedef unsigned short* WXBSTR;
+typedef unsigned long   WXLCID;
 
 #ifdef GetObject
 #undef GetObject
@@ -106,8 +107,20 @@ public:
     bool GetObject(wxAutomationObject& obj, const wxString& property, int noArgs = 0, wxVariant args[] = NULL) const;
     bool GetObject(wxAutomationObject& obj, const wxString& property, int noArgs, const wxVariant **args) const;
 
-public:
+    // Returns the locale identifier used in automation calls. The default is
+    // LOCALE_SYSTEM_DEFAULT. Objects obtained by GetObject() inherit the
+    // locale identifier from the one that created them.
+    WXLCID GetLCID() const;
+
+    // Sets the locale identifier to be used in automation calls performed by
+    // this object. The default is LOCALE_SYSTEM_DEFAULT.
+    void SetLCID(WXLCID lcid);
+
+public: // public for compatibility only, don't use m_dispatchPtr directly.
     WXIDISPATCH*  m_dispatchPtr;
+
+private:
+    WXLCID m_lcid;
 
     wxDECLARE_NO_COPY_CLASS(wxAutomationObject);
 };

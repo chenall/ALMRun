@@ -144,6 +144,8 @@ public:
     void RefreshItem(long item);
     void RefreshItems(long itemFrom, long itemTo);
 
+    virtual void EnableBellOnNoMatch(bool on = true);
+
 #if WXWIN_COMPATIBILITY_2_6
     // obsolete, don't use
     wxDEPRECATED( int GetItemSpacing( bool isSmall ) const );
@@ -209,11 +211,6 @@ protected:
 
     virtual bool DoPopupMenu( wxMenu *menu, int x, int y );
 
-    // take into account the coordinates difference between the container
-    // window and the list control window itself here
-    virtual void DoClientToScreen( int *x, int *y ) const;
-    virtual void DoScreenToClient( int *x, int *y ) const;
-
     virtual wxSize DoGetBestClientSize() const;
 
     // return the text for the given column of the given item
@@ -226,9 +223,6 @@ protected:
 
     // return the icon for the given item and column.
     virtual int OnGetItemColumnImage(long item, long column) const;
-
-    // return the attribute for the item (may return NULL if none)
-    virtual wxListItemAttr *OnGetItemAttr(long item) const;
 
     // it calls our OnGetXXX() functions
     friend class WXDLLIMPEXP_FWD_CORE wxListMainWindow;

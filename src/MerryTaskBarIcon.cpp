@@ -48,6 +48,13 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 			::wxGetApp().GetFrame().NewConfig();
 			break;
 		case MENU_ITEM_EXIT:
+			//wxGetApp().ExitMainLoop();
+			// insert your code here
+			//ExitProcess(0);
+		   // this->EndModal(true);
+			//::PostMessage((HWND__ *)::wxGetApp().GetFrame().GetHandle(),WM_CLOSE,0,0);
+		   //::PostMessage((HWND__ *)::wxGetApp().GetFrame().GetHandle(),WM_QUIT,0,0);
+		   //exit(0);
 			wxExit();
 			break;
 	#ifdef _ALMRUN_CONFIG_H_

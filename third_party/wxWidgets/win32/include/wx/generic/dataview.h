@@ -70,7 +70,7 @@ public:
 
     virtual bool IsSortKey() const { return m_sort; }
 
-    virtual void UnsetAsSortKey() { m_sort = false; UpdateDisplay(); }
+    virtual void UnsetAsSortKey();
 
     virtual void SetSortOrder(bool ascending);
 
@@ -181,6 +181,8 @@ public:
     virtual bool IsExpanded( const wxDataViewItem & item ) const;
 
     virtual void SetFocus();
+
+    virtual bool SetFont(const wxFont & font);
 
 #if wxUSE_DRAG_AND_DROP
     virtual bool EnableDragSource( const wxDataFormat &format );

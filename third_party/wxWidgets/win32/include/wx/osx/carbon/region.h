@@ -55,6 +55,7 @@ protected:
 
     virtual bool DoOffset(wxCoord x, wxCoord y);
     virtual bool DoCombine(const wxRegion& region, wxRegionOp op);
+    virtual bool DoUnionWithRect(const wxRect& rect);
 
 private:
     DECLARE_DYNAMIC_CLASS(wxRegion)
@@ -86,7 +87,7 @@ public:
     long GetWidth() const { return GetW(); }
     long GetH() const;
     long GetHeight() const { return GetH(); }
-    wxRect GetRect() const { return wxRect(GetX(), GetY(), GetWidth(), GetHeight()); }
+    wxRect GetRect() const { return wxRect((int)GetX(), (int)GetY(), (int)GetWidth(), (int)GetHeight()); }
 
 private:
     void SetRects(long numRects, wxRect *rects);

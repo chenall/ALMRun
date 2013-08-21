@@ -34,13 +34,6 @@
         return NULL;                                                          \
     }                                                                         \
                                                                               \
-    virtual bool Destroy()                                                    \
-    {                                                                         \
-        if (m_dialog)                                                         \
-            m_dialog->Destroy();                                              \
-        return wxButton::Destroy();                                           \
-    }                                                                         \
-                                                                              \
     /* even if wx derive from wxGenericFileButton, i.e. from wxButton, our */ \
     /* native GTK+ widget does not derive from GtkButton thus *all* uses   */ \
     /* GTK_BUTTON(m_widget) macro done by wxButton must be bypassed to     */ \
@@ -176,13 +169,6 @@ public:     // overrides
     FILEDIRBTN_OVERRIDES
 
 protected:
-    // common part of all ctors
-    void Init()
-    {
-        m_dialog = NULL;
-        m_bIgnoreNextChange = false;
-    }
-
     wxDialog *m_dialog;
 
 public:    // used by the GTK callback only
@@ -192,6 +178,12 @@ public:    // used by the GTK callback only
     void GTKUpdatePath(const char *gtkpath);
 
 private:
+    void Init()
+    {
+        m_dialog = NULL;
+        m_bIgnoreNextChange = false;
+    }
+
     DECLARE_DYNAMIC_CLASS(wxDirButton)
 };
 

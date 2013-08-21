@@ -408,7 +408,7 @@ public:
     // helper classes
     // ------------------------------------------------------------------------
 
-        // a class representing a time zone: basicly, this is just an offset
+        // a class representing a time zone: basically, this is just an offset
         // (in seconds) from GMT
     class WXDLLIMPEXP_BASE TimeZone
     {
@@ -693,7 +693,7 @@ public:
         // default assignment operator is ok
 
     // calendar calculations (functions which set the date only leave the time
-    // unchanged, e.g. don't explictly zero it): SetXXX() functions modify the
+    // unchanged, e.g. don't explicitly zero it): SetXXX() functions modify the
     // object itself, GetXXX() ones return a new object.
     // ------------------------------------------------------------------------
 
@@ -1062,6 +1062,8 @@ public:
         // return the difference between two dates
     inline wxTimeSpan Subtract(const wxDateTime& dt) const;
     inline wxTimeSpan operator-(const wxDateTime& dt2) const;
+
+    wxDateSpan DiffAsDateSpan(const wxDateTime& dt) const;
 
     // conversion to/from text
     // ------------------------------------------------------------------------
@@ -1577,6 +1579,8 @@ public:
     int GetYears() const { return m_years; }
         // get number of months
     int GetMonths() const { return m_months; }
+        // returns 12*GetYears() + GetMonths()
+    int GetTotalMonths() const { return 12*m_years + m_months; }
         // get number of weeks
     int GetWeeks() const { return m_weeks; }
         // get number of days
@@ -1777,9 +1781,16 @@ inline wxDateTime wxDateTime::Today()
 #if (!(defined(__VISAGECPP__) && __IBMCPP__ >= 400))
 inline wxDateTime& wxDateTime::Set(time_t timet)
 {
-    // assign first to avoid long multiplication overflow!
-    m_time = timet - WX_TIME_BASE_OFFSET ;
-    m_time *= TIME_T_FACTOR;
+    if ( timet == (time_t)-1 )
+    {
+        m_time = wxInvalidDateTime.m_time;
+    }
+    else
+    {
+        // assign first to avoid long multiplication overflow!
+        m_time = timet - WX_TIME_BASE_OFFSET;
+        m_time *= TIME_T_FACTOR;
+    }
 
     return *this;
 }

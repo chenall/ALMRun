@@ -1098,6 +1098,16 @@
 // Recommended setting: 1
 #define wxUSE_NOTIFICATION_MESSAGE 1
 
+// wxPreferencesEditor provides a common API for different ways of presenting
+// the standard "Preferences" or "Properties" dialog under different platforms
+// (e.g. some use modal dialogs, some use modeless ones; some apply the changes
+// immediately while others require an explicit "Apply" button).
+//
+// Default is 1.
+//
+// Recommended setting: 1 (but can be safely disabled if you don't use it)
+#define wxUSE_PREFERENCES_EDITOR 1
+
 // wxRichToolTip is a customizable tooltip class which has more functionality
 // than the stock (but native, unlike this class) wxToolTip.
 //
@@ -1649,7 +1659,6 @@
 // exact GTK version (without including GTK+ headers that we don't want to
 // include from our own public headers), just assume a recent GTK 2.x.
 #define __WXGTK20__
-#define __WXGTK26__
 #define __WXGTK210__
 #define __WXGTK218__
 //#define __WXGTK3__

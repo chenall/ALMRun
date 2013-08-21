@@ -521,6 +521,11 @@ public:
         return wxSize( wxMax( client.x, best.x ), wxMax( client.y, best.y ) );
     }
 
+    // returns the magnification of the content of this window
+    // eg 2.0 for a window on a retina screen
+    virtual double GetContentScaleFactor() const
+    { return 1.0; }
+    
     // return the size of the left/right and top/bottom borders in x and y
     // components of the result respectively
     virtual wxSize GetWindowBorderSize() const;
@@ -554,6 +559,43 @@ public:
 
     // this is the same as SendSizeEventToParent() but using PostSizeEvent()
     void PostSizeEventToParent() { SendSizeEventToParent(wxSEND_EVENT_POST); }
+
+    // These functions should be used before repositioning the children of
+    // this window to reduce flicker or, in MSW case, even avoid display
+    // corruption in some situations (so they're more than just optimization).
+    //
+    // EndRepositioningChildren() should be called if and only if
+    // BeginRepositioningChildren() returns true. To ensure that this is always
+    // done automatically, use ChildrenRepositioningGuard class below.
+    virtual bool BeginRepositioningChildren() { return false; }
+    virtual void EndRepositioningChildren() { }
+
+    // A simple helper which ensures that EndRepositioningChildren() is called
+    // from its dtor if and only if calling BeginRepositioningChildren() from
+    // the ctor returned true.
+    class ChildrenRepositioningGuard
+    {
+    public:
+        // Notice that window can be NULL here, for convenience. In this case
+        // this class simply doesn't do anything.
+        wxEXPLICIT ChildrenRepositioningGuard(wxWindowBase* win)
+            : m_win(win),
+              m_callEnd(win && win->BeginRepositioningChildren())
+        {
+        }
+
+        ~ChildrenRepositioningGuard()
+        {
+            if ( m_callEnd )
+                m_win->EndRepositioningChildren();
+        }
+
+    private:
+        wxWindowBase* const m_win;
+        const bool m_callEnd;
+
+        wxDECLARE_NO_COPY_CLASS(ChildrenRepositioningGuard);
+    };
 
 
     // window state
@@ -752,7 +794,7 @@ public:
     bool IsDescendant(wxWindowBase* win) const;
 
         // it doesn't really change parent, use Reparent() instead
-    void SetParent( wxWindowBase *parent ) { m_parent = (wxWindow *)parent; }
+    void SetParent( wxWindowBase *parent );
         // change the real parent of this window, return true if the parent
         // was changed, false otherwise (error or newParent == oldParent)
     virtual bool Reparent( wxWindowBase *newParent );
@@ -1511,11 +1553,6 @@ protected:
     // widgets state are necessary
     virtual void DoEnable(bool WXUNUSED(enable)) { }
 
-    // called when the on-screen widget state changes and provides an
-    // an opportunity for the widget to update its visual state (colours,
-    // fonts, anything else) as necessary
-    virtual void OnEnabled(bool WXUNUSED(enabled)) { }
-
 
     // the window id - a number which uniquely identifies a window among
     // its siblings unless it is wxID_ANY
@@ -1768,7 +1805,7 @@ protected:
     static void NotifyCaptureLost();
 
 private:
-    // recursively call our own and our children OnEnabled() when the
+    // recursively call our own and our children DoEnable() when the
     // enabled/disabled status changed because a parent window had been
     // enabled/disabled
     void NotifyWindowOnEnableChange(bool enabled);

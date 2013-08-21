@@ -132,11 +132,20 @@ public:
     void SetLinkColor(const wxColour& clr) { m_LinkColor = clr; }
     const wxColour& GetActualColor() const { return m_ActualColor; }
     void SetActualColor(const wxColour& clr) { m_ActualColor = clr ;}
+    const wxColour& GetActualBackgroundColor() const { return m_ActualBackgroundColor; }
+    void SetActualBackgroundColor(const wxColour& clr) { m_ActualBackgroundColor = clr;}
+    int GetActualBackgroundMode() const { return m_ActualBackgroundMode; }
+    void SetActualBackgroundMode(int mode) { m_ActualBackgroundMode = mode;}
     const wxHtmlLinkInfo& GetLink() const { return m_Link; }
     void SetLink(const wxHtmlLinkInfo& link);
 
     // applies current parser state (link, sub/supscript, ...) to given cell
     void ApplyStateToCell(wxHtmlCell *cell);
+
+    // Needs to be called after inserting a cell that interrupts the flow of
+    // the text like e.g. <img> and tells us to not consider any of the
+    // following space as being part of the same space run as before.
+    void StopCollapsingSpaces() { m_tmpLastWasSpace = false; }
 
 #if !wxUSE_UNICODE
     void SetInputEncoding(wxFontEncoding enc);
@@ -188,12 +197,14 @@ private:
     int m_FontSize; // From 1 (smallest) to 7, default is 3.
     wxColour m_LinkColor;
     wxColour m_ActualColor;
+    wxColour m_ActualBackgroundColor;
+    int m_ActualBackgroundMode;
             // basic font parameters.
     wxHtmlLinkInfo m_Link;
             // actual hypertext link or empty string
     bool m_UseLink;
             // true if m_Link is not empty
-    long m_CharHeight, m_CharWidth;
+    int m_CharHeight, m_CharWidth;
             // average height of normal-sized text
     int m_Align;
             // actual alignment
@@ -248,6 +259,8 @@ private:
 //                  the wxHtmlWinParser object
 //-----------------------------------------------------------------------------
 
+class WXDLLIMPEXP_FWD_HTML wxHtmlStyleParams;
+
 class WXDLLIMPEXP_HTML wxHtmlWinTagHandler : public wxHtmlTagHandler
 {
     DECLARE_ABSTRACT_CLASS(wxHtmlWinTagHandler)
@@ -259,6 +272,8 @@ public:
 
 protected:
     wxHtmlWinParser *m_WParser; // same as m_Parser, but overcasted
+
+    void ApplyStyle(const wxHtmlStyleParams &styleParams);
 
     wxDECLARE_NO_COPY_CLASS(wxHtmlWinTagHandler);
 };

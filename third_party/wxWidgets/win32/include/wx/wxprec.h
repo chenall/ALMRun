@@ -40,11 +40,13 @@
 #include "wx/chartype.h"
 
 // include standard Windows headers
-#if defined(__WXMSW__)
+#if defined(__WINDOWS__)
     #include "wx/msw/wrapwin.h"
+    #include "wx/msw/private.h"
+#endif
+#if defined(__WXMSW__)
     #include "wx/msw/wrapcctl.h"
     #include "wx/msw/wrapcdlg.h"
-    #include "wx/msw/private.h"
     #include "wx/msw/missing.h"
 #endif
 
@@ -55,7 +57,5 @@
 
 // include the most common wx headers
 #include "wx/wx.h"
-#include "wx/clipbrd.h"
-#include "wx/stdpaths.h"
-#include "wx/filename.h"
+
 #endif // WX_PRECOMP

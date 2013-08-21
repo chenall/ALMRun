@@ -228,6 +228,14 @@ public:
     // for it
     static wxAppTraits *GetTraitsIfExists();
 
+    // Return some valid traits object.
+    //
+    // This method checks if we have wxTheApp and returns its traits if it does
+    // exist and the traits are non-NULL, similarly to GetTraitsIfExists(), but
+    // falls back to wxConsoleAppTraits to ensure that it always returns
+    // something valid.
+    static wxAppTraits& GetValidTraits();
+
     // returns the main event loop instance, i.e. the event loop which is started
     // by OnRun() and which dispatches all events sent from the native toolkit
     // to the application (except when new event loops are temporarily set-up).
@@ -235,6 +243,18 @@ public:
     // non-NULL main event loop into OnEventLoopEnter().
     wxEventLoopBase* GetMainLoop() const
         { return m_mainLoop; }
+
+    // This function sets the C locale to the default locale for the current
+    // environment. It is advised to call this to ensure that the underlying
+    // toolkit uses the locale in which the numbers and monetary amounts are
+    // shown in the format expected by user and so on.
+    //
+    // Notice that this does _not_ change the global C++ locale, you need to do
+    // it explicitly if you want.
+    //
+    // Finally, notice that while this function is virtual, it is not supposed
+    // to be overridden outside of the library itself.
+    virtual void SetCLocale();
 
 
     // event processing functions
@@ -766,13 +786,26 @@ public:
 // your compiler really, really wants main() to be in your main program (e.g.
 // hello.cpp). Now wxIMPLEMENT_APP should add this code if required.
 
-#define wxIMPLEMENT_WXWIN_MAIN_CONSOLE                                        \
-    int main(int argc, char **argv)                                           \
-    {                                                                         \
-        wxDISABLE_DEBUG_SUPPORT();                                            \
+// For compilers that support it, prefer to use wmain() as this ensures any
+// Unicode strings can be passed as command line parameters and not just those
+// representable in the current locale.
+#if wxUSE_UNICODE && defined(__VISUALC__)
+    #define wxIMPLEMENT_WXWIN_MAIN_CONSOLE                                    \
+        int wmain(int argc, wchar_t **argv)                                   \
+        {                                                                     \
+            wxDISABLE_DEBUG_SUPPORT();                                        \
                                                                               \
-        return wxEntry(argc, argv);                                           \
-    }
+            return wxEntry(argc, argv);                                       \
+        }
+#else // Use standard main()
+    #define wxIMPLEMENT_WXWIN_MAIN_CONSOLE                                    \
+        int main(int argc, char **argv)                                       \
+        {                                                                     \
+            wxDISABLE_DEBUG_SUPPORT();                                        \
+                                                                              \
+            return wxEntry(argc, argv);                                       \
+        }
+#endif
 
 // port-specific header could have defined it already in some special way
 #ifndef wxIMPLEMENT_WXWIN_MAIN

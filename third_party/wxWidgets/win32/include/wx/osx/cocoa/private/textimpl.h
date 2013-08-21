@@ -45,6 +45,10 @@ public :
     virtual bool SetHint(const wxString& hint);
 
     virtual void controlAction(WXWidget slf, void* _cmd, void *sender);
+    virtual bool becomeFirstResponder(WXWidget slf, void *_cmd);
+    virtual bool resignFirstResponder(WXWidget slf, void *_cmd);
+
+    virtual void SetInternalSelection( long from , long to );
 
 protected :
     NSTextField* m_textField;
@@ -110,6 +114,10 @@ public :
     virtual int FindString(const wxString& text) const;
     virtual void Popup();
     virtual void Dismiss();
+
+    virtual void SetEditable(bool editable);
+
+    virtual void mouseEvent(WX_NSEvent event, WXWidget slf, void *_cmd);
 
 private:
     NSComboBox* m_comboBox;

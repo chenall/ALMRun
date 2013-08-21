@@ -49,6 +49,10 @@ public:
 
     virtual bool        OSXHandleClicked( double timestampsec );
 
+#if wxOSX_USE_COCOA
+    void OSXUpdateAfterLabelChange(const wxString& label);
+#endif
+
 protected:
     DECLARE_DYNAMIC_CLASS(wxButton)
 };

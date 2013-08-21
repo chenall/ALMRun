@@ -37,15 +37,32 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxGetPasswordFromUserPromptStr[];
 class WXDLLIMPEXP_CORE wxTextEntryDialog : public wxDialog
 {
 public:
+    wxTextEntryDialog()
+    {
+        m_textctrl = NULL;
+    }
+
     wxTextEntryDialog(wxWindow *parent,
                       const wxString& message,
                       const wxString& caption = wxGetTextFromUserPromptStr,
                       const wxString& value = wxEmptyString,
                       long style = wxTextEntryDialogStyle,
-                      const wxPoint& pos = wxDefaultPosition);
+                      const wxPoint& pos = wxDefaultPosition)
+    {
+        Create(parent, message, caption, value, style, pos);
+    }
+
+    bool Create(wxWindow *parent,
+                const wxString& message,
+                const wxString& caption = wxGetTextFromUserPromptStr,
+                const wxString& value = wxEmptyString,
+                long style = wxTextEntryDialogStyle,
+                const wxPoint& pos = wxDefaultPosition);
 
     void SetValue(const wxString& val);
     wxString GetValue() const { return m_value; }
+
+    void SetMaxLength(unsigned long len);
 
 #if wxUSE_VALIDATORS
     void SetTextValidator( const wxTextValidator& validator );
@@ -54,8 +71,10 @@ public:
 #endif
     void SetTextValidator( wxTextValidatorStyle style = wxFILTER_NONE );
     wxTextValidator* GetTextValidator() { return (wxTextValidator*)m_textctrl->GetValidator(); }
-#endif
-  // wxUSE_VALIDATORS
+#endif // wxUSE_VALIDATORS
+
+    virtual bool TransferDataToWindow();
+    virtual bool TransferDataFromWindow();
 
     // implementation only
     void OnOK(wxCommandEvent& event);

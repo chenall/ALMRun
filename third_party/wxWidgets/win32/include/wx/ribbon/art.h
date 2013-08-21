@@ -21,6 +21,7 @@
 #include "wx/font.h"
 #include "wx/pen.h"
 #include "wx/bitmap.h"
+#include "wx/ribbon/bar.h"
 
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
@@ -103,6 +104,10 @@ enum wxRibbonArtSetting
     wxRIBBON_ART_PANEL_ACTIVE_BACKGROUND_GRADIENT_COLOUR,
     wxRIBBON_ART_PANEL_BUTTON_FACE_COLOUR,
     wxRIBBON_ART_PANEL_BUTTON_HOVER_FACE_COLOUR,
+
+    wxRIBBON_ART_PAGE_TOGGLE_FACE_COLOUR,
+    wxRIBBON_ART_PAGE_TOGGLE_HOVER_FACE_COLOUR,
+
     wxRIBBON_ART_PAGE_BORDER_COLOUR,
     wxRIBBON_ART_PAGE_BACKGROUND_TOP_COLOUR,
     wxRIBBON_ART_PAGE_BACKGROUND_TOP_GRADIENT_COLOUR,
@@ -126,7 +131,8 @@ enum wxRibbonArtSetting
     wxRIBBON_ART_TOOL_ACTIVE_BACKGROUND_TOP_COLOUR,
     wxRIBBON_ART_TOOL_ACTIVE_BACKGROUND_TOP_GRADIENT_COLOUR,
     wxRIBBON_ART_TOOL_ACTIVE_BACKGROUND_COLOUR,
-    wxRIBBON_ART_TOOL_ACTIVE_BACKGROUND_GRADIENT_COLOUR
+    wxRIBBON_ART_TOOL_ACTIVE_BACKGROUND_GRADIENT_COLOUR,
+    wxRIBBON_ART_BUTTON_BAR_LABEL_DISABLED_COLOUR
 };
 
 enum wxRibbonScrollButtonStyle
@@ -185,6 +191,7 @@ enum wxRibbonGalleryButtonState
     wxRIBBON_GALLERY_BUTTON_DISABLED
 };
 
+class wxRibbonBar;
 class wxRibbonPage;
 class wxRibbonPanel;
 class wxRibbonGallery;
@@ -297,6 +304,17 @@ public:
                         wxRibbonButtonKind kind,
                         long state) = 0;
 
+    virtual void DrawToggleButton(
+                        wxDC& dc,
+                        wxRibbonBar* wnd,
+                        const wxRect& rect,
+                        wxRibbonDisplayMode mode) = 0;
+
+    virtual void DrawHelpButton(
+                        wxDC& dc,
+                        wxRibbonBar* wnd,
+                        const wxRect& rect) = 0;
+
     virtual void GetBarTabWidth(
                         wxDC& dc,
                         wxWindow* wnd,
@@ -380,6 +398,10 @@ public:
                         bool is_first,
                         bool is_last,
                         wxRect* dropdown_region) = 0;
+
+    virtual wxRect GetBarToggleButtonArea(const wxRect& rect)= 0;
+
+    virtual wxRect GetRibbonHelpButtonArea(const wxRect& rect) = 0;
 };
 
 class WXDLLIMPEXP_RIBBON wxRibbonMSWArtProvider : public wxRibbonArtProvider
@@ -491,6 +513,16 @@ public:
                 wxRibbonButtonKind kind,
                 long state);
 
+    void DrawToggleButton(
+                        wxDC& dc,
+                        wxRibbonBar* wnd,
+                        const wxRect& rect,
+                        wxRibbonDisplayMode mode);
+
+    void DrawHelpButton(wxDC& dc,
+                        wxRibbonBar* wnd,
+                        const wxRect& rect);
+
     void GetBarTabWidth(
                         wxDC& dc,
                         wxWindow* wnd,
@@ -570,6 +602,10 @@ public:
                         bool is_last,
                         wxRect* dropdown_region);
 
+    wxRect GetBarToggleButtonArea(const wxRect& rect);
+
+    wxRect GetRibbonHelpButtonArea(const wxRect& rect);
+
 protected:
     void ReallyDrawTabSeparator(wxWindow* wnd, const wxRect& rect, double visibility);
     void DrawPartialPageBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect,
@@ -605,12 +641,17 @@ protected:
     wxBitmap m_gallery_extension_bitmap[4];
     wxBitmap m_toolbar_drop_bitmap;
     wxBitmap m_panel_extension_bitmap[2];
+    wxBitmap m_ribbon_toggle_up_bitmap[2];
+    wxBitmap m_ribbon_toggle_down_bitmap[2];
+    wxBitmap m_ribbon_toggle_pin_bitmap[2];
+    wxBitmap m_ribbon_bar_help_button_bitmap[2];
 
     wxColour m_primary_scheme_colour;
     wxColour m_secondary_scheme_colour;
     wxColour m_tertiary_scheme_colour;
 
     wxColour m_button_bar_label_colour;
+    wxColour m_button_bar_label_disabled_colour;
     wxColour m_tab_label_colour;
     wxColour m_tab_separator_colour;
     wxColour m_tab_separator_gradient_colour;
@@ -629,6 +670,8 @@ protected:
     wxColour m_panel_active_background_top_gradient_colour;
     wxColour m_panel_button_face_colour;
     wxColour m_panel_button_hover_face_colour;
+    wxColour m_page_toggle_face_colour;
+    wxColour m_page_toggle_hover_face_colour;
     wxColour m_page_background_colour;
     wxColour m_page_background_gradient_colour;
     wxColour m_page_background_top_colour;
@@ -681,6 +724,7 @@ protected:
     wxBrush m_gallery_button_hover_background_top_brush;
     wxBrush m_gallery_button_active_background_top_brush;
     wxBrush m_gallery_button_disabled_background_top_brush;
+    wxBrush m_ribbon_toggle_brush;
 
     wxFont m_tab_label_font;
     wxFont m_panel_label_font;
@@ -698,6 +742,7 @@ protected:
     wxPen m_gallery_border_pen;
     wxPen m_gallery_item_border_pen;
     wxPen m_toolbar_border_pen;
+    wxPen m_ribbon_toggle_pen;
 
     double m_cached_tab_separator_visibility;
     long m_flags;
@@ -714,6 +759,8 @@ protected:
     int m_gallery_bitmap_padding_right_size;
     int m_gallery_bitmap_padding_top_size;
     int m_gallery_bitmap_padding_bottom_size;
+    int m_toggle_button_offset;
+    int m_help_button_offset;
 };
 
 class WXDLLIMPEXP_RIBBON wxRibbonAUIArtProvider : public wxRibbonMSWArtProvider

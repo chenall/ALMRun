@@ -26,6 +26,7 @@ class WXDLLIMPEXP_FWD_CORE wxBitmapHandler;
 class WXDLLIMPEXP_FWD_CORE wxIcon;
 class WXDLLIMPEXP_FWD_CORE wxMask;
 class WXDLLIMPEXP_FWD_CORE wxPalette;
+class WXDLLIMPEXP_FWD_CORE wxDC;
 
 // ----------------------------------------------------------------------------
 // wxVariant support
@@ -83,6 +84,23 @@ protected:
 #define wxBITMAP_SCREEN_DEPTH       (-1)
 
 
+// ----------------------------------------------------------------------------
+// wxBitmapHelpers: container for various bitmap methods common to all ports.
+// ----------------------------------------------------------------------------
+
+// Unfortunately, currently wxBitmap does not inherit from wxBitmapBase on all
+// platforms and this is not easy to fix. So we extract at least some common
+// methods into this class from which both wxBitmapBase (and hence wxBitmap on
+// all platforms where it does inherit from it) and wxBitmap in wxMSW and other
+// exceptional ports (only wxPM and old wxCocoa) inherit.
+class WXDLLIMPEXP_CORE wxBitmapHelpers
+{
+public:
+    // Create a new wxBitmap from the PNG data in the given buffer.
+    static wxBitmap NewFromPNGData(const void* data, size_t size);
+};
+
+
 // All ports except wxMSW and wxOS2 use wxBitmapHandler and wxBitmapBase as
 // base class for wxBitmapHandler; wxMSW and wxOS2 use wxGDIImageHandler as
 // base class since it allows some code reuse there.
@@ -132,12 +150,12 @@ private:
     DECLARE_ABSTRACT_CLASS(wxBitmapHandler)
 };
 
-
 // ----------------------------------------------------------------------------
 // wxBitmap: class which represents platform-dependent bitmap (unlike wxImage)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapBase : public wxGDIObject
+class WXDLLIMPEXP_CORE wxBitmapBase : public wxGDIObject,
+                                      public wxBitmapHelpers
 {
 public:
     /*
@@ -157,6 +175,8 @@ public:
 
     virtual bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH) = 0;
     virtual bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH) = 0;
+    virtual bool CreateScaled(int w, int h, int d, double logicalScale)
+        { return Create(w*logicalScale,h*logicalScale,d); }
 
     virtual int GetHeight() const = 0;
     virtual int GetWidth() const = 0;
@@ -164,6 +184,13 @@ public:
 
     wxSize GetSize() const
         { return wxSize(GetWidth(), GetHeight()); }
+
+    // support for scaled bitmaps
+    virtual double GetScaleFactor() const { return 1.0; }
+    virtual double GetScaledWidth() const { return GetWidth() / GetScaleFactor(); }
+    virtual double GetScaledHeight() const { return GetHeight() / GetScaleFactor(); }
+    virtual wxSize GetScaledSize() const
+    { return wxSize(GetScaledWidth(), GetScaledHeight()); }
 
 #if wxUSE_IMAGE
     virtual wxImage ConvertToImage() const = 0;

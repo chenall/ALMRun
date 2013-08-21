@@ -66,6 +66,7 @@
 #include "wx/cmdproc.h"
 #include "wx/txtstrm.h"
 #include "wx/variant.h"
+#include "wx/position.h"
 
 #if wxUSE_DATAOBJ
 #include "wx/dataobj.h"
@@ -125,6 +126,7 @@ enum wxRichTextFileType
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextCtrl;
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextObject;
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextImage;
+class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextPlainText;
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextCacheObject;
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextObjectList;
 class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextLine;
@@ -1543,8 +1545,15 @@ public:
     */
     void SetTextBoxAttr(const wxTextBoxAttr& attr) { m_textBoxAttr = attr; }
 
+    /**
+        Returns @true if no attributes are set.
+    */
+    bool IsDefault() const { return (GetFlags() == 0) && m_textBoxAttr.IsDefault(); }
+
     wxTextBoxAttr    m_textBoxAttr;
 };
+
+WX_DECLARE_USER_EXPORTED_OBJARRAY(wxRichTextAttr, wxRichTextAttrArray, WXDLLIMPEXP_RICHTEXT);
 
 WX_DECLARE_USER_EXPORTED_OBJARRAY(wxVariant, wxRichTextVariantArray, WXDLLIMPEXP_RICHTEXT);
 
@@ -2106,9 +2115,9 @@ public:
         Pass the buffer to the context so the context can retrieve information
         such as virtual attributes.
     */
-    wxRichTextDrawingContext(wxRichTextBuffer* buffer) { Init(); m_buffer = buffer; }
+    wxRichTextDrawingContext(wxRichTextBuffer* buffer);
 
-    void Init() { m_buffer = NULL; }
+    void Init() { m_buffer = NULL; m_enableVirtualAttributes = true; }
 
     /**
         Does this object have virtual attributes?
@@ -2129,7 +2138,45 @@ public:
     */
     bool ApplyVirtualAttributes(wxRichTextAttr& attr, wxRichTextObject* obj) const;
 
+    /**
+        Gets the count for mixed virtual attributes for individual positions within the object.
+        For example, individual characters within a text object may require special highlighting.
+    */
+    int GetVirtualSubobjectAttributesCount(wxRichTextObject* obj) const;
+
+    /**
+        Gets the mixed virtual attributes for individual positions within the object.
+        For example, individual characters within a text object may require special highlighting.
+        The function is passed the count returned by GetVirtualSubobjectAttributesCount.
+    */
+    int GetVirtualSubobjectAttributes(wxRichTextObject* obj, wxArrayInt& positions, wxRichTextAttrArray& attributes) const;
+
+    /**
+        Do we have virtual text for this object? Virtual text allows an application
+        to replace characters in an object for editing and display purposes, for example
+        for highlighting special characters.
+    */
+    bool HasVirtualText(const wxRichTextPlainText* obj) const;
+
+    /**
+        Gets the virtual text for this object.
+    */
+    bool GetVirtualText(const wxRichTextPlainText* obj, wxString& text) const;
+
+    /**
+        Enables virtual attribute processing.
+    */
+
+    void EnableVirtualAttributes(bool b) { m_enableVirtualAttributes = b; }
+
+    /**
+        Returns @true if virtual attribute processing is enabled.
+    */
+
+    bool GetVirtualAttributesEnabled() const { return m_enableVirtualAttributes; }
+
     wxRichTextBuffer*   m_buffer;
+    bool                m_enableVirtualAttributes;
 };
 
 /**
@@ -2206,7 +2253,7 @@ public:
         is invalid for this object.
     */
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const  = 0;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const  = 0;
 
     /**
         Do a split from @a pos, returning an object containing the second part, and setting
@@ -2252,13 +2299,26 @@ public:
     /**
         Returns @true if this object can merge itself with the given one.
     */
-    virtual bool CanMerge(wxRichTextObject* WXUNUSED(object)) const { return false; }
+    virtual bool CanMerge(wxRichTextObject* WXUNUSED(object), wxRichTextDrawingContext& WXUNUSED(context)) const { return false; }
 
     /**
         Returns @true if this object merged itself with the given one.
         The calling code will then delete the given object.
     */
-    virtual bool Merge(wxRichTextObject* WXUNUSED(object)) { return false; }
+    virtual bool Merge(wxRichTextObject* WXUNUSED(object), wxRichTextDrawingContext& WXUNUSED(context)) { return false; }
+
+    /**
+        JACS
+        Returns @true if this object can potentially be split, by virtue of having
+        different virtual attributes for individual sub-objects.
+    */
+    virtual bool CanSplit(wxRichTextDrawingContext& WXUNUSED(context)) const { return false; }
+
+    /**
+        Returns the final object in the split objects if this object was split due to differences between sub-object virtual attributes.
+        Returns itself if it was not split.
+    */
+    virtual wxRichTextObject* Split(wxRichTextDrawingContext& WXUNUSED(context)) { return this; }
 
     /**
         Dump object data to the given output stream for debugging.
@@ -2734,7 +2794,7 @@ public:
 
     virtual wxString GetTextForRange(const wxRichTextRange& range) const;
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     virtual void Dump(wxTextOutputStream& stream);
 
@@ -2811,7 +2871,7 @@ public:
     /**
         Recursively merges all pieces that can be merged.
     */
-    bool Defragment(const wxRichTextRange& range = wxRICHTEXT_ALL);
+    bool Defragment(wxRichTextDrawingContext& context, const wxRichTextRange& range = wxRICHTEXT_ALL);
 
     /**
         Moves the object recursively, by adding the offset from old to new.
@@ -2851,7 +2911,7 @@ public:
 
     virtual bool Layout(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style);
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     virtual bool DeleteRange(const wxRichTextRange& range);
 
@@ -3503,8 +3563,8 @@ protected:
     covers common needs especially for simple, static fields using text or a bitmap.
 
     Register field types on application initialisation with the static function
-    wxRichTextParagraphLayoutBox::AddFieldType. They will be deleted automatically
-    on application exit.
+    wxRichTextBuffer::AddFieldType. They will be deleted automatically on 
+    application exit.
 
     An application can write a field to a control with wxRichTextCtrl::WriteField,
     taking a field type, the properties for the field, and optional attributes.
@@ -3539,7 +3599,7 @@ public:
 
     virtual bool Layout(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style);
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     virtual wxString GetXMLNodeName() const { return wxT("field"); }
 
@@ -3590,8 +3650,8 @@ protected:
     property editing functionality for a field.
 
     Register field types on application initialisation with the static function
-    wxRichTextParagraphLayoutBox::AddFieldType. They will be deleted automatically
-    on application exit.
+    wxRichTextBuffer::AddFieldType. They will be deleted automatically on
+    application exit.
 
     @library{wxrichtext}
     @category{richtext}
@@ -3637,7 +3697,7 @@ public:
         Returns the object size for the given range. Returns @false if the range
         is invalid for this object.
     */
-    virtual bool GetRangeSize(wxRichTextField* obj, const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const = 0;
+    virtual bool GetRangeSize(wxRichTextField* obj, const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const = 0;
 
     /**
         Returns @true if we can edit the object's properties via a GUI.
@@ -3805,7 +3865,7 @@ public:
         Returns the object size for the given range. Returns @false if the range
         is invalid for this object.
     */
-    virtual bool GetRangeSize(wxRichTextField* obj, const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(wxRichTextField* obj, const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     /**
         Get the size of the field, given the label, font size, and so on.
@@ -4112,7 +4172,7 @@ public:
 
     virtual bool Layout(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style);
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     virtual bool FindPosition(wxDC& dc, wxRichTextDrawingContext& context, long index, wxPoint& pt, int* height, bool forceLineStart);
 
@@ -4237,7 +4297,7 @@ public:
     /**
         Lays out the floating objects.
     */
-    void LayoutFloat(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, int style, wxRichTextFloatCollector* floatCollector);
+    void LayoutFloat(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style, wxRichTextFloatCollector* floatCollector);
 
 protected:
 
@@ -4283,7 +4343,7 @@ public:
 
     virtual bool Layout(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style);
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     virtual wxString GetTextForRange(const wxRichTextRange& range) const;
 
@@ -4295,11 +4355,15 @@ public:
 
     virtual bool IsEmpty() const { return m_text.empty(); }
 
-    virtual bool CanMerge(wxRichTextObject* object) const;
+    virtual bool CanMerge(wxRichTextObject* object, wxRichTextDrawingContext& context) const;
 
-    virtual bool Merge(wxRichTextObject* object);
+    virtual bool Merge(wxRichTextObject* object, wxRichTextDrawingContext& context);
 
     virtual void Dump(wxTextOutputStream& stream);
+
+    virtual bool CanSplit(wxRichTextDrawingContext& context) const;
+
+    virtual wxRichTextObject* Split(wxRichTextDrawingContext& context);
 
     /**
         Get the first position from pos that has a line break character.
@@ -4554,6 +4618,11 @@ public:
     wxRichTextImage(const wxRichTextImage& obj): wxRichTextObject(obj) { Copy(obj); }
 
     /**
+        Destructor.
+    */
+    ~wxRichTextImage();
+
+    /**
         Initialisation.
     */
     void Init();
@@ -4564,7 +4633,7 @@ public:
 
     virtual bool Layout(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style);
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     /**
         Returns the 'natural' size for this object - the image size.
@@ -4635,7 +4704,7 @@ public:
     /**
         Creates a cached image at the required size.
     */
-    virtual bool LoadImageCache(wxDC& dc, bool resetCache = false);
+    virtual bool LoadImageCache(wxDC& dc, bool resetCache = false, const wxSize& parentSize = wxDefaultSize);
 
     /**
         Gets the original image size.
@@ -5376,6 +5445,19 @@ public:
     */
     void SetScale(double scale) { m_scale = scale; }
 
+    /**
+        Sets the floating layout mode. Pass @false to speed up editing by not performing
+        floating layout. This setting affects all buffers.
+
+    */
+    static void SetFloatingLayoutMode(bool mode) { sm_floatingLayoutMode = mode; }
+
+    /**
+        Returns the floating layout mode. The default is @true, where objects
+        are laid out according to their floating status.
+    */
+    static bool GetFloatingLayoutMode() { return sm_floatingLayoutMode; }
+
 protected:
 
     /// Command processor
@@ -5429,6 +5511,9 @@ protected:
     /// Factor to multiply by character height to get a reasonable bullet size
     static float            sm_bulletProportion;
 
+    /// Floating layout mode, @true by default
+    static bool             sm_floatingLayoutMode;
+
     /// Scaling factor in use: needed to calculate correct dimensions when printing
     double                  m_scale;
 
@@ -5477,6 +5562,14 @@ public:
 
 // Accessors
 
+    int GetColspan() const;
+
+    void SetColspan(long span) { GetProperties().SetProperty(wxT("colspan"), span); }
+
+    int GetRowspan() const;
+
+    void SetRowspan(long span) { GetProperties().SetProperty(wxT("rowspan"), span); }
+
 // Operations
 
     virtual wxRichTextObject* Clone() const { return new wxRichTextCell(*this); }
@@ -5493,7 +5586,7 @@ protected:
  */
 
 WX_DEFINE_ARRAY_PTR(wxRichTextObject*, wxRichTextObjectPtrArray);
-WX_DECLARE_OBJARRAY(wxRichTextObjectPtrArray, wxRichTextObjectPtrArrayArray);
+WX_DECLARE_USER_EXPORTED_OBJARRAY(wxRichTextObjectPtrArray, wxRichTextObjectPtrArrayArray, WXDLLIMPEXP_RICHTEXT);
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextTable: public wxRichTextBox
 {
@@ -5522,7 +5615,7 @@ public:
 
     virtual bool Layout(wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int style);
 
-    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, wxPoint position = wxPoint(0,0), wxArrayInt* partialExtents = NULL) const;
+    virtual bool GetRangeSize(const wxRichTextRange& range, wxSize& size, int& descent, wxDC& dc, wxRichTextDrawingContext& context, int flags, const wxPoint& position = wxPoint(0,0), const wxSize& parentSize = wxDefaultSize, wxArrayInt* partialExtents = NULL) const;
 
     virtual bool DeleteRange(const wxRichTextRange& range);
 
@@ -5598,6 +5691,11 @@ public:
         Returns the row/column for a given character position.
     */
     virtual bool GetCellRowColumnPosition(long pos, int& row, int& col) const;
+
+    /**
+        Returns the coordinates of the cell with keyboard focus, or (-1,-1) if none.
+    */    
+    virtual wxPosition GetFocusedCell() const;
 
 // Operations
 
@@ -5876,6 +5974,12 @@ public:
         and the action's range start position.
     */
     wxRichTextObject* GetObject() const { return m_object; }
+
+    /**
+        Stores the object to replace the one at the position defined by the container address
+        without making an address for it (cf SetObject() and MakeObject()).
+    */
+    void StoreObject(wxRichTextObject* obj) { m_object = obj; }
 
     /**
         Sets the object to replace the one at the position defined by the container address
@@ -6237,6 +6341,31 @@ public:
         Provides virtual attributes that we can provide.
     */
     virtual bool GetVirtualAttributes(wxRichTextAttr& attr, wxRichTextObject* obj) const = 0;
+
+    /**
+        Gets the count for mixed virtual attributes for individual positions within the object.
+        For example, individual characters within a text object may require special highlighting.
+    */
+    virtual int GetVirtualSubobjectAttributesCount(wxRichTextObject* obj) const = 0;
+
+    /**
+        Gets the mixed virtual attributes for individual positions within the object.
+        For example, individual characters within a text object may require special highlighting.
+        Returns the number of virtual attributes found.
+    */
+    virtual int GetVirtualSubobjectAttributes(wxRichTextObject* obj, wxArrayInt& positions, wxRichTextAttrArray& attributes) const = 0;
+
+    /**
+        Do we have virtual text for this object? Virtual text allows an application
+        to replace characters in an object for editing and display purposes, for example
+        for highlighting special characters.
+    */
+    virtual bool HasVirtualText(const wxRichTextPlainText* obj) const = 0;
+
+    /**
+        Gets the virtual text for this object.
+    */
+    virtual bool GetVirtualText(const wxRichTextPlainText* obj, wxString& text) const = 0;
 
     /**
         Sets the name of the handler.

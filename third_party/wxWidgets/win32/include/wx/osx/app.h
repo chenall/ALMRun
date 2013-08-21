@@ -83,14 +83,21 @@ public:
     // TODO change semantics to be in line with cocoa (make autrelease NOT increase the count)
     void                  MacAddToAutorelease( void* cfrefobj );
     void                  MacReleaseAutoreleasePool();
+    
 public:
     static wxWindow*      s_captureWindow ;
     static long           s_lastModifiers ;
 
     int                   m_nCmdShow;
 
-private:
     // mac specifics
+protected:
+#if wxOSX_USE_COCOA
+    // override for support of custom app controllers
+    virtual WX_NSObject   OSXCreateAppController();
+#endif
+    
+private:
     virtual bool        DoInitGui();
     virtual void        DoCleanUp();
 
@@ -109,10 +116,10 @@ public:
     // For embedded use. By default does nothing.
     virtual void          MacHandleUnhandledEvent( WXEVENTREF ev );
 
-    bool    MacSendKeyDownEvent( wxWindow* focus , long keyval , long modifiers , long when , short wherex , short wherey , wxChar uniChar ) ;
-    bool    MacSendKeyUpEvent( wxWindow* focus , long keyval , long modifiers , long when , short wherex , short wherey , wxChar uniChar ) ;
-    bool    MacSendCharEvent( wxWindow* focus , long keymessage , long modifiers , long when , short wherex , short wherey , wxChar uniChar ) ;
-    void    MacCreateKeyEvent( wxKeyEvent& event, wxWindow* focus , long keymessage , long modifiers , long when , short wherex , short wherey , wxChar uniChar ) ;
+    bool    MacSendKeyDownEvent( wxWindow* focus , long keyval , long modifiers , long when , wxChar uniChar ) ;
+    bool    MacSendKeyUpEvent( wxWindow* focus , long keyval , long modifiers , long when , wxChar uniChar ) ;
+    bool    MacSendCharEvent( wxWindow* focus , long keymessage , long modifiers , long when , wxChar uniChar ) ;
+    void    MacCreateKeyEvent( wxKeyEvent& event, wxWindow* focus , long keymessage , long modifiers , long when , wxChar uniChar ) ;
 #if wxOSX_USE_CARBON
     // we only have applescript on these
     virtual short         MacHandleAEODoc(const WXAPPLEEVENTREF event , WXAPPLEEVENTREF reply) ;

@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
-
 set(PROJ_NAME ALMRun)
 project(${PROJ_NAME})
-
 # platform
 math(EXPR BIT "${CMAKE_SIZEOF_VOID_P} * 8")
 if(WIN32)
@@ -15,15 +13,12 @@ else()
 	message(FATAL_ERROR "The platform isn't supported")
 endif()
 message(STATUS "Platform - ${PLATFORM}")
-
 # build type
 set(ALL_BUILD_TYPE Debug Release)
-
 if(NOT CMAKE_BUILD_TYPE)
 	list(GET ALL_BUILD_TYPE 0 BUILD_TYPE_0)
 	set(CMAKE_BUILD_TYPE ${BUILD_TYPE_0})
 endif()
-
 foreach(BUILD_TYPE ${ALL_BUILD_TYPE})
 	string(TOLOWER ${BUILD_TYPE} BUILD_TYPE_LOWER)
 	string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_LOWER)
@@ -34,22 +29,19 @@ endforeach()
 if(NOT IS_VALID_BUILD_TYPE)
 	message(FATAL_ERROR "Build type ${CMAKE_BUILD_TYPE} isn't supported")
 endif()
-
 message(STATUS "Build type (Makefile) - ${CMAKE_BUILD_TYPE}")
-
 # set output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
-
 # add executable
 aux_source_directory(src SRCS)
 aux_source_directory(src/Dialog SRCS)
-include_directories(src/Dialog)
-include_directories(src)
+include_directories(src src/Dialog)
+#include_directories("E:/wxWidgets-2.9.5/include" "E:/wxWidgets-2.9.5/include/msvc")
+#link_directories("E:/wxWidgets-2.9.5/lib/vc_lib")
 if(NOT APPLE)
 	file(GLOB OBJC_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.mm)
 	list(REMOVE_ITEM SRCS ${OBJC_SRCS})
 endif()
-
 if(WIN32)
 	add_executable(${PROJ_NAME} WIN32 ${SRCS} resource/merry.rc)
 else(APPLE)
@@ -57,13 +49,11 @@ else(APPLE)
 else()
 	add_executable(${PROJ_NAME} ${SRCS})
 endif()
-
 # add third party libraries
 file(GLOB ALL_THIRD_PARTY_PATH third_party/*)
 foreach(THIRD_PARTY_PATH ${ALL_THIRD_PARTY_PATH})
 	if(NOT (${THIRD_PARTY_PATH} MATCHES "\\.svn$"))
 		include_directories(${THIRD_PARTY_PATH}/${PLATFORM}/include)
-
 		foreach(BUILD_TYPE ${ALL_BUILD_TYPE})
 			string(TOLOWER ${BUILD_TYPE} BUILD_TYPE_LOWER)
 			set(THIRD_PARTY_LIB_PATH ${THIRD_PARTY_PATH}/${PLATFORM}/${BUILD_TYPE_LOWER})
@@ -78,13 +68,11 @@ foreach(THIRD_PARTY_PATH ${ALL_THIRD_PARTY_PATH})
 		endforeach()
 	endif()
 endforeach()
-
 if(UNIX)
 	find_package(wxWidgets REQUIRED)
 	include(${wxWidgets_USE_FILE})
 	target_link_libraries(${PROJ_NAME} ${wxWidgets_LIBRARIES})
 endif()
-
 # set flags
 if(WIN32)
 	foreach(FLAG_VAR
@@ -93,19 +81,16 @@ if(WIN32)
 			CMAKE_CXX_FLAGS_RELEASE
 			CMAKE_CXX_FLAGS_MINSIZEREL
 			CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-		if(${FLAG_VAR} MATCHES "/MD")
+		if(${FLAG_VAR} MATCHES "/MT")
 			string(REGEX REPLACE "/MD" "/MT" ${FLAG_VAR} "${${FLAG_VAR}}")
 		endif()
 	endforeach()
-
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_UNICODE -DUNICODE /wd4996")
 	target_link_libraries(${PROJ_NAME} comctl32 rpcrt4)
 endif()
-
 if(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif()
-
 # configuration types
 if(CMAKE_CONFIGURATION_TYPES)
 	set(CMAKE_CONFIGURATION_TYPES ${ALL_BUILD_TYPE})

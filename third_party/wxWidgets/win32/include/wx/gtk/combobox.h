@@ -56,6 +56,7 @@ public:
         Init();
         Create(parent, id, value, pos, size, choices, style, validator, name);
     }
+    ~wxComboBox();
 
     bool Create(wxWindow *parent, wxWindowID id,
                 const wxString& value = wxEmptyString,
@@ -143,6 +144,8 @@ protected:
     // Override in derived classes to create combo box widgets with
     // custom list stores.
     virtual void GTKCreateComboBoxWidget();
+
+    virtual wxSize DoGetSizeFromTextSize(int xlen, int ylen = -1) const;
 
     virtual GtkEntry *GetEntry() const
         { return m_entry; }

@@ -212,6 +212,14 @@ public:
     virtual bool CanApplyThemeBorder() const { return false; }
 
 protected:
+    // Implement "update locking" in a custom way for this control.
+    virtual void DoFreeze();
+    virtual void DoThaw();
+
+    virtual void DoSetSize(int x, int y,
+                           int width, int height,
+                           int sizeFlags = wxSIZE_AUTO);
+
     // SetImageList helper
     void SetAnyImageList(wxImageList *imageList, int which);
 
@@ -331,6 +339,9 @@ private:
 
     // whether we need to deselect other items on mouse up
     bool m_mouseUpDeselect;
+
+    // The size to restore the control to when it is thawed, see DoThaw().
+    wxSize m_thawnSize;
 
     friend class wxTreeItemIndirectData;
     friend class wxTreeSortHelper;

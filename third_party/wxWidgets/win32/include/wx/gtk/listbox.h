@@ -10,7 +10,7 @@
 #ifndef _WX_GTK_LISTBOX_H_
 #define _WX_GTK_LISTBOX_H_
 
-struct _GtkTreeEntry;
+struct _wxTreeEntry;
 struct _GtkTreeIter;
 
 //-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public:
     bool       m_hasCheckBoxes;
 #endif // wxUSE_CHECKLISTBOX
 
-    struct _GtkTreeEntry* GTKGetEntry(unsigned pos) const;
+    struct _wxTreeEntry* GTKGetEntry(unsigned pos) const;
 
     void GTKDisableEvents();
     void GTKEnableEvents();
@@ -111,6 +111,7 @@ protected:
     virtual int DoInsertItems(const wxArrayStringsAdapter& items,
                               unsigned int pos,
                               void **clientData, wxClientDataType type);
+    virtual int DoInsertOneItem(const wxString& item, unsigned int pos);
 
     virtual void DoSetFirstItem(int n);
     virtual void DoSetItemClientData(unsigned int n, void* clientData);
@@ -122,9 +123,6 @@ protected:
 
     // get the index for the given iterator, return wxNOT_FOUND on failure
     int GTKGetIndexFor(_GtkTreeIter& iter) const;
-
-    // set the specified item
-    void GTKSetItem(_GtkTreeIter& iter, const _GtkTreeEntry *entry);
 
     // common part of DoSetFirstItem() and EnsureVisible()
     void DoScrollToCell(int n, float alignY, float alignX);

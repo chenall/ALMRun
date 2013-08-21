@@ -45,7 +45,9 @@ public:
     bool MouseDblClick(int button = wxMOUSE_BTN_LEFT);
     bool MouseDragDrop(long x1, long y1, long x2, long y2,
                        int button = wxMOUSE_BTN_LEFT);
-
+    bool MouseDragDrop(const wxPoint& p1, const wxPoint& p2,
+                       int button = wxMOUSE_BTN_LEFT)
+    { return MouseDragDrop(p1.x, p1.y, p2.x, p2.y, button); }
 
     // Keyboard simulation
     // -------------------

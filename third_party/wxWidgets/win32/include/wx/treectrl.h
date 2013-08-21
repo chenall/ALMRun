@@ -289,10 +289,10 @@ public:
         // delete this item and associated data if any
     virtual void Delete(const wxTreeItemId& item) = 0;
         // delete all children (but don't delete the item itself)
-        // NB: this won't send wxEVT_COMMAND_TREE_ITEM_DELETED events
+        // NB: this won't send wxEVT_TREE_ITEM_DELETED events
     virtual void DeleteChildren(const wxTreeItemId& item) = 0;
         // delete all items from the tree
-        // NB: this won't send wxEVT_COMMAND_TREE_ITEM_DELETED events
+        // NB: this won't send wxEVT_TREE_ITEM_DELETED events
     virtual void DeleteAllItems() = 0;
 
         // expand this item
@@ -348,6 +348,10 @@ public:
         // end editing and accept or discard the changes to item label
     virtual void EndEditLabel(const wxTreeItemId& item,
                               bool discardChanges = false) = 0;
+
+        // Enable or disable beep when incremental match doesn't find any item.
+        // Only implemented in the generic version currently.
+    virtual void EnableBellOnNoMatch(bool WXUNUSED(on) = true) { }
 
     // sorting
     // -------

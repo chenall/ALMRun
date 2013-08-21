@@ -237,6 +237,87 @@ private:
 // Convert variants
 class WXDLLIMPEXP_FWD_BASE wxVariant;
 
+// wrapper for CURRENCY type used in VARIANT (VARIANT.vt == VT_CY)
+class WXDLLIMPEXP_CORE wxVariantDataCurrency : public wxVariantData
+{
+public:
+    wxVariantDataCurrency() { VarCyFromR8(0.0, &m_value); }
+    wxVariantDataCurrency(CURRENCY value) { m_value = value; }
+
+    CURRENCY GetValue() const { return m_value; }
+    void SetValue(CURRENCY value) { m_value = value; }
+
+    virtual bool Eq(wxVariantData& data) const;
+
+#if wxUSE_STD_IOSTREAM
+    virtual bool Write(wxSTD ostream& str) const;
+#endif
+    virtual bool Write(wxString& str) const;
+
+    wxVariantData* Clone() const { return new wxVariantDataCurrency(m_value); }
+    virtual wxString GetType() const { return wxS("currency"); }
+
+    DECLARE_WXANY_CONVERSION()
+
+private:
+    CURRENCY m_value;
+};
+
+
+// wrapper for SCODE type used in VARIANT (VARIANT.vt == VT_ERROR)
+class WXDLLIMPEXP_CORE wxVariantDataErrorCode : public wxVariantData
+{
+public:
+    wxVariantDataErrorCode(SCODE value = S_OK) { m_value = value; }
+
+    SCODE GetValue() const { return m_value; }
+    void SetValue(SCODE value) { m_value = value; }
+
+    virtual bool Eq(wxVariantData& data) const;
+
+#if wxUSE_STD_IOSTREAM
+    virtual bool Write(wxSTD ostream& str) const;
+#endif
+    virtual bool Write(wxString& str) const;
+
+    wxVariantData* Clone() const { return new wxVariantDataErrorCode(m_value); }
+    virtual wxString GetType() const { return wxS("errorcode"); }
+
+    DECLARE_WXANY_CONVERSION()
+
+private:
+    SCODE m_value;
+};
+
+// wrapper for SAFEARRAY, used for passing multidimensional arrays in wxVariant
+class WXDLLIMPEXP_CORE wxVariantDataSafeArray : public wxVariantData
+{
+public:
+    wxEXPLICIT wxVariantDataSafeArray(SAFEARRAY* value = NULL)
+    {
+        m_value = value;
+    }
+
+    SAFEARRAY* GetValue() const { return m_value; }
+    void SetValue(SAFEARRAY* value) { m_value = value; }
+
+    virtual bool Eq(wxVariantData& data) const;
+
+#if wxUSE_STD_IOSTREAM
+    virtual bool Write(wxSTD ostream& str) const;
+#endif
+    virtual bool Write(wxString& str) const;
+
+    wxVariantData* Clone() const { return new wxVariantDataSafeArray(m_value); }
+    virtual wxString GetType() const { return wxS("safearray"); }
+
+    DECLARE_WXANY_CONVERSION()
+
+private:
+    SAFEARRAY* m_value;
+};
+
+
 WXDLLIMPEXP_CORE bool wxConvertVariantToOle(const wxVariant& variant, VARIANTARG& oleVariant);
 WXDLLIMPEXP_CORE bool wxConvertOleToVariant(const VARIANTARG& oleVariant, wxVariant& variant);
 #endif // wxUSE_VARIANT

@@ -51,9 +51,6 @@ class WXDLLIMPEXP_CORE wxGUIAppTraits : public wxGUIAppTraitsBase
 public:
     virtual wxEventLoopBase *CreateEventLoop();
     virtual int WaitForChild(wxExecuteData& execData);
-#ifdef wxHAS_GUI_PROCESS_CALLBACKS
-    virtual int AddProcessCallback(wxEndProcessData *data, int fd);
-#endif
 #if wxUSE_TIMER
     virtual wxTimerImpl *CreateTimerImpl(wxTimer *timer);
 #endif
@@ -66,10 +63,6 @@ public:
     virtual wxStandardPaths& GetStandardPaths();
 #endif
     virtual wxPortId GetToolkitVersion(int *majVer = NULL, int *minVer = NULL) const;
-
-#if defined(__WXGTK__) && wxUSE_INTL
-    virtual void SetLocale();
-#endif // __WXGTK__
 
 #ifdef __WXGTK20__
     virtual wxString GetDesktopEnvironment() const;
@@ -92,6 +85,8 @@ public:
 #endif
 
 #endif // wxUSE_SOCKETS
+
+    virtual wxEventLoopSourcesManagerBase* GetEventLoopSourcesManager();
 };
 
 #endif // wxUSE_GUI

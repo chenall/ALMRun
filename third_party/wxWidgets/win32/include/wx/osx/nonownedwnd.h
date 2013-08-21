@@ -65,7 +65,7 @@ public:
     virtual void UnsubclassWin();
 
     virtual wxPoint GetClientAreaOrigin() const;
-
+    
     // implement base class pure virtuals
 
     virtual bool SetTransparent(wxByte alpha);

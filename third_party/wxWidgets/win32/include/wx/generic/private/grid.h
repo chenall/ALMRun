@@ -16,6 +16,10 @@
 
 #if wxUSE_GRID
 
+// Internally used (and hence intentionally not exported) event telling wxGrid
+// to hide the currently shown editor.
+wxDECLARE_EVENT( wxEVT_GRID_HIDE_EDITOR, wxCommandEvent );
+
 // ----------------------------------------------------------------------------
 // array classes
 // ----------------------------------------------------------------------------
@@ -553,7 +557,7 @@ public:
     // NB: As GetLineAt(), currently this is always identity for rows.
     virtual int GetLinePos(const wxGrid *grid, int line) const = 0;
 
-    // Return the index of the line just before the given one.
+    // Return the index of the line just before the given one or wxNOT_FOUND.
     virtual int GetLineBefore(const wxGrid* grid, int line) const = 0;
 
     // Get the row or column label window
@@ -626,7 +630,7 @@ public:
         { return line; } // TODO: implement row reordering
 
     virtual int GetLineBefore(const wxGrid* WXUNUSED(grid), int line) const
-        { return line ? line - 1 : line; }
+        { return line - 1; }
 
     virtual wxWindow *GetHeaderWindow(wxGrid *grid) const
         { return grid->GetGridRowLabelWindow(); }
@@ -692,7 +696,10 @@ public:
         { return grid->GetColPos(line); }
 
     virtual int GetLineBefore(const wxGrid* grid, int line) const
-        { return grid->GetColAt(wxMax(0, grid->GetColPos(line) - 1)); }
+    {
+        int posBefore = grid->GetColPos(line) - 1;
+        return posBefore >= 0 ? grid->GetColAt(posBefore) : wxNOT_FOUND;
+    }
 
     virtual wxWindow *GetHeaderWindow(wxGrid *grid) const
         { return grid->GetGridColLabelWindow(); }

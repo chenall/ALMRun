@@ -88,10 +88,10 @@ public:
     /// wxEVT_IDLE event handler for ID_RICHTEXTFONTPAGE
     void OnIdle( wxIdleEvent& event );
 
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTFONTPAGE_FACETEXTCTRL
+    /// wxEVT_TEXT event handler for ID_RICHTEXTFONTPAGE_FACETEXTCTRL
     void OnFaceTextCtrlUpdated( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTFONTPAGE_SIZETEXTCTRL
+    /// wxEVT_TEXT event handler for ID_RICHTEXTFONTPAGE_SIZETEXTCTRL
     void OnSizeTextCtrlUpdated( wxCommandEvent& event );
 
     /// wxEVT_SCROLL_LINEUP event handler for ID_RICHTEXTFONTPAGE_SPINBUTTONS
@@ -100,31 +100,31 @@ public:
     /// wxEVT_SCROLL_LINEDOWN event handler for ID_RICHTEXTFONTPAGE_SPINBUTTONS
     void OnRichtextfontpageSpinbuttonsDown( wxSpinEvent& event );
 
-    /// wxEVT_COMMAND_CHOICE_SELECTED event handler for ID_RICHTEXTFONTPAGE_SIZE_UNITS
+    /// wxEVT_CHOICE event handler for ID_RICHTEXTFONTPAGE_SIZE_UNITS
     void OnRichtextfontpageSizeUnitsSelected( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_RICHTEXTFONTPAGE_SIZELISTBOX
+    /// wxEVT_LISTBOX event handler for ID_RICHTEXTFONTPAGE_SIZELISTBOX
     void OnSizeListBoxSelected( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTFONTPAGE_STYLECTRL
+    /// wxEVT_COMBOBOX event handler for ID_RICHTEXTFONTPAGE_STYLECTRL
     void OnStyleCtrlSelected( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTFONTPAGE_WEIGHTCTRL
+    /// wxEVT_COMBOBOX event handler for ID_RICHTEXTFONTPAGE_WEIGHTCTRL
     void OnWeightCtrlSelected( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTFONTPAGE_UNDERLINING_CTRL
+    /// wxEVT_COMBOBOX event handler for ID_RICHTEXTFONTPAGE_UNDERLINING_CTRL
     void OnUnderliningCtrlSelected( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTFONTPAGE_STRIKETHROUGHCTRL
+    /// wxEVT_CHECKBOX event handler for ID_RICHTEXTFONTPAGE_STRIKETHROUGHCTRL
     void OnStrikethroughctrlClick( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTFONTPAGE_CAPSCTRL
+    /// wxEVT_CHECKBOX event handler for ID_RICHTEXTFONTPAGE_CAPSCTRL
     void OnCapsctrlClick( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTFONTPAGE_SUPERSCRIPT
+    /// wxEVT_CHECKBOX event handler for ID_RICHTEXTFONTPAGE_SUPERSCRIPT
     void OnRichtextfontpageSuperscriptClick( wxCommandEvent& event );
 
-    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTFONTPAGE_SUBSCRIPT
+    /// wxEVT_CHECKBOX event handler for ID_RICHTEXTFONTPAGE_SUBSCRIPT
     void OnRichtextfontpageSubscriptClick( wxCommandEvent& event );
 
 ////@end wxRichTextFontPage event handler declarations
@@ -158,6 +158,7 @@ public:
     wxRichTextColourSwatchCtrl* m_bgColourCtrl;
     wxCheckBox* m_strikethroughCtrl;
     wxCheckBox* m_capitalsCtrl;
+    wxCheckBox* m_smallCapitalsCtrl;
     wxCheckBox* m_superscriptCtrl;
     wxCheckBox* m_subscriptCtrl;
     wxRichTextFontPreviewCtrl* m_previewCtrl;
@@ -165,23 +166,24 @@ public:
     enum {
         ID_RICHTEXTFONTPAGE = 10000,
         ID_RICHTEXTFONTPAGE_FACETEXTCTRL = 10001,
-        ID_RICHTEXTFONTPAGE_SIZETEXTCTRL = 10005,
-        ID_RICHTEXTFONTPAGE_SPINBUTTONS = 10018,
-        ID_RICHTEXTFONTPAGE_SIZE_UNITS = 10017,
-        ID_RICHTEXTFONTPAGE_FACELISTBOX = 10002,
+        ID_RICHTEXTFONTPAGE_SIZETEXTCTRL = 10002,
+        ID_RICHTEXTFONTPAGE_SPINBUTTONS = 10003,
+        ID_RICHTEXTFONTPAGE_SIZE_UNITS = 10004,
+        ID_RICHTEXTFONTPAGE_FACELISTBOX = 10005,
         ID_RICHTEXTFONTPAGE_SIZELISTBOX = 10006,
         ID_RICHTEXTFONTPAGE_STYLECTRL = 10007,
-        ID_RICHTEXTFONTPAGE_WEIGHTCTRL = 10004,
-        ID_RICHTEXTFONTPAGE_UNDERLINING_CTRL = 10008,
-        ID_RICHTEXTFONTPAGE_COLOURCTRL_LABEL = 10015,
-        ID_RICHTEXTFONTPAGE_COLOURCTRL = 10009,
-        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL_LABEL = 10016,
-        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL = 10014,
-        ID_RICHTEXTFONTPAGE_STRIKETHROUGHCTRL = 10010,
-        ID_RICHTEXTFONTPAGE_CAPSCTRL = 10011,
-        ID_RICHTEXTFONTPAGE_SUPERSCRIPT = 10012,
-        ID_RICHTEXTFONTPAGE_SUBSCRIPT = 10013,
-        ID_RICHTEXTFONTPAGE_PREVIEWCTRL = 10003
+        ID_RICHTEXTFONTPAGE_WEIGHTCTRL = 10008,
+        ID_RICHTEXTFONTPAGE_UNDERLINING_CTRL = 10009,
+        ID_RICHTEXTFONTPAGE_COLOURCTRL_LABEL = 10010,
+        ID_RICHTEXTFONTPAGE_COLOURCTRL = 10011,
+        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL_LABEL = 10012,
+        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL = 10013,
+        ID_RICHTEXTFONTPAGE_STRIKETHROUGHCTRL = 10014,
+        ID_RICHTEXTFONTPAGE_CAPSCTRL = 10015,
+        ID_RICHTEXTFONTPAGE_SMALLCAPSCTRL = 10016,
+        ID_RICHTEXTFONTPAGE_SUPERSCRIPT = 10017,
+        ID_RICHTEXTFONTPAGE_SUBSCRIPT = 10018,
+        ID_RICHTEXTFONTPAGE_PREVIEWCTRL = 10019
     };
 ////@end wxRichTextFontPage member variables
 

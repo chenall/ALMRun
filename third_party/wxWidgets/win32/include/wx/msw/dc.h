@@ -126,6 +126,8 @@ public:
         m_clipX2 = 0;
     }
 
+    void* GetHandle() const { return (void*)GetHDC(); }
+    
     const wxBitmap& GetSelectedBitmap() const { return m_selectedBitmap; }
     wxBitmap& GetSelectedBitmap() { return m_selectedBitmap; }
 
@@ -247,12 +249,12 @@ public:
 
     virtual void DoGetSizeMM(int* width, int* height) const;
 
-    virtual void DoDrawLines(int n, wxPoint points[],
+    virtual void DoDrawLines(int n, const wxPoint points[],
                              wxCoord xoffset, wxCoord yoffset);
-    virtual void DoDrawPolygon(int n, wxPoint points[],
+    virtual void DoDrawPolygon(int n, const wxPoint points[],
                                wxCoord xoffset, wxCoord yoffset,
                                wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
-    virtual void DoDrawPolyPolygon(int n, int count[], wxPoint points[],
+    virtual void DoDrawPolyPolygon(int n, const int count[], const wxPoint points[],
                                    wxCoord xoffset, wxCoord yoffset,
                                    wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
     virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const

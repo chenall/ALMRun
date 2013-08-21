@@ -398,7 +398,7 @@ public:
     void Add(wxColour col, float pos) { Add(wxGraphicsGradientStop(col, pos)); }
 
     // Get the number of stops.
-    unsigned GetCount() const { return m_stops.size(); }
+    size_t GetCount() const { return m_stops.size(); }
 
     // Return the stop at the given index (which must be valid).
     wxGraphicsGradientStop Item(unsigned n) const { return m_stops.at(n); }
@@ -565,7 +565,7 @@ public:
     virtual bool SetCompositionMode(wxCompositionMode op) = 0;
 
     // returns the size of the graphics context in device coordinates
-    void GetSize(wxDouble* width, wxDouble* height)
+    void GetSize(wxDouble* width, wxDouble* height) const
     {
         if ( width )
             *width = m_width;

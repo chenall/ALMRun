@@ -1,4 +1,5 @@
 #include "MerryApp.h"
+#include <wx/stdpaths.h>
 
 IMPLEMENT_APP(MerryApp)
 
@@ -17,7 +18,7 @@ bool MerryApp::OnInit()
 		wxLogMessage("ALMRun_INIT");
 	#endif
 	#ifdef __WXMSW__
-	wxStandardPaths std; //<wx/stdpaths.h>
+	wxStandardPaths std = wxStandardPaths::Get(); //<wx/stdpaths.h>
 	wxFileName fname = wxFileName(std.GetExecutablePath());
 	wxString volume;
 	wxString pathTmp = fname.GetPathWithSep(); //<wx/filename.h>

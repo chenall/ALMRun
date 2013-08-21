@@ -129,18 +129,6 @@ static inline guint16 wx_gtk_entry_get_text_length(GtkEntry* entry)
 }
 #define gtk_entry_get_text_length wx_gtk_entry_get_text_length
 
-static inline GtkWidget* wx_gtk_font_selection_dialog_get_cancel_button(GtkFontSelectionDialog* fsd)
-{
-    return fsd->cancel_button;
-}
-#define gtk_font_selection_dialog_get_cancel_button wx_gtk_font_selection_dialog_get_cancel_button
-
-static inline GtkWidget* wx_gtk_font_selection_dialog_get_ok_button(GtkFontSelectionDialog* fsd)
-{
-    return fsd->ok_button;
-}
-#define gtk_font_selection_dialog_get_ok_button wx_gtk_font_selection_dialog_get_ok_button
-
 static inline const guchar* wx_gtk_selection_data_get_data(GtkSelectionData* selection_data)
 {
     return selection_data->data;
@@ -381,6 +369,12 @@ static inline gint wx_gdk_visual_get_depth(GdkVisual* visual)
 }
 #define gdk_visual_get_depth wx_gdk_visual_get_depth
 
+static inline gboolean wx_gtk_window_has_group(GtkWindow* window)
+{
+    return window->group != NULL;
+}
+#define gtk_window_has_group wx_gtk_window_has_group
+
 // ----------------------------------------------------------------------------
 // the following were introduced in GTK+ 2.24
 
@@ -433,7 +427,93 @@ static inline GtkWidget* wx_gtk_tree_view_column_get_button(GtkTreeViewColumn* t
 {
     return tree_column->button;
 }
-#define gtk_tree_view_column_get_button wx_gtk_tree_view_column_get_button 
+#define gtk_tree_view_column_get_button wx_gtk_tree_view_column_get_button
+
+static inline GtkWidget* wx_gtk_box_new(GtkOrientation orientation, gint spacing)
+{
+    GtkWidget* widget;
+    if (orientation == GTK_ORIENTATION_HORIZONTAL)
+        widget = gtk_hbox_new(false, spacing);
+    else
+        widget = gtk_vbox_new(false, spacing);
+    return widget;
+}
+#define gtk_box_new wx_gtk_box_new
+
+static inline GtkWidget* wx_gtk_button_box_new(GtkOrientation orientation)
+{
+    GtkWidget* widget;
+    if (orientation == GTK_ORIENTATION_HORIZONTAL)
+        widget = gtk_hbutton_box_new();
+    else
+        widget = gtk_vbutton_box_new();
+    return widget;
+}
+#define gtk_button_box_new wx_gtk_button_box_new
+
+static inline GtkWidget* wx_gtk_scale_new(GtkOrientation orientation, GtkAdjustment* adjustment)
+{
+    GtkWidget* widget;
+    if (orientation == GTK_ORIENTATION_HORIZONTAL)
+        widget = gtk_hscale_new(adjustment);
+    else
+        widget = gtk_vscale_new(adjustment);
+    return widget;
+}
+#define gtk_scale_new wx_gtk_scale_new
+
+static inline GtkWidget* wx_gtk_scrollbar_new(GtkOrientation orientation, GtkAdjustment* adjustment)
+{
+    GtkWidget* widget;
+    if (orientation == GTK_ORIENTATION_HORIZONTAL)
+        widget = gtk_hscrollbar_new(adjustment);
+    else
+        widget = gtk_vscrollbar_new(adjustment);
+    return widget;
+}
+#define gtk_scrollbar_new wx_gtk_scrollbar_new
+
+static inline GtkWidget* wx_gtk_separator_new(GtkOrientation orientation)
+{
+    GtkWidget* widget;
+    if (orientation == GTK_ORIENTATION_HORIZONTAL)
+        widget = gtk_hseparator_new();
+    else
+        widget = gtk_vseparator_new();
+    return widget;
+}
+#define gtk_separator_new wx_gtk_separator_new
+
+static inline void wx_gtk_widget_get_preferred_height(GtkWidget* widget, gint* minimum, gint* natural)
+{
+    GtkRequisition req;
+    gtk_widget_size_request(widget, &req);
+    if (minimum)
+        *minimum = req.height;
+    if (natural)
+        *natural = req.height;
+}
+#define gtk_widget_get_preferred_height wx_gtk_widget_get_preferred_height
+
+static inline void wx_gtk_widget_get_preferred_width(GtkWidget* widget, gint* minimum, gint* natural)
+{
+    GtkRequisition req;
+    gtk_widget_size_request(widget, &req);
+    if (minimum)
+        *minimum = req.width;
+    if (natural)
+        *natural = req.width;
+}
+#define gtk_widget_get_preferred_width wx_gtk_widget_get_preferred_width
+
+static inline void wx_gtk_widget_get_preferred_size(GtkWidget* widget, GtkRequisition* minimum, GtkRequisition* natural)
+{
+    GtkRequisition* req = minimum;
+    if (req == NULL)
+        req = natural;
+    gtk_widget_size_request(widget, req);
+}
+#define gtk_widget_get_preferred_size wx_gtk_widget_get_preferred_size
 
 #endif // !__WXGTK3__
 #endif // _WX_GTK_PRIVATE_COMPAT_H_

@@ -56,10 +56,13 @@ public:
     virtual bool Layout();
     virtual bool ScrollLines(int lines);
     bool ScrollPixels(int pixels);
+    bool ScrollSections(int sections);
 
     wxOrientation GetMajorAxis() const;
 
     virtual void RemoveChild(wxWindowBase *child);
+
+    void HideIfExpanded();
 
 protected:
     virtual wxSize DoGetBestSize() const;

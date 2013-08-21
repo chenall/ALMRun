@@ -3,6 +3,8 @@
 #include "ALMRunConfig.h"
 #include "MerryApp.h"
 #include "DlgConfig.h"
+#include "wx/dir.h"
+
 ALMRunConfig* g_config = NULL;
 const char *ALMRunConfig::config_str[] = {"StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection"};
 const char *ALMRunConfig::config_tip[] = {
@@ -18,9 +20,9 @@ const char *ALMRunConfig::config_tip[] = {
 };
 ALMRunConfig::ALMRunConfig()
 {
-	if (wxGetEnv("ALMRUN_HOME",&Home))
+	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
-		cfg_file = Home + "config/ALMRun.ini";
+		cfg_file = Home + wxT("config/ALMRun.ini");
 		if (!wxFileExists(cfg_file))
 			MoveFile(Home + wxGetApp().GetAppName().Append(".ini"),cfg_file);
 	}
@@ -39,7 +41,7 @@ ALMRunConfig::ALMRunConfig()
 		return;
 	}
 	lastId = 0;
-	conf = new wxFileConfig("ALMRun",wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
+	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
 	config[OrderByPre] = conf->ReadBool(config_str[OrderByPre],false);

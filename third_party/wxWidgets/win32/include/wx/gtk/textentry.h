@@ -11,6 +11,7 @@
 #ifndef _WX_GTK_TEXTENTRY_H_
 #define _WX_GTK_TEXTENTRY_H_
 
+typedef struct _GdkEventKey GdkEventKey;
 typedef struct _GtkEditable GtkEditable;
 typedef struct _GtkEntry GtkEntry;
 
@@ -50,8 +51,17 @@ public:
 
     // implementation only from now on
     void SendMaxLenEvent();
+    bool GTKEntryOnInsertText(const char* text);
 
 protected:
+    // This method must be called from the derived class Create() to connect
+    // the handlers for the clipboard (cut/copy/paste) events.
+    void GTKConnectClipboardSignals(GtkWidget* entry);
+
+    // And this one to connect "insert-text" signal.
+    void GTKConnectInsertTextSignal(GtkEntry* entry);
+
+
     virtual void DoSetValue(const wxString& value, int flags);
     virtual wxString DoGetValue() const;
 
@@ -60,6 +70,9 @@ protected:
     virtual wxPoint DoGetMargins() const;
 
     virtual bool DoAutoCompleteStrings(const wxArrayString& choices);
+
+    // Override the base class method to use GtkEntry IM context.
+    virtual int GTKIMFilterKeypress(GdkEventKey* event) const;
 
 private:
     // implement this to return the associated GtkEntry or another widget

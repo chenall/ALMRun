@@ -43,7 +43,6 @@ public:
 
     virtual wxString GetPath() const;
     virtual void GetPaths(wxArrayString& paths) const;
-    virtual wxString GetDirectory() const;
     virtual wxString GetFilename() const;
     virtual void GetFilenames(wxArrayString& files) const;
     virtual int GetFilterIndex() const;
@@ -58,6 +57,9 @@ public:
     virtual int ShowModal();
 
     virtual bool SupportsExtraControl() const { return true; }
+
+    // Implementation only.
+    void GTKSelectionChanged(const wxString& filename);
 
 
 protected:

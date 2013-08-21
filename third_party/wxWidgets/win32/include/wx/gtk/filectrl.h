@@ -88,9 +88,8 @@ public:
         Create( parent, id, defaultDirectory, defaultFilename, wildCard, style, pos, size, name );
     }
 
-    virtual ~wxGtkFileCtrl() {}
+    virtual ~wxGtkFileCtrl();
 
-    void Init();
     bool Create( wxWindow *parent,
                  wxWindowID id,
                  const wxString& defaultDirectory = wxEmptyString,
@@ -133,6 +132,9 @@ protected:
     GtkFileChooser     *m_fcWidget;
     wxGtkFileChooser    m_fc;
     wxString            m_wildCard;
+
+private:
+    void Init();
 
     DECLARE_DYNAMIC_CLASS( wxGtkFileCtrl )
 };

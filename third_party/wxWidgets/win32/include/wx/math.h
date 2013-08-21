@@ -62,7 +62,12 @@
         add more compilers with C99 support here: using C99 isfinite() is
         preferable to using BSD-ish finite()
      */
-    #define wxFinite(x) isfinite(x)
+    #if defined(_GLIBCXX_CMATH) || defined(_LIBCPP_CMATH)
+        // these <cmath> headers #undef isfinite
+        #define wxFinite(x) std::isfinite(x)
+    #else
+        #define wxFinite(x) isfinite(x)
+    #endif
 #elif ( defined(__GNUG__)||defined(__GNUWIN32__)||defined(__DJGPP__)|| \
       defined(__SGI_CC__)||defined(__SUNCC__)||defined(__XLC__)|| \
       defined(__HPUX__) ) && ( !defined(wxOSX_USE_IPHONE) || wxOSX_USE_IPHONE == 0 )
@@ -107,8 +112,9 @@
         }
 
     #else /* !__INTELC__ */
-
+        wxGCC_WARNING_SUPPRESS(float-equal)
         inline bool wxIsSameDouble(double x, double y) { return x == y; }
+        wxGCC_WARNING_RESTORE(float-equal)
 
     #endif /* __INTELC__/!__INTELC__ */
 

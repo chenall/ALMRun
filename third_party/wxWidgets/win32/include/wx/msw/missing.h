@@ -86,6 +86,9 @@
     #ifndef SPI_GETWHEELSCROLLLINES
         #define SPI_GETWHEELSCROLLLINES 104
     #endif
+    #ifndef SPI_GETWHEELSCROLLCHARS
+        #define SPI_GETWHEELSCROLLCHARS 108
+    #endif
 #endif // wxUSE_MOUSEWHEEL
 
 // Needed by window.cpp
@@ -649,6 +652,10 @@ typedef struct
 
 #ifndef INET_E_CODE_INSTALL_SUPPRESSED
 #define INET_E_CODE_INSTALL_SUPPRESSED 0x800C0400L
+#endif
+
+#ifndef MUI_LANGUAGE_NAME
+#define MUI_LANGUAGE_NAME 0x8
 #endif
 
 //We need to check if we are using MinGW or mingw-w64 as their

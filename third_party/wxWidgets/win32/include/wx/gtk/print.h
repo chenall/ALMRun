@@ -19,8 +19,6 @@
 #include "wx/printdlg.h"
 #include "wx/prntbase.h"
 #include "wx/dc.h"
-#include "wx/cairo.h"
-
 
 typedef struct _GtkPrintOperation GtkPrintOperation;
 typedef struct _GtkPrintContext GtkPrintContext;
@@ -197,6 +195,7 @@ public:
     void SetPrintConfig( GtkPrintSettings * config );
 
     GtkPrintOperation* GetPrintJob() { return m_job; }
+    void SetPrintJob(GtkPrintOperation *job) { m_job = job; }
 
     GtkPrintContext *GetPrintContext() { return m_context; }
     void SetPrintContext(GtkPrintContext *context) {m_context = context; }
@@ -206,6 +205,8 @@ public:
     void SetPageSetupToSettings(GtkPrintSettings* settings, GtkPageSetup* page_setup);
 
 private:
+    // NB: m_config is created and owned by us, but the other objects are not
+    //     and their accessors don't change their ref count.
     GtkPrintSettings    *m_config;
     GtkPrintOperation   *m_job;
     GtkPrintContext     *m_context;
@@ -227,7 +228,8 @@ public:
     bool IsOk() const;
 
     virtual void* GetCairoContext() const;
-
+    virtual void* GetHandle() const;
+    
     bool CanDrawBitmap() const { return true; }
     void Clear();
     void SetFont( const wxFont& font );
@@ -264,9 +266,9 @@ protected:
     void DoDrawArc(wxCoord x1,wxCoord y1,wxCoord x2,wxCoord y2,wxCoord xc,wxCoord yc);
     void DoDrawEllipticArc(wxCoord x,wxCoord y,wxCoord w,wxCoord h,double sa,double ea);
     void DoDrawPoint(wxCoord x, wxCoord y);
-    void DoDrawLines(int n, wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0);
-    void DoDrawPolygon(int n, wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0, wxPolygonFillMode fillStyle=wxODDEVEN_RULE);
-    void DoDrawPolyPolygon(int n, int count[], wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0, wxPolygonFillMode fillStyle=wxODDEVEN_RULE);
+    void DoDrawLines(int n, const wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0);
+    void DoDrawPolygon(int n, const wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0, wxPolygonFillMode fillStyle=wxODDEVEN_RULE);
+    void DoDrawPolyPolygon(int n, const int count[], const wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0, wxPolygonFillMode fillStyle=wxODDEVEN_RULE);
     void DoDrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height);
     void DoDrawRoundedRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height, double radius = 20.0);
     void DoDrawEllipse(wxCoord x, wxCoord y, wxCoord width, wxCoord height);

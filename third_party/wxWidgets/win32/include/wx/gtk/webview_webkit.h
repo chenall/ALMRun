@@ -10,7 +10,7 @@
 #ifndef _WX_GTK_WEBKITCTRL_H_
 #define _WX_GTK_WEBKITCTRL_H_
 
-#include "wx/setup.h"
+#include "wx/defs.h"
 
 #if wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT && defined(__WXGTK__)
 
@@ -26,7 +26,7 @@ typedef struct _WebKitWebView WebKitWebView;
 class WXDLLIMPEXP_WEBVIEW wxWebViewWebKit : public wxWebView
 {
 public:
-    wxWebViewWebKit() { Init(); }
+    wxWebViewWebKit();
 
     wxWebViewWebKit(wxWindow *parent,
            wxWindowID id = wxID_ANY,
@@ -35,8 +35,6 @@ public:
            const wxSize& size = wxDefaultSize, long style = 0,
            const wxString& name = wxWebViewNameStr)
     {
-        Init();
-
         Create(parent, id, url, pos, size, style, name);
     }
 
@@ -46,6 +44,8 @@ public:
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize, long style = 0,
            const wxString& name = wxWebViewNameStr);
+
+    virtual ~wxWebViewWebKit();
 
     virtual bool Enable( bool enable = true );
 
@@ -59,10 +59,11 @@ public:
     virtual void LoadURL(const wxString& url);
     virtual void GoBack();
     virtual void GoForward();
-    virtual void Reload(wxWebViewReloadFlags flags = wxWEB_VIEW_RELOAD_DEFAULT);
+    virtual void Reload(wxWebViewReloadFlags flags = wxWEBVIEW_RELOAD_DEFAULT);
     virtual bool CanGoBack() const;
     virtual bool CanGoForward() const;
     virtual void ClearHistory();
+    virtual void EnableContextMenu(bool enable = true);
     virtual void EnableHistory(bool enable = true);
     virtual wxVector<wxSharedPtr<wxWebViewHistoryItem> > GetBackwardHistory();
     virtual wxVector<wxSharedPtr<wxWebViewHistoryItem> > GetForwardHistory();
@@ -71,9 +72,6 @@ public:
     virtual wxString GetCurrentTitle() const;
     virtual wxString GetPageSource() const;
     virtual wxString GetPageText() const;
-    //We do not want to hide the other overloads
-    using wxWebView::SetPage;
-    virtual void SetPage(const wxString& html, const wxString& baseUrl);
     virtual void Print();
     virtual bool IsBusy() const;
 
@@ -97,6 +95,9 @@ public:
     virtual void Undo();
     virtual void Redo();
 
+    //Find function
+    virtual long Find(const wxString& text, int flags = wxWEBVIEW_FIND_DEFAULT);
+
     //Editing functions
     virtual void SetEditable(bool enable = true);
     virtual bool IsEditable() const;
@@ -115,6 +116,8 @@ public:
     virtual void RegisterHandler(wxSharedPtr<wxWebViewHandler> handler);
     virtual wxVector<wxSharedPtr<wxWebViewHandler> > GetHandlers() { return m_handlerList; }
 
+    virtual void* GetNativeBackend() const { return m_web_view; }
+
     /** TODO: check if this can be made private
      * The native control has a getter to check for busy state, but except in
      * very recent versions of webkit this getter doesn't say everything we need
@@ -130,6 +133,7 @@ public:
     bool m_guard;
 
 protected:
+    virtual void DoSetPage(const wxString& html, const wxString& baseUrl);
 
     virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
 
@@ -140,6 +144,9 @@ private:
     void SetWebkitZoom(float level);
     float GetWebkitZoom() const;
 
+    //Find helper function
+    void FindClear();
+
     // focus event handler: calls GTKUpdateBitmap()
     void GTKOnFocus(wxFocusEvent& event);
 
@@ -148,8 +155,29 @@ private:
 
     wxVector<wxSharedPtr<wxWebViewHandler> > m_handlerList;
 
+    //variables used for Find()
+    int m_findFlags;
+    wxString m_findText;
+    int m_findPosition;
+    int m_findCount;
+
     wxDECLARE_DYNAMIC_CLASS(wxWebViewWebKit);
 };
+
+class WXDLLIMPEXP_WEBVIEW wxWebViewFactoryWebKit : public wxWebViewFactory
+{
+public:
+    virtual wxWebView* Create() { return new wxWebViewWebKit; }
+    virtual wxWebView* Create(wxWindow* parent,
+                              wxWindowID id,
+                              const wxString& url = wxWebViewDefaultURLStr,
+                              const wxPoint& pos = wxDefaultPosition,
+                              const wxSize& size = wxDefaultSize,
+                              long style = 0,
+                              const wxString& name = wxWebViewNameStr)
+    { return new wxWebViewWebKit(parent, id, url, pos, size, style, name); }
+};
+
 
 #endif // wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT && defined(__WXGTK__)
 

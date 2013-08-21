@@ -12,17 +12,11 @@
 
 typedef struct _GtkLabel GtkLabel;
 typedef struct _GtkFrame GtkFrame;
+typedef struct _GtkEntry GtkEntry;
 
 //-----------------------------------------------------------------------------
 // wxControl
 //-----------------------------------------------------------------------------
-
-// C-linkage function pointer types for GetDefaultAttributesFromGTKWidget
-extern "C" {
-    typedef GtkWidget* (*wxGtkWidgetNew_t)(void);
-    typedef GtkWidget* (*wxGtkWidgetNewFromStr_t)(const char*);
-    typedef GtkWidget* (*wxGtkWidgetNewFromAdj_t)(GtkAdjustment*);
-}
 
 class WXDLLIMPEXP_CORE wxControl : public wxControlBase
 {
@@ -79,19 +73,6 @@ protected:
         GetDefaultAttributesFromGTKWidget(GtkWidget* widget,
                                           bool useBase = false,
                                           int state = 0);
-    static wxVisualAttributes
-        GetDefaultAttributesFromGTKWidget(wxGtkWidgetNew_t,
-                                          bool useBase = false,
-                                          int state = 0);
-    static wxVisualAttributes
-        GetDefaultAttributesFromGTKWidget(wxGtkWidgetNewFromStr_t,
-                                          bool useBase = false,
-                                          int state = 0);
-
-    static wxVisualAttributes
-        GetDefaultAttributesFromGTKWidget(wxGtkWidgetNewFromAdj_t,
-                                          bool useBase = false,
-                                          int state = 0);
 
     // Widgets that use the style->base colour for the BG colour should
     // override this and return true.
@@ -99,6 +80,12 @@ protected:
 
     // Fix sensitivity due to bug in GTK+ < 2.14
     void GTKFixSensitivity(bool onlyIfUnderMouse = true);
+
+    // Ask GTK+ for preferred size. Use it after setting the font.
+    wxSize GTKGetPreferredSize(GtkWidget* widget) const;
+
+    // Inner margins in a GtkEntry
+    wxPoint GTKGetEntryMargins(GtkEntry* entry) const;
 
 private:
     DECLARE_DYNAMIC_CLASS(wxControl)

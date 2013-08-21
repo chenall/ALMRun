@@ -42,9 +42,12 @@ public:
     {
         m_winParent = NULL;
 
-        // do accept focus initially, we'll stop doing it if/when any children
-        // are added
-        m_acceptsFocus = true;
+        // By default, we accept focus ourselves.
+        m_acceptsFocusSelf = true;
+
+        // But we don't have any children accepting it yet.
+        m_acceptsFocusChildren = false;
+
         m_inSetFocus = false;
         m_winLastFocused = NULL;
     }
@@ -57,31 +60,28 @@ public:
         m_winParent = winParent;
     }
 
+    // This can be called by the window to indicate that it never wants to have
+    // the focus for itself.
+    void DisableSelfFocus() { m_acceptsFocusSelf = false; }
+
     // should be called from SetFocus(), returns false if we did nothing with
     // the focus and the default processing should take place
     bool DoSetFocus();
 
-    // should be called when we decide that we should [stop] accepting focus
-    void SetCanFocus(bool acceptsFocus);
-
     // returns whether we should accept focus ourselves or not
-    bool AcceptsFocus() const { return m_acceptsFocus; }
+    bool AcceptsFocus() const { return m_acceptsFocusSelf; }
 
-    // returns whether we or one of our children accepts focus: we always do
-    // because if we don't have any focusable children it probably means that
-    // we're not being used as a container at all (think of wxGrid or generic
-    // wxListCtrl) and so should get focus for ourselves
-    bool AcceptsFocusRecursively() const { return true; }
+    // Returns whether we or one of our children accepts focus.
+    bool AcceptsFocusRecursively() const
+        { return m_acceptsFocusSelf || m_acceptsFocusChildren; }
 
-    // this is used to determine whether we can accept focus when Tab or
-    // another navigation key is pressed -- we alsways can, for the same reason
-    // as mentioned above for AcceptsFocusRecursively()
-    bool AcceptsFocusFromKeyboard() const { return true; }
+    // We accept focus from keyboard if we accept it at all.
+    bool AcceptsFocusFromKeyboard() const { return AcceptsFocusRecursively(); }
 
     // Call this when the number of children of the window changes.
-    // If we have any children, this panel (used just as container for
-    // them) shouldn't get focus for itself.
-    void UpdateCanFocus() { SetCanFocus(!HasAnyFocusableChildren()); }
+    //
+    // Returns true if we have any focusable children, false otherwise.
+    bool UpdateCanFocusChildren();
 
 protected:
     // set the focus to the child which had it the last time
@@ -97,9 +97,16 @@ protected:
     wxWindow *m_winLastFocused;
 
 private:
-    // value returned by AcceptsFocus(), should be changed using SetCanFocus()
-    // only
-    bool m_acceptsFocus;
+    // Indicates whether the associated window can ever have focus itself.
+    //
+    // Usually this is the case, e.g. a wxPanel can be used either as a
+    // container for its children or just as a normal window which can be
+    // focused. But sometimes, e.g. for wxStaticBox, we can never have focus
+    // ourselves and can only get it if we have any focusable children.
+    bool m_acceptsFocusSelf;
+
+    // Cached value remembering whether we have any children accepting focus.
+    bool m_acceptsFocusChildren;
 
     // a guard against infinite recursion
     bool m_inSetFocus;
@@ -198,7 +205,13 @@ public:
     {
         BaseWindowClass::AddChild(child);
 
-        m_container.UpdateCanFocus();
+        if ( m_container.UpdateCanFocusChildren() )
+        {
+            // Under MSW we must have wxTAB_TRAVERSAL style for TAB navigation
+            // to work.
+            if ( !BaseWindowClass::HasFlag(wxTAB_TRAVERSAL) )
+                BaseWindowClass::ToggleWindowStyle(wxTAB_TRAVERSAL);
+        }
     }
 
     WXDLLIMPEXP_INLINE_CORE virtual void RemoveChild(wxWindowBase *child)
@@ -209,7 +222,9 @@ public:
 
         BaseWindowClass::RemoveChild(child);
 
-        m_container.UpdateCanFocus();
+        // We could reset wxTAB_TRAVERSAL here but it doesn't seem to do any
+        // harm to keep it.
+        m_container.UpdateCanFocusChildren();
     }
 
     WXDLLIMPEXP_INLINE_CORE virtual void SetFocus()
@@ -221,11 +236,6 @@ public:
     void SetFocusIgnoringChildren()
     {
         BaseWindowClass::SetFocus();
-    }
-
-    void AcceptFocus(bool acceptFocus)
-    {
-        m_container.SetCanFocus(acceptFocus);
     }
 
 protected:
@@ -271,10 +281,6 @@ public:                                                                       \
     virtual void RemoveChild(wxWindowBase *child);                            \
     virtual void SetFocus();                                                  \
     void SetFocusIgnoringChildren();                                          \
-    void AcceptFocus(bool acceptFocus)                                        \
-    {                                                                         \
-        m_container.SetCanFocus(acceptFocus);                                 \
-    }                                                                         \
                                                                               \
 protected:                                                                    \
     wxControlContainer m_container
@@ -290,7 +296,7 @@ protected:                                                                    \
     {                                                                         \
         basename::AddChild(child);                                            \
                                                                               \
-        m_container.UpdateCanFocus();                                         \
+        m_container.UpdateCanFocusChildren();                                 \
     }                                                                         \
                                                                               \
     bool classname::AcceptsFocusRecursively() const                           \
@@ -328,7 +334,7 @@ protected:                                                                    \
     {                                                                         \
         basename::RemoveChild(child);                                         \
                                                                               \
-        m_container.UpdateCanFocus();                                         \
+        m_container.UpdateCanFocusChildren();                                 \
     }                                                                         \
                                                                               \
     void classname::SetFocusIgnoringChildren()                                \
@@ -363,7 +369,7 @@ public:                                                                       \
                                                                               \
         basename::RemoveChild(child);                                         \
                                                                               \
-        m_container.UpdateCanFocus();                                         \
+        m_container.UpdateCanFocusChildren();                                 \
     }                                                                         \
                                                                               \
     void classname::OnNavigationKey( wxNavigationKeyEvent& event )            \

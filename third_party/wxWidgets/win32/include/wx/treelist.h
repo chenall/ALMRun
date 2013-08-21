@@ -3,7 +3,7 @@
 // Purpose:     wxTreeListCtrl class declaration.
 // Author:      Vadim Zeitlin
 // Created:     2011-08-17
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@ enum
     wxTL_CHECKBOX       = 0x0002,       // Show checkboxes in the first column.
     wxTL_3STATE         = 0x0004,       // Allow 3rd state in checkboxes.
     wxTL_USER_3STATE    = 0x0008,       // Allow user to set 3rd state.
+    wxTL_NO_HEADER      = 0x0010,       // Column titles not visible.
 
     wxTL_DEFAULT_STYLE  = wxTL_SINGLE,
     wxTL_STYLE_MASK     = wxTL_SINGLE |
@@ -525,11 +526,11 @@ typedef void (wxEvtHandler::*wxTreeListEventFunction)(wxTreeListEvent&);
     wxEVENT_HANDLER_CAST(wxTreeListEventFunction, func)
 
 #define wxEVT_TREELIST_GENERIC(name, id, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_TREELIST_##name, id, wxTreeListEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_TREELIST_##name, id, wxTreeListEventHandler(fn))
 
 #define wxDECLARE_TREELIST_EVENT(name) \
     wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, \
-                              wxEVT_COMMAND_TREELIST_##name, \
+                              wxEVT_TREELIST_##name, \
                               wxTreeListEvent)
 
 wxDECLARE_TREELIST_EVENT(SELECTION_CHANGED);
@@ -561,6 +562,15 @@ wxDECLARE_TREELIST_EVENT(COLUMN_SORTED);
     wxEVT_TREELIST_GENERIC(COLUMN_SORTED, id, fn)
 
 #undef wxDECLARE_TREELIST_EVENT
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_TREELIST_SELECTION_CHANGED   wxEVT_TREELIST_SELECTION_CHANGED
+#define wxEVT_COMMAND_TREELIST_ITEM_EXPANDING      wxEVT_TREELIST_ITEM_EXPANDING
+#define wxEVT_COMMAND_TREELIST_ITEM_EXPANDED       wxEVT_TREELIST_ITEM_EXPANDED
+#define wxEVT_COMMAND_TREELIST_ITEM_CHECKED        wxEVT_TREELIST_ITEM_CHECKED
+#define wxEVT_COMMAND_TREELIST_ITEM_ACTIVATED      wxEVT_TREELIST_ITEM_ACTIVATED
+#define wxEVT_COMMAND_TREELIST_ITEM_CONTEXT_MENU   wxEVT_TREELIST_ITEM_CONTEXT_MENU
+#define wxEVT_COMMAND_TREELIST_COLUMN_SORTED       wxEVT_TREELIST_COLUMN_SORTED
 
 #endif // wxUSE_TREELISTCTRL
 
