@@ -184,7 +184,7 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 		return;
 	}
 	else
-		cmd = wxFileSelector("«Î—°‘Ò",wxEmptyString,wxEmptyString,wxEmptyString,"*.exe;*.bat;*.cmd");
+		cmd = wxFileSelector("«Î—°‘Ò",wxEmptyString,wxEmptyString,wxEmptyString,"*.exe;*.bat;*.cmd",0,this);
 	if (cmd.Len())
 	{
 		cmd.Replace("\\","/");
