@@ -42,7 +42,7 @@ MerryFrame::~MerryFrame()
 	if (g_lua)
 		OnClose();
 	if (m_taskBarIcon)
-		delete m_taskBarIcon;
+		wxDELETE(m_taskBarIcon);
 	m_taskBarIcon = NULL;
 	m_listBoxPanel = NULL;
 	m_mainPanel = NULL;
@@ -60,30 +60,30 @@ void MerryFrame::NewConfig()
 	if (g_hotkey)
 	{
 //		g_hotkey->OnDelete();
-		delete g_hotkey;
+		wxDELETE(g_hotkey);
 		g_hotkey = NewMerryHotkey();
 	}
 
 	if (g_timers)
 	{
-		delete g_timers;
+		wxDELETE(g_timers);
 		g_timers = new MerryTimerManager();
 	}
 
 	if (g_commands)
 	{
-		delete g_commands;
+		wxDELETE(g_commands);
 		g_commands = new MerryCommandManager();
 	}
 #ifdef _ALMRUN_CONFIG_H_
 	if (g_config)
 	{
-		delete g_config;
+		wxDELETE(g_config);
 		g_config = new ALMRunConfig();
 	}
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	if (lua_bak)
-		delete lua_bak;
+		wxDELETE(lua_bak);
 
 	lua_bak = g_lua;
 
@@ -156,46 +156,36 @@ void MerryFrame::OnClose()
 	__DEBUG_BEGIN("")
 	this->Hide();
 	if (lua_bak)
-	{
-		delete lua_bak;
-		lua_bak = NULL;
-	}
+		wxDELETE(lua_bak);
 
 	if (g_lua)
 	{
 		g_lua->OnClose();
-		delete g_lua;
-		g_lua = NULL;
+		wxDELETE(g_lua);
 	}
 
 	if (g_commands)
-	{
-		delete g_commands;
-		g_commands = NULL;
-	}
+		wxDELETE(g_commands);
+
 #ifdef _ALMRUN_CONFIG_H_
 	if (g_config)
-	{
-		delete g_config;
-		g_config = NULL;
-	}
+		wxDELETE(g_config);
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	if (g_hotkey)
 	{
 //		g_hotkey->OnDelete();
-		delete g_hotkey;
-		g_hotkey = NULL;
+		wxDELETE(g_hotkey);
 	}
 
 	if (g_timers)
 	{
-		delete g_timers;
+		wxDELETE(g_timers);
 		g_timers = NULL;
 	}
 
 	if (g_controller)
 	{
-		delete g_controller;
+		wxDELETE(g_controller);
 		g_controller = NULL;
 	}
 	__DEBUG_END("")

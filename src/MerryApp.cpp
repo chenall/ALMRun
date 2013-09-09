@@ -5,12 +5,43 @@ IMPLEMENT_APP(MerryApp)
 
 bool MerryApp::OnInit()
 {
+	const wxString name = wxString::Format("ALMRun-%s", wxGetUserId().c_str());
+    m_checker = new wxSingleInstanceChecker(name);
+    if (m_checker->IsAnotherRunning())//程序已经在运行中..
+    {
+        stClient* client = new stClient;
+
+        // Create the connection
+        wxConnectionBase* connection =
+					//	client->MakeConnection( IPC_HOST,"4242","IPC TEST");
+                     client->MakeConnection( IPC_HOST,IPC_SERVICE,IPC_TOPIC);
+
+        if (connection)
+        {
+            // Ask the other instance to open a file or raise itself
+			Execute_IPC_CMD(connection);
+        }
+        else
+        {
+            wxMessageBox(wxT("程序已经运行,但是进程通信失败!"),
+                wxT("ALMRun"), wxICON_INFORMATION|wxOK);
+        }
+        wxDELETE(client);
+        return false;
+    }
+	    // Create a new server
+    m_server = new stServer;
+    if (!m_server->Create(IPC_SERVICE))
+    {
+        wxMessageBox("创建高级进程通信失败,无法实现单一实例进程和右键发送到等功能.");
+		return false;
+    }
 	if (!wxApp::OnInit())
 		return false;
 	#if _DEBUG_LOG
         m_pLogFile = fopen( "log.txt", "w+" );
 		wxLogStderr *log = new wxLogStderr(m_pLogFile);
-        wxLog::SetActiveTarget(log);
+        delete  wxLog::SetActiveTarget(log);
 
         wxLog::SetTimestamp(wxT("%Y-%m-%d %H:%M:%S"));
 		
@@ -45,14 +76,28 @@ bool MerryApp::OnInit()
 	return true;
 }
 
+void MerryApp::Execute_IPC_CMD(wxConnectionBase* conn)
+{
+	if (this->argc == 1)
+		conn->Execute("SHOW");
+	else
+	{
+		for(int i = 1;i < this->argc; ++i)
+			conn->Execute(this->argv[i]);
+		conn->Execute("EXIT");
+	}
+}
+
 int MerryApp::OnExit()
 {
 	__DEBUG_BEGIN("")
 	this->Disconnect(wxEVT_ACTIVATE_APP);
-
 	if (m_frame)
-		delete m_frame;
-	m_frame = NULL;
+		wxDELETE(m_frame);
+	if (m_checker)
+		wxDELETE(m_checker);
+	if (m_server)
+		wxDELETE(m_server);
 	__DEBUG_END("")
 	#if _DEBUG_LOG
 	if (m_pLogFile)
@@ -73,6 +118,11 @@ void MerryApp::EvtActive(wxActivateEvent &e)
 		m_frame->NewConfig();
 #endif//ifdef _ALMRUN_CONFIG_H_
 //	e.Skip();
+}
+
+void MerryApp::stServerDisconnect()
+{
+	m_server->Disconnect();
 }
 
 void MerryApp::NewFrame()
