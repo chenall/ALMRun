@@ -27,6 +27,7 @@ public:
 	virtual bool OnDisconnect();
 private:
 	int cmd_mode;
+	wxArrayString cmds;
 };
 
 // Server class, for listening to connection requests

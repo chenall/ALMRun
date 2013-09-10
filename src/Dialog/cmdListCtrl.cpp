@@ -40,8 +40,8 @@
 			wxString cmd = filenames[i];
 			cmd.Replace("\\","/");
 			g_config->AddCmd(cmd,wxFileNameFromPath(cmd));
-			m_pOwner->ReLoadCmds();
 		}
+		m_pOwner->ReLoadCmds();
 		return true;
 		//多个文件时自动批量添加;
 	}

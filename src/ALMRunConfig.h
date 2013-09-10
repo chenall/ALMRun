@@ -66,7 +66,7 @@ public:
 
 	wxFileConfig *conf;
 private:
-	int lastId;
+	//int lastId;
 	wxString cfg_file;
 	DirCfg def_dir_cfg;
 	time_t cfg_time;

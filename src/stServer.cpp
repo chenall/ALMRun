@@ -1,6 +1,8 @@
 #include "stServer.h"
 #ifdef _ALMRUN_STSERVER_H_
 #include "MerryApp.h"
+#include "DlgAddNewCmd.h"
+#include "DlgAddNewDir.h"
 
 // ----------------------------------------------------------------------------
 // stServer
@@ -51,38 +53,55 @@ bool stConnection::OnExecute(const wxString& topic,
 	wxString cmd((const wchar_t *)data);
 	if (topic == IPC_TOPIC)//程序通信
 	{
-		if (cmd == "EXIT")
+		if (cmd.empty() ||  cmd.Upper() == "SHOW")//默认显示
 		{
-			cmd_mode = 0;
+			::wxGetApp().GetFrame().Show();
 			return true;
 		}
-
-		switch(cmd_mode)
-		{
-			case IPC_CMD_ADD_CMD:
-			case IPC_CMD_ADD_DIR:
-				break;
-			default:
-				cmd.UpperCase();
-				if (cmd == "SHOW")
-					::wxGetApp().GetFrame().Show();
-				else if (cmd == "ADD_CMD")
-					cmd_mode = IPC_CMD_ADD_CMD;
-				else if (cmd == "ADD_DIR")
-					cmd_mode = IPC_CMD_ADD_DIR;
-				else
-					break;
-				return true;
-		}
-//		return true;
+		cmds.Add(cmd);
 	}
-	wxMessageBox(cmd,topic);
+//	wxMessageBox(cmd,topic);
     return true;
 }
 
 bool stConnection::OnDisconnect()
 {
 	__DEBUG_BEGIN("")
+	if (cmds.Count() == 1)
+	{
+		wxString cmd = cmds[0];
+		if (::wxDirExists(cmd))
+		{
+			DlgAddNewDir *dlg = new DlgAddNewDir(NULL,wxID_ANY);
+			dlg->dirName->SetValue(cmd);
+			dlg->dirExclude->SetValue(g_config->GetDefaultDirExclude());
+			dlg->dirInclude->SetValue(g_config->GetDefaultDirInclude());
+			dlg->dirSub->SetValue(g_config->GetDefaultDirSub());
+			dlg->ShowModal();
+			dlg->Destroy();
+		}
+		else
+		{
+			DlgAddNewCmd *dlg = new DlgAddNewCmd(NULL,wxID_ANY);
+			dlg->cmdLine->SetValue(cmd);
+			dlg->cmdName->SetValue(wxFileNameFromPath(cmd));
+			dlg->ShowModal();
+			dlg->Destroy();
+		}
+	}
+	else
+	{
+		for(int i=cmds.Count() - 1; i>=0 ;--i)
+		{
+			wxString cmd = cmds[i];
+			cmd.Replace("\\","/");
+			if (::wxDirExists(cmd))
+				g_config->AddDir(cmd);
+			else
+				g_config->AddCmd(cmd,wxFileNameFromPath(cmd));
+		}
+		wxMessageBox("批量添加完成!");
+	}
 	::wxGetApp().stServerDisconnect();
     return true;
 }

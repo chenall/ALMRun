@@ -207,6 +207,7 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 			break;
 		cmd.erase(0,1);
 	}
+	cmd.Replace('\\','/');
 	cmdLine->SetValue(cmd);
 }
 
@@ -227,7 +228,12 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		cmd.insert(0,'@');
 	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
 		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))>0 )
-		this->EndModal(wxID_OK);
+	{
+		if (this->IsModal())
+			this->EndModal(wxID_OK);
+		else
+			this->Destroy();
+	}
 }
 
 /*!

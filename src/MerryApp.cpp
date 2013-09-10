@@ -84,7 +84,6 @@ void MerryApp::Execute_IPC_CMD(wxConnectionBase* conn)
 	{
 		for(int i = 1;i < this->argc; ++i)
 			conn->Execute(this->argv[i]);
-		conn->Execute("EXIT");
 	}
 }
 
