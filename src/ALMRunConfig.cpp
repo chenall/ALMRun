@@ -4,10 +4,13 @@
 #include "MerryApp.h"
 #include "DlgConfig.h"
 #include "wx/dir.h"
+#include <wx/stdpaths.h>
+#include <shlobj.h>
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo"};
 const char *ALMRunConfig::config_tip[] = {
+	"如果选中，随系统启动而自动运行",
 	"保持程序窗口置顶,默认禁用.",
 	"选中时敲0-9键执行对应编号的快捷项",
 	"选中时在系统托盘显示图标",
@@ -17,7 +20,71 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中, 命令列表中前辍匹配的排前面",
 	"如果选中,鼠标移动列表框项目时会显示备注信息或命令行",
 	"运行程序之前禁用系统的WOW64重定向,解决在64位系统上部份64位程序无法运行的问题",
+	"如果选中，将本软件添加到“发送到”菜单",
 };
+
+/* 
+函数功能：对指定文件在指定的目录下创建其快捷方式 
+函数参数： 
+lpszFileName    指定文件，为NULL表示当前进程的EXE文件。 
+lpszLnkFilePath 要创建的快捷方式全路径.
+wHotkey         为0表示不设置快捷键 
+pszDescription  备注 
+iShowCmd        运行方式，默认为常规窗口 
+*/  
+BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR lpszWorkDir, WORD wHotkey = 0, LPCTSTR lpszDescription = NULL, int iShowCmd = SW_SHOWNORMAL)  
+{  
+    if (lpszLnkFilePath == NULL)  
+        return FALSE;  
+  
+    HRESULT hr;  
+    IShellLink     *pLink;  //IShellLink对象指针  
+    IPersistFile   *ppf; //IPersisFil对象指针  
+      
+    //创建IShellLink对象  
+    hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pLink);  
+    if (FAILED(hr))  
+        return FALSE;  
+      
+    //从IShellLink对象中获取IPersistFile接口  
+    hr = pLink->QueryInterface(IID_IPersistFile, (void**)&ppf);  
+    if (FAILED(hr))  
+    {  
+        pLink->Release();  
+        return FALSE;  
+    }  
+      
+    //目标  
+    if (lpszFileName == NULL)  
+        pLink->SetPath(_wpgmptr);  
+    else  
+        pLink->SetPath(lpszFileName);  
+    //工作目录  
+    if (lpszWorkDir != NULL)  
+		pLink->SetWorkingDirectory(lpszWorkDir);  
+      
+    //快捷键  
+    if (wHotkey != 0)  
+        pLink->SetHotkey(wHotkey);  
+      
+    //备注  
+    if (lpszDescription != NULL)  
+        pLink->SetDescription(lpszDescription);  
+      
+    //显示方式  
+    pLink->SetShowCmd(iShowCmd);  
+  
+  
+    //快捷方式的路径 + 名称  
+
+    //保存快捷方式到指定目录下  
+    hr = ppf->Save(lpszLnkFilePath,TRUE);  
+      
+    ppf->Release();  
+    pLink->Release();  
+    return SUCCEEDED(hr);  
+}
+
 ALMRunConfig::ALMRunConfig()
 {
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
@@ -50,6 +117,8 @@ ALMRunConfig::ALMRunConfig()
 	config[ExecuteIfOnlyOne] = conf->ReadBool(config_str[ExecuteIfOnlyOne],false);
 	config[IndexFrom0to9] = conf->ReadBool(config_str[IndexFrom0to9],true);
 	config[ShowTip] = conf->ReadBool(config_str[ShowTip],true);
+	config[AutoRun] = conf->ReadBool(config_str[AutoRun],false);
+	config[AddToSendTo] = conf->ReadBool(config_str[AddToSendTo],false);
 
 	config[DisableWow64FsRedirection] = conf->ReadBool(config_str[DisableWow64FsRedirection],true);
 	CompareMode = conf->ReadLong("CompareMode",0);
@@ -70,6 +139,39 @@ ALMRunConfig::ALMRunConfig()
 	this->ConfigCommand();
 	conf->SetPath("/Config");
 	cfg_time = wxFileModificationTime(cfg_file);
+	#ifdef __WXMSW__
+	wxString Sendto = wxStandardPaths::MSWGetShellDir(0x0009) + "/ALMRun.lnk";//CSIDL_SENDTO                    0x0009        // <user name>\SendTo
+	wxString Startup = wxStandardPaths::MSWGetShellDir(0x0007) + "/ALMRun.lnk";//CSIDL_STARTUP
+	bool InSendTo = ::wxFileExists(Sendto);
+	bool InStartup = ::wxFileExists(Startup);
+	if (config[AddToSendTo])
+	{
+		if (InSendTo == false)
+		{
+			if (!CreateFileShortcut(::wxGetApp().argv[0],Sendto.c_str(),Home,0,_T("ALMRun 快速启动工具")))
+				wxMessageBox("添加到<发送到>菜单失败!");
+		}
+		
+	}
+	else if (InSendTo)
+	{
+		wxRemoveFile(Sendto);
+	}
+
+	if (config[AutoRun])
+	{
+		if (InStartup == false)
+		{
+			if (!CreateFileShortcut(::wxGetApp().argv[0],Startup.c_str(),Home,0,_T("ALMRun 快速启动工具")))
+				wxMessageBox("添加自动启动到<开始/启动>失败!");
+		}
+
+	}
+	else if (InStartup)
+	{
+		wxRemoveFile(Startup);
+	}
+	#endif
 }
 
 bool ALMRunConfig::set(const wxString& name,const wxString &value)

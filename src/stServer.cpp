@@ -89,7 +89,7 @@ bool stConnection::OnDisconnect()
 			dlg->Destroy();
 		}
 	}
-	else
+	else if (cmds.Count() > 1)
 	{
 		for(int i=cmds.Count() - 1; i>=0 ;--i)
 		{

@@ -162,6 +162,7 @@ void DlgConfig::CreateControls()
     wxStaticBoxSizer* itemStaticBoxSizer3 = new wxStaticBoxSizer(itemStaticBoxSizer3Static, wxVERTICAL);
     itemBoxSizer2->Add(itemStaticBoxSizer3, 0, wxGROW|wxALL, 5);
     wxArrayString configStrings;
+	configStrings.Add("随系统自动启动");
 	configStrings.Add("保持窗口置顶");
     configStrings.Add("允许数字快捷键");
     configStrings.Add("显示托盘图标");
@@ -171,6 +172,7 @@ void DlgConfig::CreateControls()
     configStrings.Add("前辍匹配优先");
 	configStrings.Add("显示命令提示信息");
 	configStrings.Add("禁用WOW64文件系统重定向");
+	configStrings.Add("添加到<发送到>菜单");
     config = new wxCheckListBox(itemStaticBoxSizer3->GetStaticBox(), ID_CHECKLISTBOX, wxDefaultPosition, wxDefaultSize, configStrings, 0 );
 	config_tip = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC,wxEmptyString, wxDefaultPosition, wxSize(-1,50), wxALIGN_LEFT|wxST_NO_AUTORESIZE|wxNO_BORDER);
 	config_tip->SetForegroundColour(wxColour(255, 0, 255));

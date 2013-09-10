@@ -11,6 +11,7 @@
 
 enum config_item
 {
+	AutoRun,
 	StayOnTop,
 	NumberKey,
 	ShowTrayIcon,
@@ -20,6 +21,7 @@ enum config_item
 	OrderByPre,
 	ShowTip,
 	DisableWow64FsRedirection,
+	AddToSendTo,
 	CONFIG_MAX,
 };
 struct DirCfg
