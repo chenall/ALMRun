@@ -59,6 +59,32 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	assert(listBoxPanel);
 	int keyCode = e.GetKeyCode();
 	m_lastKeyDownCode = keyCode;
+#ifdef __WXMSW__
+	if (e.AltDown())
+	{
+		int key = keyCode | 0x20;
+		int id = 0;
+
+		switch(key)
+		{
+			case 'c':// Alt+C 呼出配置设定界面。
+				id = MENU_ITEM_GUI_CONFIG;
+				break;
+			case 's'://Alt+S 呼出快捷项管理界面；
+				id = MENU_ITEM_CMDMGR;
+				break;
+			case 'x'://Alt+X 退出
+				id = MENU_ITEM_EXIT;
+				break;
+		}
+		if (id)
+		{
+			HWND hwnd = this->GetParent()->GetHWND();
+			PostMessage(hwnd,WM_COMMAND,id,0);
+			return;
+		}
+	}
+#endif
 	if (listBoxPanel->IsPopup())
 	{
 		if ((e.AltDown() || e.ControlDown()) && keyCode >= '0' && keyCode <= '9')

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 set(PROJ_NAME ALMRun)
+# wxWidgets path
 set(WX_DIR d:/dev/wxWidgets-2.9.5)
 project(${PROJ_NAME})
 # platform

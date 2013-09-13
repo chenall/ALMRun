@@ -22,6 +22,7 @@ enum config_item
 	ShowTip,
 	DisableWow64FsRedirection,
 	AddToSendTo,
+	PlayPopupNotify,
 	CONFIG_MAX,
 };
 struct DirCfg

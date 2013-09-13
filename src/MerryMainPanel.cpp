@@ -19,8 +19,8 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 	m_textCtrl = new MerryTextCtrl(this);
 
 	menu = new wxMenu;
-	menu->Append(MENU_ITEM_GUI_CONFIG, wxT("参数配置(&S)"));
-	menu->Append(MENU_ITEM_CMDMGR, wxT("命令管理(&M)"));
+	menu->Append(MENU_ITEM_GUI_CONFIG, wxT("参数配置(&C)"));
+	menu->Append(MENU_ITEM_CMDMGR, wxT("命令管理(&S)"));
 	menu->Append(MENU_ITEM_CONFIG, wxT("刷新配置(R)"));
 	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
 	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));

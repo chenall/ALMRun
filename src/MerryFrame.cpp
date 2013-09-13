@@ -9,7 +9,7 @@
 #include "MerryTimerManager.h"
 #include "MerryHotkey.h"
 #include "MerryController.h"
-
+#include <wx/sound.h>
 //#define DEBUG_ALWAYS_SHOW
 
 BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
@@ -216,6 +216,8 @@ void MerryFrame::OnShowEvent(wxShowEvent& e)
 	assert(textCtrl);
 	if (e.IsShown())
 	{
+		if (g_config->config[PlayPopupNotify])//是否播放提示音
+			wxSound("Popup.wav").Play();
 		this->CentreOnce();
 		m_listBoxPanel->Dismiss();
 		this->Raise();
@@ -223,6 +225,7 @@ void MerryFrame::OnShowEvent(wxShowEvent& e)
 	}
 	else
 		textCtrl->ChangeValue(wxT(""));
+
 	textCtrl->EnterArgs = 0;
 }
 

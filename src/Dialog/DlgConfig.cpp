@@ -173,6 +173,7 @@ void DlgConfig::CreateControls()
 	configStrings.Add("显示命令提示信息");
 	configStrings.Add("禁用WOW64文件系统重定向");
 	configStrings.Add("添加到<发送到>菜单");
+	configStrings.Add("主窗体弹出时播放声音");
     config = new wxCheckListBox(itemStaticBoxSizer3->GetStaticBox(), ID_CHECKLISTBOX, wxDefaultPosition, wxDefaultSize, configStrings, 0 );
 	config_tip = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC,wxEmptyString, wxDefaultPosition, wxSize(-1,50), wxALIGN_LEFT|wxST_NO_AUTORESIZE|wxNO_BORDER);
 	config_tip->SetForegroundColour(wxColour(255, 0, 255));
