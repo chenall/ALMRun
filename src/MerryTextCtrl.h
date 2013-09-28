@@ -17,6 +17,7 @@ private:
 	void OnIdleEvent(wxIdleEvent& e);
 #else
 	void OnTextEvent(wxCommandEvent& e);
+	void OnCharEvent(wxKeyEvent& e);
 #endif
 
 private:

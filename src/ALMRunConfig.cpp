@@ -310,7 +310,7 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 			return -1;
 	}
 
-	return Id;
+	return cmdId;
 }
 
 bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc)

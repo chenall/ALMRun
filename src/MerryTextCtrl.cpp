@@ -20,6 +20,7 @@ BEGIN_EVENT_TABLE(MerryTextCtrl, wxTextCtrl)
 	EVT_IDLE(MerryTextCtrl::OnIdleEvent)
 #else
 	EVT_TEXT(wxID_ANY, MerryTextCtrl::OnTextEvent)
+	EVT_CHAR(OnCharEvent)
 #endif
 END_EVENT_TABLE()
 
@@ -141,8 +142,11 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 		case WXK_TAB:
 			if (!listBoxPanel->IsPopup())
 			{
-				this->AppendText(wxT(">>"));
-				this->EnterArgs = this->GetValue().size();
+				if (this->EnterArgs == 0 && this->GetValue().size())
+				{
+					this->AppendText(wxT(">>"));
+					this->EnterArgs = this->GetValue().size();
+				}
 				break;
 			}
 			else
@@ -199,6 +203,12 @@ void MerryTextCtrl::OnTextEvent(wxCommandEvent& e)
 	if (this->EnterArgs == 0 && m_lastKeyDownCode != WXK_TAB)
 		return this->AutoCompletion(m_lastKeyDownCode);
 }
+
+void MerryTextCtrl::OnCharEvent(wxKeyEvent& e)
+{
+	if (e.GetKeyCode() != WXK_RETURN)
+		e.Skip();
+}
 #endif
 void MerryTextCtrl::ExecuteCmd()
 {
@@ -239,7 +249,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 		listBoxPanel->SelectNext();
 	else if (listBoxPanel->IsPopup() && keyCode == WXK_UP)
 		listBoxPanel->SelectPrev();
-	else if (keyCode != WXK_TAB)
+	else// if (keyCode != WXK_TAB)
 	{
 		MerryCommandArray commands = g_commands->Collect(name);
 #ifdef _ALMRUN_CONFIG_H_
