@@ -45,13 +45,7 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 
 	this->SetBackgroundColour(*wxWHITE);
 	this->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-
-	if (MERRY_DEFAULT_LIST_BOX_ITEM_FONT_HEIGHT)
-	{
-		wxFont font = this->GetFont();
-		font.SetPixelSize(wxSize(0, MERRY_DEFAULT_LIST_BOX_ITEM_FONT_HEIGHT));
-		this->SetOwnFont(font);
-	}
+	SetFont(wxEmptyString);
 	menu = new wxMenu;
 	menu->Append(MENU_CMD_ADD, wxT("Ìí¼Ó(&I)"));
 	menu->Append(MENU_CMD_EDIT, wxT("±à¼­(&E)"));
@@ -67,6 +61,26 @@ MerryListBoxPanel::~MerryListBoxPanel()
 		delete menu;
 	menu = NULL;
 	__DEBUG_END("")
+}
+bool MerryListBoxPanel::SetFont(const wxString& fontInfo)
+{
+	wxFont font = this->GetFont();
+	if (!fontInfo.empty())
+	{
+		wxArrayString Font = wxSplit(fontInfo,'|');
+		ULONG height;
+		ULONG flags = 0;
+		Font.Item(2).ToULong(&height);
+		font.SetStyle(flags);
+		font.SetFaceName(Font.Item(0));
+		font.SetPointSize(height);
+		Font.Item(3).ToULong(&height);
+		this->SetForegroundColour(wxColour(height));
+	}
+	else
+		font.SetPixelSize(wxSize(0, MERRY_DEFAULT_LIST_BOX_ITEM_FONT_HEIGHT));
+	this->SetOwnFont(font);
+	return true;
 }
 
 void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)

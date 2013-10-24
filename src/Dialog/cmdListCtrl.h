@@ -4,6 +4,8 @@
 #include "wx/listctrl.h"
 #include "ALMRunConfig.h"
 #ifdef _ALMRUN_CONFIG_H_
+#define DIRLIST_MODE 1
+#define CMDLIST_MODE 0
 class cmdListCtrl : public wxListCtrl
 {
 public:
@@ -24,6 +26,7 @@ protected:
 
 private:
 //    void SetColumnImage(int col, int image);
+	int mode;
 
 private:
     DECLARE_NO_COPY_CLASS(cmdListCtrl)
@@ -38,5 +41,15 @@ enum
 	CMDLIST_COL_KEY,
 	CMDLIST_COL_DESC
 };
+
+enum
+{
+	DIRLIST_COL_ID = 0,
+	DIRLIST_COL_SUB,
+	DIRLIST_COL_PATH,
+	DIRLIST_COL_INCLUDE,
+	DIRLIST_COL_EXCLUDE
+};
+
 #endif
 #endif // __MY_LIST_CTRL_H__

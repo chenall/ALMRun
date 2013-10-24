@@ -9,6 +9,12 @@
 #define CMDS_FLAG_ALMRUN_LUA 4
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
 
+enum gui_config_item
+{
+	ListFont,
+	GUI_CONFIG_MAX,
+};
+
 enum config_item
 {
 	AutoRun,
@@ -39,6 +45,7 @@ public:
 	ALMRunConfig();
 	int CompareMode;
 	bool config[CONFIG_MAX];
+	wxString gui_config[GUI_CONFIG_MAX];
 	static const char *config_str[];
 	static const char *config_tip[];
 	wxString Explorer;

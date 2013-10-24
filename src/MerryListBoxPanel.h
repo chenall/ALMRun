@@ -21,6 +21,7 @@ public:
 	void SelectNext();
 	void SelectPrev();
 	int flags;
+	bool SetFont(const wxString& font);
 	int SetSelection(int index,int top = -1);
 	bool DelSelectedItem();
 	const MerryCommand* GetSelectionCommand() const;

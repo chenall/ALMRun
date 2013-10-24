@@ -1,6 +1,7 @@
 #include "MerryCommandManager.h"
 #include "MerryHotkey.h"
 #include "ALMRunConfig.h"
+#include "MerryListBoxPanel.h"
 #include "MerryApp.h"
 #include "DlgConfig.h"
 #include "wx/dir.h"
@@ -110,6 +111,9 @@ ALMRunConfig::ALMRunConfig()
 	}
 	//lastId = 0;
 	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
+	gui_config[ListFont] = conf->Read("/GUI/ListFont");
+	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
+	listBoxPanel->SetFont(gui_config[ListFont]);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
 	config[OrderByPre] = conf->ReadBool(config_str[OrderByPre],false);
