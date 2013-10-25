@@ -183,10 +183,12 @@ void DlgConfig::CreateControls()
 
    itemBoxSizer2->Add(itemStdDialogButtonSizer6, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
     wxButton* itemButton7 = new wxButton( itemDialog1, wxID_OK, _("更新(&O)"), wxDefaultPosition, wxDefaultSize, 0 );
+	itemButton7->SetDefault();
     itemStdDialogButtonSizer6->AddButton(itemButton7);
 
     wxButton* itemButton8 = new wxButton( itemDialog1, wxID_CANCEL, _("取消(&C)"), wxDefaultPosition, wxDefaultSize, 0 );
     itemStdDialogButtonSizer6->AddButton(itemButton8);
+	itemButton8->SetFocus();
 
     itemStdDialogButtonSizer6->Realize();
 

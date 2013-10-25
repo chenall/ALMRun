@@ -2,6 +2,7 @@
 #include "MerryCommandManager.h"
 #include "MerryLua.h"
 #include "MerryInformationDialog.h"
+#include "DlgParam.h"
 //
  
  MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
@@ -109,7 +110,18 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 		return;
 
 	lua_State* L = g_lua->GetLua();
+	wxString cmdArg = commandArg;
 	assert(L);
+	if (cmdArg.empty() && m_commandLine.Find("{%p+}") != wxNOT_FOUND)
+	{
+		DlgParam *dlg = new DlgParam(NULL,-1,m_commandName);
+		if (dlg->ShowModal() == wxID_OK)
+			cmdArg = dlg->getvalue();
+		dlg->Destroy();
+		dlg = NULL;
+		if (cmdArg.empty())
+			return;
+	}
 
 	if (m_commandFunc == 0)
 	{
@@ -120,7 +132,7 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 			return;
 		}
 		lua_pushstring(L, m_commandLine.c_str());
-		lua_pushstring(L, commandArg.c_str());
+		lua_pushstring(L, cmdArg.c_str());
 	}
 	else
 	{
@@ -129,7 +141,7 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 		else
 			lua_rawgeti(L, LUA_REGISTRYINDEX, m_commandFunc);
 		assert(lua_isfunction(L, -1));
-		lua_pushstring(L, commandArg.c_str());
+		lua_pushstring(L, cmdArg.c_str());
 		lua_pushnumber(L, m_commandID);
 	}
 
