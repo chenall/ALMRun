@@ -20,12 +20,16 @@ function enterString(str)
 	end)
 	enterKey(table.unpack(t))
 end
+-- 过滤字符串首尾空格函数
 function trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
+
+-- 获取文件名函数
 function get_name(file)
 	return file:match("[^\\]+$")
 end
+
 -- 自动扫描指定目录下指定扩展名程序到列表中
 function scan_dir(path,ext,sub)
     if ext == nil then
@@ -109,19 +113,15 @@ CmdCallFunc = function(cmdLine,cmdArg)
 	cmdLine = cmdLine:gsub("{%%[pP]%+?}",cmdArg)
 	cmdArg = nil
     end
-
     -- 替换{%c}为剪贴板内容
     if cmdLine:match("{%%c}") then
 	cmdLine = cmdLine:gsub("{%%c}",GetClipboardData())
     end
-
     -- 替换{%wt}为窗体标题
     if cmdLine:match("{%%wt}") then
 	cmdLine = cmdLine:gsub("{%%wt}",GetWindowText(getForegroundWindow()))
     end
-
     -- 以上{%p},{%c},{%wt}是为了兼容ALTRUN参数设置
-
     cmdLine = cmdLine:gsub("%%(%S+)%%",os.getenv) --系统环境变量扩展
     local cmd,arg = SplitCmd(cmdLine)
     if arg then
@@ -170,6 +170,9 @@ end
 function altrun_config(file)
     local FileName = file:match("[^\\]+$")
     local DestDir = file:sub(1,-FileName:len()-1)
+    if not FileExists(file) then--文件不存在
+	return
+    end
     local altrun = read_altrun_config(file)
     for i=1,#altrun do
 	if altrun[i][5]:sub(1,1) == "." then
