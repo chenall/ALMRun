@@ -103,6 +103,32 @@ MerryCommand::~MerryCommand()
 	luaL_unref(L, LUA_REGISTRYINDEX, m_commandFunc);
 }
 
+wxString MerryCommand::GetDetails() const
+{
+	wxString cmd_from;
+	if (m_flags & CMDS_FLAG_DIRS)
+	{
+		cmd_from = wxT("Ä¿Â¼É¨Ãè(ALMRUN.INI)");
+	}
+	else if (m_flags & CMDS_FLAG_ALTRUN)
+	{
+		cmd_from = wxT("ALTRunÅäÖÃÎÄ¼þ");
+	}
+	else if (m_flags & CMDS_FLAG_LUA)
+	{
+		cmd_from = wxT("LUA½Å±¾À©Õ¹");
+	}
+	else if (m_flags & CMDS_FLAG_CMDS)
+	{
+		cmd_from = wxT("ALMRunÃüÁî(ALMRUN.INI)");
+	}
+	else
+	{
+		cmd_from = wxT("Î´ÖªÅäÖÃ");
+	}
+	return wxString::Format(wxT("ÅäÖÃÎÄ¼þ£º%s\nID:[%d] %s\nÃüÁî:%s\nÈÈ¼ü: %s\n"),cmd_from,m_flags>>4,this->m_commandDesc,this->m_commandLine,this->m_triggerKey);
+}
+
 void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 {
 

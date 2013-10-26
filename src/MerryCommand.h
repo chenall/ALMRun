@@ -1,7 +1,10 @@
 #ifndef _MERRY_COMMAND_H_
 #define _MERRY_COMMAND_H_
 #include "MerryWx.h"
-
+#define CMDS_FLAG_CMDS 1
+#define CMDS_FLAG_DIRS 2
+#define CMDS_FLAG_LUA 4
+#define CMDS_FLAG_ALTRUN 8
 class MerryCommand
 {
 public:
@@ -15,6 +18,7 @@ public:
 	const wxString& GetTriggerKey() const { return m_triggerKey; }
 	const wxString& GetCommandDesc() const { return m_commandDesc; }
 	const wxString& GetCommandLine() const { return m_commandLine; }
+	wxString GetDetails() const;
 	void ExecuteCommand(const wxString& commandArg) const;
 	int m_order;
 	int m_compare;

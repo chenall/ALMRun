@@ -1,27 +1,38 @@
 ALMRUN_CONFIG_PATH = ALMRUN_HOME .. "config\\"
 ALMRUN_ORDER_FILE = ALMRUN_CONFIG_PATH .. 'order.txt'
-dofile(ALMRUN_HOME .. 'LuaEx/base.lua')--åŸºæœ¬åº“
 
---è¯»å–ç”¨æˆ·æ‰©å±•åº“
+--LUA´íÎó²¶»ñº¯Êı
+function error_hook(msg)
+    message(msg:gsub("^(.+):(%d+):(.+)$","ÎÄ¼ş£º%1\n´íÎóĞĞ [%2] ÒÔºóµÄÄÚÈİ½«±»ºöÂÔ\n%3"),"Configure failed")
+end
+
+--Ê¹ÓÃluajitµÄxpcallÀ´µ÷ÓÃ¿ÉÒÔ·À´ËÓÉÓÚÒâÍâ´íÎóµ¼ÖÂ³ÌĞò±ÀÀ£
+function DoFile(file)
+    xpcall(dofile,error_hook,file)
+end
+
+DoFile(ALMRUN_HOME .. 'LuaEx/base.lua')--»ù±¾¿â
+
+--¶ÁÈ¡ÓÃ»§À©Õ¹¿â
 local Files = ListDir(ALMRUN_CONFIG_PATH,"*.lua",-1)
 if Files == nil then 
     return
 end
 for key,value in pairs(Files) do  
-    dofile(value)
+    DoFile(value)
 end
 
-CmdOrder = {}--å‘½ä»¤æ’åºè¡¨
+CmdOrder = {}--ÃüÁîÅÅĞò±í
 --[[
-	order.txt å†…å®¹æ ¼å¼  æ’åºå·|å‘½ä»¤å
-	ä¾‹å­:
+	order.txt ÄÚÈİ¸ñÊ½  ÅÅĞòºÅ|ÃüÁîÃû
+	Àı×Ó:
 	1|radmin
 	100|airview
-	æ³¨:ä½ ä¹Ÿå¯ä»¥ä½¿ç”¨è‡ªå·±å–œæ¬¢çš„æ ¼å¼,éœ€è¦ä¿®æ”¹è¯»å–å’Œä¿å­˜çš„ä»£ç 
-		è¯»å–çš„ä»£ç åœ¨ä¸‹é¢,ä¿å­˜çš„ä»£ç åœ¨base.luaçš„onCloseå‡½æ•°é‡Œé¢.
+	×¢:ÄãÒ²¿ÉÒÔÊ¹ÓÃ×Ô¼ºÏ²»¶µÄ¸ñÊ½,ĞèÒªĞŞ¸Ä¶ÁÈ¡ºÍ±£´æµÄ´úÂë
+		¶ÁÈ¡µÄ´úÂëÔÚÏÂÃæ,±£´æµÄ´úÂëÔÚbase.luaµÄonCloseº¯ÊıÀïÃæ.
 ]]
 
---è¯»å–å‘½ä»¤æ’åºè¡¨æ•°æ®åé¢æ·»åŠ å‘½ä»¤æ—¶è¦ç”¨åˆ°
+--¶ÁÈ¡ÃüÁîÅÅĞò±íÊı¾İºóÃæÌí¼ÓÃüÁîÊ±ÒªÓÃµ½
 local f = io.open(ALMRUN_ORDER_FILE,'r')
 if f then
 	for line in f:lines() do
@@ -35,3 +46,4 @@ if f then
 	end
 	f:close()
 end
+

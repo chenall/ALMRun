@@ -43,6 +43,10 @@ static int LuaAddCommand(lua_State* L)
 	lua_rawget(L, 1);
 	wxString commandLine(wxString(lua_tostring(L, -1), wxConvLocal));
 
+	lua_pushstring(L, "flags");
+	lua_rawget(L,1);
+	int flags = lua_tointeger(L,-1);
+
 	lua_pushstring(L, "func");
 	lua_rawget(L, 1);
 	int funcRef = 0;
@@ -72,23 +76,19 @@ static int LuaAddCommand(lua_State* L)
 		}
 		lua_pop(L, 1);
 	}
-	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,order,CMDS_FLAG_ALMRUN_LUA);
-	if (commandID == -2)
+	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,order,(flags<<3) | CMDS_FLAG_LUA);
+
+	if (commandID < 0 )
 	{
 		luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
 		lua_settop(L, 1);
-		luaL_error(L, ::MerryGetLastError().c_str());
-	}
-	else if (commandID == -1)
-	{
-		lua_settop(L, 1);
-		return 0;
+		return luaL_error(L, ::MerryGetLastError().c_str());
 	}
 
 	if (!g_hotkey->RegisterHotkey(commandID))
 	{
 		lua_settop(L, 1);
-		luaL_error(L, ::MerryGetLastError().c_str());
+		return luaL_error(L, ::MerryGetLastError().c_str());
 	}
 
 	lua_settop(L, 1);

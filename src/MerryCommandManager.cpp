@@ -19,7 +19,7 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files)
 {
 	for(int i=files.GetCount()-1;i >= 0;--i)
 	{
-		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
+		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
 	}
 }
 
@@ -36,7 +36,7 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files,const wxArra
 				break;
 		}
 		if (j == -1)
-			m_commands.push_back(new MerryCommand(m_commands.size() |(CMDS_FLAG_ALMRUN_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
+			m_commands.push_back(new MerryCommand(m_commands.size() |(CMDS_FLAG_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
 	}
 }
 
@@ -55,13 +55,13 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 	int order_id = 0;
 	if (m_commands.size() >= 1000)
 	{
-		::MerrySetLastError(wxT("1000 commands limit,If you need more please contact me!"));
+		MerrySetLastError(wxT("\n超过1000个命令限制，目前限制命令数量不可以超过1000个，有特殊需求请联系我或到到网站留言 http://chenall.net"));
 		return -2;
 	}
 
 	if (commandName.empty() && triggerKey.empty())
 	{
-		//::MerrySetLastError(wxT("Command name and key not found"));
+		MerrySetLastError(wxT("\n热键(KEY)或名称(NAME),至少需要设置一个"));
 		return -1;
 	}
 	for (size_t i=0; i<m_commands.size(); ++i)
@@ -70,16 +70,12 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 		assert(command);
 		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
 		{
-			if (!(flags & CMDS_FLAG_ALMRUN_CMDS))
-				new MerryInformationDialog(wxT("Command name exists"),wxString::Format(wxT("以下命令名称重复:\r\n%s"),commandName));
-			//::MerrySetLastError(wxString::Format(wxT("Command name \"%s\" already exists[%d]"), commandName,command->GetCommandID()));
+			MerrySetLastError(wxString::Format(wxT("\n命令[%s]已经存在\n\n%s"),commandName,command->GetDetails()));
 			return -1;
 		}
 		if (!triggerKey.empty() && triggerKey.IsSameAs(command->GetTriggerKey(), false))
 		{
-			if (!(flags & CMDS_FLAG_ALMRUN_CMDS))
-				new MerryInformationDialog(wxT("Command key exists"),wxString::Format(wxT("以下命令热键重复:\r\n%s"),triggerKey));
-			//::MerrySetLastError(wxString::Format(wxT("Command key \"%s\" already exists[%d]"), triggerKey,command->GetCommandID()));
+			MerrySetLastError(wxString::Format(wxT("\n命令[%s]热键重复\n\n%s\n"), commandName,command->GetDetails()));
 			return -1;
 		}
 		if (command->m_order > order_id)
@@ -103,17 +99,6 @@ const MerryCommand* MerryCommandManager::GetCommand(int commandID) const
 		return NULL;
 	assert(m_commands[commandID]);
 	return m_commands[commandID];
-	/*
-	size_t mx = m_commands.size();
-	for (size_t i=0; i<mx; ++i)
-	{
-		MerryCommand* command = m_commands[i];
-		assert(command);
-		if (command->GetCommandID() == commandID)
-			return command;
-	}
-	return NULL;
-	*/
 }
 
 /*

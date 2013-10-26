@@ -1,3 +1,4 @@
+local bit = require("bit")
 local eventTable = {}
 function addEventHandler(eventName, eventHandler)
 	if not eventTable[eventName] then
@@ -13,6 +14,7 @@ function addEventHandler(eventName, eventHandler)
 		end
 	end
 end
+
 function enterString(str)
 	local t = {}
 	str:gsub('.', function(c)
@@ -20,12 +22,11 @@ function enterString(str)
 	end)
 	enterKey(table.unpack(t))
 end
--- 过滤字符串首尾空格函数
+
 function trim(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
--- 获取文件名函数
 function get_name(file)
 	return file:match("[^\\]+$")
 end
@@ -48,6 +49,7 @@ function scan_dir(path,ext,sub)
 	addCommand{ name = m_name,cmd = value}
     end
 end
+
 -- Events
 addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 	local commandNameArray = { commandName }
@@ -66,6 +68,7 @@ addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 	end
 	f:close()
 end)
+
 addEventHandler('onClose', function()
 -- 保存命令优先级设置开始
 	local f = io.open(ALMRUN_ORDER_FILE,'w+')
@@ -78,6 +81,7 @@ addEventHandler('onClose', function()
 	showWindow(curHideWindow, 'normal')
     end
 end)
+
 function SplitCmd(cmdLine)
    cmdLine = trim(cmdLine)
    local pos = cmdLine:find(":::") -- 正常使用:::分隔参数
@@ -106,6 +110,7 @@ function SplitCmd(cmdLine)
     end
     return cmdLine
 end
+
 -- 默认的命令调用函数
 CmdCallFunc = function(cmdLine,cmdArg)
     -- 自动参数替换{%p}
@@ -135,6 +140,7 @@ CmdCallFunc = function(cmdLine,cmdArg)
     local DestDir = cmd:match("^(.-)[^\\]+$")
     shellExecute(cmd,cmdArg,DestDir)
 end
+
 --本函数在每添加一个命令之后调用,获取对应命令的优先级,返回数值越大优先级越高.
 function GetCmdOrder(cmdName)
 	local order = CmdOrder[cmdName]
@@ -144,6 +150,7 @@ function GetCmdOrder(cmdName)
 		return 0
 	end
 end
+
 --本函数在每执行一条命令之后调用,返回数值越大优先级越高.
 function SetCmdOrder(cmdName,order)
 	order = order + 1
@@ -166,7 +173,8 @@ function read_altrun_config (file)
 	fp:close()
   return csv
 end
--- 偷懒,直接调用ALTRUN的配置,^_^
+
+-- 直接调用ALTRUN的配置,^_^
 function altrun_config(file)
     local FileName = file:match("[^\\]+$")
     local DestDir = file:sub(1,-FileName:len()-1)
@@ -181,6 +189,6 @@ function altrun_config(file)
 	if altrun[i][5]:sub(1,2) == "@." then
 	    altrun[i][5] = "@" .. DestDir .. altrun[i][5]:sub(2)
 	end
-	addCommand{ name = altrun[i][3],desc=altrun[i][4],cmd = altrun[i][5]}
+	addCommand{ name = altrun[i][3],desc=altrun[i][4],cmd = altrun[i][5],flags = bit.bor(CMDS_FLAG_ALTRUN,bit.lshift(i,1))}
     end
 end

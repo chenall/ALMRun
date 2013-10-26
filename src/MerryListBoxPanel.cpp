@@ -146,7 +146,7 @@ bool MerryListBoxPanel::DelSelectedItem()
 	const MerryCommand* cmd = this->GetSelectionCommand();
 	assert(cmd);
 	int flags = cmd->GetFlags();
-	if ((flags & CMDS_FLAG_ALMRUN_CMDS) && (wxMessageBox(wxString::Format("删除 ID:[%d] %s\n命令:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCommandLine()),"提示",wxYES_NO|wxICON_WARNING) == wxYES))
+	if ((flags & CMDS_FLAG_CMDS) && (wxMessageBox(wxString::Format("删除 ID:[%d] %s\n命令:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCommandLine()),"提示",wxYES_NO|wxICON_WARNING) == wxYES))
 	{
 	#ifdef _ALMRUN_CONFIG_H_
 		if (g_config->DeleteCmd(flags>>4))
@@ -203,7 +203,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 				const MerryCommand* cmd = GetSelectionCommand();
 				if (id == MENU_CMD_EDIT)
 				{
-					if (!(cmd->GetFlags() & CMDS_FLAG_ALMRUN_CMDS)) 
+					if (!(cmd->GetFlags() & CMDS_FLAG_CMDS)) 
 					{
 						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
 						return;

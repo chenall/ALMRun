@@ -1,4 +1,5 @@
 #include "MerryCommandManager.h"
+#include "MerryError.h"
 #include "MerryHotkey.h"
 #include "ALMRunConfig.h"
 #include "MerryListBoxPanel.h"
@@ -296,10 +297,10 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 				return -1;
 		}
 	}
-	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(Id << 4) | CMDS_FLAG_ALMRUN_CMDS);
+	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(Id << 4) | CMDS_FLAG_CMDS);
 	if (cmdId < 0)
 	{
-		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->ÃüÁî[%d]:%s",Id,name),"²ÎÊý´íÎó");
+		wxMessageBox(wxString::Format("Ìí¼ÓÃüÁîÊ§°Ü->ÃüÁî[%d]:%s\n%s",Id,name,MerryGetLastError()),"Ê§°Ü");
 		return -1;
 	}
 	if (!key.empty() && !g_hotkey->RegisterHotkey(cmdId))
