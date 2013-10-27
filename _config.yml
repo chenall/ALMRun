@@ -2,6 +2,7 @@
 # For more see: http://jekyllrb.com/docs/permalinks/
 permalink: /post/:title 
 markdown: rdiscount
+#markdown: maruku
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 pygments: true
 timezone: Asia/Chongqing

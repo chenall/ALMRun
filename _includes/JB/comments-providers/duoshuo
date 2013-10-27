@@ -1,5 +1,13 @@
 <!-- Duoshuo Comment BEGIN -->
-<div class="ds-thread"></div>
+{% if page.wordpress_id %}
+    {% assign thread-key = page.wordpress_id %}
+{% else %}
+    {% if page.thread %}
+	{% assign thread-key = page.thread %}
+    {% endif %}
+{% endif %}
+{% assign in_sale_collection = false %}
+<div class="ds-thread" {% if thread-key %} data-thread-key="{{thread-key}}" {% endif %} data-url="{{ site.url }}{{ page.url }}" data-title="{{ page.title }}" ></div>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"{{ site.JB.comments.duoshuo.short_name }}"};
 	(function() {
