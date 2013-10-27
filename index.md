@@ -18,15 +18,14 @@ ALMRun
 
    源自[Merry]，结合了[ALTRun]的优点，经过多次改进增强，现在基本上[ALTRun]上面可以实现的功能，使用`ALMRun`都可以实现了，并且`ALMRun`直接支持`ALTRun`的配置文件，并保持和`ALTRun`一样的使用使用习惯，很容易就可以直接上手。
 
-* [基本功能](#almrun-base-基本功能)
-* [扩展功能](#almrun-advanced-扩展功能)
-* [相关资源](#resource-相关资源)
+* [基本功能](#ALMRUN_BASE)
+* [扩展功能](#ALMRun_Advanced)
+* [相关资源](#ALMRun_resource)
 * [更新记录](https://github.com/chenall/ALMRun/blob/master/doc/update.log)
 * [API 参考](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
 * [程序下载](http://www.chenall.net/downloads/file/28/)
 
-ALMRun Base 基本功能
-====================
+<h2 id="ALMRUN_BASE">ALMRun Base 基本功能</h2>
 ******************
 *	程序相关快捷键
     * `ALT+R`(全局)　　　　隐藏激活程序（可在参数配置中修改）
@@ -70,8 +69,7 @@ ALMRun Base 基本功能
 
 *  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](https://github.com/chenall/ALMRun/blob/master/bin/ALMRun.ini)里面有更详细的配置介绍.
 
-ALMRun Advanced 扩展功能
-=========================
+<h2 id="ALMRun_Advanced">ALMRun Advanced 扩展功能</h2>
 ***********************
   ALMRUN使用[luajit]引擎支持使用LUA脚本进行功能扩展，只需要把你的扩展脚本放在`config`目录下即可，不限文件名，不限子目录。
   扩展能请参考[API 介绍](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
@@ -91,9 +89,9 @@ ALMRun Advanced 扩展功能
 	xpcall(addCommand,error_hook,{ name = "test",cmd = "cmd.exe /k echo test" })
 {% endhighlight %}
    
-
+<h2 id="ALMRun_resource">
 Resource 相关资源
-=================
+</h2>
 *****************
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 源码: <https://github.com/chenall/ALMRun>  
