@@ -137,7 +137,7 @@ CmdCallFunc = function(cmdLine,cmdArg)
 	end
     end
 -- 提取可执行程序所在目录
-    local DestDir = cmd:match("^(.-)[^\\]+$")
+    local DestDir = cmd:match("^(.-)[^\\|/]+$")
     shellExecute(cmd,cmdArg,DestDir)
 end
 

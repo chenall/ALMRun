@@ -88,8 +88,9 @@ Resource 相关资源
 *****************
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 源码: <https://github.com/chenall/ALMRun>  
-* 搏客: <http://chenall.net/post/alrun-merry/>  
 * 主页: <http://almrun.chenall.net>  
+* 下载: <http://www.chenall.net/downloads/file/28/>  
+* 搏客: <http://chenall.net/post/alrun-merry/>  
 * altrun介绍：<http://xbeta.info/altrun.htm> 可以参考一下，使用方法基本上都是差不多的。
 
 [Merry]:http://code.google.com/p/name5566-merry/

@@ -523,5 +523,5 @@ Other 其它说明
 >
 [CloseWindow],[GetWindowText],[SetWindowText],[GetWindowSize], [SetWindowSize],[GetWindowPosition],[SetWindowPosition]
 
-[CSIDL]: CSIDL.TXT "Windows 系统特殊文件夹CSIDL参考"
-[HOT_KEY]: key_string.txt "部份热键字符表,像A-Z之类的直接使用字符本身表示"
+[CSIDL]: https://github.com/chenall/ALMRun/blob/master/doc/CSIDL.TXT "Windows 系统特殊文件夹CSIDL参考"
+[HOT_KEY]: https://github.com/chenall/ALMRun/blob/master/doc/key_string.txt "部份热键字符表,像A-Z之类的直接使用字符本身表示"
