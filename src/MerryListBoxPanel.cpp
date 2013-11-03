@@ -310,7 +310,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 	{
 		const ListBoxItem& item = m_items[i];
 		assert(i + m_topCommandIndex < (int)m_commands.size());
-		const MerryCommand* command = m_commands[i + m_topCommandIndex];
+		MerryCommand* command = m_commands[i + m_topCommandIndex];
 		assert(command);
 		if (m_selectionCommandIndex - m_topCommandIndex == i)
 		{

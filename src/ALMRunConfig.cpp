@@ -10,7 +10,7 @@
 #include <shlobj.h>
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行",
 	"保持程序窗口置顶,默认禁用.",
@@ -24,6 +24,8 @@ const char *ALMRunConfig::config_tip[] = {
 	"运行程序之前禁用系统的WOW64重定向,解决在64位系统上部份64位程序无法运行的问题",
 	"如果选中，将本软件添加到“发送到”菜单",
 	"如果选中，当窗体弹出时播放声音",
+	"如果选中，按下空格键就启动当前条目",
+	"如果选中，显示ALMRun界面时自动显示列表框",
 };
 
 /* 
@@ -127,6 +129,8 @@ ALMRunConfig::ALMRunConfig()
 	config[AddToSendTo] = conf->ReadBool(config_str[AddToSendTo],false);
 	config[PlayPopupNotify] = conf->ReadBool(config_str[PlayPopupNotify],false);
 	config[DisableWow64FsRedirection] = conf->ReadBool(config_str[DisableWow64FsRedirection],true);
+	config[SpaceKey] = conf->ReadBool(config_str[SpaceKey],false);
+	config[AutoPopup] = conf->ReadBool(config_str[AutoPopup],false);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	HotKey = conf->Read("HotKey","A-R");
 	HotKeyReLoad = conf->Read("HotKeyReLoad");

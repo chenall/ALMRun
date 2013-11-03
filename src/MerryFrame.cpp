@@ -55,7 +55,7 @@ void MerryFrame::NewConfig()
 	bool show = m_listBoxPanel->IsShown();
 	m_listBoxPanel->Dismiss();
 	if (g_lua)
-		g_lua->OnClose();
+		wxDELETE(g_lua);
 
 	if (g_hotkey)
 	{
@@ -82,10 +82,10 @@ void MerryFrame::NewConfig()
 		g_config = new ALMRunConfig();
 	}
 #endif//#ifdef _ALMRUN_CONFIG_H_
-	if (lua_bak)
-		wxDELETE(lua_bak);
+	//if (lua_bak)
+	//	wxDELETE(lua_bak);
 
-	lua_bak = g_lua;
+	//lua_bak = g_lua;
 
 	g_lua = new MerryLua();
 	if (show)
@@ -155,14 +155,9 @@ void MerryFrame::OnClose()
 {
 	__DEBUG_BEGIN("")
 	this->Hide();
-	if (lua_bak)
-		wxDELETE(lua_bak);
 
 	if (g_lua)
-	{
-		g_lua->OnClose();
 		wxDELETE(g_lua);
-	}
 
 	if (g_commands)
 		wxDELETE(g_commands);
@@ -222,6 +217,8 @@ void MerryFrame::OnShowEvent(wxShowEvent& e)
 		m_listBoxPanel->Dismiss();
 		this->Raise();
 		textCtrl->SetFocus();
+		if (g_config->config[AutoPopup])
+			textCtrl->AppendText(wxT(""));
 	}
 	else
 		textCtrl->ChangeValue(wxT(""));

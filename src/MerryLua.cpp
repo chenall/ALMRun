@@ -3,7 +3,6 @@
 #include "MerryConfig.h"
 
 MerryLua* g_lua = NULL;
-MerryLua* lua_bak = NULL;
 
 MerryLua::MerryLua()
 {
@@ -95,8 +94,10 @@ MerryLua::MerryLua()
 MerryLua::~MerryLua()
 {
 	__DEBUG_BEGIN("")
+	this->OnClose();
 	assert(lua_gettop(L) == 0);
 	lua_close(L);
+	L = NULL;
 	__DEBUG_END("")
 }
 
@@ -121,6 +122,7 @@ void MerryLua::DoConfig()
 
 void MerryLua::OnClose()
 {
+	__DEBUG_BEGIN("")
 	if (!L)
 		return;
 
@@ -139,6 +141,7 @@ void MerryLua::OnClose()
 		);
 		lua_pop(L, 1);
 	}
+	__DEBUG_END("")
 }
 
 bool MerryLua::onCompare(const wxString& commandName,const wxString& commandPrefix)

@@ -112,6 +112,11 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			dlg->Destroy();
 			return;
 		}
+#ifdef _ALMRUN_CONFIG_H_
+		//°´¿Õ¸ñ¼üÖ´ÐÐ
+		else if (keyCode == WXK_SPACE && g_config->config[SpaceKey])
+			keyCode = WXK_RETURN;
+#endif
 	}
 	switch (keyCode)
 	{
