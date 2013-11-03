@@ -5,7 +5,7 @@ BEGIN_EVENT_TABLE(MerryListBoxPanel, wxPanel)
 	EVT_MOUSE_EVENTS(MerryListBoxPanel::OnMouseEvent)
 	EVT_PAINT(MerryListBoxPanel::OnPaintEvent)
 	EVT_CONTEXT_MENU(MerryListBoxPanel::onContextMenu)
-	EVT_MENU_RANGE(10000,10010,onPopMenu)
+	EVT_MENU_RANGE(10000,10011,onPopMenu)
 END_EVENT_TABLE()
 
 MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
