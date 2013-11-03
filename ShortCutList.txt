@@ -1,0 +1,16 @@
+F100     |                    |Computer                      |我的电脑                      |::{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+F3       |                    |Explorer                      |资源管理器                    |explorer.exe /e,::{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+F0       |                    |MyDocument                    |我的文档                      |explorer.exe
+F8       |                    |ie                            |IE浏览器                      |iexplore.exe
+F0       |                    |msconfig                      |系统配置                      |msconfig
+F6       |                    |Reg                           |注册表编辑器                  |regedt32
+F0       |                    |myip                          |我的IP地址                    |nslookup
+F2       |                    |dev                           |设备管理器                    |devmgmt.msc
+F0       |                    |Taskmgr                       |任务管理器                    |taskmgr
+F0       |                    |ShutDown                      |立即关机                      |shutdown /s /t 5
+F0       |                    |Reboot                        |立即重启                      |shutdown /r /t 5
+
+F0       |                    |Windows                       |Windows 目录                  |%WINDIR%
+F0       |                    |System32                      |System32 目录                 |%WINDIR%\System32
+F0       |                    |ProgramFiles                  |Program Files 目录            |%PROGRAMFILES%
+F10      |                    |Recent                        |最近打开文件 目录             |%USERPROFILE%\Recent
