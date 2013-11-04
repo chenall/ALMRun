@@ -224,7 +224,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 			break;
 		case MENU_CMD_OPENDIR:
 			LocationExec = true;
-			GetSelectionCommand()->ExecuteCommand(wxEmptyString);
+			GetSelectionCommand()->Execute(wxEmptyString);
 			break;
 
 	}
@@ -250,7 +250,7 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 	{
 		const MerryCommand* command = m_commands[m_selectionCommandIndex];
 		assert(command);
-		command->ExecuteCommand(wxT(''));
+		command->Execute(wxT(''));
 	}
 	else
 		e.Skip();
@@ -343,10 +343,14 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		this->flags = 0;
 		return;
 	}
+#ifdef _RELWITHDEBINFO
+	dc.DrawLabel(wxString::Format(wxT(" ÃüÁî[%d]: %s"),command->GetOrder(),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
+#else
 	if (!cmdLine.empty())
-		dc.DrawLabel(wxString::Format(wxT(" ÃüÁî: %s"),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
+		dc.DrawLabel(wxString::Format(wxT(" ÃüÁî[%d]: %s"),command->GetOrder(),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
 	else if (!cmdDesc.empty())
 		dc.DrawLabel(wxString::Format(wxT(" ËµÃ÷: %s"),cmdDesc.c_str()),item.rect, wxALIGN_LEFT);	
+#endif
 }
 
 void MerryListBoxPanel::SetHeight(int height)

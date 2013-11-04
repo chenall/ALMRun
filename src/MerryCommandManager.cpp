@@ -50,9 +50,8 @@ bool MerryCommandManager::DelCommand(int commandID)
 	return false;
 }
 
-const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order,int flags)
+const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags)
 {
-	int order_id = 0;
 	if (m_commands.size() >= 1000)
 	{
 		MerrySetLastError(wxT("\n超过1000个命令限制，目前限制命令数量不可以超过1000个，有特殊需求请联系我或到到网站留言 http://chenall.net"));
@@ -78,18 +77,9 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 			MerrySetLastError(wxString::Format(wxT("\n命令[%s]热键重复\n\n%s\n"), commandName,command->GetDetails()));
 			return -1;
 		}
-		if (command->m_order > order_id)
-			order_id = i;
 	}
-	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine, funcRef, triggerKey,order);
-#if 1
+	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine, funcRef, triggerKey);
 	m_commands.push_back(command);
-#else
-	if (order == 0)
-		m_commands.push_back(command);
-	else
-		m_commands.insert(m_commands.begin()+order_id,command);
-#endif
 	return command->GetCommandID();
 }
 
@@ -109,7 +99,7 @@ const MerryCommand* MerryCommandManager::GetCommand(int commandID) const
 */
 static bool mysort(MerryCommand *s1,MerryCommand  *s2)
 {
-	int cmp  = s1->m_order - s2->m_order;
+	int cmp  = s1->GetOrder() - s2->GetOrder();
 	if (cmp == 0)//排序值一样时
 	{
 		if (s1->m_compare == 0)//前缀匹配优先
@@ -119,7 +109,7 @@ static bool mysort(MerryCommand *s1,MerryCommand  *s2)
 		}
 		else if (s2->m_compare == 0)
 			return false;
-		return s2->GetCommandName() > s1->GetCommandName();
+		return s2->GetCommandName().Upper() > s1->GetCommandName().Upper();
 	}
 	return cmp > 0;
 }
@@ -135,51 +125,47 @@ static bool SortPreOrder(MerryCommand *s1,MerryCommand  *s2)
 	{
 		if (s2->m_compare != 0)//前缀不匹配
 			return true;
-		int cmp = s1->m_order - s2->m_order;
+		int cmp = s1->GetOrder() - s2->GetOrder();
 		if (cmp != 0)
 			return cmp >0 ;
 	}
 	else if (s2->m_compare == 0)
 		return false;
-	return s2->GetCommandName() > s1->GetCommandName();
+	return s2->GetCommandName().Upper() > s1->GetCommandName().Upper();
 }
 
-const int MerryCommandManager::SetCmdOrder(int commandID)
+//初始排序
+static bool command_sort(MerryCommand *s1,MerryCommand  *s2)
 {
-	assert(m_commands[commandID]);
-	MerryCommand* cmd= m_commands[commandID];
-	wxString commandName = cmd->GetCommandName();
-	if (commandName.empty() || !g_lua)
-		return ++cmd->m_order;
-	lua_State* L = g_lua->GetLua();
-	assert(L);
-	lua_getglobal(L, "SetCmdOrder");
-	if (!lua_isnil(L, 1))
-	{
-		lua_pushstring(L, commandName.c_str());
-		lua_pushinteger(L, cmd->m_order);
-		if (lua_pcall(L, 2, 1, 0) == 0)
-			cmd->m_order = lua_tointeger(L,-1);
-
-	}
-	lua_pop(L, 1);
-	commandName.Clear();
-	return cmd->m_order;
+	int cmp = s1->GetOrder() - s2->GetOrder();
+	if (cmp == 0)
+		return s2->GetCommandName().Upper() > s1->GetCommandName().Upper();
+	return cmp > 0;
 }
 
 MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) const
 {
 	MerryCommandArray commands;
+	MerryCommandArray l_commands;
 	bool test_cmp = false;
 	int cmp_find = -1;
-	cmdPrefix = commandPrefix.Upper();
 	for (size_t i=0; i<m_commands.size(); ++i)
 	{
-		MerryCommand* command = m_commands[i];
+		if (m_commands[i]->GetCommandName().empty())
+			continue;
+		l_commands.push_back(m_commands[i]);
+	}
+	sort(l_commands.begin(),l_commands.end(),command_sort);
+	if (commandPrefix.empty())
+		return l_commands;
+	cmdPrefix = commandPrefix.Upper();
+	if (commandPrefix.empty())
+		return l_commands;
+	for (size_t i=0; i<l_commands.size(); ++i)
+	{
+		MerryCommand* command = l_commands[i];
 		assert(command);
 		const wxString& commandName = command->GetCommandName(0);
-		if (commandName.empty())
-			continue;
 		if (commandName.size() < commandPrefix.size())
 			continue;
 	#ifdef _ALMRUN_CONFIG_H_
@@ -211,14 +197,14 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 		{
 			command->m_compare = cmp_find;
 			commands.push_back(command);
-		#ifdef _ALMRUN_CONFIG_H_
-			if (g_config->config[ShowTopTen] && commands.size()>9)
+			if (g_config->config[ShowTopTen] && commands.size() >= 10 && !g_config->config[OrderByPre])
 				break;
-		#endif//ifdef _ALMRUN_CONFIG_H_
 		}
 	}
 #ifdef _ALMRUN_CONFIG_H_
 	sort(commands.begin(),commands.end(),g_config->config[OrderByPre]?SortPreOrder:mysort);
-#endif
+	if (g_config->config[ShowTopTen] && commands.size() >= 10)
+		commands.resize(10);
+#endif//ifdef _ALMRUN_CONFIG_H_
 	return commands;
 }

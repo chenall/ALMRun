@@ -236,7 +236,7 @@ void MerryTextCtrl::ExecuteCmd()
 	}
 	#endif
 	::wxGetApp().GetFrame().Hide();
-	command->ExecuteCommand(commandArg);
+	command->Execute(commandArg);
 }
 
 void MerryTextCtrl::AutoCompletion(int keyCode)

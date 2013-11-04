@@ -70,13 +70,6 @@ addEventHandler('onUndefinedCommand', function(commandName, commandArg)
 end)
 
 addEventHandler('onClose', function()
--- 保存命令优先级设置开始
-	local f = io.open(ALMRUN_ORDER_FILE,'w+')
-	for i,v in pairs(CmdOrder) do
-		f:write(v..'|'..i.."\n")
-	end
-	f:close()
--- 保存命令优先级设置完成
     if curHideWindow then
 	showWindow(curHideWindow, 'normal')
     end
@@ -141,22 +134,6 @@ CmdCallFunc = function(cmdLine,cmdArg)
     shellExecute(cmd,cmdArg,DestDir)
 end
 
---本函数在每添加一个命令之后调用,获取对应命令的优先级,返回数值越大优先级越高.
-function GetCmdOrder(cmdName)
-	local order = CmdOrder[cmdName]
-	if order then
-		return order
-	else
-		return 0
-	end
-end
-
---本函数在每执行一条命令之后调用,返回数值越大优先级越高.
-function SetCmdOrder(cmdName,order)
-	order = order + 1
-	CmdOrder[cmdName] = order
-	return order
-end
 function read_altrun_config (file)
   local fp = assert(io.open (file))
   local csv = {}
