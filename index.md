@@ -23,7 +23,7 @@ ALMRun
 * [相关资源](#ALMRun_resource)
 * [更新记录]
 * [API 参考](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
-* [程序下载](http://www.chenall.net/downloads/file/28/)
+* [程序下载](https://github.com/chenall/ALMRun/archive/Build.zip)
 
 <h2 id="ALMRUN_BASE">ALMRun Base 基本功能</h2>
 ******************
@@ -119,6 +119,7 @@ Build 编译方法
 Download 程序下载
 ===================
 
-[ALMRUN最新版下载](https://github.com/chenall/ALMRun/archive/Build.zip)
-其它版本请从[更新记录]下载
+ALMRUN最新编译版： <https://github.com/chenall/ALMRun/archive/Build.zip>
+
+其它版本请从 [更新记录] 下载
 
