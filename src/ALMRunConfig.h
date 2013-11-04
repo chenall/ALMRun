@@ -75,6 +75,7 @@ public:
 	void GuiConfig();
 
 	wxFileConfig *conf;
+	wxFileConfig *order;
 private:
 	//int lastId;
 	wxString cfg_file;

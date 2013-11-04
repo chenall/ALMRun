@@ -3,9 +3,10 @@
 #include "MerryLua.h"
 #include "MerryInformationDialog.h"
 #include "DlgParam.h"
+#include "ALMRunConfig.h"
 //
  
- MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int order)
+ MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey)
 {
 	m_commandID = commandID & 0xFFFF;
 	m_flags = commandID >> 16;
@@ -15,7 +16,7 @@
 	m_commandDesc = commandDesc;
 	m_commandLine = commandLine;
 	m_commandFName = commandName;
-	m_order = order;
+	m_order = 0;
 	if (commandName.empty())
 		return;
 	static int li_SecPosValue[] = {
@@ -91,6 +92,11 @@
 			m_commandFName.Append(ls_SecondSecTable[H-0xD8][L-0xA1]);
 		++i;
 	}
+	#ifdef _ALMRUN_CONFIG_H_
+	//获取排序值信息
+	if (g_config)
+		m_order = g_config->order->ReadLong(m_commandName,0);
+	#endif
 }
 
 MerryCommand::~MerryCommand()
@@ -129,7 +135,27 @@ wxString MerryCommand::GetDetails() const
 	return wxString::Format(wxT("配置文件：%s\nID:[%d] %s\n命令:%s\n热键: %s\n"),cmd_from,m_flags>>4,this->m_commandDesc,this->m_commandLine,this->m_triggerKey);
 }
 
-void MerryCommand::ExecuteCommand(const wxString& commandArg) const
+int MerryCommand::SetOrder()
+{
+#ifdef _ALMRUN_CONFIG_H_
+	if (g_config && !m_commandName.empty())
+	{
+		m_order = g_config->order->ReadLong(m_commandName,0);
+		g_config->order->Write(m_commandName,++m_order);
+		g_config->order->Flush();
+	}
+#else
+	++m_order;
+#endif
+	return m_order;
+}
+
+int MerryCommand::GetOrder() const
+{
+	return m_order;
+}
+
+void MerryCommand::Execute(const wxString& commandArg) const
 {
 
 	if (!g_lua)
@@ -173,7 +199,7 @@ void MerryCommand::ExecuteCommand(const wxString& commandArg) const
 
 	lua_pushnumber(L,0);
 	if (!m_commandName.empty())
-		g_commands->SetCmdOrder(m_commandID);
+		const_cast<MerryCommand*>(this)->SetOrder();
 	if (lua_pcall(L, 3, 0, 0))
 	{
 		new MerryInformationDialog(

@@ -80,6 +80,7 @@ void MerryFrame::NewConfig()
 	{
 		wxDELETE(g_config);
 		g_config = new ALMRunConfig();
+		g_config->ConfigCommand();
 	}
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	//if (lua_bak)
@@ -113,6 +114,7 @@ void MerryFrame::OnInit()
 #ifdef _ALMRUN_CONFIG_H_
 	assert(!g_config);
 	g_config = new ALMRunConfig();
+	g_config->ConfigCommand();
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	assert(!g_lua);
 	g_lua = new MerryLua();

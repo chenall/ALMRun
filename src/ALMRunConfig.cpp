@@ -95,6 +95,8 @@ ALMRunConfig::ALMRunConfig()
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");
+		order = new wxFileConfig(wxT("ALMRun"),wxEmptyString,Home + wxT("config/Order.ini"),wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
+		order->SetExpandEnvVars(false);
 		if (!wxFileExists(cfg_file))
 			MoveFile(Home + wxGetApp().GetAppName().Append(".ini"),cfg_file);
 	}
@@ -146,7 +148,6 @@ ALMRunConfig::ALMRunConfig()
 	if (!HotKeyReLoad.empty())
 		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",-1,HotKeyReLoad,0));
 	this->OldToNew();
-	this->ConfigCommand();
 	conf->SetPath("/Config");
 	cfg_time = wxFileModificationTime(cfg_file);
 	#ifdef __WXMSW__
@@ -301,7 +302,7 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 				return -1;
 		}
 	}
-	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,0,(Id << 4) | CMDS_FLAG_CMDS);
+	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,(Id << 4) | CMDS_FLAG_CMDS);
 	if (cmdId < 0)
 	{
 		wxMessageBox(wxString::Format("ÃÌº”√¸¡Ó ß∞‹->√¸¡Ó[%d]:%s\n%s",Id,name,MerryGetLastError())," ß∞‹");
@@ -566,8 +567,7 @@ void ALMRunConfig::get(const wxString& name)
 ALMRunConfig::~ALMRunConfig()
 {
 	__DEBUG_BEGIN("")
-	if (conf)
-		delete conf;
-	conf = NULL;
+	wxDELETE(conf);
+	wxDELETE(order);
 	__DEBUG_END("")
 }
