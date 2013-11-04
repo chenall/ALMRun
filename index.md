@@ -21,7 +21,7 @@ ALMRun
 * [基本功能](#ALMRUN_BASE)
 * [扩展功能](#ALMRun_Advanced)
 * [相关资源](#ALMRun_resource)
-* [更新记录](https://github.com/chenall/ALMRun/blob/master/doc/update.log)
+* [更新记录]
 * [API 参考](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
 * [程序下载](http://www.chenall.net/downloads/file/28/)
 
@@ -103,7 +103,7 @@ Resource 相关资源
 [ALTRUN]:https://code.google.com/p/altrun/
 [ALMRUN]:http://almrun.chenall.net/
 [luajit]:http://luajit.org/
-
+[更新记录]:update_log.html
 Requirement(编译环境)
 ======================
 	vs2010 sp1
@@ -116,4 +116,9 @@ Build 编译方法
 	cmake ..
 	ALMRun.sln
 
+Download 程序下载
+===================
+
+[ALMRUN最新版下载](https://github.com/chenall/ALMRun/archive/Build.zip)
+其它版本请从[更新记录]下载
 
