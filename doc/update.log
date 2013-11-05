@@ -1,3 +1,11 @@
+### [2013-11-05](https://github.com/chenall/ALMRun/archive/v1.2.0.25_BIN.zip)
+    1.命令列表新增两个快捷键。仿ALTRUN
+      * F1  显示关于窗口
+      * F2  编辑当前命令
+    2.新增全局热键 ALT+L 重复运行上一个命令（可以配置中禁用）
+    3.连续按两次程序显隐热键直接重复运行上一个命令。
+    4.去掉onUndefinedCommand,添加使用LUA添加动态命令功能.在config\sample\plugins.lua有两个示范
+    
 ### [2013-11-04](https://github.com/chenall/ALMRun/archive/v1.2.0.23_BIN.zip)
     1.程序内部优化,把命令排序功能放在程序内部，修正排序列表问题。
 
