@@ -14,13 +14,14 @@ ALMRun
 * [相关资源](#resource-相关资源)
 * [更新记录](doc/update.log)
 * [API 参考](doc/config_api.md)
-* [程序下载](http://www.chenall.net/downloads/file/28/)
+* [程序下载](http://almrun.chenall.net)
 
 ALMRun Base 基本功能
 ====================
 ******************
 *	程序相关快捷键
     * `ALT+R`(全局)　　　　隐藏激活程序（可在参数配置中修改）
+    * `ALT+L`(全局)　　　　运行上一个命令(可改)
     * `CTRL+D`　　 　　　　自动定位所选条目的文件位置，方便查找
     * `Alt+C`　　　　　　　打开参数配置界面
     * `Alt+S`　　　　　　　打开命令管理器
@@ -28,6 +29,8 @@ ALMRun Base 基本功能
     * `Tab`　　　　　　　　选定条目，并且进入输入参数模式。
     * `Ctrl+N/Alt+N`　　　N=0-9,启动列表中对应的条目
     * `Enter`　　　　　　　启动程序
+    * `F1`　　　　　　　　 显示关于窗口
+    * `F2`　　　　　　　　 编辑当前项目
 
 *   基本操作
 
@@ -89,7 +92,7 @@ Resource 相关资源
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 源码: <https://github.com/chenall/ALMRun>  
 * 主页: <http://almrun.chenall.net>  
-* 下载: <http://www.chenall.net/downloads/file/28/>  
+* 下载: <https://github.com/chenall/ALMRun/archive/Build.zip>  
 * 搏客: <http://chenall.net/post/alrun-merry/>  
 * altrun介绍：<http://xbeta.info/altrun.htm> 可以参考一下，使用方法基本上都是差不多的。
 

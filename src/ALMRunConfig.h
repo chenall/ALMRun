@@ -77,6 +77,7 @@ public:
 	wxFileConfig *conf;
 	wxFileConfig *order;
 private:
+	wxString LastItemHotKey;
 	//int lastId;
 	wxString cfg_file;
 	DirCfg def_dir_cfg;

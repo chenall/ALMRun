@@ -347,7 +347,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 	dc.DrawLabel(wxString::Format(wxT(" รüม๎[%d]: %s"),command->GetOrder(),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
 #else
 	if (!cmdLine.empty())
-		dc.DrawLabel(wxString::Format(wxT(" รüม๎[%d]: %s"),command->GetOrder(),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
+		dc.DrawLabel(wxString::Format(wxT(" รüม๎: %s"),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
 	else if (!cmdDesc.empty())
 		dc.DrawLabel(wxString::Format(wxT(" หตร๗: %s"),cmdDesc.c_str()),item.rect, wxALIGN_LEFT);	
 #endif

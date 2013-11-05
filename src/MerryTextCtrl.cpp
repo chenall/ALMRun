@@ -61,29 +61,33 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	int keyCode = e.GetKeyCode();
 	m_lastKeyDownCode = keyCode;
 #ifdef __WXMSW__
+	int menu_id = 0;
 	if (e.AltDown())
 	{
 		int key = keyCode | 0x20;
-		int id = 0;
 
 		switch(key)
 		{
 			case 'c':// Alt+C 呼出配置设定界面。
-				id = MENU_ITEM_GUI_CONFIG;
+				menu_id = MENU_ITEM_GUI_CONFIG;
 				break;
 			case 's'://Alt+S 呼出快捷项管理界面；
-				id = MENU_ITEM_CMDMGR;
+				menu_id = MENU_ITEM_CMDMGR;
 				break;
 			case 'x'://Alt+X 退出
-				id = MENU_ITEM_EXIT;
+				menu_id = MENU_ITEM_EXIT;
 				break;
 		}
-		if (id)
-		{
-			HWND hwnd = this->GetParent()->GetHWND();
-			PostMessage(hwnd,WM_COMMAND,id,0);
-			return;
-		}
+
+	}
+	else if (keyCode == WXK_F1)
+		menu_id = MENU_ITEM_ABOUT;
+
+	if (menu_id)
+	{
+		HWND hwnd = this->GetParent()->GetHWND();
+		PostMessage(hwnd,WM_COMMAND,menu_id,0);
+		return;
 	}
 #endif
 	if (listBoxPanel->IsPopup())
@@ -112,6 +116,14 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			dlg->Destroy();
 			return;
 		}
+#ifdef __WXMSW__
+		else if (keyCode == WXK_F2)
+		{
+			PostMessage(listBoxPanel->GetHWND(),WM_COMMAND,MENU_CMD_EDIT,0);
+			return;
+		}
+#endif
+
 #ifdef _ALMRUN_CONFIG_H_
 		//按空格键执行
 		else if (keyCode == WXK_SPACE && g_config->config[SpaceKey])

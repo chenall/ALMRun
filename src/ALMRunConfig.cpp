@@ -134,19 +134,26 @@ ALMRunConfig::ALMRunConfig()
 	config[SpaceKey] = conf->ReadBool(config_str[SpaceKey],false);
 	config[AutoPopup] = conf->ReadBool(config_str[AutoPopup],false);
 	CompareMode = conf->ReadLong("CompareMode",0);
-	HotKey = conf->Read("HotKey","A-R");
-	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
 	this->set("ShowTrayIcon",conf->ReadBool(config_str[ShowTrayIcon],true));
 	this->set("StayOnTop",conf->ReadBool("StayOnTop",false));
+	//³ÌÐòÏÔÒþÈÈ¼üÅäÖÃ
+	HotKey = conf->Read("HotKey","A-R");
 	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0)))
 	{
 		this->set("ShowTrayIcon",true);
 		wxMessageBox(wxString::Format("ÈÈ¼ü %s ×¢²áÊ§°Ü!",HotKey),"´íÎóÌáÊ¾",0x00000100);
 	}
+	//ÖØÔØÅäÖÃÈÈ¼üÅäÖÃ
+	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	if (!HotKeyReLoad.empty())
 		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",-1,HotKeyReLoad,0));
+	//ÉÏÒ»¸öÔËÐÐµÄÃüÁîÈÈ¼üÅäÖÃ
+	LastItemHotKey = conf->Read("LastItemHotKey");
+	if (!LastItemHotKey.empty())
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"LastCmd",-2,LastItemHotKey,0));
+
 	this->OldToNew();
 	conf->SetPath("/Config");
 	cfg_time = wxFileModificationTime(cfg_file);

@@ -5,7 +5,8 @@
 #include "DlgParam.h"
 #include "ALMRunConfig.h"
 //
- 
+const MerryCommand* LastCmd;
+
  MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey)
 {
 	m_commandID = commandID & 0xFFFF;
@@ -186,6 +187,13 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		lua_pushstring(L, m_commandLine.c_str());
 		lua_pushstring(L, cmdArg.c_str());
 	}
+	else if (m_commandFunc == -2)
+	{
+		if (m_commandLine == "LastCmd" && LastCmd)
+			LastCmd->Execute(wxEmptyString);
+		return;
+
+	}
 	else
 	{
 		if (m_commandFunc == -1)
@@ -198,8 +206,7 @@ void MerryCommand::Execute(const wxString& commandArg) const
 	}
 
 	lua_pushnumber(L,0);
-	if (!m_commandName.empty())
-		const_cast<MerryCommand*>(this)->SetOrder();
+
 	if (lua_pcall(L, 3, 0, 0))
 	{
 		new MerryInformationDialog(
@@ -208,4 +215,8 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		);
 		lua_pop(L, 1);
 	}
+	if (!m_commandName.empty())
+		const_cast<MerryCommand*>(this)->SetOrder();
+	if (m_commandFunc != -1)
+		LastCmd = this;
 }

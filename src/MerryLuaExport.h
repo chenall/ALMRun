@@ -153,12 +153,30 @@ static int LuaSetForegroundWindow(lua_State* L)
 
 static int LuaToggleMerry(lua_State* L)
 {
+	static time_t chktime;
 	MerryFrame& frame = ::wxGetApp().GetFrame();
 #ifdef __WXOSX__
 	if (!frame.IsShown())
 		MerryActivateIgnoringOtherApps();
 #endif
-	frame.IsShown() ? frame.Hide() : frame.Show();
+
+	if (frame.IsShown())
+	{
+		frame.Hide();
+		if (LastCmd)
+		{
+			time_t n_time;
+			time(&n_time);
+			n_time -= chktime;
+			if (n_time == 0 || n_time == 1)
+				LastCmd->Execute(wxEmptyString);
+		}
+	}
+	else
+	{
+		frame.Show();
+		time(&chktime);
+	}
 	return 0;
 }
 

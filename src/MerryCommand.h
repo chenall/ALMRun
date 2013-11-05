@@ -37,5 +37,5 @@ private:
 	wxString m_triggerKey;
 		
 };
-
+extern const MerryCommand* LastCmd;
 #endif
