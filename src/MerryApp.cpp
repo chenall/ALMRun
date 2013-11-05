@@ -110,6 +110,8 @@ int MerryApp::OnExit()
 
 void MerryApp::EvtActive(wxActivateEvent &e)
 {
+	if (!m_frame)
+		return;
 	if (!e.GetActive())
 		m_frame->Hide();
 #ifdef _ALMRUN_CONFIG_H_

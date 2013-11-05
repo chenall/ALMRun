@@ -1,5 +1,27 @@
 local bit = require("bit")
 local eventTable = {}
+local PluginTable = {}
+
+function RegisterPlugin(eventName,eventHandler)
+    if not PluginTable[eventName] then
+	PluginTable[eventName] = {}
+    end
+    local events = PluginTable[eventName] 
+    table.insert(events, eventHandler)
+    if not _G["plugin_"..eventName] then
+	_G["plugin_"..eventName] = function(...)
+	    local _eventResult = {}
+	    for _, _eventHandler in ipairs(events) do
+		local result = _eventHandler(...)
+		if result then
+		    table.insert(_eventResult,result)
+		end
+	    end
+	    return _eventResult
+	end
+    end
+end
+
 function addEventHandler(eventName, eventHandler)
 	if not eventTable[eventName] then
 		eventTable[eventName] = {}
@@ -51,24 +73,6 @@ function scan_dir(path,ext,sub)
 end
 
 -- Events
-addEventHandler('onUndefinedCommand', function(commandName, commandArg)
-	local commandNameArray = { commandName }
-	if MAC then
-		table.insert(commandNameArray, "/Applications/" .. commandName .. ".app")
-		table.insert(commandNameArray, "/Applications/Utilities/" .. commandName .. ".app")
-	end
-	local f = io.open(ALMRUN_CONFIG_PATH .. 'histroy.lua', 'a')
-	for _, commandNameFull in ipairs(commandNameArray) do
-		if shellExecute(commandNameFull, commandArg) then
-			addCommand{ name = commandName, func = function() shellExecute(commandNameFull) end }
-			f:write(string.format("addCommand{ name = [[%s]], desc='未定义命令,在histroy.lua文件中',func = function() shellExecute([[%s]]) end }\n",
-				commandName, commandNameFull))
-			break
-		end
-	end
-	f:close()
-end)
-
 addEventHandler('onClose', function()
     if curHideWindow then
 	showWindow(curHideWindow, 'normal')

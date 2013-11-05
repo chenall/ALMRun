@@ -83,10 +83,6 @@ void MerryFrame::NewConfig()
 		g_config->ConfigCommand();
 	}
 #endif//#ifdef _ALMRUN_CONFIG_H_
-	//if (lua_bak)
-	//	wxDELETE(lua_bak);
-
-	//lua_bak = g_lua;
 
 	g_lua = new MerryLua();
 	if (show)

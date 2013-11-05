@@ -19,7 +19,7 @@ public:
 	const wxString& GetCommandName(const int) const { return m_commandFName; }
 	const wxString& GetTriggerKey() const { return m_triggerKey; }
 	const wxString& GetCommandDesc() const { return m_commandDesc; }
-	const wxString& GetCommandLine() const { return m_commandLine; }
+	wxString GetCmd() const;
 	int GetOrder() const;
 	int SetOrder();
 	wxString GetDetails() const;

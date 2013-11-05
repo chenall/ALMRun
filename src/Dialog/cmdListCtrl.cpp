@@ -129,7 +129,7 @@ cmdListCtrl::~cmdListCtrl()
 //			return command->GetCommandDesc();
 //			break;
 //		case 3:
-//			return command->GetCommandLine();
+//			return command->GetCmd();
 //			break;
 //		default:
 //			return wxEmptyString;

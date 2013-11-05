@@ -232,15 +232,12 @@ void MerryTextCtrl::ExecuteCmd()
 	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
 	wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxT('');
 	if (!listBoxPanel->IsPopup())
-	{
-		wxString commandName = (this->EnterArgs>0)?this->GetValue().substr(0,this->EnterArgs-2):this->GetValue();
-		::wxGetApp().GetFrame().Hide();
-		g_lua->OnUndefinedCommand(commandName, commandArg);
 		return;
-	}
 	const MerryCommand* command = listBoxPanel->GetSelectionCommand();
+	if (command->GetCmd().empty())
+		return;
 	#ifdef __WXMSW__
-	if (command->GetCommandLine().Find("{%p+}") != wxNOT_FOUND && this->EnterArgs <= 0)
+	if (command->GetCmd().Find("{%p+}") != wxNOT_FOUND && this->EnterArgs <= 0)
 	{
 		SendMessage(this->GetHWND(),WM_KEYDOWN,VK_TAB,0);
 		SendMessage(this->GetHWND(),WM_KEYUP,VK_TAB,0);

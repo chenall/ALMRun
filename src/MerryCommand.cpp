@@ -18,7 +18,8 @@ const MerryCommand* LastCmd;
 	m_commandLine = commandLine;
 	m_commandFName = commandName;
 	m_order = 0;
-	if (commandName.empty())
+
+	if (commandName.empty() || m_flags == -1)
 		return;
 	static int li_SecPosValue[] = {
 		0xB0A1, 0xB0C5, 0xB2C1, 0xB4EE, 0xB6EA, 0xB7A2, 0xB8C1, 0xB9FE, 0xBBF7, 0xBFA6, 0xC0AC,
@@ -136,6 +137,15 @@ wxString MerryCommand::GetDetails() const
 	return wxString::Format(wxT("≈‰÷√Œƒº˛£∫%s\nID:[%d] %s\n√¸¡Ó:%s\n»»º¸: %s\n"),cmd_from,m_flags>>4,this->m_commandDesc,this->m_commandLine,this->m_triggerKey);
 }
 
+wxString MerryCommand::GetCmd() const
+{
+	if (!m_commandLine.empty())
+		return m_commandLine;
+	if (m_commandFunc)
+		return wxT("÷¥––LUA√¸¡Ó");
+	return wxEmptyString;
+}
+
 int MerryCommand::SetOrder()
 {
 #ifdef _ALMRUN_CONFIG_H_
@@ -215,8 +225,10 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		);
 		lua_pop(L, 1);
 	}
-	if (!m_commandName.empty())
-		const_cast<MerryCommand*>(this)->SetOrder();
+	if (m_commandName.empty() || m_flags == -1)
+		return;
+
+	const_cast<MerryCommand*>(this)->SetOrder();
 	if (m_commandFunc != -1)
 		LastCmd = this;
 }

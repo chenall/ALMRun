@@ -146,7 +146,7 @@ bool MerryListBoxPanel::DelSelectedItem()
 	const MerryCommand* cmd = this->GetSelectionCommand();
 	assert(cmd);
 	int flags = cmd->GetFlags();
-	if ((flags & CMDS_FLAG_CMDS) && (wxMessageBox(wxString::Format("É¾³ý ID:[%d] %s\nÃüÁî:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCommandLine()),"ÌáÊ¾",wxYES_NO|wxICON_WARNING) == wxYES))
+	if ((flags & CMDS_FLAG_CMDS) && (wxMessageBox(wxString::Format("É¾³ý ID:[%d] %s\nÃüÁî:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCmd()),"ÌáÊ¾",wxYES_NO|wxICON_WARNING) == wxYES))
 	{
 	#ifdef _ALMRUN_CONFIG_H_
 		if (g_config->DeleteCmd(flags>>4))
@@ -214,7 +214,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 					dlg->cmdName->SetValue(cmd->GetCommandName());
 					dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
 					dlg->cmdKey->SetValue(cmd->GetTriggerKey());
-					dlg->cmdLine->SetValue(cmd->GetCommandLine());
+					dlg->cmdLine->SetValue(cmd->GetCmd());
 				}
 				else
 					dlg = new DlgAddNewCmd(NULL,wxID_ANY);
@@ -318,7 +318,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 			if (g_config->config[ShowTip])
 			{
 				if (command->GetCommandDesc().empty())
-					this->SetToolTip(command->GetCommandLine());
+					this->SetToolTip(command->GetCmd());
 				else
 					this->SetToolTip(command->GetCommandDesc());
 			}
@@ -335,7 +335,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 	const MerryCommand* command = m_commands[m_selectionCommandIndex];
 	const ListBoxItem& item = m_items[ITEM_NUM];
 	dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_HELP_FONT_COLOR);
-	const wxString& cmdLine = command->GetCommandLine();
+	const wxString& cmdLine = command->GetCmd();
 	const wxString& cmdDesc = command->GetCommandDesc();
 	if (this->flags > 0)
 	{

@@ -13,6 +13,7 @@ end }
 --addCommand{ key = 'A-Q', func = function()
 --	closeWindow(getForegroundWindow())
 --end }
+--[[
 local curHideWindow
 addCommand{ key = 'A-H', func = function()
     if not curHideWindow then
@@ -23,7 +24,9 @@ addCommand{ key = 'A-H', func = function()
         curHideWindow = nil
     end
 end }
+]]
 if WINDOWS then
+--[[
 	for i = string.byte('c'), string.byte('z') do
 		local disk = string.char(i).. ':'
 		local isOk, errMsg = io.open(disk)
@@ -33,6 +36,7 @@ if WINDOWS then
 			break
 		end
 	end
+--]]
 	addCommand{ name = 'cmd', key = 'A-T', func = function(arg)
 		local window = getForegroundWindow()
 		local dir = getWindowText(window)

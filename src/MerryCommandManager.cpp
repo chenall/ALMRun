@@ -1,8 +1,8 @@
 #include "MerryCommandManager.h"
 #include "MerryError.h"
-#include "MerryLua.h"
+
+
 #include "MerryInformationDialog.h"
-#include "ALMRunConfig.h"
 #include  <algorithm>
 
 MerryCommandManager* g_commands = NULL;
@@ -10,11 +10,17 @@ static wxString cmdPrefix;
 MerryCommandManager::~MerryCommandManager()
 {
 	__DEBUG_BEGIN("")
-	for (size_t i=0; i<m_commands.size(); ++i)
-		delete m_commands[i];
+	clearCmds(plugin_commands);
+	clearCmds(m_commands);
 	__DEBUG_END("")
 }
 
+void MerryCommandManager::clearCmds(MerryCommandArray& cmds)
+{
+	for(size_t i=0;i<cmds.size();++i)
+		delete cmds[i];
+	cmds.clear();
+}
 const void MerryCommandManager::AddFiles(const wxArrayString& files)
 {
 	for(int i=files.GetCount()-1;i >= 0;--i)
@@ -143,7 +149,71 @@ static bool command_sort(MerryCommand *s1,MerryCommand  *s2)
 	return cmp > 0;
 }
 
-MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) const
+void MerryCommandManager::AddPluginCmd(lua_State* L)
+{
+	if (!lua_istable(L, -1))
+		return;
+	int it = lua_gettop(L);
+
+	lua_pushstring(L, "name");
+	lua_rawget(L, it);
+	wxString commandName(wxString(lua_tostring(L, -1), wxConvLocal));
+	if (commandName.empty())
+	{
+		lua_settop(L,it);
+		return;
+	}
+
+	lua_pushstring(L, "desc");
+	lua_rawget(L, it);
+	wxString commandDesc(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	int funcRef = 0;
+	wxString commandLine;
+	lua_pushstring(L, "cmd");
+	lua_rawget(L, it);
+	if (lua_isfunction(L,-1))
+		funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
+	else
+		commandLine = wxString(lua_tostring(L, -1), wxConvLocal);
+
+	lua_settop(L,it);
+	plugin_commands.push_back(new MerryCommand(-1,commandName, commandDesc,commandLine,funcRef));
+	return;
+}
+
+void MerryCommandManager::GetPluginCmd(const wxString& name)
+{
+	if (!g_lua)
+		return;
+	clearCmds(plugin_commands);
+	lua_State* L = g_lua->GetLua();
+		lua_getglobal(L, "plugin_command");
+	if (!lua_isfunction(L, 1))
+		return;
+
+	lua_pushstring(L, name.c_str());
+	if (lua_pcall(L, 1, 1, 0))
+	{
+		lua_pop(L, 1);
+		return;
+	}
+	int it=lua_gettop(L);
+	lua_pushnil(L);                               // ？？
+	wxString cmdName;
+	wxString cmdDesc;
+	wxString cmdFunc;
+	wxString cmdLine;
+    while(lua_next(L, it))                         // 开始枚举，并把枚举到的值压入栈
+    {
+		this->AddPluginCmd(L);
+        lua_pop(L, 1);                              // 将Item从栈里面弹出
+    }
+	lua_pop(L,1);
+	sort(plugin_commands.begin(),plugin_commands.end(),command_sort);
+	return;
+}
+MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 {
 	MerryCommandArray commands;
 	MerryCommandArray l_commands;
@@ -156,9 +226,9 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 		l_commands.push_back(m_commands[i]);
 	}
 	sort(l_commands.begin(),l_commands.end(),command_sort);
-	if (commandPrefix.empty())
+	cmdPrefix = commandPrefix.Upper().Trim();
+	if (cmdPrefix.empty())
 		return l_commands;
-	cmdPrefix = commandPrefix.Upper();
 	if (commandPrefix.empty())
 		return l_commands;
 	for (size_t i=0; i<l_commands.size(); ++i)
@@ -205,6 +275,12 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix) co
 	sort(commands.begin(),commands.end(),g_config->config[OrderByPre]?SortPreOrder:mysort);
 	if (g_config->config[ShowTopTen] && commands.size() >= 10)
 		commands.resize(10);
+	if (commands.size() < 9)
+	{
+		this->GetPluginCmd(commandPrefix);
+		for(size_t i=0;i<plugin_commands.size();++i)
+			commands.push_back(plugin_commands[i]);
+	}
 #endif//ifdef _ALMRUN_CONFIG_H_
 	return commands;
 }
