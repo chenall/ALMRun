@@ -5,7 +5,7 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
-### [2013-11-06]
+### [2013-11-06](https://github.com/chenall/ALMRun/archive/v1.2.0.27_BIN.zip)
     1.BUG修复，小调整，添加新参数"按两次程序热键重复执行上一个命令"
     2.命令管理器的ID列移到最后面，方便快速选中命令
     3.支持快速导入ALTRUN配置（使用方法，直接添加一个命令，命令选择ALTRUN的配置文件ShortCutList.txt就会弹出提示）
