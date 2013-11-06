@@ -5,8 +5,5 @@ RegisterPlugin('command', function(commandName)
 end)
 
 RegisterPlugin('command', function(commandName)
-    return {name="run "..commandName,desc="ALMRun 运行插件",cmd=function(arg)
-	shellExecute(commandName,arg)
-    end
-    }
+    return {name="run "..commandName,desc="ALMRun 运行插件",cmd=commandName}
 end)
