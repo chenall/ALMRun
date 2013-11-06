@@ -104,6 +104,7 @@ public:
 	HotkeyCtrl* cmdKey;
 	wxCheckBox* HideRun;
 	wxCheckBox* RunAs;
+	wxCheckBox* RequiredArg;
 	int flags;
 	int cmdID;
 ////@end DlgAddNewCmd member variables

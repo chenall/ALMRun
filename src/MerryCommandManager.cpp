@@ -188,7 +188,7 @@ void MerryCommandManager::GetPluginCmd(const wxString& name)
 		return;
 	clearCmds(plugin_commands);
 	lua_State* L = g_lua->GetLua();
-		lua_getglobal(L, "plugin_command");
+	lua_getglobal(L, "plugin_command");
 	if (!lua_isfunction(L, 1))
 		return;
 
@@ -200,10 +200,6 @@ void MerryCommandManager::GetPluginCmd(const wxString& name)
 	}
 	int it=lua_gettop(L);
 	lua_pushnil(L);                               // ？？
-	wxString cmdName;
-	wxString cmdDesc;
-	wxString cmdFunc;
-	wxString cmdLine;
     while(lua_next(L, it))                         // 开始枚举，并把枚举到的值压入栈
     {
 		this->AddPluginCmd(L);

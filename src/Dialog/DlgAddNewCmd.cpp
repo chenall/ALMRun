@@ -30,6 +30,7 @@
 #include "ALMRunConfig.h"
 #include "DlgAddNewCmd.h"
 #include "DlgAddNewDir.h"
+#include "MerryLua.h"
 
 #ifndef _DISABLE_DND_
 	#include <wx/dnd.h>
@@ -203,6 +204,8 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 			this->HideRun->SetValue(true);
 		else if (cmd[0] == '>')//前导'>'请求管理员权限(NT6以上有效)
 			this->RunAs->SetValue(true);
+		else if (cmd[0] == '+')//前导'+'，请求输入参数
+			this->RequiredArg->SetValue(true);
 		else
 			break;
 		cmd.erase(0,1);
@@ -211,6 +214,66 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 	cmdLine->SetValue(cmd);
 }
 
+static int AddALTRunCMD(lua_State *L)
+{
+	if (!lua_istable(L, -1))
+		return 0;
+	int it = lua_gettop(L);
+
+	lua_rawgeti(L,it,3);//快捷名
+	wxString commandName(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_rawgeti(L,it,4);//备注
+	wxString commandDesc(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_rawgeti(L,it,5);//命令
+	wxString commandLine(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_rawgeti(L,it,2);//参数编码
+	wxString commandParam(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_settop(L,it);//恢复
+
+	if (!commandParam.Trim(false).empty())//如果需要参数，加上强制参数标志
+		commandLine.insert(0,'+');
+	if (g_config->AddCmd(commandLine,commandName,wxEmptyString,commandDesc) > 0)
+		return 1;
+	return false;
+}
+
+static bool ALTRunCheck(wxString& cmd)
+{
+	if (!g_lua)
+		return false;
+	if (wxFileNameFromPath(cmd).Upper().StartsWith("SHORTCUTLIST.") == false || 
+		wxMessageBox("该文件可能是ALTRun的配置文件，是否导入命令?","ALTRun命令导入提示",wxYES_NO|wxICON_INFORMATION) != wxYES)
+		return false;
+	lua_State *L = g_lua->GetLua();
+	lua_getglobal(L, "read_altrun_config");
+	if (!lua_isfunction(L, 1))
+	{
+		lua_pop(L, 1);
+		wxMessageBox("该功能所需要的LUA函数不存在，请确认LuaEx\\base.lua文件存在","错误");
+		return true;
+	}
+	lua_pushstring(L,cmd.c_str());
+	if (lua_pcall(L, 1, 1, 0) || !lua_istable(L,-1))
+	{
+		wxMessageBox("LUA脚本执行有误，或返回值不对");
+		lua_pop(L, 1);
+		return true;
+	}
+	int it=lua_gettop(L);
+	int num = 0;
+	lua_pushnil(L);
+	while(lua_next(L, it))
+	{
+		num += AddALTRunCMD(L);
+		lua_pop(L, 1);
+	}
+	lua_pop(L,1);
+	return true;
+}
 void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 {
 	if (!g_config)
@@ -221,11 +284,23 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		wxMessageBox("命令行不能为空,请重新输入!","提示");
 		return;
 	}
+
+	if (ALTRunCheck(cmd))
+	{
+		if (this->IsModal())
+			this->EndModal(wxID_OK);
+		else
+			this->Destroy();
+		return;
+	}
+
 	cmdLine->SetValue(cmd);
 	if (RunAs->GetValue())
 		cmd.insert(0,'>');
 	if (HideRun->GetValue())
 		cmd.insert(0,'@');
+	if (RequiredArg->GetValue())
+		cmd.insert(0,'+');
 	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
 		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))>0 )
 	{
@@ -334,6 +409,9 @@ void DlgAddNewCmd::CreateControls()
 	RunAs = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("管理员权限"), wxDefaultPosition, wxDefaultSize, 0 );
 	RunAs->SetValue(false);
 	itemBoxSizer_checkbox->Add(RunAs,0,wxALIGN_CENTER_VERTICAL|wxALL);
+	RequiredArg = new wxCheckBox( itemStaticBoxSizer3->GetStaticBox(),wxID_ANY, _T("强制输入参数"), wxDefaultPosition, wxDefaultSize, 0 );
+	RunAs->SetValue(false);
+	itemBoxSizer_checkbox->Add(RequiredArg,0,wxALIGN_CENTER_VERTICAL|wxALL);
 
     wxBoxSizer* itemBoxSizer17 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer17, 0, wxGROW|wxALL, 5);

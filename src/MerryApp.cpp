@@ -112,10 +112,13 @@ void MerryApp::EvtActive(wxActivateEvent &e)
 {
 	if (!m_frame)
 		return;
+	bool Changed = false;
+	if (g_config)
+		Changed = g_config->Changed();
 	if (!e.GetActive())
 		m_frame->Hide();
 #ifdef _ALMRUN_CONFIG_H_
-	else if (g_config && g_config->Changed())
+	else if (Changed)
 		m_frame->NewConfig();
 #endif//ifdef _ALMRUN_CONFIG_H_
 //	e.Skip();

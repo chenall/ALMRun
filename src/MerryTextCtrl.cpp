@@ -230,7 +230,7 @@ void MerryTextCtrl::OnCharEvent(wxKeyEvent& e)
 void MerryTextCtrl::ExecuteCmd()
 {
 	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
-	wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxT('');
+	wxString commandArg = (this->EnterArgs>0)?this->GetValue().substr(this->EnterArgs):wxEmptyString;
 	if (!listBoxPanel->IsPopup())
 		return;
 	const MerryCommand* command = listBoxPanel->GetSelectionCommand();

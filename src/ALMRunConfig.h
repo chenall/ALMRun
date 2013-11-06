@@ -61,7 +61,6 @@ public:
 	bool set(const wxString& name,const int value);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude  = wxEmptyString,const int sub = -1);
-	void WriteConfig(const wxString& name,const wxString& value);
 	bool SaveCfg();
 	bool DeleteCmd(const int id);
 	bool DeleteDir(const int id);
@@ -81,6 +80,7 @@ public:
 private:
 	wxString LastItemHotKey;
 	//int lastId;
+	bool cfg_changed;
 	wxString cfg_file;
 	DirCfg def_dir_cfg;
 	time_t cfg_time;

@@ -250,7 +250,7 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 	{
 		const MerryCommand* command = m_commands[m_selectionCommandIndex];
 		assert(command);
-		command->Execute(wxT(''));
+		command->Execute(wxEmptyString);
 	}
 	else
 		e.Skip();

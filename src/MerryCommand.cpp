@@ -170,7 +170,7 @@ void MerryCommand::Execute(const wxString& commandArg) const
 	lua_State* L = g_lua->GetLua();
 	wxString cmdArg = commandArg;
 	assert(L);
-	if (cmdArg.empty() && m_commandLine.Find("{%p+}") != wxNOT_FOUND)
+	if (cmdArg.empty() && (m_commandLine[0] == '+' || m_commandLine.Find("{%p+}") != wxNOT_FOUND))
 	{
 		DlgParam *dlg = new DlgParam(NULL,-1,m_commandName);
 		if (dlg->ShowModal() == wxID_OK)

@@ -313,7 +313,7 @@ bool MerryController::ShellExecute(const wxString& commandName,
 			if (::wxGetWinVersion() >= wxWinVersion_6)
 				runas = true;
 		}
-		else
+		else if (T != '+')
 			break;
 		cmdName.erase(0,1);
 	}

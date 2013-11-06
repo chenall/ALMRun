@@ -103,7 +103,7 @@ ALMRunConfig::ALMRunConfig()
 	config[PlayPopupNotify] = false;
 	config[SpaceKey] = false;
 	config[DoubleToggleFunc] = false;
-
+	cfg_changed = false;
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");
@@ -243,15 +243,6 @@ bool ALMRunConfig::set(const wxString& name,const int value)
 	return true;
 }
 
-void ALMRunConfig::WriteConfig(const wxString& name,const wxString& value)
-{
-	if (conf)
-	{
-		conf->Write(name,value);
-		conf->Flush();
-	}
-}
-
 void ALMRunConfig::GuiConfig()
 {
 	if (!conf)
@@ -273,7 +264,7 @@ void ALMRunConfig::GuiConfig()
 			if (config[i] != dlg->config->IsChecked(i))
 				conf->Write(config_str[i],!config[i]);
 		}
-		conf->Flush();
+		cfg_changed = true;
 		::wxGetApp().GetFrame().NewConfig();
 	}
 	dlg->Destroy();
@@ -285,6 +276,7 @@ bool ALMRunConfig::SaveCfg()
 	{
 		conf->Flush();
 		cfg_time = wxFileModificationTime(cfg_file);
+		cfg_changed = false;
 		return true;
 	}
 	return false;
@@ -357,23 +349,20 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 		conf->DeleteEntry("desc");
 
 	conf->SetPath(oldPath);
-	return this->SaveCfg();
+	return (cfg_changed = true);
 }
 
 bool ALMRunConfig::DeleteCmd(const int id)
 {
 	if (conf && conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
-		return this->SaveCfg();
+		return (cfg_changed = true);
 	return false;
 }
 
 bool ALMRunConfig::DeleteDir(const int id)
 {
 	if (conf && conf->DeleteGroup(wxString::Format("/dirs/%d",id)))
-	{
-		conf->Flush();
 		return true;
-	}
 	return false;
 }
 
@@ -406,12 +395,14 @@ int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString
 		conf->Write("include",inc);
 	if (!exc.empty())
 		conf->Write("exclude",exc);
-	conf->Flush();
+	cfg_changed = true;
 	return i;
 }
 
 bool ALMRunConfig::Changed()
 {
+	if (cfg_changed)
+		this->SaveCfg();
 	return (cfg_time  && cfg_time != wxFileModificationTime(cfg_file));
 }
 
@@ -589,6 +580,8 @@ void ALMRunConfig::get(const wxString& name)
 ALMRunConfig::~ALMRunConfig()
 {
 	__DEBUG_BEGIN("")
+	if (conf && cfg_changed)
+		conf->Flush();
 	wxDELETE(conf);
 	wxDELETE(order_conf);
 	__DEBUG_END("")
