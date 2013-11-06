@@ -163,7 +163,7 @@ static int LuaToggleMerry(lua_State* L)
 	if (frame.IsShown())
 	{
 		frame.Hide();
-		if (LastCmd)
+		if (g_config->config[DoubleToggleFunc] && LastCmd)
 		{
 			time_t n_time;
 			time(&n_time);

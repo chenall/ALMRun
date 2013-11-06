@@ -29,6 +29,7 @@ enum config_item
 	PlayPopupNotify,
 	SpaceKey,
 	AutoPopup,
+	DoubleToggleFunc,
 	CONFIG_MAX,
 };
 struct DirCfg
@@ -73,15 +74,18 @@ public:
 	void ConfigCommand();
 	void OldToNew();
 	void GuiConfig();
-
+	int SetcmdOrder(wxString& cmd,int order = 0);
 	wxFileConfig *conf;
-	wxFileConfig *order;
+	wxFileConfig *order_conf;
+
 private:
 	wxString LastItemHotKey;
 	//int lastId;
 	wxString cfg_file;
 	DirCfg def_dir_cfg;
 	time_t cfg_time;
+	time_t order_cfg_time;
+	wxString order_cfg_file;
 };
 
 extern ALMRunConfig* g_config;

@@ -54,6 +54,8 @@ void MerryFrame::NewConfig()
 	__DEBUG_BEGIN("::Ë¢ÐÂÅäÖÃ");
 	bool show = m_listBoxPanel->IsShown();
 	m_listBoxPanel->Dismiss();
+	LastCmd = NULL;
+
 	if (g_lua)
 		wxDELETE(g_lua);
 

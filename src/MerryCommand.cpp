@@ -96,8 +96,8 @@ const MerryCommand* LastCmd;
 	}
 	#ifdef _ALMRUN_CONFIG_H_
 	//获取排序值信息
-	if (g_config)
-		m_order = g_config->order->ReadLong(m_commandName,0);
+	if (g_config && g_config->order_conf)
+		m_order = g_config->order_conf->ReadLong(m_commandName,0);
 	#endif
 }
 
@@ -148,17 +148,12 @@ wxString MerryCommand::GetCmd() const
 
 int MerryCommand::SetOrder()
 {
+	static time_t chgtime;
 #ifdef _ALMRUN_CONFIG_H_
 	if (g_config && !m_commandName.empty())
-	{
-		m_order = g_config->order->ReadLong(m_commandName,0);
-		g_config->order->Write(m_commandName,++m_order);
-		g_config->order->Flush();
-	}
-#else
-	++m_order;
+		return (m_order = g_config->SetcmdOrder(m_commandName));
 #endif
-	return m_order;
+	return ++m_order;
 }
 
 int MerryCommand::GetOrder() const

@@ -10,7 +10,7 @@
 #include <shlobj.h>
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行",
 	"保持程序窗口置顶,默认禁用.",
@@ -26,6 +26,7 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中，当窗体弹出时播放声音",
 	"如果选中，按下空格键就启动当前条目",
 	"如果选中，显示ALMRun界面时自动显示列表框",
+	"如果选中，连续按两次程序热键相当于ALT+L功能，重复执行上一次的命令",
 };
 
 /* 
@@ -92,24 +93,30 @@ BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR l
 
 ALMRunConfig::ALMRunConfig()
 {
+	//初始化默认参数
+	config[OrderByPre] = false;
+	config[NumberKey] = false;
+	config[ExecuteIfOnlyOne] = false;
+	config[ShowTip] = false;
+	config[AutoRun] = false;
+	config[AddToSendTo] = false;
+	config[PlayPopupNotify] = false;
+	config[SpaceKey] = false;
+	config[DoubleToggleFunc] = false;
+
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");
-		order = new wxFileConfig(wxT("ALMRun"),wxEmptyString,Home + wxT("config/Order.ini"),wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
-		order->SetExpandEnvVars(false);
+		order_cfg_file = Home + wxT("config/Order.ini");
+		order_cfg_time =  wxFileModificationTime(order_cfg_file);
+		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
+		order_conf->SetExpandEnvVars(false);
 		if (!wxFileExists(cfg_file))
 			MoveFile(Home + wxGetApp().GetAppName().Append(".ini"),cfg_file);
 	}
 	if (wxFileExists(cfg_file) == false)
 	{
 		CompareMode = 0;
-		config[NumberKey] = false;
-		config[ShowTrayIcon] = true;
-		config[ShowTopTen] = true;
-		config[ExecuteIfOnlyOne] = false;
-		config[IndexFrom0to9] = false;
-		config[OrderByPre] = false;
-		config[StayOnTop] = false;
 		conf = NULL;
 		cfg_time = 0;
 		return;
@@ -121,23 +128,17 @@ ALMRunConfig::ALMRunConfig()
 	listBoxPanel->SetFont(gui_config[ListFont]);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
-	config[OrderByPre] = conf->ReadBool(config_str[OrderByPre],false);
-	config[NumberKey] = conf->ReadBool(config_str[NumberKey],false);
-	config[ShowTopTen] = conf->ReadBool(config_str[ShowTopTen],true);
-	config[ExecuteIfOnlyOne] = conf->ReadBool(config_str[ExecuteIfOnlyOne],false);
-	config[IndexFrom0to9] = conf->ReadBool(config_str[IndexFrom0to9],true);
-	config[ShowTip] = conf->ReadBool(config_str[ShowTip],false);
-	config[AutoRun] = conf->ReadBool(config_str[AutoRun],false);
-	config[AddToSendTo] = conf->ReadBool(config_str[AddToSendTo],false);
-	config[PlayPopupNotify] = conf->ReadBool(config_str[PlayPopupNotify],false);
-	config[DisableWow64FsRedirection] = conf->ReadBool(config_str[DisableWow64FsRedirection],true);
-	config[SpaceKey] = conf->ReadBool(config_str[SpaceKey],false);
-	config[AutoPopup] = conf->ReadBool(config_str[AutoPopup],false);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
-	this->set("ShowTrayIcon",conf->ReadBool(config_str[ShowTrayIcon],true));
-	this->set("StayOnTop",conf->ReadBool("StayOnTop",false));
+
+	//从配置文件中读取参数，如果不存在则使用默认值
+	for(int i=0;i<CONFIG_MAX;++i)
+		config[i] = conf->ReadBool(config_str[i],config[i]);
+
+	this->set("ShowTrayIcon",config[ShowTrayIcon]);
+	this->set("StayOnTop",config[StayOnTop]);
+
 	//程序显隐热键配置
 	HotKey = conf->Read("HotKey","A-R");
 	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0)))
@@ -566,6 +567,20 @@ void ALMRunConfig::OldToNew()
 	conf->SetPath("/Config");
 }
 
+int ALMRunConfig::SetcmdOrder(wxString& cmd,int order)
+{
+	if (order_cfg_time != wxFileModificationTime(order_cfg_file))
+	{
+		wxDELETE(order_conf);
+		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE); 
+	}
+	order = order_conf->ReadLong(cmd,0);
+	order_conf->Write(cmd,++order);
+	order_conf->Flush();
+	order_cfg_time	= wxFileModificationTime(order_cfg_file);
+	return order;
+}
+
 void ALMRunConfig::get(const wxString& name)
 {
 
@@ -575,6 +590,6 @@ ALMRunConfig::~ALMRunConfig()
 {
 	__DEBUG_BEGIN("")
 	wxDELETE(conf);
-	wxDELETE(order);
+	wxDELETE(order_conf);
 	__DEBUG_END("")
 }

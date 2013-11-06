@@ -126,7 +126,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 
 #ifdef _ALMRUN_CONFIG_H_
 		//°´¿Õ¸ñ¼üÖ´ÐÐ
-		else if (keyCode == WXK_SPACE && g_config->config[SpaceKey])
+		else if (keyCode == WXK_SPACE && g_config->config[SpaceKey] && EnterArgs == 0)
 			keyCode = WXK_RETURN;
 #endif
 	}
