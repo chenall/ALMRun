@@ -55,11 +55,11 @@ END_EVENT_TABLE()
 cmdListCtrl::cmdListCtrl(wxWindow *parent, wxWindowID id, const wxPoint& pos,const wxSize& size, long style):
 wxListCtrl(parent,id,pos,size,style)
 {
-	this->InsertColumn(CMDLIST_COL_ID,_T("ÃüÁîID"),0,60);
 	this->InsertColumn(CMDLIST_COL_NAME,_T("¿ì½ÝÃüÁî"),wxLIST_AUTOSIZE,150);
 	this->InsertColumn(CMDLIST_COL_CMD,_T("ÃüÁîÐÐ"),wxLIST_AUTOSIZE,250);
 	this->InsertColumn(CMDLIST_COL_KEY,_T("ÈÈ¼ü"),wxLIST_AUTOSIZE,100);
 	this->InsertColumn(CMDLIST_COL_DESC,_T("±¸×¢"),wxLIST_AUTOSIZE,100);
+	this->InsertColumn(CMDLIST_COL_ID,_T("ID"),0,30);
 	this->ReLoadCmds();
 //	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
 //	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
@@ -88,6 +88,7 @@ void cmdListCtrl::ReLoadCmds()
 			conf->SetPath(cmds);
 			cmds.ToLong(&index);
 			index = this->InsertItem(index,cmds);
+			this->SetItem(index, CMDLIST_COL_ID,cmds);
 			this->SetItem(index, CMDLIST_COL_NAME ,conf->Read("name"));
 			this->SetItem(index, CMDLIST_COL_CMD ,conf->Read("cmd"));
 			this->SetItem(index, CMDLIST_COL_KEY ,conf->Read("key"));
@@ -210,7 +211,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			{
 				if (wxMessageBox(wxString::Format("ÕæµÄÒªÉ¾³ý¸ÃÃüÁîÂð?\nÃû³Æ:%s\nÃüÁîÐÐ:%s",ctrl->GetItemText(item,CMDLIST_COL_NAME),ctrl->GetItemText(item,CMDLIST_COL_CMD))	,"É¾³ýÈ·ÈÏ",wxYES_NO | wxICON_WARNING) != wxYES)
 					break;
-				if (cmdListCtrl::onDelete(ctrl->GetItemText(item)))
+				if (cmdListCtrl::onDelete(ctrl->GetItemText(item,CMDLIST_COL_ID)))
 					ctrl->DeleteItem(item);
 				break;
 			}
@@ -226,7 +227,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				}
 				for(item = sel.size() - 1;item >= 0;--item)
 				{
-					if (cmdListCtrl::onDelete(ctrl->GetItemText(sel[item])))
+					if (cmdListCtrl::onDelete(ctrl->GetItemText(sel[item],CMDLIST_COL_ID)))
 						ctrl->DeleteItem(sel[item]);
 				}
 				sel.Clear();
