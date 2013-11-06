@@ -9,18 +9,20 @@ ALMRun
 
    源自[Merry]，结合了[ALTRun]的优点，经过多次改进增强，现在基本上[ALTRun]上面可以实现的功能，使用`ALMRun`都可以实现了，并且`ALMRun`直接支持`ALTRun`的配置文件，并保持和`ALTRun`一样的使用使用习惯，很容易就可以直接上手。
 
-* [基本功能](#almrun-base-基本功能)
-* [扩展功能](#almrun-advanced-扩展功能)
-* [相关资源](#resource-相关资源)
-* [更新记录](doc/update.log)
-* [API 参考](doc/config_api.md)
-* [程序下载](http://www.chenall.net/downloads/file/28/)
+* [基本功能](#ALMRUN_BASE)
+* [扩展功能](#ALMRun_Advanced)
+* [相关资源](#ALMRun_resource)
+* [更新记录]
+* [API 参考](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
+* [程序下载](https://github.com/chenall/ALMRun/archive/Build.zip)
 
+<h2 id="ALMRUN_BASE"></h2>
 ALMRun Base 基本功能
 ====================
-******************
+********************
 *	程序相关快捷键
     * `ALT+R`(全局)　　　　隐藏激活程序（可在参数配置中修改）
+    * `ALT+L`(全局)　　　　运行上一个命令(可改)
     * `CTRL+D`　　 　　　　自动定位所选条目的文件位置，方便查找
     * `Alt+C`　　　　　　　打开参数配置界面
     * `Alt+S`　　　　　　　打开命令管理器
@@ -28,7 +30,8 @@ ALMRun Base 基本功能
     * `Tab`　　　　　　　　选定条目，并且进入输入参数模式。
     * `Ctrl+N/Alt+N`　　　N=0-9,启动列表中对应的条目
     * `Enter`　　　　　　　启动程序
-
+    * `F1`　　　　　　　　显示关于窗口
+    * `F2`　　　　　　　　编辑当前项目
 *   基本操作
 
     输入要启动的程序名（支持任意位置匹配和中文首字母识别），筛选过虑列表清单。然后根据列表框选择要启动的程序，如果需要输入参数可按`Tab`键，否则直接启动程序。如果在配置中勾选了“允许数字快捷键“，还支持直接按数字键0-9来启动，或按空格键来启动当前选择条目。
@@ -40,12 +43,13 @@ ALMRun Base 基本功能
     如果选择了多个文件或目录，则不弹出窗口，自动批量添加。
 
 *   在命令中可以使用的一些特殊参数: 这些执行时会替换为相应的内容
-	* `{%p}`/`{%p+}`　　用户输入的参数 `{%p+}` 是强制型参数，有`{%p+}`的命令执行时一定要输入参数。
-	* `{%c}`　　　　　　剪贴板内容
-	* `{%wt}`　　　　　当前窗口的标题
-	* '@'和'>'　　　　　在命令中前置时有效
+	* **{&#37;p}/{&#37;p+}**　　用户输入的参数*{&#37;p+}*是强制型参数，有*{&#37;p+}*的命令执行时一定要输入参数。
+	* **{&#37;c}**　　　　　　剪贴板内容
+	* **{&#37;wt}**　　　　　当前窗口的标题
+	* **'@'/'>'/'+'**　　　　在命令中前置时有效
 	>前置'@' 隐藏执行,   
 	前置'>' 请求管理员权限有(NT6或以上有效)  
+	前置`+` 必需输入参数
     也可以组合使用  
     例子(以管理员权限隐藏执行notepad.exe): ">@notepad.exe“
 
@@ -59,33 +63,34 @@ ALMRun Base 基本功能
     * `%CommonDesktop%`	所有用户(All Users)桌面文件夹路径
     * `%CommonPrograms%` 	所有用户(All Users)程序文件夹路径
 
-*  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](bin/ALMRun.ini)里面有更详细的配置介绍.
+*  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](https://github.com/chenall/ALMRun/blob/master/bin/ALMRun.ini)里面有更详细的配置介绍.
 
+<h2 id="ALMRun_Advanced"></h2>
 ALMRun Advanced 扩展功能
-=========================
-***********************
+========================
+************************
   ALMRUN使用[luajit]引擎支持使用LUA脚本进行功能扩展，只需要把你的扩展脚本放在`config`目录下即可，不限文件名，不限子目录。
-  扩展能请参考[API 介绍](doc/config_api.md)
+  扩展能请参考[API 介绍](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
 
   * 使用LUA扩展时需注意：
     * Lua脚本有区分大小写，调用API时需要注意大小写
     * 对于文件路径的正确写法如下: 详细请考config_api尾部的内容
-      1. "c:/windows/notepad.exe"
-      2. “c:\\windows\\notepad.exe"
-      3. [[c:\windows\notepad.exe]]
+      1. `"c:/windows/notepad.exe"`
+      2. `“c:\\windows\\notepad.exe"`
+      3. `[[c:\windows\notepad.exe]]`
     * 调用API时建议使用xpcall调用，可以防止由于出现错误导致后续的脚本无法运行 
       例子：添加命令，使用了xpcall如果失败时不会中止脚本运行，否则后面的脚本不会执行
 
 ```lua
 	--语法xpcall(API,error_hook,API参数)
 	--其中API就是你要调用的函数，error_hook，是固定的错误提示函数在ALMRun.lua中
-	xpcall(addCommand,error_hook,{ name = "test",cmd = "cmd.exe /k echo test" } )
+	xpcall(addCommand,error_hook,{ name = "test",cmd = "cmd.exe /k echo test" })
 ```
    
-
+<h2 id="ALMRun_resource"></h2>
 Resource 相关资源
-=================
-*****************
+================
+****************
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 源码: <https://github.com/chenall/ALMRun>  
 * 搏客: <http://chenall.net/post/alrun-merry/>  
@@ -96,7 +101,7 @@ Resource 相关资源
 [ALTRUN]:https://code.google.com/p/altrun/
 [ALMRUN]:http://almrun.chenall.net/
 [luajit]:http://luajit.org/
-
+[更新记录]:update_log.html
 Requirement(编译环境)
 ======================
 	vs2010 sp1
@@ -109,5 +114,9 @@ Build 编译方法
 	cmake ..
 	ALMRun.sln
 
+Download 程序下载
+===================
 
+ALMRUN最新编译版： <https://github.com/chenall/ALMRun/archive/Build.zip>
 
+其它版本请从 [更新记录] 下载

@@ -4,7 +4,6 @@ title: ALMRun 快速启动软件
 tags: ALMRun 启动 ALTRUN Merry 热键
 tagline: 绿色实用，热键管理，程序管理，LUA扩展
 ---
-{% include JB/setup %}
 
 
 ALMRun
@@ -25,8 +24,10 @@ ALMRun
 * [API 参考](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
 * [程序下载](https://github.com/chenall/ALMRun/archive/Build.zip)
 
-<h2 id="ALMRUN_BASE">ALMRun Base 基本功能</h2>
-******************
+<h2 id="ALMRUN_BASE"></h2>
+ALMRun Base 基本功能
+====================
+********************
 *	程序相关快捷键
     * `ALT+R`(全局)　　　　隐藏激活程序（可在参数配置中修改）
     * `ALT+L`(全局)　　　　运行上一个命令(可改)
@@ -53,9 +54,10 @@ ALMRun
 	* **{&#37;p}/{&#37;p+}**　　用户输入的参数*{&#37;p+}*是强制型参数，有*{&#37;p+}*的命令执行时一定要输入参数。
 	* **{&#37;c}**　　　　　　剪贴板内容
 	* **{&#37;wt}**　　　　　当前窗口的标题
-	* **'@'和'>'**　　　　　在命令中前置时有效
+	* **'@'/'>'/'+'**　　　　在命令中前置时有效
 	>前置'@' 隐藏执行,   
 	前置'>' 请求管理员权限有(NT6或以上有效)  
+	前置`+` 必需输入参数
     也可以组合使用  
     例子(以管理员权限隐藏执行notepad.exe): ">@notepad.exe“
 
@@ -71,8 +73,10 @@ ALMRun
 
 *  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](https://github.com/chenall/ALMRun/blob/master/bin/ALMRun.ini)里面有更详细的配置介绍.
 
-<h2 id="ALMRun_Advanced">ALMRun Advanced 扩展功能</h2>
-***********************
+<h2 id="ALMRun_Advanced"></h2>
+ALMRun Advanced 扩展功能
+========================
+************************
   ALMRUN使用[luajit]引擎支持使用LUA脚本进行功能扩展，只需要把你的扩展脚本放在`config`目录下即可，不限文件名，不限子目录。
   扩展能请参考[API 介绍](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
 
@@ -85,16 +89,16 @@ ALMRun
     * 调用API时建议使用xpcall调用，可以防止由于出现错误导致后续的脚本无法运行 
       例子：添加命令，使用了xpcall如果失败时不会中止脚本运行，否则后面的脚本不会执行
 
-{% highlight lua %}
+```lua
 	--语法xpcall(API,error_hook,API参数)
 	--其中API就是你要调用的函数，error_hook，是固定的错误提示函数在ALMRun.lua中
 	xpcall(addCommand,error_hook,{ name = "test",cmd = "cmd.exe /k echo test" })
-{% endhighlight %}
+```
    
-<h2 id="ALMRun_resource">
+<h2 id="ALMRun_resource"></h2>
 Resource 相关资源
-</h2>
-*****************
+================
+****************
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 源码: <https://github.com/chenall/ALMRun>  
 * 搏客: <http://chenall.net/post/alrun-merry/>  
@@ -124,4 +128,3 @@ Download 程序下载
 ALMRUN最新编译版： <https://github.com/chenall/ALMRun/archive/Build.zip>
 
 其它版本请从 [更新记录] 下载
-

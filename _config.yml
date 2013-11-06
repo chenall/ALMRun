@@ -3,7 +3,7 @@
 permalink: /post/:title 
 markdown: rdiscount
 #markdown: maruku
-exclude: ["CNAME", ".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
+exclude: ["head","CNAME", ".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 pygments: true
 timezone: Asia/Chongqing
 encoding: UTF-8
