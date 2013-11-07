@@ -141,7 +141,9 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			this->ExecuteCmd();
 			break;
 		case WXK_ESCAPE:
-			if (this->EnterArgs == 0)
+			if (this->GetValue().size())
+				this->Clear();
+			else if (this->EnterArgs == 0)
 				::wxGetApp().GetFrame().Hide();
 			else//当前是输入参数模式,按Esc取消
 			{
