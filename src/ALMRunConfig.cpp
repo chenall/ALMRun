@@ -10,7 +10,7 @@
 #include <shlobj.h>
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行",
 	"保持程序窗口置顶,默认禁用.",
@@ -27,6 +27,7 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中，按下空格键就启动当前条目",
 	"如果选中，显示ALMRun界面时自动显示列表框",
 	"如果选中，连续按两次程序热键相当于ALT+L功能，重复执行上一次的命令",
+	"如果选中，鼠标单击选中列表条目，双击运行",
 };
 
 /* 
@@ -103,7 +104,9 @@ ALMRunConfig::ALMRunConfig()
 	config[PlayPopupNotify] = false;
 	config[SpaceKey] = false;
 	config[DoubleToggleFunc] = false;
+	config[DoubleClick] = false;
 	cfg_changed = false;
+	
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");

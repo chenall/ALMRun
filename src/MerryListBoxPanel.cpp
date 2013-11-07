@@ -5,7 +5,7 @@ BEGIN_EVENT_TABLE(MerryListBoxPanel, wxPanel)
 	EVT_MOUSE_EVENTS(MerryListBoxPanel::OnMouseEvent)
 	EVT_PAINT(MerryListBoxPanel::OnPaintEvent)
 	EVT_CONTEXT_MENU(MerryListBoxPanel::onContextMenu)
-	EVT_MENU_RANGE(10000,10011,onPopMenu)
+	EVT_MENU_RANGE(10000,10012,onPopMenu)
 END_EVENT_TABLE()
 
 MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
@@ -51,6 +51,7 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 	menu->Append(MENU_CMD_EDIT, wxT("±à¼­(&E)"));
 	menu->Append(MENU_CMD_DEL, wxT("É¾³ý(&D)"));
 	menu->Append(MENU_CMD_OPENDIR, wxT("¶¨Î»(&L)"));
+	menu->Append(MENU_CMD_INFO, wxT("ÏêÇé(&M)"));
     return;
 }
 
@@ -189,6 +190,13 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 	int id = e.GetId();
 	switch(id)
 	{
+		case MENU_CMD_INFO:
+			{
+				const MerryCommand* cmd = GetSelectionCommand();
+				if (cmd)
+					wxMessageBox(cmd->GetDetails(),cmd->GetCommandName());
+			}
+			break;
 		case MENU_CMD_DEL:
 			if (DelSelectedItem())
 			{
@@ -232,28 +240,55 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 
 void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 {
-	if (e.Moving() || e.RightDown())
+#ifdef _ALMRUN_CONFIG_H_
+	if (e.LeftDClick() || (g_config->config[DoubleClick] == false && e.LeftUp()))
+#else
+	if (e.LeftUp())
+#endif
 	{
-		e.StopPropagation();
-		wxPoint pos = e.GetPosition();
-		int itemIndex = pos.y / MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
-		if (itemIndex >= this->GetVisibleItemNum() || itemIndex == (m_selectionCommandIndex - m_topCommandIndex))
-			return;
-		const ListBoxItem& item = m_items[itemIndex];
-		if (item.rect.Contains(pos))
-		{
-			m_selectionCommandIndex = m_topCommandIndex + itemIndex;
-			this->Refresh();
-		}
-	}
-	else if (e.LeftUp())
-	{
+	#if defined(_ALMRUN_CONFIG_H_) && defined(__WXMSW__)
+		SendMessage(HWND_TEXTCTRL,WM_KEYDOWN,VK_RETURN,0);
+		SendMessage(HWND_TEXTCTRL,WM_KEYUP,VK_RETURN,0);
+	#else
 		const MerryCommand* command = m_commands[m_selectionCommandIndex];
 		assert(command);
 		command->Execute(wxEmptyString);
+	#endif
+		return;
 	}
-	else
-		e.Skip();
+
+	wxPoint pos = e.GetPosition();
+	int itemIndex = pos.y / MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
+	const ListBoxItem& item = m_items[itemIndex];
+	if (item.rect.Contains(pos) == false || itemIndex >= this->GetVisibleItemNum())
+	{
+		e.StopPropagation();
+		return;
+	}
+	e.Skip();
+	itemIndex += m_topCommandIndex;
+	if (itemIndex == m_selectionCommandIndex)
+		return;
+
+#ifdef _ALMRUN_CONFIG_H_
+	bool refresh = e.ButtonDown() || (g_config->config[DoubleClick] == false && e.Moving());
+#else
+	bool refresh = e.ButtonDown() || e.Moving();
+#endif
+
+	if (g_config->config[ShowTip] && (refresh || e.Moving()))
+	{
+		MerryCommand* cmd = m_commands[itemIndex];
+		if (cmd->GetCommandDesc().empty())
+			this->SetToolTip(cmd->GetCmd());
+		else
+			this->SetToolTip(cmd->GetCommandDesc());
+	}
+	if (refresh)
+	{
+		m_selectionCommandIndex = itemIndex;
+		this->Refresh();
+	}
 }
 
 void MerryListBoxPanel::OnPaintEvent(wxPaintEvent& e)
@@ -314,15 +349,6 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		assert(command);
 		if (m_selectionCommandIndex - m_topCommandIndex == i)
 		{
-		#ifdef _ALMRUN_CONFIG_H_
-			if (g_config->config[ShowTip])
-			{
-				if (command->GetCommandDesc().empty())
-					this->SetToolTip(command->GetCmd());
-				else
-					this->SetToolTip(command->GetCommandDesc());
-			}
-		#endif//#ifdef _ALMRUN_CONFIG_H_
 			dc.DrawBitmap(m_selectionItemBackground, item.rect.x, item.rect.y, false);
 		}
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_MAIN_FONT_COLOR);

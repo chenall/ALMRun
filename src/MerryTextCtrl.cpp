@@ -12,6 +12,9 @@
 #endif
 
 bool LocationExec;
+#ifdef __WXMSW__
+	HWND HWND_TEXTCTRL = NULL;
+#endif
 
 BEGIN_EVENT_TABLE(MerryTextCtrl, wxTextCtrl)
 	EVT_CONTEXT_MENU(MerryTextCtrl::onContextMenu)
@@ -46,6 +49,7 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 		this->SetOwnFont(font);
 	}
 	this->EnterArgs = 0;
+	HWND_TEXTCTRL = this->GetHWND();
 }
 
 void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
@@ -239,8 +243,8 @@ void MerryTextCtrl::ExecuteCmd()
 	#ifdef __WXMSW__
 	if (command->GetCmd().Find("{%p+}") != wxNOT_FOUND && this->EnterArgs <= 0)
 	{
-		SendMessage(this->GetHWND(),WM_KEYDOWN,VK_TAB,0);
-		SendMessage(this->GetHWND(),WM_KEYUP,VK_TAB,0);
+		SendMessage(HWND_TEXTCTRL,WM_KEYDOWN,VK_TAB,0);
+		SendMessage(HWND_TEXTCTRL,WM_KEYUP,VK_TAB,0);
 		return;
 	}
 	#endif

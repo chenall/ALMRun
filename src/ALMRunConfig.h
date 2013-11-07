@@ -30,6 +30,7 @@ enum config_item
 	SpaceKey,
 	AutoPopup,
 	DoubleToggleFunc,
+	DoubleClick,
 	CONFIG_MAX,
 };
 struct DirCfg
@@ -88,6 +89,9 @@ private:
 	wxString order_cfg_file;
 };
 
+#ifdef __WXMSW__
+	extern HWND HWND_TEXTCTRL;
+#endif
 extern ALMRunConfig* g_config;
 extern bool LocationExec;
 enum
@@ -103,5 +107,6 @@ enum
 	MENU_CMD_DEL,
 	MENU_CMD_EDIT,
 	MENU_CMD_OPENDIR,
+	MENU_CMD_INFO,
 };
 #endif
