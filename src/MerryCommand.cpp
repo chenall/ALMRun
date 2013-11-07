@@ -7,7 +7,7 @@
 //
 const MerryCommand* LastCmd;
 
- MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey)
+ MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,const int order)
 {
 	m_commandID = commandID & 0xFFFF;
 	m_flags = commandID >> 16;
@@ -17,7 +17,7 @@ const MerryCommand* LastCmd;
 	m_commandDesc = commandDesc;
 	m_commandLine = commandLine;
 	m_commandFName = commandName;
-	m_order = 0;
+	m_order = order;
 
 	if (commandName.empty() || m_flags == -1)
 		return;

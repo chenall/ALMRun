@@ -177,8 +177,11 @@ void MerryCommandManager::AddPluginCmd(lua_State* L)
 	else
 		commandLine = wxString(lua_tostring(L, -1), wxConvLocal);
 
+	lua_pushstring(L, "order");
+	lua_rawget(L, it);
+	int order = lua_tointeger(L,-1);
 	lua_settop(L,it);
-	plugin_commands.push_back(new MerryCommand(-1,commandName, commandDesc,commandLine,funcRef));
+	plugin_commands.push_back(new MerryCommand(-1,commandName, commandDesc,commandLine,funcRef,wxEmptyString,order));
 	return;
 }
 
