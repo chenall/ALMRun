@@ -106,12 +106,13 @@ ALMRunConfig::ALMRunConfig()
 	config[DoubleToggleFunc] = false;
 	config[DoubleClick] = false;
 	cfg_changed = false;
-	
+	order_cfg_time = 0;
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");
 		order_cfg_file = Home + wxT("config/Order.ini");
-		order_cfg_time =  wxFileModificationTime(order_cfg_file);
+		if (wxFileExists(cfg_file))
+			order_cfg_time =  wxFileModificationTime(order_cfg_file);
 		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 		order_conf->SetExpandEnvVars(false);
 		if (!wxFileExists(cfg_file))
@@ -119,6 +120,7 @@ ALMRunConfig::ALMRunConfig()
 	}
 	if (wxFileExists(cfg_file) == false)
 	{
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,"A-R",0));
 		CompareMode = 0;
 		conf = NULL;
 		cfg_time = 0;
@@ -275,18 +277,18 @@ void ALMRunConfig::GuiConfig()
 
 bool ALMRunConfig::SaveCfg()
 {
-	if (conf)
-	{
-		conf->Flush();
-		cfg_time = wxFileModificationTime(cfg_file);
-		cfg_changed = false;
-		return true;
-	}
-	return false;
+	if (!conf)
+		return false;
+	conf->Flush();
+	cfg_time = wxFileModificationTime(cfg_file);
+	cfg_changed = false;
+	return true;
 }
 
 int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const int id)
 {
+	if (!conf)
+		return false;
 	wxString cmdName = name;
 	if (cmdName.empty() && key.empty())
 	{
@@ -461,6 +463,8 @@ void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const 
 //新版的配置文件?
 void ALMRunConfig::ConfigCommand()
 {
+	if (!conf)
+		return;
 	wxString name;
 	wxString key;
 	wxString cmd;
@@ -563,7 +567,7 @@ void ALMRunConfig::OldToNew()
 
 int ALMRunConfig::SetcmdOrder(wxString& cmd,int order)
 {
-	if (order_cfg_time != wxFileModificationTime(order_cfg_file))
+	if (order_cfg_time && order_cfg_time != wxFileModificationTime(order_cfg_file))
 	{
 		wxDELETE(order_conf);
 		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE); 
