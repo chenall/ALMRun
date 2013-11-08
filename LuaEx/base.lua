@@ -2,19 +2,43 @@ local bit = require("bit")
 local eventTable = {}
 local PluginTable = {}
 
-function RegisterPlugin(eventName,eventHandler)
-    if not PluginTable[eventName] then
-	PluginTable[eventName] = {}
+function RegisterPlugin(Name,plugin)
+    if plugin.func == nil then
+	return
     end
-    local events = PluginTable[eventName] 
-    table.insert(events, eventHandler)
-    if not _G["plugin_"..eventName] then
-	_G["plugin_"..eventName] = function(...)
+    if not PluginTable[Name] then
+	PluginTable[Name] = {}
+    end
+    local _plugins = PluginTable[Name]
+    table.insert(_plugins, plugin)
+    if not _G["plugin_"..Name] then
+	_G["plugin_"..Name] = function(commandName,...)
 	    local _eventResult = {}
-	    for _, _eventHandler in ipairs(events) do
-		local result = _eventHandler(...)
-		if result then
-		    table.insert(_eventResult,result)
+	    for _,_plugin in ipairs(_plugins) do
+		local __name
+		if _plugin.name == nil then
+		    __name = commandName
+		else
+		    local l_len = _plugin.name:len()
+		    __name = commandName:sub(1,l_len)
+		    if _plugin.name:upper():find(__name:upper()) then
+			__name = commandName:sub(l_len+2)
+		    else
+			__name = nil
+		    end
+		end
+		if __name then
+		    local _func = _plugin.func
+		    local result = _func(__name,...)
+		    if result then
+			if #result == 0 then--返回单个结果
+			    table.insert(_eventResult,result)
+			else
+			    for _,__ in ipairs(result) do
+				table.insert(_eventResult,__)
+			    end
+			end
+		    end
 		end
 	    end
 	    return _eventResult
