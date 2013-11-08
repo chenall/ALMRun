@@ -73,7 +73,7 @@ bool MerryListBoxPanel::SetFont(const wxString& fontInfo)
 		ULONG flags = 0;
 		Font.Item(2).ToULong(&height);
 		font.SetStyle(flags);
-		font.SetFaceName(Font.Item(0));
+		font.SetFaceName(Font[0]);
 		font.SetPointSize(height);
 		Font.Item(3).ToULong(&height);
 		this->SetForegroundColour(wxColour(height));
@@ -208,9 +208,9 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 		case MENU_CMD_ADD:
 			{
 				DlgAddNewCmd* dlg;
-				const MerryCommand* cmd = GetSelectionCommand();
 				if (id == MENU_CMD_EDIT)
 				{
+					const MerryCommand* cmd = GetSelectionCommand();
 					if (!(cmd->GetFlags() & CMDS_FLAG_CMDS)) 
 					{
 						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");

@@ -159,7 +159,7 @@ static int LuaToggleMerry(lua_State* L)
 	if (!frame.IsShown())
 		MerryActivateIgnoringOtherApps();
 #endif
-
+	
 	if (frame.IsShown())
 	{
 		frame.Hide();
@@ -174,8 +174,8 @@ static int LuaToggleMerry(lua_State* L)
 	}
 	else
 	{
-		frame.Show();
 		time(&chktime);
+		frame.Show();
 	}
 	return 0;
 }

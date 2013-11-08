@@ -69,7 +69,7 @@ const MerryCommand* LastCmd;
 	for (i = 0; i < len; ++i)
 	{
 		H = name[i];
-		L = name[i+1];
+		L = ((i+1)< len)?name[i+1]:0;//防止访问越界.
 		//汉字从16区(A1)开始到87区(F7)
 		//一个区94个,位码 A1 - FE
 		if (H < 0xB0 ||  L < 0xA1 || H > 0xF7 || L == 0xFF)

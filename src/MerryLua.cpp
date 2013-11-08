@@ -94,12 +94,44 @@ MerryLua::MerryLua()
 MerryLua::~MerryLua()
 {
 	__DEBUG_BEGIN("")
+	#if _DEBUG
+	stackDump();
+	#endif
 	this->OnClose();
-	assert(lua_gettop(L) == 0);
+	lua_settop(L,0);
 	lua_close(L);
 	L = NULL;
 	__DEBUG_END("")
 }
+
+#if _DEBUG
+void MerryLua::stackDump()
+{ 
+    int top = lua_gettop(L);
+	if (top == 0)
+		return;
+	wxString lua_strack;
+    for (int i = 1; i <= top; i++) 
+    { 
+        int t = lua_type(L,i); 
+        switch(t) 
+        { 
+        case LUA_TSTRING: 
+			lua_strack += wxString::Format("%d=%s\n",i,lua_tostring(L,i)); 
+            break; 
+        case LUA_TBOOLEAN: 
+			lua_strack += wxString::Format("%d=%s\n",i,lua_toboolean(L,i)?"true":"false"); 
+            break; 
+        case LUA_TNUMBER: 
+			lua_strack += wxString::Format("%d=%g\n",i,lua_tonumber(L,i)); 
+            break; 
+        default:
+			lua_strack += wxString::Format("%d=%s\n",i,lua_typename(L,t)); 
+        } 
+    } 
+	wxMessageBox(lua_strack,"LUA_STRACK");
+}
+#endif
 
 lua_State* MerryLua::GetLua()
 {

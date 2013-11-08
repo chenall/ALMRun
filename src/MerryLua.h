@@ -23,6 +23,10 @@ public:
 	void DoConfig();
 	void OnUndefinedCommand(const wxString& commandName, const wxString& commandArg);
 	bool onCompare(const wxString& commandName,const wxString& commandPrefix);
+#if _DEBUG
+	void stackDump(); 
+#endif
+
 private:
 	lua_State* L;
 };

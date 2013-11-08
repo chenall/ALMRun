@@ -120,14 +120,15 @@ ALMRunConfig::ALMRunConfig()
 	}
 	if (wxFileExists(cfg_file) == false)
 	{
-		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,"A-R",0));
-		CompareMode = 0;
-		conf = NULL;
+		cfg_file = wxEmptyString;
 		cfg_time = 0;
-		return;
+	}
+	else
+	{
+		cfg_time = wxFileModificationTime(cfg_file);
 	}
 	//lastId = 0;
-	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
+	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,7);
 	gui_config[ListFont] = conf->Read("/GUI/ListFont");
 	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
 	listBoxPanel->SetFont(gui_config[ListFont]);
@@ -162,7 +163,7 @@ ALMRunConfig::ALMRunConfig()
 
 	this->OldToNew();
 	conf->SetPath("/Config");
-	cfg_time = wxFileModificationTime(cfg_file);
+
 	#ifdef __WXMSW__
 	wxString Sendto = wxStandardPaths::MSWGetShellDir(0x0009) + "/ALMRun.lnk";//CSIDL_SENDTO                    0x0009        // <user name>\SendTo
 	wxString Startup = wxStandardPaths::MSWGetShellDir(0x0007) + "/ALMRun.lnk";//CSIDL_STARTUP
@@ -280,8 +281,11 @@ bool ALMRunConfig::SaveCfg()
 	if (!conf)
 		return false;
 	conf->Flush();
-	cfg_time = wxFileModificationTime(cfg_file);
-	cfg_changed = false;
+	if (cfg_time)
+	{
+		cfg_time = wxFileModificationTime(cfg_file);
+		cfg_changed = false;
+	}
 	return true;
 }
 
