@@ -5,7 +5,7 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
-### [2013-11-08 V1.2.0.29] (https://github.com/chenall/ALMRun/archive/v1.2.0.29_BIN.zip)
+### [2013-11-08 v1.2.0.29](https://github.com/chenall/ALMRun/archive/v1.2.0.29_BIN.zip)
     1.修正由于配置文件不存在导致的程序错误问题
     2.修正几个可能导致程序出错的BUG。
 
