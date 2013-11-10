@@ -111,7 +111,7 @@ ALMRunConfig::ALMRunConfig()
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");
 		order_cfg_file = Home + wxT("config/Order.ini");
-		if (wxFileExists(cfg_file))
+		if (wxFileExists(order_cfg_file))
 			order_cfg_time =  wxFileModificationTime(order_cfg_file);
 		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
 		order_conf->SetExpandEnvVars(false);
@@ -162,6 +162,9 @@ ALMRunConfig::ALMRunConfig()
 		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"LastCmd",-2,LastItemHotKey,0));
 
 	this->OldToNew();
+
+	ConfigCommand();
+#ifndef _DEBUG
 	conf->SetPath("/Config");
 
 	#ifdef __WXMSW__
@@ -197,6 +200,7 @@ ALMRunConfig::ALMRunConfig()
 		wxRemoveFile(Startup);
 	}
 	#endif
+#endif
 }
 
 bool ALMRunConfig::set(const wxString& name,const wxString &value)

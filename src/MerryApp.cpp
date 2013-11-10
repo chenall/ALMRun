@@ -66,8 +66,8 @@ bool MerryApp::OnInit()
 		::wxSetEnv(wxT("ALMRUN_DRIVE"),volume.c_str());
 	}
 	::wxSetWorkingDirectory(pathTmp);
-	pathTmp.Clear();
-	volume.Clear();
+	//pathTmp.Clear();
+	//volume.Clear();
 	#endif
 	m_frame = NULL;
 	this->NewFrame();
@@ -91,12 +91,12 @@ int MerryApp::OnExit()
 {
 	__DEBUG_BEGIN("")
 	this->Disconnect(wxEVT_ACTIVATE_APP);
-	if (m_frame)
-		wxDELETE(m_frame);
-	if (m_checker)
-		wxDELETE(m_checker);
-	if (m_server)
-		wxDELETE(m_server);
+	//子窗口会自动半闭，所以不需要这个语句，否则有可能会出错
+	//if (m_frame)
+	//	wxDELETE(m_frame);
+	m_frame = NULL;
+	wxDELETE(m_checker);
+	wxDELETE(m_server);
 	__DEBUG_END("")
 	#if _DEBUG_LOG
 	if (m_pLogFile)

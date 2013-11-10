@@ -56,34 +56,23 @@ void MerryFrame::NewConfig()
 	m_listBoxPanel->Dismiss();
 	LastCmd = NULL;
 
-	if (g_lua)
-		wxDELETE(g_lua);
+	wxDELETE(g_lua);
 
-	if (g_hotkey)
-	{
-//		g_hotkey->OnDelete();
-		wxDELETE(g_hotkey);
-		g_hotkey = NewMerryHotkey();
-	}
+	wxDELETE(g_hotkey);
+	g_hotkey = NewMerryHotkey();
 
-	if (g_timers)
-	{
-		wxDELETE(g_timers);
-		g_timers = new MerryTimerManager();
-	}
 
-	if (g_commands)
-	{
-		wxDELETE(g_commands);
-		g_commands = new MerryCommandManager();
-	}
+	wxDELETE(g_timers);
+	g_timers = new MerryTimerManager();
+
+
+	wxDELETE(g_commands);
+	g_commands = new MerryCommandManager();
+
 #ifdef _ALMRUN_CONFIG_H_
-	if (g_config)
-	{
-		wxDELETE(g_config);
-		g_config = new ALMRunConfig();
-		g_config->ConfigCommand();
-	}
+	wxDELETE(g_config);
+	g_config = new ALMRunConfig();
+
 #endif//#ifdef _ALMRUN_CONFIG_H_
 
 	g_lua = new MerryLua();
@@ -112,7 +101,6 @@ void MerryFrame::OnInit()
 #ifdef _ALMRUN_CONFIG_H_
 	assert(!g_config);
 	g_config = new ALMRunConfig();
-	g_config->ConfigCommand();
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	assert(!g_lua);
 	g_lua = new MerryLua();
@@ -156,33 +144,17 @@ void MerryFrame::OnClose()
 	__DEBUG_BEGIN("")
 	this->Hide();
 
-	if (g_lua)
-		wxDELETE(g_lua);
-
-	if (g_commands)
-		wxDELETE(g_commands);
+	wxDELETE(g_lua);
+	wxDELETE(g_commands);
 
 #ifdef _ALMRUN_CONFIG_H_
-	if (g_config)
-		wxDELETE(g_config);
+	wxDELETE(g_config);
 #endif//#ifdef _ALMRUN_CONFIG_H_
-	if (g_hotkey)
-	{
-//		g_hotkey->OnDelete();
-		wxDELETE(g_hotkey);
-	}
+	wxDELETE(g_hotkey);
 
-	if (g_timers)
-	{
-		wxDELETE(g_timers);
-		g_timers = NULL;
-	}
+	wxDELETE(g_timers);
 
-	if (g_controller)
-	{
-		wxDELETE(g_controller);
-		g_controller = NULL;
-	}
+	wxDELETE(g_controller);
 	__DEBUG_END("")
 }
 

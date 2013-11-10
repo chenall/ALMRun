@@ -71,7 +71,7 @@ public:
 	wxString& GetDefaultDirInclude() { return def_dir_cfg.include;};
 	wxString& GetDefaultDirExclude() { return def_dir_cfg.exclude;};
 	int GetDefaultDirSub() { return def_dir_cfg.sub;};
-	void ConfigCommand();
+
 	void GuiConfig();
 	int SetcmdOrder(wxString& cmd,int order = 0);
 	wxFileConfig *conf;
@@ -79,6 +79,7 @@ public:
 
 private:
 	void OldToNew();
+	void ConfigCommand();
 	wxString LastItemHotKey;
 	//int lastId;
 	bool cfg_changed;

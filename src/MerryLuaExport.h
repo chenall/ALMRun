@@ -175,6 +175,8 @@ static int LuaToggleMerry(lua_State* L)
 	else
 	{
 		time(&chktime);
+//		PostMessage(frame.GetHWND(),WM_SHOWWINDOW,WA_ACTIVE,0);
+//		PostMessage(frame.GetHWND(),WM_ACTIVATE,WA_ACTIVE,0);
 		frame.Show();
 	}
 	return 0;
