@@ -22,7 +22,10 @@ function RegisterPlugin(Name,plugin)
 		    local l_len = _plugin.name:len()
 		    __name = commandName:sub(1,l_len)
 		    if _plugin.name:upper():find(__name:upper()) then
-			__name = commandName:sub(l_len+2)
+			__name,l_len = commandName:gsub("%S+%s+(.+)","%1")
+			if l_len == 0 then
+			    __name = ""
+			end
 		    else
 			__name = nil
 		    end
