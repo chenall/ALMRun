@@ -1,6 +1,7 @@
 ---
 date: 2013-10-27
 layout: page
+thread: ALMRun_GUESTBOOK
 title: 留言板
 header: 留言板
 tagline: ALMRun 问题反馈，有什么问题或建议欢迎在这里留言反馈，你也可以贴出你的扩展供大家使用一起完善。

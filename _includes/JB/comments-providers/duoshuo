@@ -7,7 +7,7 @@
     {% endif %}
 {% endif %}
 {% assign in_sale_collection = false %}
-<div class="ds-thread" {% if thread-key %} data-thread-key="{{thread-key}}" {% endif %} data-url="{{ site.url }}{{ page.url }}" data-title="{{ page.title }}" ></div>
+<div class="ds-thread" {% if thread-key %} data-thread-key="{{thread-key}}" {% endif %} data-url="{{site.production_url}}{{ page.url }}" data-title="{{ page.title }}" ></div>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"{{ site.JB.comments.duoshuo.short_name }}"};
 	(function() {
