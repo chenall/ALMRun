@@ -58,9 +58,9 @@ bool MerryCommandManager::DelCommand(int commandID)
 
 const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags)
 {
-	if (m_commands.size() >= 1000)
+	if (m_commands.size() >= 10000)
 	{
-		MerrySetLastError(wxT("\n超过1000个命令限制，目前限制命令数量不可以超过1000个，有特殊需求请联系我或到到网站留言 http://chenall.net"));
+		MerrySetLastError(wxT("\n超过10000个命令限制，目前限制命令数量不可以超过10000个，有特殊需求请联系我或到到网站留言 http://chenall.net"));
 		return -2;
 	}
 
