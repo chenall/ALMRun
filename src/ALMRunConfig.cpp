@@ -10,7 +10,7 @@
 #include <shlobj.h>
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行",
 	"保持程序窗口置顶,默认禁用.",
@@ -28,6 +28,7 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中，显示ALMRun界面时自动显示列表框",
 	"如果选中，连续按两次程序热键相当于ALT+L功能，重复执行上一次的命令",
 	"如果选中，鼠标单击选中列表条目，双击运行",
+	"如果选中，允许命令名称一样，否则添加命令时名称一样会失败。"
 };
 
 /* 
@@ -105,6 +106,7 @@ ALMRunConfig::ALMRunConfig()
 	config[SpaceKey] = false;
 	config[DoubleToggleFunc] = false;
 	config[DoubleClick] = false;
+	config[DuplicateCMD] = false;
 	cfg_changed = false;
 	order_cfg_time = 0;
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
@@ -148,6 +150,7 @@ ALMRunConfig::ALMRunConfig()
 
 	this->set("ShowTrayIcon",config[ShowTrayIcon]);
 	this->set("StayOnTop",config[StayOnTop]);
+	g_config = this;
 
 	//程序显隐热键配置
 	HotKey = conf->Read("HotKey","A-R");

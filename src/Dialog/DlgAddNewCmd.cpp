@@ -198,6 +198,8 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 	if (!e.GetShow())
 		return;
 	wxString cmd = cmdLine->GetValue();
+	if (cmd.empty())
+		return;
 	while(true)
 	{
 		if (cmd[0] == '@')//前导'@'隐藏窗口运行

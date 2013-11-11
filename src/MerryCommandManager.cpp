@@ -73,14 +73,16 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 	{
 		const MerryCommand* command = m_commands[i];
 		assert(command);
-		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
-		{
-			MerrySetLastError(wxString::Format(wxT("\nÃüÁî[%s]ÒÑ¾­´æÔÚ\n\n%s"),commandName,command->GetDetails()));
-			return -1;
-		}
 		if (!triggerKey.empty() && triggerKey.IsSameAs(command->GetTriggerKey(), false))
 		{
 			MerrySetLastError(wxString::Format(wxT("\nÃüÁî[%s]ÈÈ¼üÖØ¸´\n\n%s\n"), commandName,command->GetDetails()));
+			return -1;
+		}
+		if (g_config && g_config->config[DuplicateCMD])
+			continue;
+		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
+		{
+			MerrySetLastError(wxString::Format(wxT("\nÃüÁî[%s]ÒÑ¾­´æÔÚ\n\n%s"),commandName,command->GetDetails()));
 			return -1;
 		}
 	}

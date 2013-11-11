@@ -31,6 +31,7 @@ enum config_item
 	AutoPopup,
 	DoubleToggleFunc,
 	DoubleClick,
+	DuplicateCMD,
 	CONFIG_MAX,
 };
 struct DirCfg
