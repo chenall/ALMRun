@@ -7,13 +7,14 @@
 
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
 #define CONFIG_VERSION 1
+#define ParamHistoryLimit_default 50
 enum gui_config_item
 {
 	ListFont,
 	GUI_CONFIG_MAX,
 };
 
-enum config_item
+typedef enum
 {
 	AutoRun,
 	StayOnTop,
@@ -21,6 +22,7 @@ enum config_item
 	ShowTrayIcon,
 	ShowTopTen,
 	ExecuteIfOnlyOne,
+	RememberFavouratMatch,
 	IndexFrom0to9,
 	OrderByPre,
 	ShowTip,
@@ -32,8 +34,9 @@ enum config_item
 	DoubleToggleFunc,
 	DoubleClick,
 	DuplicateCMD,
-	CONFIG_MAX,
-};
+	CONFIG_ITEM_MAX,
+} config_item_t;
+
 struct DirCfg
 {
 	wxString include;
@@ -47,7 +50,7 @@ public:
 	~ALMRunConfig();
 	ALMRunConfig();
 	int CompareMode;
-	bool config[CONFIG_MAX];
+
 	wxString gui_config[GUI_CONFIG_MAX];
 	static const char *config_str[];
 	static const char *config_tip[];
@@ -59,6 +62,7 @@ public:
 	void Check();
 	bool Changed();
 	void get(const wxString& name);
+	bool get(config_item_t config_type);
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
@@ -78,6 +82,9 @@ public:
 	wxFileConfig *conf;
 	wxFileConfig *order_conf;
 
+protected:
+	bool config[CONFIG_ITEM_MAX];
+
 private:
 	void OldToNew();
 	void ConfigCommand();
@@ -89,6 +96,7 @@ private:
 	time_t cfg_time;
 	time_t order_cfg_time;
 	wxString order_cfg_file;
+	size_t ParamHistoryLimit;
 	int config_ver;
 };
 

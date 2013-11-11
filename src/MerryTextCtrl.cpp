@@ -130,7 +130,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 
 #ifdef _ALMRUN_CONFIG_H_
 		//按空格键执行
-		else if (keyCode == WXK_SPACE && g_config->config[SpaceKey] && EnterArgs == 0)
+		else if (keyCode == WXK_SPACE && g_config->get(SpaceKey) && EnterArgs == 0)
 			keyCode = WXK_RETURN;
 #endif
 	}
@@ -250,6 +250,9 @@ void MerryTextCtrl::ExecuteCmd()
 		return;
 	}
 	#endif
+	if (g_config->get(RememberFavouratMatch))
+	{
+	}
 	::wxGetApp().GetFrame().Hide();
 	command->Execute(commandArg);
 }
@@ -275,7 +278,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 #ifdef _ALMRUN_CONFIG_H_
 		//数字热键启用
 
-		if (g_config->config[NumberKey] && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
+		if (g_config->get(NumberKey) && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
 		{
 			if (keyCode != ' ' && !listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
 				return;
@@ -290,7 +293,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 		}
 		listBoxPanel->Popup();
 #ifdef _ALMRUN_CONFIG_H_
-		if (g_config->config[ExecuteIfOnlyOne] && commands.size() == 1)
+		if (g_config->get(ExecuteIfOnlyOne) && commands.size() == 1)
 			return this->ExecuteCmd();
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	}

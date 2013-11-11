@@ -115,7 +115,7 @@ int MerryListBoxPanel::SetSelection(int index,int top)
 	if (index == -1 && top >= 0)
 	{
 	#ifdef _ALMRUN_CONFIG_H_
-		if (!g_config->config[IndexFrom0to9])
+		if (!g_config->get(IndexFrom0to9))
 		{
 			if (top == 0)
 				top = 9;
@@ -241,7 +241,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 {
 #ifdef _ALMRUN_CONFIG_H_
-	if (e.LeftDClick() || (g_config->config[DoubleClick] == false && e.LeftUp()))
+	if (e.LeftDClick() || (g_config->get(DoubleClick) == false && e.LeftUp()))
 #else
 	if (e.LeftUp())
 #endif
@@ -271,12 +271,12 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 		return;
 
 #ifdef _ALMRUN_CONFIG_H_
-	bool refresh = e.ButtonDown() || (g_config->config[DoubleClick] == false && e.Moving());
+	bool refresh = e.ButtonDown() || (g_config->get(DoubleClick) == false && e.Moving());
 #else
 	bool refresh = e.ButtonDown() || e.Moving();
 #endif
 
-	if (g_config->config[ShowTip] && (refresh || e.Moving()))
+	if (g_config->get(ShowTip) && (refresh || e.Moving()))
 	{
 		MerryCommand* cmd = m_commands[itemIndex];
 		if (cmd->GetCommandDesc().empty())
@@ -355,7 +355,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		dc.DrawLabel(command->GetCommandName(), item.mainRect, wxALIGN_LEFT,command->m_compare);
 		dc.SetTextForeground(MERRY_DEFAULT_LIST_BOX_SUB_FONT_COLOR);
 		#ifdef _ALMRUN_CONFIG_H_
-		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),(g_config->config[IndexFrom0to9]) ?i:(i==9?0:i+1) ), item.LeftRect, wxALIGN_RIGHT);
+		dc.DrawLabel(wxString::Format(wxT("%.5s(%1d"),command->GetTriggerKey(),(g_config->get(IndexFrom0to9)) ?i:(i==9?0:i+1) ), item.LeftRect, wxALIGN_RIGHT);
 		#endif//#ifdef _ALMRUN_CONFIG_H_
 	}
 	const MerryCommand* command = m_commands[m_selectionCommandIndex];

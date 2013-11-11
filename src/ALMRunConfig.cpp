@@ -10,7 +10,7 @@
 #include <shlobj.h>
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行",
 	"保持程序窗口置顶,默认禁用.",
@@ -18,6 +18,7 @@ const char *ALMRunConfig::config_tip[] = {
 	"选中时在系统托盘显示图标",
 	"选中时仅显示前10项快捷项",
 	"选中时列表只剩一项时无需按键立即执行",
+	"如果选中，记住最近一次关键字和快捷项的对应关系",
 	"如果未选中，编号顺序为 1, 2, ..., 9, 0",
 	"如果选中, 命令列表中前辍匹配的排前面",
 	"如果选中,鼠标移动列表框项目时会显示备注信息或命令行",
@@ -139,13 +140,13 @@ ALMRunConfig::ALMRunConfig()
 	config_ver = conf->ReadLong("Version",-1);
 	if (config_ver == -1)//配置文件未标注版本
 		cfg_changed = conf->Write("Version",(config_ver = CONFIG_VERSION));
-
+	ParamHistoryLimit = conf->ReadLong("ParamHistoryLimit",ParamHistoryLimit_default);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
 
 	//从配置文件中读取参数，如果不存在则使用默认值
-	for(int i=0;i<CONFIG_MAX;++i)
+	for(int i=0;i<CONFIG_ITEM_MAX;++i)
 		config[i] = conf->ReadBool(config_str[i],config[i]);
 
 	this->set("ShowTrayIcon",config[ShowTrayIcon]);
@@ -417,6 +418,13 @@ int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString
 		conf->Write("exclude",exc);
 	cfg_changed = true;
 	return i;
+}
+
+bool ALMRunConfig::get(config_item_t config_type)
+{
+	if (config_type<0 || config_type >= CONFIG_ITEM_MAX)
+		return false;
+	return this->config[config_type];
 }
 
 bool ALMRunConfig::Changed()

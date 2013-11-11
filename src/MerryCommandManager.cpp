@@ -78,7 +78,7 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 			MerrySetLastError(wxString::Format(wxT("\nÃüÁî[%s]ÈÈ¼üÖØ¸´\n\n%s\n"), commandName,command->GetDetails()));
 			return -1;
 		}
-		if (g_config && g_config->config[DuplicateCMD])
+		if (g_config && g_config->get(DuplicateCMD))
 			continue;
 		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
 		{
@@ -183,7 +183,7 @@ void MerryCommandManager::AddPluginCmd(lua_State* L)
 	lua_rawget(L, it);
 	int order = lua_tointeger(L,-1);
 	lua_settop(L,it);
-	plugin_commands.push_back(new MerryCommand(-1,commandName, commandDesc,commandLine,funcRef,wxEmptyString,order));
+	plugin_commands.push_back(new MerryCommand(plugin_commands.size()|(CMDS_FLAG_PLUGIN<<16),commandName, commandDesc,commandLine,funcRef,wxEmptyString,order));
 	return;
 }
 
@@ -268,13 +268,13 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 		{
 			command->m_compare = cmp_find;
 			commands.push_back(command);
-			if (g_config->config[ShowTopTen] && commands.size() >= 10 && !g_config->config[OrderByPre])
+			if (g_config->get(ShowTopTen) && commands.size() >= 10 && !g_config->get(OrderByPre))
 				break;
 		}
 	}
 #ifdef _ALMRUN_CONFIG_H_
-	sort(commands.begin(),commands.end(),g_config->config[OrderByPre]?SortPreOrder:mysort);
-	if (g_config->config[ShowTopTen] && commands.size() >= 10)
+	sort(commands.begin(),commands.end(),g_config->get(OrderByPre)?SortPreOrder:mysort);
+	if (g_config->get(ShowTopTen) && commands.size() >= 10)
 		commands.resize(10);
 	if (commands.size() < 9)
 	{

@@ -19,7 +19,7 @@ const MerryCommand* LastCmd;
 	m_commandFName = commandName;
 	m_order = order;
 
-	if (commandName.empty() || m_flags == -1)
+	if (commandName.empty() || m_flags == CMDS_FLAG_PLUGIN)
 		return;
 	static int li_SecPosValue[] = {
 		0xB0A1, 0xB0C5, 0xB2C1, 0xB4EE, 0xB6EA, 0xB7A2, 0xB8C1, 0xB9FE, 0xBBF7, 0xBFA6, 0xC0AC,
@@ -114,7 +114,13 @@ MerryCommand::~MerryCommand()
 wxString MerryCommand::GetDetails() const
 {
 	wxString cmd_from;
-	if (m_flags & CMDS_FLAG_DIRS)
+	int cmdId = m_flags >> 4;
+	if (m_flags == CMDS_FLAG_PLUGIN)
+	{
+		cmd_from = wxT("LUA²å¼þÀ©Õ¹");
+		cmdId = m_commandID;
+	}
+	else if (m_flags & CMDS_FLAG_DIRS)
 	{
 		cmd_from = wxT("Ä¿Â¼É¨Ãè(ALMRUN.INI)");
 	}
@@ -134,7 +140,7 @@ wxString MerryCommand::GetDetails() const
 	{
 		cmd_from = wxT("Î´ÖªÅäÖÃ");
 	}
-	return wxString::Format(wxT("ÅäÖÃÎÄ¼þ£º%s\nID:[%d] %s\nÃüÁî:%s\nÈÈ¼ü: %s\n"),cmd_from,m_flags>>4,this->m_commandDesc,this->m_commandLine,this->m_triggerKey);
+	return wxString::Format(wxT("ÅäÖÃÎÄ¼þ£º%s\nID:[%d] %s\nÃüÁî:%s\nÈÈ¼ü: %s\n"),cmd_from,cmdId,this->m_commandDesc,this->m_commandLine,this->m_triggerKey);
 }
 
 wxString MerryCommand::GetCmd() const
@@ -220,7 +226,7 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		);
 		lua_pop(L, 1);
 	}
-	if (m_commandName.empty() || m_flags == -1)
+	if (m_commandName.empty() || m_flags == CMDS_FLAG_PLUGIN)
 		return;
 
 	const_cast<MerryCommand*>(this)->SetOrder();

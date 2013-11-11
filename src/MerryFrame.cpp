@@ -79,7 +79,7 @@ void MerryFrame::NewConfig()
 	if (show)
 		m_mainPanel->GetTextCtrl()->AppendText("");
 #ifdef _ALMRUN_CONFIG_H_
-	if (!g_config->config[ShowTip])
+	if (!g_config->get(ShowTip))
 		m_listBoxPanel->SetToolTip(NULL);
 #endif//#ifdef _ALMRUN_CONFIG_H_
 	__DEBUG_END("::刷新配置");
@@ -183,13 +183,13 @@ void MerryFrame::OnShowEvent(wxShowEvent& e)
 	assert(textCtrl);
 	if (e.IsShown())
 	{
-		if (g_config->config[PlayPopupNotify])//是否播放提示音
+		if (g_config->get(PlayPopupNotify))//是否播放提示音
 			wxSound("Popup.wav").Play();
 		this->CentreOnce();
 		m_listBoxPanel->Dismiss();
 		this->Raise();
 		textCtrl->SetFocus();
-		if (g_config->config[AutoPopup])
+		if (g_config->get(AutoPopup))
 			textCtrl->AppendText(wxT(""));
 	}
 	else

@@ -105,7 +105,7 @@ static int LuaShellExecute(lua_State* L)
 #ifdef __WXMSW__
 	static bool chkwow = (
 	#ifdef _ALMRUN_CONFIG_H_
-		g_config->config[DisableWow64FsRedirection] && 
+		g_config->get(DisableWow64FsRedirection) && 
 	#endif//ifdef _ALMRUN_CONFIG_H_
 		wxIsPlatform64Bit() && wxGetWinVersion() >= wxWinVersion_6);
 	PVOID wowOld = NULL;
@@ -163,7 +163,7 @@ static int LuaToggleMerry(lua_State* L)
 	if (frame.IsShown())
 	{
 		frame.Hide();
-		if (g_config->config[DoubleToggleFunc] && LastCmd)
+		if (g_config->get(DoubleToggleFunc) && LastCmd)
 		{
 			time_t n_time;
 			time(&n_time);
