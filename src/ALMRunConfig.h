@@ -6,7 +6,7 @@
 #include <wx/fileconf.h>
 
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
-
+#define CONFIG_VERSION 1
 enum gui_config_item
 {
 	ListFont,
@@ -88,6 +88,7 @@ private:
 	time_t cfg_time;
 	time_t order_cfg_time;
 	wxString order_cfg_file;
+	int config_ver;
 };
 
 #ifdef __WXMSW__

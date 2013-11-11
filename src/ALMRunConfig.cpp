@@ -134,6 +134,10 @@ ALMRunConfig::ALMRunConfig()
 	listBoxPanel->SetFont(gui_config[ListFont]);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
+	config_ver = conf->ReadLong("Version",-1);
+	if (config_ver == -1)//配置文件未标注版本
+		cfg_changed = conf->Write("Version",(config_ver = CONFIG_VERSION));
+
 	CompareMode = conf->ReadLong("CompareMode",0);
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
