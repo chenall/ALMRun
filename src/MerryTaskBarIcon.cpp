@@ -4,13 +4,7 @@
 #include "cmdmgr.h"
 
 BEGIN_EVENT_TABLE(MerryTaskBarIcon, wxTaskBarIcon)
-	EVT_MENU(MENU_ITEM_OPEN, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_OPEN_CONFIG, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_CONFIG, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_ABOUT, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_EXIT, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_GUI_CONFIG, MerryTaskBarIcon::onPopMenu)
-	EVT_MENU(MENU_ITEM_CMDMGR,MerryTaskBarIcon::onPopMenu)
+	EVT_MENU_RANGE(MENU_ITEM_FIRST,MENU_ITEM_LAST,MerryTaskBarIcon::onPopMenu)
 	EVT_TASKBAR_LEFT_DCLICK(MerryTaskBarIcon::OnLeftButtonDClickEvent)
 END_EVENT_TABLE()
 
@@ -24,11 +18,11 @@ wxMenu* MerryTaskBarIcon::CreatePopupMenu()
 {
 	wxMenu* menu = new wxMenu;
 
-	menu->Append(MENU_ITEM_OPEN, wxT("显示界面(&O)"));
+	menu->Append(MENU_ITEM_SHOW, wxT("显示界面(&O)"));
 	menu->Append(MENU_ITEM_GUI_CONFIG, wxT("参数配置(&C)"));
 	menu->Append(MENU_ITEM_CMDMGR, wxT("命令管理(&S)"));
 	menu->Append(MENU_ITEM_OPEN_CONFIG, wxT("程序目录(&S)"));
-	menu->Append(MENU_ITEM_CONFIG, wxT("刷新配置(R)"));
+	menu->Append(MENU_ITEM_RECONFIG, wxT("刷新配置(R)"));
 	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
 	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));
 
@@ -42,13 +36,13 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 		case MENU_ITEM_ABOUT:
 			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format("version " VERSION_STR " --- http://ALMRun.chenall.net\r\n修改自(merry SVN R:98 http://name5566.com)\r\n编译时间:%s %s",__DATE__,__TIME__));
 			break;
-		case MENU_ITEM_OPEN:
+		case MENU_ITEM_SHOW:
 			::wxGetApp().GetFrame().Show();
 			break;
 		case MENU_ITEM_OPEN_CONFIG:
 			::wxGetApp().GetFrame().OpenConfigDir();
 			break;
-		case MENU_ITEM_CONFIG:
+		case MENU_ITEM_RECONFIG:
 			::wxGetApp().GetFrame().NewConfig();
 			break;
 		case MENU_ITEM_EXIT:

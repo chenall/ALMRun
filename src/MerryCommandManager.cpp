@@ -171,7 +171,7 @@ void MerryCommandManager::AddPluginCmd(lua_State* L)
 	wxString commandDesc(wxString(lua_tostring(L, -1), wxConvLocal));
 
 	int funcRef = 0;
-	wxString commandLine;
+	wxString commandLine = wxEmptyString;
 	lua_pushstring(L, "cmd");
 	lua_rawget(L, it);
 	if (lua_isfunction(L,-1))

@@ -175,9 +175,12 @@ static int LuaToggleMerry(lua_State* L)
 	else
 	{
 		time(&chktime);
-//		PostMessage(frame.GetHWND(),WM_SHOWWINDOW,WA_ACTIVE,0);
-//		PostMessage(frame.GetHWND(),WM_ACTIVATE,WA_ACTIVE,0);
+#ifdef __WXMSW__
+		//使用POST发送消息，使得这个函数可以快速返回，否则如果在LUA脚本中执行该命令有可能会出错。
+		PostMessage(frame.GetHWND(),WM_COMMAND,MENU_ITEM_SHOW,0);
+#else
 		frame.Show();
+#endif
 	}
 	return 0;
 }
@@ -395,7 +398,6 @@ static int LuaMessageBox(lua_State* L)
 	if (caption.empty())
 		caption = wxMessageBoxCaptionStr;
 	lua_pushnumber(L,wxMessageBox(message,caption,style));
-	wxYES_NO;
 	return 1;
 }
 
@@ -587,7 +589,12 @@ static int LuaConfig(lua_State* L)
 static int LuaTestConfig(lua_State* L)
 {
 #ifdef _ALMRUN_CONFIG_H_
-	g_config->GuiConfig();
+	#ifdef __WXMSW__
+	//使用POST发送消息，使得这个函数可以快速返回，否则如果在LUA脚本中执行该命令有可能会出错。
+	PostMessage(::wxGetApp().GetFrame().GetHWND(),WM_COMMAND,MENU_ITEM_GUI_CONFIG,0);
+	#else
+		g_config->GuiConfig();
+	#endif
 #endif//ifdef _ALMRUN_CONFIG_H_
 	return 0;
 }
@@ -606,6 +613,11 @@ static int LuaDirExists(lua_State* L)
 
 static int LuaReConfig(lua_State* L)
 {
+#ifdef __WXMSW__
+	//使用POST发送消息，使得这个函数可以快速返回，否则如果在LUA脚本中执行该命令有可能会出错。
+	PostMessage(::wxGetApp().GetFrame().GetHWND(),WM_COMMAND,MENU_ITEM_RECONFIG,0);
+#else
 	::wxGetApp().GetFrame().NewConfig();
+#endif
 	return 0;
 }

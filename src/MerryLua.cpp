@@ -95,7 +95,8 @@ MerryLua::~MerryLua()
 {
 	__DEBUG_BEGIN("")
 	#if _DEBUG
-	stackDump();
+	while(lua_gettop(L))
+		stackDump();
 	#endif
 	this->OnClose();
 	lua_settop(L,0);

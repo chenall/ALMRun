@@ -15,6 +15,7 @@
 BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 //	EVT_CLOSE(MerryFrame::OnCloseEvent)
 //	EVT_ACTIVATE(MerryFrame::OnActivateEvent)
+	EVT_MENU_RANGE(MENU_ITEM_FIRST,MENU_ITEM_LAST,MerryTaskBarIcon::onPopMenu)
 	EVT_SHOW(MerryFrame::OnShowEvent)
 END_EVENT_TABLE()
 
