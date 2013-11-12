@@ -218,6 +218,9 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 {
 	MerryCommandArray commands;
 	MerryCommandArray l_commands;
+	MerryCommand* favourite_cmd = NULL;
+	const wxString& favourite = g_config->GetFavorite(commandPrefix);
+
 	bool test_cmp = false;
 	int cmp_find = -1;
 	for (size_t i=0; i<m_commands.size(); ++i)
@@ -266,6 +269,12 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 	#endif//ifdef _ALMRUN_CONFIG_H_
 		if (test_cmp)
 		{
+			//FavoriteList中有匹配，先记录下，后面再插入到最前面。
+			if (!favourite.empty() && !favourite_cmd && command->GetCommandName().IsSameAs(favourite))
+			{
+				favourite_cmd = command;
+				continue;
+			}
 			command->m_compare = cmp_find;
 			commands.push_back(command);
 			if (g_config->get(ShowTopTen) && commands.size() >= 10 && !g_config->get(OrderByPre))
@@ -274,6 +283,9 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 	}
 #ifdef _ALMRUN_CONFIG_H_
 	sort(commands.begin(),commands.end(),g_config->get(OrderByPre)?SortPreOrder:mysort);
+	if (favourite_cmd)
+		commands.insert(commands.begin(),favourite_cmd);
+
 	if (g_config->get(ShowTopTen) && commands.size() >= 10)
 		commands.resize(10);
 	if (commands.size() < 9)

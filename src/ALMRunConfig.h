@@ -7,7 +7,9 @@
 
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
 #define CONFIG_VERSION 1
+#define FAVORITELIST_FILE wxT("config/FavoriteList.txt")
 #define ParamHistoryLimit_default 50
+
 enum gui_config_item
 {
 	ListFont,
@@ -82,6 +84,8 @@ public:
 	int GetDefaultDirSub() { return def_dir_cfg.sub;};
 
 	void GuiConfig();
+	bool SetFavorite(const wxString& key,const wxString& name);
+	const wxString GetFavorite(const wxString& key);
 	int SetcmdOrder(wxString& cmd,int order = 0);
 	wxFileConfig *conf;
 	wxFileConfig *order_conf;
@@ -89,6 +93,7 @@ public:
 protected:
 	bool config[CONFIG_BOOL_MAX];
 	size_t config_u[CONFIG_UINT_MAX];
+	wxFileConfig *FavoriteList;
 
 private:
 	void OldToNew();

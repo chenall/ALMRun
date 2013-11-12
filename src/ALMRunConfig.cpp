@@ -109,7 +109,12 @@ ALMRunConfig::ALMRunConfig()
 	config[DoubleClick] = false;
 	config[DuplicateCMD] = false;
 	cfg_changed = false;
+	FavoriteList = NULL;
+	order_conf = NULL;
+	conf = NULL;
 	order_cfg_time = 0;
+	cfg_time = 0;
+
 	if (wxGetEnv(wxT("ALMRUN_HOME"),&Home))
 	{	
 		cfg_file = Home + wxT("config/ALMRun.ini");
@@ -122,14 +127,10 @@ ALMRunConfig::ALMRunConfig()
 			MoveFile(Home + wxGetApp().GetAppName().Append(".ini"),cfg_file);
 	}
 	if (wxFileExists(cfg_file) == false)
-	{
 		cfg_file = wxEmptyString;
-		cfg_time = 0;
-	}
 	else
-	{
 		cfg_time = wxFileModificationTime(cfg_file);
-	}
+
 	//lastId = 0;
 	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,7);
 	gui_config[ListFont] = conf->Read("/GUI/ListFont");
@@ -172,6 +173,9 @@ ALMRunConfig::ALMRunConfig()
 	this->OldToNew();
 
 	ConfigCommand();
+	if (config[RememberFavouratMatch])
+		FavoriteList = new wxFileConfig(wxT("ALMRun"),wxEmptyString,Home +  FAVORITELIST_FILE ,wxEmptyString,wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH | wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
+
 #ifndef _DEBUG
 	conf->SetPath("/Config");
 
@@ -282,8 +286,13 @@ void ALMRunConfig::GuiConfig()
 			if (config[i] != dlg->config->IsChecked(i))
 				conf->Write(config_str[i],!config[i]);
 		}
-		cfg_changed = true;
-		::wxGetApp().GetFrame().NewConfig();
+		conf->Flush();
+		#ifdef __WXMSW__
+			//使用POST发送消息，使得这个函数可以快速返回.
+			PostMessage(::wxGetApp().GetFrame().GetHWND(),WM_COMMAND,MENU_ITEM_RECONFIG,0);
+		#else
+			::wxGetApp().GetFrame().NewConfig();
+		#endif
 	}
 	dlg->Destroy();
 }
@@ -609,6 +618,23 @@ int ALMRunConfig::SetcmdOrder(wxString& cmd,int order)
 	return order;
 }
 
+bool ALMRunConfig::SetFavorite(const wxString& key,const wxString& name)
+{
+	if (FavoriteList)
+	{
+		FavoriteList->Write(key,name);
+		return FavoriteList->Flush();
+	}
+	return false;
+}
+
+const wxString ALMRunConfig::GetFavorite(const wxString& key)
+{
+	if (FavoriteList)
+		return FavoriteList->Read(key);
+	return wxEmptyString;
+}
+
 void ALMRunConfig::get(const wxString& name)
 {
 
@@ -621,5 +647,6 @@ ALMRunConfig::~ALMRunConfig()
 		conf->Flush();
 	wxDELETE(conf);
 	wxDELETE(order_conf);
+	wxDELETE(FavoriteList);
 	__DEBUG_END("")
 }
