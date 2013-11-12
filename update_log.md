@@ -5,6 +5,14 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [2013-11-12 v1.2.0.32](https://github.com/chenall/ALMRun/archive/v1.2.0.32_BIN.zip)
+    1.完善参数记录，新增ParamHistoryLimit参数，限制参数历史记录个数（默认50，可以在ALMRun.INI中修改）.
+    2.新增配置参数“保存最近一次匹配”，仿ALTRun的FavoriteList.txt功能。
+
+### [2013-11-11 v1.2.0.31]
+    1.最多命令数量限制增加到1万个。
+    2.添加新参数“允许命令名重复”。
+
 ### [2013-11-10 v1.2.0.30](https://github.com/chenall/ALMRun/archive/v1.2.0.30_BIN.zip)
     1.修正ORDER.INI不存在时出错的问题。
     2.修改几处可能出现问题的代码，尝试解决关机时报错的问题。
