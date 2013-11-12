@@ -1,4 +1,4 @@
-### [2013-11-12 v1.2.0.32]
+### [2013-11-12 v1.2.0.32](https://github.com/chenall/ALMRun/archive/v1.2.0.32_BIN.zip)
     1.完善参数记录，新增ParamHistoryLimit参数，限制参数历史记录个数（默认50，可以在ALMRun.INI中修改）.
     2.新增配置参数“保存最近一次匹配”，仿ALTRun的FavoriteList.txt功能。
 
