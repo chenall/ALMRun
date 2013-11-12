@@ -44,6 +44,7 @@
 + [触发事件机制](#almrunevent)
 	* [onClose]
 	* [onUndefinedCommand]
++ [插件机制](#almrunplugins)
 
 ALMRunAPI
 =================
@@ -471,7 +472,33 @@ shellExecute(commandName, commandArg, workingDir, show)
 >参考资料:  
 	1. <http://baike.baidu.com/view/1080349.htm>   
 	2. <http://msdn.microsoft.com/en-us/library/windows/desktop/ms633545(v=vs.85).aspx> 
-    
+
+ 
+<h2 id="almrunplugins"></h2>
+ALMRunPlugins
+===============
+***************
+ALMRun最新的版本支持使用LUA脚本自动产生一系列命令，我们称为插件命令。（在config\sample\plugin.lua文件里面有几个例子）
+
+注册插件命令使用以下LUA语法  
+```lua
+  --其中，第一个参数'command'是固定的，说明要注册插件命令，以后可能会提供更多的插件事件方法。
+  --第二个是一个插件声明表，目前只支持两个参数name和func
+  --其中，name就是命令前辍（相当于命令名称，只有当输入的命令有符合这个名称才会执行这个插件
+  --  func要执行的函数体。这个函数的返回内容可以是nil不添加任何命令或者是一个命令，或命令组
+  -- function目前接受一个参数commandName，就是用户输入的内容（从前辍后面第一个空格开始的内容）
+  RegisterPlugin('command',{name=Prefix,func = function})
+
+  --一个例子在plugin.lua文件中，最简单的插件
+   RegisterPlugin('command',{name="R",func=function(commandName,...)
+     return {name="Run "..commandName,desc="ALMRun 运行插件",cmd=commandName}
+  end})
+  --上面的LUA代码就注册了一个插件，前辍为'R'，只要输入'R'就会执行该插件，它返回了一个命令名称为"Run "用户输入的内容
+  -- 用户比如输入 r cmd.exe
+  -- 命令显示"Run cmd.exe"执行的内容是cmd.exe
+  -- 一个插件也可以返回多个命令，你可以把所有要返回的命令放在一个table中返回就行了，具体可以参考plugin.lua里面的calc命令
+```
+
     
 ALMRunEvent
 ===============
