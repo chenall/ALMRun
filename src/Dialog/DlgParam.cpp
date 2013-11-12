@@ -1,4 +1,5 @@
 #include "DlgParam.h"
+#include "ALMRunConfig.h"
 #include <wx/wfstream.h>
 #define PARAMHISTORY_FILE wxT("config/ParamHistory.txt")
 
@@ -41,16 +42,19 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->SetSizer(bSizer2 );
 
 	wxArrayString m_array;
-	Param_file = PARAMHISTORY_FILE;
-	if (!wxFileExists(Param_file))
-		tfile.Create(Param_file);
-
-	if (tfile.Open(Param_file))
+	if (g_config->get_u(ParamHistoryLimit))
 	{
-		size_t i = tfile.GetLineCount();
-		for(size_t j=0;j<i;++j)
+		Param_file = PARAMHISTORY_FILE;
+		if (!wxFileExists(Param_file))
+			tfile.Create(Param_file);
+
+		if (tfile.Open(Param_file))
 		{
-			m_array.Add(tfile[j].Trim());
+			size_t i = tfile.GetLineCount();
+			for(size_t j=0;j<i;++j)
+			{
+				m_array.Add(tfile[j].Trim());
+			}
 		}
 	}
 	comboBox = new wxComboBox(this, wxID_ANY,wxEmptyString, wxDefaultPosition,wxSize(this->GetSize().GetWidth()-80,this->GetSize().GetHeight()-5),m_array,wxCB_DROPDOWN ); 
@@ -74,12 +78,18 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 void DlgParam::OnOKClick(wxCommandEvent& e)
 {
-	int i = comboBox->GetSelection();
 	wxString m_value = comboBox->GetValue();
-	if (!m_value.empty() && i && tfile.IsOpened())
+	if (m_value.empty() || !tfile.IsOpened())
+		return this->EndModal(wxID_OK);
+	int i = comboBox->GetSelection();
+	if (i < 0 )
+		i = comboBox->FindString(m_value);
+	if (i)
 	{
 		if (i > 0)
 			tfile.RemoveLine(i);
+		else if (tfile.GetLineCount() >= g_config->get_u(ParamHistoryLimit))
+			tfile.RemoveLine(tfile.GetLineCount()-1);
 		tfile.InsertLine(comboBox->GetValue(),0);
 		tfile.Write();
 	}

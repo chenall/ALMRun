@@ -137,16 +137,16 @@ ALMRunConfig::ALMRunConfig()
 	listBoxPanel->SetFont(gui_config[ListFont]);
 	conf->SetPath("/Config");
 	conf->SetRecordDefaults(false);
-	config_ver = conf->ReadLong("Version",-1);
-	if (config_ver == -1)//配置文件未标注版本
-		cfg_changed = conf->Write("Version",(config_ver = CONFIG_VERSION));
-	ParamHistoryLimit = conf->ReadLong("ParamHistoryLimit",ParamHistoryLimit_default);
+	config_u[CONFIG_VER] = conf->ReadLong("Version",-1);
+	if (config_u[CONFIG_VER] == -1)//配置文件未标注版本
+		cfg_changed = conf->Write("Version",(config_u[CONFIG_VER] = CONFIG_VERSION));
+	config_u[ParamHistoryLimit] = conf->ReadLong("ParamHistoryLimit",ParamHistoryLimit_default);
 	CompareMode = conf->ReadLong("CompareMode",0);
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
 
 	//从配置文件中读取参数，如果不存在则使用默认值
-	for(int i=0;i<CONFIG_ITEM_MAX;++i)
+	for(int i=0;i<CONFIG_BOOL_MAX;++i)
 		config[i] = conf->ReadBool(config_str[i],config[i]);
 
 	this->set("ShowTrayIcon",config[ShowTrayIcon]);
@@ -422,9 +422,16 @@ int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString
 
 bool ALMRunConfig::get(config_item_t config_type)
 {
-	if (config_type<0 || config_type >= CONFIG_ITEM_MAX)
+	if (config_type<0 || config_type >= CONFIG_BOOL_MAX)
 		return false;
 	return this->config[config_type];
+}
+
+size_t ALMRunConfig::get_u(config_item_t config_type) const
+{
+	if (config_type < 0 || config_type >= CONFIG_UINT_MAX)
+		return -1;
+	return this->config_u[config_type];
 }
 
 bool ALMRunConfig::Changed()

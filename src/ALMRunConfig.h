@@ -34,7 +34,10 @@ typedef enum
 	DoubleToggleFunc,
 	DoubleClick,
 	DuplicateCMD,
-	CONFIG_ITEM_MAX,
+	CONFIG_BOOL_MAX,
+	CONFIG_VER = 0,
+	ParamHistoryLimit,
+	CONFIG_UINT_MAX,
 } config_item_t;
 
 struct DirCfg
@@ -63,6 +66,7 @@ public:
 	bool Changed();
 	void get(const wxString& name);
 	bool get(config_item_t config_type);
+	size_t get_u(config_item_t config_type) const;
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
 	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
@@ -83,7 +87,8 @@ public:
 	wxFileConfig *order_conf;
 
 protected:
-	bool config[CONFIG_ITEM_MAX];
+	bool config[CONFIG_BOOL_MAX];
+	size_t config_u[CONFIG_UINT_MAX];
 
 private:
 	void OldToNew();
@@ -96,8 +101,6 @@ private:
 	time_t cfg_time;
 	time_t order_cfg_time;
 	wxString order_cfg_file;
-	size_t ParamHistoryLimit;
-	int config_ver;
 };
 
 #ifdef __WXMSW__
