@@ -60,7 +60,7 @@ void MerryMainPanel::OnMouseEvent(wxMouseEvent& e)
 		assert(!this->HasCapture());
 		this->CaptureMouse();
 	}
-	else if (e.Dragging())
+	else if (e.Dragging() && !e.RightIsDown())
 	{
 		wxPoint offset = e.GetPosition() - m_mousePosition;
 		wxWindow* parent = this->GetParent();
