@@ -55,6 +55,11 @@ void HotkeyCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	}
 	if (code == WXK_NONE || code == WXK_SHIFT || code == WXK_ALT || code == WXK_CONTROL)
 		return;
+	if (code == WXK_DELETE)
+	{
+		this->Clear();
+		return;
+	}
 	wxString key;
 	if (code > 32 && code < 127)
 		key.Append(e.GetUnicodeKey());
