@@ -2,6 +2,7 @@
 #ifndef _ALMRUN_CONFIG_H_
 #define _ALMRUN_CONFIG_H_
 #include "ALMRunVersion.h"
+#include "ALMRunCommon.h"
 #include "MerryWx.h"
 #include <wx/fileconf.h>
 
@@ -71,8 +72,6 @@ public:
 	size_t get_u(config_item_t config_type) const;
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
-	void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
-	void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude  = wxEmptyString,const int sub = -1);
 	bool SaveCfg();
 	bool DeleteCmd(const int id);
 	bool DeleteDir(const int id);
@@ -122,6 +121,7 @@ enum
 	MENU_ITEM_GUI_CONFIG,
 	MENU_ITEM_ABOUT,
 	MENU_ITEM_EXIT,
+	MENU_ITEM_EXIT1,
 	MENU_ITEM_CMDMGR,
 	MENU_ITEM_LAST,
 	MENU_CMD_FIRST = 10000,

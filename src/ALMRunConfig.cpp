@@ -5,9 +5,8 @@
 #include "MerryListBoxPanel.h"
 #include "MerryApp.h"
 #include "DlgConfig.h"
-#include "wx/dir.h"
 #include <wx/stdpaths.h>
-#include <shlobj.h>
+#include "ALMRunCommon.h"
 
 ALMRunConfig* g_config = NULL;
 const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD"};
@@ -31,68 +30,6 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中，鼠标单击选中列表条目，双击运行",
 	"如果选中，允许命令名称一样，否则添加命令时名称一样会失败。"
 };
-
-/* 
-函数功能：对指定文件在指定的目录下创建其快捷方式 
-函数参数： 
-lpszFileName    指定文件，为NULL表示当前进程的EXE文件。 
-lpszLnkFilePath 要创建的快捷方式全路径.
-wHotkey         为0表示不设置快捷键 
-pszDescription  备注 
-iShowCmd        运行方式，默认为常规窗口 
-*/  
-BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR lpszWorkDir, WORD wHotkey = 0, LPCTSTR lpszDescription = NULL, int iShowCmd = SW_SHOWNORMAL)  
-{  
-    if (lpszLnkFilePath == NULL)  
-        return FALSE;  
-  
-    HRESULT hr;  
-    IShellLink     *pLink;  //IShellLink对象指针  
-    IPersistFile   *ppf; //IPersisFil对象指针  
-      
-    //创建IShellLink对象  
-    hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pLink);  
-    if (FAILED(hr))  
-        return FALSE;  
-      
-    //从IShellLink对象中获取IPersistFile接口  
-    hr = pLink->QueryInterface(IID_IPersistFile, (void**)&ppf);  
-    if (FAILED(hr))  
-    {  
-        pLink->Release();  
-        return FALSE;  
-    }  
-      
-    //目标  
-    if (lpszFileName == NULL)  
-        pLink->SetPath(_wpgmptr);  
-    else  
-        pLink->SetPath(lpszFileName);  
-    //工作目录  
-    if (lpszWorkDir != NULL)  
-		pLink->SetWorkingDirectory(lpszWorkDir);  
-      
-    //快捷键  
-    if (wHotkey != 0)  
-        pLink->SetHotkey(wHotkey);  
-      
-    //备注  
-    if (lpszDescription != NULL)  
-        pLink->SetDescription(lpszDescription);  
-      
-    //显示方式  
-    pLink->SetShowCmd(iShowCmd);  
-  
-  
-    //快捷方式的路径 + 名称  
-
-    //保存快捷方式到指定目录下  
-    hr = ppf->Save(lpszLnkFilePath,TRUE);  
-      
-    ppf->Release();  
-    pLink->Release();  
-    return SUCCEEDED(hr);  
-}
 
 ALMRunConfig::ALMRunConfig()
 {
@@ -450,55 +387,6 @@ bool ALMRunConfig::Changed()
 	return (cfg_time  && cfg_time != wxFileModificationTime(cfg_file));
 }
 
-void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude, const int sub)
-{
-	wxArrayString specs = wxSplit(filespec,'|');
-	wxArrayString exc = wxSplit(exclude,'|');
-	if (specs.GetCount() == 0)
-		specs.Add(wxEmptyString);
-	this->ListFiles(dirname,files,specs,sub);
-	for(int i = files->Count() - 1;i>=0;--i)
-	{
-		int j = -1;
-		for(j = exc.size()-1;j >= 0;--j)
-		{//过滤符合条件的内容
-			if (files->Item(i).Matches(exc[j]))
-				break;
-		}
-		if (j >= 0)
-			files->RemoveAt(i);
-	}
-	specs.Clear();
-	exc.Clear();
-}
-
-void ALMRunConfig::ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub)
-{
-	static int cur_sub_dir = 0;
-	int flags = wxDIR_HIDDEN|wxDIR_FILES;
-	wxDir dir(dirname);
-	if (!dir.IsOpened())
-		return;
-	if (sub == -1)
-		flags |= wxDIR_DIRS;
-	for(int i=filespec.GetCount() - 1; i >= 0;--i)
-		dir.GetAllFiles(dirname,files,filespec[i],flags);
-
-	if (sub == -1 || cur_sub_dir == sub)
-		return;
-	++cur_sub_dir;//子目录级别+1
-	wxString file;
-	bool test = dir.GetFirst(&file,wxEmptyString,wxDIR_DIRS|wxDIR_HIDDEN);
-	wxString path = dir.GetNameWithSep();
-	while(test)
-	{
-		ListFiles(path+file,files,filespec,sub);
-		test = dir.GetNext(&file);
-	}
-	--cur_sub_dir;//子目录级别-1
-	return;
-}
-
 //新版的配置文件?
 void ALMRunConfig::ConfigCommand()
 {
@@ -545,7 +433,7 @@ void ALMRunConfig::ConfigCommand()
 		if (paths.empty())
 			continue;
 		for(int i=paths.size()-1;i>=0;--i)
-			this->ListFiles(paths[i],&files, conf->Read("include",def_dir_cfg.include) , conf->Read("exclude",def_dir_cfg.exclude) , conf->ReadLong("sub",def_dir_cfg.sub));
+			ListFiles(paths[i],&files, conf->Read("include",def_dir_cfg.include) , conf->Read("exclude",def_dir_cfg.exclude) , conf->ReadLong("sub",def_dir_cfg.sub));
 		g_commands->AddFiles(files);
 	}
 	conf->SetPath("/Config");

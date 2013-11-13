@@ -1,6 +1,8 @@
 #ifndef _MERRY_COMMAND_H_
 #define _MERRY_COMMAND_H_
 #include "MerryWx.h"
+#include "ALMRunCommon.h"
+
 #define CMDS_FLAG_CMDS 1
 #define CMDS_FLAG_DIRS 2
 #define CMDS_FLAG_LUA 4
@@ -11,6 +13,7 @@
 class MerryCommand
 {
 public:
+	MerryCommand(int commandID, const ALMRunCMDBase* cmd);
 	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc = wxEmptyString,const wxString& commandLine = wxEmptyString, int funcRef = 0, const wxString& triggerKey = wxEmptyString,const int order = 0);
 	~MerryCommand();
 
@@ -27,6 +30,7 @@ public:
 	void Execute(const wxString& commandArg) const;
 	int m_compare;
 private:
+	void conf_cmd();
 	int m_order;
 	int m_commandID;
 	wxString m_commandName;

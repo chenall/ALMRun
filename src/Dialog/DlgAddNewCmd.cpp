@@ -28,6 +28,7 @@
 ////@end includes
 
 #include "ALMRunConfig.h"
+#include "ALMRunCommon.h"
 #include "DlgAddNewCmd.h"
 #include "DlgAddNewDir.h"
 #include "MerryLua.h"
@@ -170,7 +171,7 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 		{
 			wxArrayString files;
 			wxString Exclude = dlg->dirExclude->GetValue();
-			g_config->ListFiles(dlg->dirName->GetValue(),&files,dlg->dirInclude->GetValue(),dlg->dirExclude->GetValue(),dlg->dirSub->GetValue());
+			ListFiles(dlg->dirName->GetValue(),&files,dlg->dirInclude->GetValue(),dlg->dirExclude->GetValue(),dlg->dirSub->GetValue());
 			if (!files.empty())
 			{
 				for(int i = files.Count() - 1 ;i>=0;--i)
@@ -197,6 +198,7 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 {
 	if (!e.GetShow())
 		return;
+	this->SetFocus();
 	wxString cmd = cmdLine->GetValue();
 	if (cmd.empty())
 		return;

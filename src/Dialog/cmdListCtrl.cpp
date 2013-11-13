@@ -25,7 +25,7 @@
 		{
 			wxString cmd = filenames[0];
 			cmd.Replace('\\','/');
-			DlgAddNewCmd* dlg=new DlgAddNewCmd(NULL);
+			DlgAddNewCmd* dlg=new DlgAddNewCmd(m_pOwner->GetParent());
 			dlg->cmdLine->SetValue(cmd);
 			dlg->cmdName->SetValue(wxFileNameFromPath(cmd));
 			cmd.Clear();
@@ -169,8 +169,8 @@ bool cmdListCtrl::onDelete(const wxString& item)
 void cmdListCtrl::onRightClick(wxListEvent& e)
 {
 	wxMenu *menu = new wxMenu;
-	menu->Append(MENU_CMD_EDIT,"±à¼­(&E)");
-	menu->Append(MENU_CMD_DEL,"É¾³ý(&D)");
+	menu->Append(ID_TOOL_EDIT,"±à¼­(&E)");
+	menu->Append(ID_TOOL_DELETE,"É¾³ý(&D)");
 	PopupMenu(menu);
 	delete menu;
 }
@@ -180,7 +180,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 	int item = ctrl->GetNextItem(-1,wxLIST_NEXT_ALL,wxLIST_STATE_FOCUSED);
 	switch(id)
 	{
-		case MENU_CMD_ADD:
+		case ID_TOOL_ADD:
 			{
 				DlgAddNewCmd* dlg=new DlgAddNewCmd(NULL);
 				if (dlg->ShowModal() == wxID_OK)
@@ -188,7 +188,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				dlg->Destroy();
 			}
 			break;
-		case MENU_CMD_EDIT:
+		case ID_TOOL_EDIT:
 			if (item == -1)
 				break;
 			{
@@ -204,7 +204,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				dlg->Destroy();
 			}
 			break;
-		case MENU_CMD_DEL:
+		case ID_TOOL_DELETE:
 			if (item == -1)
 				break;
 			if (ctrl->GetSelectedItemCount() == 1)

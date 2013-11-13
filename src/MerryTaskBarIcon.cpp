@@ -24,7 +24,7 @@ wxMenu* MerryTaskBarIcon::CreatePopupMenu()
 	menu->Append(MENU_ITEM_OPEN_CONFIG, wxT("程序目录(&S)"));
 	menu->Append(MENU_ITEM_RECONFIG, wxT("刷新配置(R)"));
 	menu->Append(MENU_ITEM_ABOUT, wxT("关于ALMRun(&A)"));
-	menu->Append(MENU_ITEM_EXIT, wxT("退出(&X)"));
+	menu->Append(MENU_ITEM_EXIT1, wxT("退出(&X)"));
 
 	return menu;
 }
@@ -54,6 +54,9 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 		   //::PostMessage((HWND__ *)::wxGetApp().GetFrame().GetHandle(),WM_QUIT,0,0);
 		   //exit(0);
 			wxExit();
+			break;
+		case MENU_ITEM_EXIT1:
+			PostMessage((HWND__ *)::wxGetApp().GetFrame().GetHandle(),WM_CLOSE,0,0);
 			break;
 	#ifdef _ALMRUN_CONFIG_H_
 		case MENU_ITEM_GUI_CONFIG:

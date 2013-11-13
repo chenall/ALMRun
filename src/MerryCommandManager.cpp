@@ -50,10 +50,16 @@ bool MerryCommandManager::DelCommand(int commandID)
 {
 	if (GetCommand(commandID))
 	{
+		wxDELETE(m_commands[commandID]);
 		m_commands[commandID] = new MerryCommand(-1,wxEmptyString);
 		return true;
 	}
 	return false;
+}
+
+const int MerryCommandManager::AddCommand(const ALMRunCMDBase* cmd)
+{
+	return AddCommand(cmd->Name,cmd->Desc,cmd->cmdLine,cmd->FuncRef,cmd->Key,cmd->Flags);
 }
 
 const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags)
@@ -202,12 +208,15 @@ void MerryCommandManager::GetPluginCmd(const wxString& name)
 		goto lua_pop;
 	int it=lua_gettop(L);
 	lua_pushnil(L);                               // ？？
+	ALMRunCMDBase *cmd = NULL;
     while(lua_next(L, it))                         // 开始枚举，并把枚举到的值压入栈
     {
-		this->AddPluginCmd(L);
+		cmd = lua_GetCommand(L, CMDS_FLAG_PLUGIN);
+		if (cmd && !cmd->Name.empty())
+			plugin_commands.push_back(new MerryCommand(plugin_commands.size(),cmd));
         lua_pop(L, 1);                              // 将Item从栈里面弹出
     }
-
+	wxDELETE(cmd);
 	sort(plugin_commands.begin(),plugin_commands.end(),command_sort);
 
 	lua_pop://恢复

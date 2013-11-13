@@ -10,6 +10,7 @@
 #include <wx/clipbrd.h>
 #include <wx/stdpaths.h>
 #include "dlgconfig.h"
+#include "ALMRunCommon.h"
 
 static void* lua_tohwnd(lua_State* L,int index)
 {
@@ -18,68 +19,28 @@ static void* lua_tohwnd(lua_State* L,int index)
 
 static int LuaAddCommand(lua_State* L)
 {
-	if (!lua_istable(L, 1))
+	ALMRunCMDBase* cmd = lua_GetCommand(L);
+	int commandID = 0;
+	if (!cmd)
 		luaL_error(L, "bad argument #1 to 'addCommand' (table expected)");
-
-	lua_pushstring(L, "name");
-	lua_rawget(L, 1);
-	wxString commandName(wxString(lua_tostring(L, -1), wxConvLocal));
-
-	lua_pushstring(L, "key");
-	lua_rawget(L, 1);
-	wxString triggerKey(wxString(lua_tostring(L, -1), wxConvLocal));
-
-	if (commandName.empty() && triggerKey.empty())
-	{
-		lua_settop(L, 1);
+	else if (cmd->Name.empty() && cmd->Key.empty())
 		luaL_error(L, "Command name or key not found.\r\n\r\n参数错误,丢失name或key参数.");
-	}
-
-	lua_pushstring(L, "desc");
-	lua_rawget(L, 1);
-	wxString commandDesc(wxString(lua_tostring(L, -1), wxConvLocal));
-
-	lua_pushstring(L, "cmd");
-	lua_rawget(L, 1);
-	wxString commandLine(wxString(lua_tostring(L, -1), wxConvLocal));
-
-	lua_pushstring(L, "flags");
-	lua_rawget(L,1);
-	int flags = lua_tointeger(L,-1);
-
-	lua_pushstring(L, "func");
-	lua_rawget(L, 1);
-	int funcRef = 0;
-	if (!lua_isfunction(L, -1))
-	{
-		if (commandLine.empty())
-		{
-			lua_settop(L, 1);
-			luaL_error(L, "can't find the command or func\r\n\r\n参数错误,cmd或func参数未设置.");
-			return 0;
-		}
-	}
+	else if (cmd->cmdLine.empty() && cmd->FuncRef == 0)
+		luaL_error(L, "can't find the command or func\r\n\r\n参数错误,cmd或func参数未设置.");
 	else
-	{
-		funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
-	}
+		commandID = g_commands->AddCommand(cmd);
 
-	const int commandID = g_commands->AddCommand(commandName, commandDesc,commandLine,funcRef, triggerKey,(flags<<3) | CMDS_FLAG_LUA);
+	wxDELETE(cmd);
 
 	if (commandID < 0 )
 	{
-		luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
-		lua_settop(L, 1);
+		luaL_unref(L, LUA_REGISTRYINDEX,cmd->FuncRef);
 		return luaL_error(L, ::MerryGetLastError().c_str());
 	}
 
 	if (!g_hotkey->RegisterHotkey(commandID))
-	{
-		lua_settop(L, 1);
 		return luaL_error(L, ::MerryGetLastError().c_str());
-	}
 
-	lua_settop(L, 1);
 	lua_pushnumber(L, commandID);
 	return 1;
 }
@@ -479,7 +440,7 @@ static int LuaDir(lua_State* L)
 	}
 	wxArrayString files;
 #ifdef _ALMRUN_CONFIG_H_
-	g_config->ListFiles(ls_path,&files,filespec,wxEmptyString,sub);
+	ListFiles(ls_path,&files,filespec,wxEmptyString,sub);
 #endif//ifdef _ALMRUN_CONFIG_H_
 	lua_newtable(L);
 	int i = files.Count();
