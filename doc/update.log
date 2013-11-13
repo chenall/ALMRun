@@ -1,6 +1,7 @@
 ### [2013-11-13 v1.2.0.33]
     1.热键输入框可以按Delete键清除热键。
     2.部份代码重整优化
+    3.修正输入命令之后按Tab键再按Esc键之后无法匹配并导致程序崩溃的问题。
     
 ### [2013-11-12 v1.2.0.32](https://github.com/chenall/ALMRun/archive/v1.2.0.32_BIN.zip)
     1.完善参数记录，新增ParamHistoryLimit参数，限制参数历史记录个数（默认50，可以在ALMRun.INI中修改）.

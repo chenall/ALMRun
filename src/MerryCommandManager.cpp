@@ -214,9 +214,9 @@ void MerryCommandManager::GetPluginCmd(const wxString& name)
 		cmd = lua_GetCommand(L, CMDS_FLAG_PLUGIN);
 		if (cmd && !cmd->Name.empty())
 			plugin_commands.push_back(new MerryCommand(plugin_commands.size(),cmd));
+		wxDELETE(cmd);
         lua_pop(L, 1);                              // 将Item从栈里面弹出
     }
-	wxDELETE(cmd);
 	sort(plugin_commands.begin(),plugin_commands.end(),command_sort);
 
 	lua_pop://恢复

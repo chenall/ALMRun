@@ -141,16 +141,16 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			this->ExecuteCmd();
 			break;
 		case WXK_ESCAPE:
-			if (this->GetValue().size())
-				this->Clear();
-			else if (this->EnterArgs == 0)
-				::wxGetApp().GetFrame().Hide();
-			else//当前是输入参数模式,按Esc取消
+			if (this->EnterArgs>0)//当前是输入参数模式,按Esc取消
 			{
 				this->ChangeValue(this->GetValue().substr(0,this->EnterArgs-2));
 				this->EnterArgs = 0;
 				this->SetSelection(0,-1);
 			}
+			else if (this->GetValue().size())//有输入的内容，按Esc清除内容
+				this->Clear();
+			else//没有输入，按Esc隐藏
+				::wxGetApp().GetFrame().Hide();
 			break;
 		case WXK_HOME:
 			this->SetInsertionPoint(this->EnterArgs);
