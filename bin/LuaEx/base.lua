@@ -108,6 +108,9 @@ end)
 
 function SplitCmd(cmdLine)
    cmdLine = trim(cmdLine)
+   if cmdLine:sub(1,10):lower():find("tp://") then -- 网址http://或ftp://
+	return cmdLine
+    end
    local pos = cmdLine:find(":::") -- 正常使用:::分隔参数
    local cmd,arg
     if pos then

@@ -1,7 +1,9 @@
-### [2013-11-13 v1.2.0.33]
+### [2013-11-13 v1.2.0.33](https://github.com/chenall/ALMRun/archive/v1.2.0.33_BIN.zip)
     1.热键输入框可以按Delete键清除热键。
     2.部份代码重整优化
     3.修正输入命令之后按Tab键再按Esc键之后无法匹配并导致程序崩溃的问题。
+    4.解决当命令是一个网址(http或ftp)时，参数包含空格时被截断的问题。
+    5.主界面点击第二次右键时不改变窗口位置。
     
 ### [2013-11-12 v1.2.0.32](https://github.com/chenall/ALMRun/archive/v1.2.0.32_BIN.zip)
     1.完善参数记录，新增ParamHistoryLimit参数，限制参数历史记录个数（默认50，可以在ALMRun.INI中修改）.
