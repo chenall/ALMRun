@@ -99,7 +99,7 @@ void cmdListCtrl::ReLoadCmds()
 
 void cmdListCtrl::onDclick(wxMouseEvent& e)
 {
-	this->RunMenu(MENU_CMD_EDIT,this);
+	this->RunMenu(ID_TOOL_EDIT,this);
 }
 
 cmdListCtrl::~cmdListCtrl()
