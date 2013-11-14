@@ -1,12 +1,19 @@
 cmake_minimum_required(VERSION 2.8)
 set(PROJ_NAME ALMRun)
-# wxWidgets path
-set(WX_DIR d:/dev/wxWidgets-2.9.5)
+
 project(${PROJ_NAME})
 # platform
 math(EXPR BIT "${CMAKE_SIZEOF_VOID_P} * 8")
 if(WIN32)
 	set(PLATFORM win${BIT})
+	# wxWidgets path
+	set(WXWIN $ENV{WXWIN})
+	if (NOT WXWIN)
+	    set(WXWIN D:/dev/wxWidgets-3.0.0)
+	ENDIF()
+	if (NOT EXISTS ${WXWIN}/include/msvc/wx/setup.h)
+	    MESSAGE(FATAL_ERROR "\nwxWidgets 库设置(${WXWIN})可能不正确\n编译需要至少wxWidgets 2.9.5以上版本")
+endif()
 elseif(APPLE)
 	set(PLATFORM macos)
 elseif(UNIX)
@@ -16,7 +23,7 @@ else()
 endif()
 message(STATUS "Platform - ${PLATFORM}")
 # build type
-set(ALL_BUILD_TYPE Debug Release)
+set(ALL_BUILD_TYPE Release Debug)
 if(NOT CMAKE_BUILD_TYPE)
 	list(GET ALL_BUILD_TYPE 0 BUILD_TYPE_0)
 	set(CMAKE_BUILD_TYPE ${BUILD_TYPE_0})
@@ -33,13 +40,14 @@ if(NOT IS_VALID_BUILD_TYPE)
 endif()
 message(STATUS "Build type (Makefile) - ${CMAKE_BUILD_TYPE}")
 # set output directory
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 # add executable
 aux_source_directory(src SRCS)
 aux_source_directory(src/Dialog SRCS)
 include_directories(src src/Dialog)
-include_directories(${WX_DIR}/include ${WX_DIR}/include/msvc)
-link_directories(${WX_DIR}/lib/vc_lib)
+include_directories(${WXWIN}/include ${WXWIN}/include/msvc)
+link_directories(${WXWIN}/lib/vc_lib)
 if(NOT APPLE)
 	file(GLOB OBJC_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.mm)
 	list(REMOVE_ITEM SRCS ${OBJC_SRCS})
@@ -75,23 +83,23 @@ if(UNIX)
 	include(${wxWidgets_USE_FILE})
 	target_link_libraries(${PROJ_NAME} ${wxWidgets_LIBRARIES})
 endif()
-# set flags
+# set flags 如果使用了-DRTL=MT参数，则使用/MT参数编译，这样产生的程序不依赖运行库
 if(WIN32)
+    if (RTL STREQUAL MT)
 	foreach(FLAG_VAR
-			CMAKE_CXX_FLAGS
-			CMAKE_CXX_FLAGS_DEBUG
-			CMAKE_CXX_FLAGS_RELEASE
-			CMAKE_CXX_FLAGS_MINSIZEREL
-			CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-		if(${FLAG_VAR} MATCHES "/MT")
-			string(REGEX REPLACE "/MD" "/MT" ${FLAG_VAR} "${${FLAG_VAR}}")
-		endif()
+		CMAKE_CXX_FLAGS
+		CMAKE_CXX_FLAGS_DEBUG
+		CMAKE_CXX_FLAGS_RELEASE
+		CMAKE_CXX_FLAGS_MINSIZEREL
+		CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+	    string(REGEX REPLACE "/MD" "/MT" ${FLAG_VAR} "${${FLAG_VAR}}")
 	endforeach()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_UNICODE -DUNICODE /wd4996")
-	target_link_libraries(${PROJ_NAME} comctl32 rpcrt4)
+    endif()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_UNICODE -DUNICODE /wd4996")
+    target_link_libraries(${PROJ_NAME} comctl32 rpcrt4)
 endif()
 if(UNIX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif()
 # configuration types
 if(CMAKE_CONFIGURATION_TYPES)
