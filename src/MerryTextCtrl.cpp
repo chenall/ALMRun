@@ -281,9 +281,8 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 
 		if (g_config->get(NumberKey) && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
 		{
-			if (keyCode != ' ' && !listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
-				return;
-			return this->ExecuteCmd();
+			if (keyCode == ' ' || listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
+				return this->ExecuteCmd();
 		}
 #endif//#ifdef _ALMRUN_CONFIG_H_
 		listBoxPanel->SetCommandArray(commands);

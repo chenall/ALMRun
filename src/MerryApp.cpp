@@ -26,7 +26,8 @@ bool MerryApp::OnInit()
             wxMessageBox(wxT("程序已经运行,但是进程通信失败!"),
                 wxT("ALMRun"), wxICON_INFORMATION|wxOK);
         }
-        wxDELETE(client);
+		wxDELETE(client);
+		wxDELETE(m_checker);
         return false;
     }
 	    // Create a new server

@@ -124,6 +124,8 @@ int MerryListBoxPanel::SetSelection(int index,int top)
 		}
 	#endif//#ifdef _ALMRUN_CONFIG_H_
 		index = m_topCommandIndex + top;
+		if (index>=(int)m_commands.size())
+			return 0;
 	}
 	else if (index < 0 )
 		index = m_commands.size() - 1;
