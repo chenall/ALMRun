@@ -259,7 +259,9 @@ void MerryListBoxPanel::OnMouseEvent(wxMouseEvent& e)
 	#endif
 		return;
 	}
-
+	#ifdef __WXMSW__
+		::SetFocus(HWND_TEXTCTRL);
+	#endif
 	wxPoint pos = e.GetPosition();
 	int itemIndex = pos.y / MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT;
 	const ListBoxItem& item = m_items[itemIndex];

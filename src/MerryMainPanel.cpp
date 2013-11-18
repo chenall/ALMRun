@@ -13,7 +13,6 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 	wxPanel(parent, wxID_ANY, wxPoint(0, 0), parent->GetClientSize())
 {
 	m_textCtrl = new MerryTextCtrl(this);
-
 	menu = new wxMenu;
 	menu->Append(MENU_ITEM_GUI_CONFIG, wxT("参数配置(&C)"));
 	menu->Append(MENU_ITEM_CMDMGR, wxT("命令管理(&S)"));
