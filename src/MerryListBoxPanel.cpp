@@ -230,6 +230,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 					dlg = new DlgAddNewCmd(NULL,wxID_ANY);
 				dlg->ShowModal();
 				dlg->Destroy();
+				PostMessage(this->GetParent()->GetHWND(),WM_COMMAND,MENU_ITEM_RECONFIG,0);
 			}
 			break;
 		case MENU_CMD_OPENDIR:
