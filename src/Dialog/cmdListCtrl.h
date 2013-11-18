@@ -19,6 +19,7 @@ public:
 protected:
 //    void OnColClick(wxListEvent& event);
 	void OnSelected(wxListEvent& event);
+	void onKeyDown(wxListEvent&  e);
 	void onRightClick(wxListEvent& event);
 	void onDclick(wxMouseEvent& e);
 	void onPopMenu(wxCommandEvent& e);

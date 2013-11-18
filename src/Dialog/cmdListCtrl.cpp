@@ -64,6 +64,7 @@ wxListCtrl(parent,id,pos,size,style)
 //	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
 //	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
 	this->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,wxObjectEventFunction(&cmdListCtrl::onRightClick));
+	this->Connect(wxEVT_LIST_KEY_DOWN,wxObjectEventFunction(&cmdListCtrl::onKeyDown));
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(new DnDialogFile(this));
 #endif
@@ -97,6 +98,30 @@ void cmdListCtrl::ReLoadCmds()
 	}
 }
 
+void cmdListCtrl::onKeyDown(wxListEvent& e)
+{
+	int keyCode = e.GetKeyCode();
+	int menuid = 0;
+	switch(keyCode)
+	{
+		case WXK_INSERT:
+			menuid = ID_TOOL_ADD;
+			break;
+		case WXK_DELETE:
+			menuid = ID_TOOL_DELETE;
+			break;
+		case WXK_F2:
+			menuid = ID_TOOL_EDIT;
+			break;
+		default:
+			e.Skip();
+			return;
+	}
+	if (menuid)
+		this->RunMenu(menuid,this);
+//	wxMessageBox(wxString::Format("%d,%d,%s",e.GetKeyCode(),e.GetIndex(),e.GetItem().GetText()));
+}
+
 void cmdListCtrl::onDclick(wxMouseEvent& e)
 {
 	this->RunMenu(ID_TOOL_EDIT,this);
@@ -105,7 +130,9 @@ void cmdListCtrl::onDclick(wxMouseEvent& e)
 cmdListCtrl::~cmdListCtrl()
 {
 	__DEBUG_BEGIN("")
+	this->Disconnect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK);
 	this->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED);
+	this->Disconnect(wxEVT_LIST_KEY_DOWN);
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(NULL);
 #endif
@@ -189,7 +216,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			}
 			break;
 		case ID_TOOL_EDIT:
-			if (item == -1)
+			if (ctrl->GetSelectedItemCount() == 0)
 				break;
 			{
 				DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
@@ -205,7 +232,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			}
 			break;
 		case ID_TOOL_DELETE:
-			if (item == -1)
+			if (ctrl->GetSelectedItemCount() == 0)
 				break;
 			if (ctrl->GetSelectedItemCount() == 1)
 			{
