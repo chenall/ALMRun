@@ -71,6 +71,12 @@ ALMRun Base 基本功能
     * `%CommonDesktop%`	所有用户(All Users)桌面文件夹路径
     * `%CommonPrograms%` 	所有用户(All Users)程序文件夹路径
 
+*   ALTRun 用户  
+   `ALMRun` 可以直接调用`ALTRun`的配置文件（只需要把`ALTRun`的`ShortCutList.txt`复制到ALMRun目录下即可），所以ALTRun用户可以直接转换过来，但是ALMRun无法管理ALTRun的配置文件，所以如果你经过一段时间的使用，习惯了ALMRun的操作，这时可以把ALTRun的配置导入ALMRun中，快速导入方法如下:  
+  
+      在命令列表或命令管理器添加一个新的命令，然后在命令中使用浏览操作选择ALTRun的配置文件（`ShortCutList.txt`），再点确定就会弹出一个提示，根据提示进行转换即可，如果你之前已经把`ShortCutList.txt`复制到ALMRun目录下，则需要删除该文件，否则会导致命令重复。
+  
+
 *  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](https://github.com/chenall/ALMRun/blob/master/bin/ALMRun.ini)里面有更详细的配置介绍.
 
 <h2 id="ALMRun_Advanced"></h2>
