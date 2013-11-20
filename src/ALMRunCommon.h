@@ -2,6 +2,7 @@
 #ifndef _ALMRUN_COMMON_H_
 #define _ALMRUN_COMMON_H_
 #include <shlobj.h>
+#include <wx/fileconf.h>
 #include "MerryWx.h"
 #include "MerryLua.h"
 
@@ -22,5 +23,8 @@ void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString&
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude  = wxEmptyString,const int sub = -1);
 ALMRunCMDBase* lua_GetCommand(lua_State* L, int flags = 0);
 wxString GetPinYin(const wxString& source);
+#ifdef __WXMSW__
+wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir = wxEmptyString);
+#endif
 
 #endif

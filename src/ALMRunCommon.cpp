@@ -1,7 +1,9 @@
 #include "ALMRunCommon.h"
 #include "MerryCommand.h"
 #include "wx/dir.h"
-
+#ifdef __WXMSW__
+	#include <wx/msw/registry.h>
+#endif
 /* 
 函数功能：对指定文件在指定的目录下创建其快捷方式 
 函数参数： 
@@ -249,3 +251,105 @@ wxString GetPinYin(const wxString& source)
 	}
 	return pinyin;
 }
+
+#ifdef __WXMSW__
+
+wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
+{
+	wxString cmdName = commandLine;
+	wxFileName fn = wxFileName(cmdName);
+	if (commandLine.find("://",3,3) !=  wxNOT_FOUND)//网址类型
+		return commandLine;
+	if (commandLine.StartsWith("::"))//:: 类型系统功能调用
+		return commandLine;
+	if (commandLine.StartsWith("\\\\"))//网络地址或系统功能调用
+		return commandLine;
+
+	//如果文件存在返回文件路径
+	if (!workingDir.empty() && wxDirExists(workingDir))
+		fn.SetCwd(workingDir);
+	if (fn.Exists())
+	{
+		fn.MakeAbsolute();
+		return fn.GetFullPath();
+	}
+
+	bool hasvol = fn.HasVolume();
+	bool hasPath = cmdName.Find('\\') != wxNOT_FOUND;
+	bool hasext = fn.HasExt();
+	if (!hasPath)//无路径信息，首先尝试读取注册表App Paths位置
+	{
+		wxString regPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\" + cmdName;
+		if (!hasext)//无扩展名，添加.exe
+			regPath.Append(".exe");
+		wxRegKey reg;
+		wxRegKey::StdKey hk[2] = {wxRegKey::HKCU,wxRegKey::HKLM};//在HKCU和HKLM中查找
+		for(int i=0;i<2;++i)
+		{
+			reg.SetName(hk[i],regPath);
+			if (!reg.Exists())
+				continue;
+			regPath = reg.QueryDefaultValue();
+			if (regPath.empty())
+				continue;
+			if (wxFileExists(regPath))//有找到，直接返回
+				return regPath;
+		}
+	}
+
+	wxArrayString mcwd;//根据PATH路径查询文件
+	wxArrayString wExt;//文件扩展名
+
+	if (cmdName.GetChar(0) == '\\')//当前磁盘根目录
+		mcwd.Add("\\");
+	else if (!hasPath)//在PATH和当前目录中查询
+		mcwd = ::wxSplit(wxString::Format("%s;%s",wxGetCwd(),wxGetenv("PATH")),';','\0');
+	else//只在当前目录中查询
+		mcwd.Add(::wxGetCwd());
+
+	if (!hasext)//无扩展，查找符合PATHEXT变量设定扩展的文件
+	{
+		cmdName.Append(".*");//使用.*查找所有，再根据PATHEXT的扩展名判断
+		wExt = ::wxSplit(wxGetenv("PATHEXT"),';','\0');
+	}
+
+	size_t mc_size = mcwd.size();
+
+	for(size_t i = 0;i< mc_size;++i)//循环查找所有路径下的文件
+	{
+		if (!::wxDirExists(mcwd[i]))//路径错误或不存在不查找
+			continue;
+		TCHAR szFind[MAX_PATH] = {_T("\0")};
+		WIN32_FIND_DATA findFileData;
+		BOOL bRet = true;
+		BOOL bFind = false;
+		wxString strPath = mcwd[i];
+		if(!::wxEndsWithPathSeparator(strPath))//路径不是以"\\"结尾自动添加
+			strPath += '\\';
+		strPath += cmdName;
+		_tcscpy_s(szFind, MAX_PATH, strPath.c_str());
+ 
+		HANDLE hFind = ::FindFirstFile(szFind, &findFileData);
+		if (INVALID_HANDLE_VALUE == hFind)
+			continue;
+			while (bRet)
+		{
+			if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			{//非目录
+				wxString file(findFileData.cFileName);
+				if (hasext || wExt.Index(file.substr(file.find_last_of('.')),false,true) != wxNOT_FOUND)
+				{
+					bFind = true;
+					strPath = wxFileName(strPath).GetPathWithSep() + file;
+					break;
+				}
+			}
+			bRet = ::FindNextFile(hFind, &findFileData);
+		}
+ 		::FindClose(hFind);
+		if (bFind)
+			return strPath;
+	}
+	return wxEmptyString;
+}
+#endif

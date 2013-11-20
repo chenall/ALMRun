@@ -216,7 +216,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			}
 			break;
 		case ID_TOOL_EDIT:
-			if (ctrl->GetSelectedItemCount() == 0)
+			if (item == -1)//没有当前激活条目
 				break;
 			{
 				DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
@@ -261,7 +261,21 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			}
 			break;
 		case ID_TOOL_CHECK:
-			wxMessageBox("命令检测,尚未完成");
+			{
+				if (MessageBox(NULL,_T("校验会检测无效命令（有可能没有办法全部检测出来），并选中这些条目，你可以直接删除或修改，如果命令比较多可能需要比较长的时间，继续吗？"),_T("提示"),MB_YESNO|MB_TOPMOST|MB_ICONQUESTION) != IDYES)
+					break;
+				size_t count = ctrl->GetItemCount();
+				size_t n = 0;
+				for(size_t i = 0;i<count;++i)
+				{
+					wxString test(GetCMDPath(ctrl->GetItemText(i,CMDLIST_COL_CMD)));
+					long state = test.empty()?wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED:0;
+					ctrl->SetItemState(i,state,wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED);
+					if (state) ++n;
+				}
+				if (n)
+					wxMessageBox(wxString::Format("列表中有%d个条目[已选定]的命令找不到，可能是无效命令，请检查或直接删除",n));
+			}
 			break;
 	}
 //	ctrl->Refresh();
