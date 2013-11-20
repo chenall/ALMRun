@@ -58,7 +58,7 @@ ALMRunConfig::ALMRunConfig()
 		order_cfg_file = Home + wxT("config/Order.ini");
 		if (wxFileExists(order_cfg_file))
 			order_cfg_time =  wxFileModificationTime(order_cfg_file);
-		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE);
+		order_conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,order_cfg_file,wxEmptyString,wxCONFIG_USE_LOCAL_FILE|wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
 		order_conf->SetExpandEnvVars(false);
 		if (!wxFileExists(cfg_file))
 			MoveFile(Home + wxGetApp().GetAppName().Append(".ini"),cfg_file);
@@ -69,19 +69,35 @@ ALMRunConfig::ALMRunConfig()
 		cfg_time = wxFileModificationTime(cfg_file);
 
 	//lastId = 0;
-	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,7);
+	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,7|wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
 	gui_config[ListFont] = conf->Read("/GUI/ListFont");
 	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
 	listBoxPanel->SetFont(gui_config[ListFont]);
 	conf->SetPath("/Config");
-	conf->SetRecordDefaults(false);
-	config_u[CONFIG_VER] = conf->ReadLong("Version",-1);
-	if (config_u[CONFIG_VER] == -1)//配置文件未标注版本
-		cfg_changed = conf->Write("Version",(config_u[CONFIG_VER] = CONFIG_VERSION));
-	config_u[ParamHistoryLimit] = conf->ReadLong("ParamHistoryLimit",ParamHistoryLimit_default);
-	CompareMode = conf->ReadLong("CompareMode",0);
+	conf->SetExpandEnvVars(true);
 	this->set("Explorer",conf->Read("Explorer"));
 	this->set("Root",conf->Read("Root"));
+	conf->SetExpandEnvVars(false);
+	conf->SetRecordDefaults(false);
+	config_u[CONFIG_VER] = conf->ReadLong("Version",-1);
+	if (config_u[CONFIG_VER] != CONFIG_VERSION)//配置文件版本不一致
+	{
+		if (wxMessageBox(wxT("为了方便使用，新的版本对配置文件进行了一些改变，需要升级配置文件才可以正常使用,对此造成的不便请谅解\n\n\t\t是否现在升级？"),wxT("提示"),wxICON_INFORMATION|wxYES_NO) == wxYES)
+		{
+			if (wxCopyFile(cfg_file,cfg_file + ".V1.BAK"))
+			{
+				configv2();
+				wxMessageBox(wxT("升级完成（旧版配置文件已经备份为ALMRun.V1.BAK），部份命令可能会出错，建议使用管理器检查一下"));
+				cfg_changed = conf->Write("Version",(config_u[CONFIG_VER] = CONFIG_VERSION));
+			}
+			else
+			{
+				wxMessageBox(wxT("备份旧版配置文件失败，升级失败，可能无法正常使用"));
+			}
+		}
+	}
+	config_u[ParamHistoryLimit] = conf->ReadLong("ParamHistoryLimit",ParamHistoryLimit_default);
+	CompareMode = conf->ReadLong("CompareMode",0);
 
 	//从配置文件中读取参数，如果不存在则使用默认值
 	for(int i=0;i<CONFIG_BOOL_MAX;++i)
@@ -296,9 +312,9 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 		return false;
 	if (cmd.empty() && !conf->DeleteGroup(wxString::Format("/cmds/%d",id)))
 		return false;
-
 	wxString oldPath = conf->GetPath();
 	conf->SetPath(wxString::Format("/cmds/%d",id));
+
 	conf->Write("cmd",cmd);
 	if (!name.empty())
 		conf->Write("name",name);
@@ -314,8 +330,8 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 		conf->Write("desc",desc);
 	else
 		conf->DeleteEntry("desc");
-
 	conf->SetPath(oldPath);
+
 	return (cfg_changed = true);
 }
 
@@ -399,7 +415,9 @@ void ALMRunConfig::ConfigCommand()
 	wxString cmds;
 	long cmdId;
 	long index = 0;
+	bool isExpandEnv = conf->IsExpandingEnvVars();
 	//命令
+	conf->SetExpandEnvVars(true);
 	conf->SetPath("/cmds");
 	for(bool test = conf->GetFirstGroup(cmds,index); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,index))
     {
@@ -437,6 +455,54 @@ void ALMRunConfig::ConfigCommand()
 		g_commands->AddFiles(files);
 	}
 	conf->SetPath("/Config");
+	conf->SetExpandEnvVars(isExpandEnv);
+}
+//V1版配置转换为V2版
+void ALMRunConfig::configv2()
+{
+	if (!conf)
+		return;
+	wxString oldPath = conf->GetPath();
+	wxString cmds;
+	long index = 0;
+	long NewStyle = conf->GetStyle();
+	long OldStyle =  NewStyle & (~wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
+	bool isExpandEnv = conf->IsExpandingEnvVars();
+	conf->SetPath("/cmds");
+
+	conf->SetExpandEnvVars(false);
+	for(bool test = conf->GetFirstGroup(cmds,index); test ; test = conf->GetNextGroup(cmds,index))
+    {
+		if (!cmds.IsNumber())
+			continue;
+		conf->SetStyle(OldStyle);
+		wxString cmd = conf->Read(cmds + "/cmd");
+		if (cmd.empty() || cmd.find("://",3,3) != wxNOT_FOUND)
+			continue;
+		cmd.Replace("\\\\","\\");
+//		cmd.Replace("/","\\");
+		conf->SetStyle(NewStyle);
+		conf->Write(cmds + "/cmd",cmd);
+    }
+	conf->SetPath("/dirs");
+	for(bool test = conf->GetFirstGroup(cmds,index); test ; test = conf->GetNextGroup(cmds,index))
+    {
+		if (!cmds.IsNumber())
+			continue;
+		conf->SetStyle(OldStyle);
+		wxString cmd = conf->Read(cmds + "/path");
+		if (cmd.empty())
+			continue;
+		cmd.Replace("\\\\","\\");
+		cmd.Replace("/","\\");
+		conf->SetStyle(NewStyle);
+		conf->Write(cmds + "/path",cmd);
+    }
+	conf->SetStyle(NewStyle);
+	conf->SetPath(oldPath);
+	conf->SetExpandEnvVars(isExpandEnv);
+	conf->Flush();
+	return;
 }
 
 //旧版自动转换为新版本
@@ -448,6 +514,7 @@ void ALMRunConfig::OldToNew()
 	wxString cmd;
 	wxString desc;
 	wxString cmds;
+	bool isExpandEnv = conf->IsExpandingEnvVars();
 	conf->SetExpandEnvVars(false);
 	if (conf->HasGroup("/Command"))
 	{
@@ -488,7 +555,7 @@ void ALMRunConfig::OldToNew()
 		conf->DeleteGroup("/directories");
 		conf->Flush();
 	}
-	conf->SetExpandEnvVars(true);
+	conf->SetExpandEnvVars(isExpandEnv);
 	conf->SetPath("/Config");
 }
 

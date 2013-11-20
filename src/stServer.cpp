@@ -94,7 +94,7 @@ bool stConnection::OnDisconnect()
 		for(int i=cmds.Count() - 1; i>=0 ;--i)
 		{
 			wxString cmd = cmds[i];
-			cmd.Replace("\\","/");
+			//cmd.Replace("\\","/");
 			if (::wxDirExists(cmd))
 				g_config->AddDir(cmd);
 			else

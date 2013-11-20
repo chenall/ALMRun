@@ -158,7 +158,7 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 		if (cmd.empty())
 			return;
 		this->Hide();
-		cmd.Replace("\\","/");
+		//cmd.Replace("\\","/");
 		DlgAddNewDir *dlg = new DlgAddNewDir(this);
 		dlg->dirName->SetValue(cmd);
 		dlg->SetMode(ADDDIR_FLAG_CMDS);
@@ -176,7 +176,7 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 			{
 				for(int i = files.Count() - 1 ;i>=0;--i)
 				{
-					files[i].Replace("\\","/");
+					//files[i].Replace("\\","/");
 					g_config->AddCmd(files[i],wxFileNameFromPath(files[i]));
 				}
 			}
@@ -187,9 +187,9 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 	}
 	else
 		cmd = wxFileSelector("ÇëÑ¡Ôñ",wxEmptyString,wxEmptyString,wxEmptyString,"*.exe;*.bat;*.cmd",0,this);
-	if (cmd.Len())
+	if (!cmd.empty())
 	{
-		cmd.Replace("\\","/");
+		//cmd.Replace("\\","/");
 		cmdLine->SetValue(cmd);
 	}
 }
@@ -214,7 +214,7 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 			break;
 		cmd.erase(0,1);
 	}
-	cmd.Replace('\\','/');
+//	cmd.Replace('\\','/');
 	cmdLine->SetValue(cmd);
 }
 

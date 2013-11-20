@@ -222,7 +222,7 @@ void MerryController::EnterKey(const wxArrayString& keys)
 	::SendInput(input.size(), &input[0], sizeof(INPUT));
 	::BlockInput(FALSE);
 }
-
+/*
 wxString GetFullCmdName(const wxString& commandName,const wxString& workingDir,const bool retOld = false)
 {
 	wxString wdir = workingDir;
@@ -284,14 +284,16 @@ wxString GetFullCmdName(const wxString& commandName,const wxString& workingDir,c
 		cmdName.Clear();
 	return cmdName;
 }
-
+*/
 bool MerryController::ShellExecute(const wxString& commandName,
 	const wxString& commandArg,
 	const wxString& workingDir,
 	const wxString& show) const
 {
 	// wxLogNull logNo;
-	wxString cmdName = commandName;
+	wxString cmdName = wxExpandEnvVars(commandName);
+	wxString cmdArg = wxExpandEnvVars(commandArg);
+
 	int showCommand = SW_SHOW;
 	bool runas = false;
 	if (show.IsSameAs(wxT("hide"), false))
@@ -317,14 +319,16 @@ bool MerryController::ShellExecute(const wxString& commandName,
 			break;
 		cmdName.erase(0,1);
 	}
+
 	if (!LocationExec)
 	{
 		__DEBUG_BEGIN(cmdName.c_str());
-		int ret = (int)::ShellExecute(NULL,(runas?_T("RunAs"):NULL), cmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand);
+		int ret = 0;
+		ret = (int)::ShellExecute(NULL,(runas?_T("RunAs"):NULL), cmdName.c_str(), cmdArg.c_str(), workingDir.c_str(), showCommand);
 		if (ret > 32)
 			return true;
-		__DEBUG_BEGIN(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg));
-		return (int)::WinExec(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg),SW_HIDE) > 32;
+		__DEBUG_BEGIN(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,cmdArg));
+		return (int)::WinExec(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,cmdArg),SW_HIDE) > 32;
 		//wxString tmpName = GetFullCmdName(cmdName,workingDir,false);
 		//if (tmpName.empty())
 		//{
@@ -335,8 +339,12 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	}
 
 	LocationExec = false;//定位文件位置标志复位
+	cmdName = GetCMDPath(cmdName,workingDir);
+	if (cmdName.empty())
+		return false;
+
 	cmdName.Replace('/','\\');
-	cmdName = GetFullCmdName(cmdName,workingDir,true);
+
 #ifdef _ALMRUN_CONFIG_H_
 	if (!g_config->Explorer.empty())
 		return (int)::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,cmdName),SW_SHOW) > 32;

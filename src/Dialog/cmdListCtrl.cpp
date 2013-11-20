@@ -38,7 +38,7 @@
 		for(int i = filenames.Count() - 1 ;i>=0;--i)
 		{
 			wxString cmd = filenames[i];
-			cmd.Replace("\\","/");
+			//cmd.Replace("\\","/");
 			g_config->AddCmd(cmd,wxFileNameFromPath(cmd));
 		}
 		m_pOwner->ReLoadCmds();

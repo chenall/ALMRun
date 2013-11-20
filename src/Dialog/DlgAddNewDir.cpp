@@ -239,7 +239,7 @@ void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
 		wxString name = wxDirSelector("请选择一个目录",wxEmptyString,0,wxDefaultPosition,this);
 		if (!name.empty())
 		{
-			name.Replace("\\","/");
+			//name.Replace("\\","/");
 			dirName->SetValue(name);
 		}
 		return;

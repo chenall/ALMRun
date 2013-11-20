@@ -7,7 +7,7 @@
 #include <wx/fileconf.h>
 
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
-#define CONFIG_VERSION 1
+#define CONFIG_VERSION 2
 #define FAVORITELIST_FILE wxT("config/FavoriteList.txt")
 #define ParamHistoryLimit_default 50
 
@@ -95,6 +95,7 @@ protected:
 	wxFileConfig *FavoriteList;
 
 private:
+	void configv2();
 	void OldToNew();
 	void ConfigCommand();
 	wxString LastItemHotKey;

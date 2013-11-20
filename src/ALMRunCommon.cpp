@@ -1,6 +1,8 @@
 #include "ALMRunCommon.h"
 #include "MerryCommand.h"
 #include "wx/dir.h"
+#include <wx/clipbrd.h>
+
 #ifdef __WXMSW__
 	#include <wx/msw/registry.h>
 #endif
@@ -115,6 +117,21 @@ void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString&
 	return;
 }
 
+wxString GetClipboardText()
+{
+	wxString ClipText = wxEmptyString;
+	if (wxTheClipboard->Open())
+	{
+		if (wxTheClipboard->IsSupported(wxDF_TEXT))
+		{
+			wxTextDataObject data;
+			wxTheClipboard->GetData(data);
+			ClipText = data.GetText();
+		}
+		wxTheClipboard->Close();
+	}
+	return ClipText;
+}
 
 ALMRunCMDBase* lua_GetCommand(lua_State* L,int flags)
 {
@@ -254,9 +271,31 @@ wxString GetPinYin(const wxString& source)
 
 #ifdef __WXMSW__
 
+//简单的分离命令和参数函数
+wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
+{
+	if (cmdLine.empty())
+		return cmdLine;
+	wxArrayString cmdArray = ::wxSplit(cmdLine,' ');
+	wxString cmd = cmdArray.Item(0);
+	if (cmdArg && cmdArray.size() > 1)
+	{
+		cmdArray.RemoveAt(0);
+		*cmdArg = ::wxJoin(cmdArray,' ');
+	}
+	return cmd;
+}
+
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 {
-	wxString cmdName = commandLine;
+	wxString cmdName = ParseCmd(commandLine);
+	wxString cmdFlags("@+>*");
+	while(!cmdName.empty())
+	{
+		if (cmdFlags.Index(cmdName[0]) == wxNOT_FOUND)
+			break;
+		cmdName.erase(0,1);
+	}
 	wxFileName fn = wxFileName(cmdName);
 	if (commandLine.find("://",3,3) !=  wxNOT_FOUND)//网址类型
 		return commandLine;
@@ -268,6 +307,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	//如果文件存在返回文件路径
 	if (!workingDir.empty() && wxDirExists(workingDir))
 		fn.SetCwd(workingDir);
+	wxMessageBox(fn.GetFullPath());
 	if (fn.Exists())
 	{
 		fn.MakeAbsolute();
@@ -352,4 +392,14 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	}
 	return wxEmptyString;
 }
+
+bool RunCMD(const wxString& cmdLine)
+{
+    wxString cmd(cmdLine);
+	//替换{%c}为剪贴板内容
+	cmd.Replace("{%c}",GetClipboardText());
+   //替换{%wt}为窗体标题
+	return true;
+}
+
 #endif
