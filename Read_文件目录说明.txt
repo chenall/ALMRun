@@ -1,0 +1,14 @@
+ALMRun.exe		主程序
+lua51.dll		LUA扩展支持库
+ALMRun.ini 		默认配置文件（优先使用config目录下的）
+config      		配置文件目录
+doc         		说明，介绍，API文档  
+LuaEx       		LUA扩展支持目录，可删除（删除后就不再支持调用LUA脚本）
+skin			主界面
+Popup.wav   		声音文件
+ShortCutList.txt 	ALTRUN配置支持的例子（不需要可删除）
+README.md   		
+
+其中：除了除了ALMRUN.EXE和lua51.dll，还有SKIN目录以外，所有文件都是可以删除的，不需要可以自己删除。
+
+

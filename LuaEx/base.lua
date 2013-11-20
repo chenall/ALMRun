@@ -106,6 +106,7 @@ addEventHandler('onClose', function()
     end
 end)
 
+--[[
 function SplitCmd(cmdLine)
    cmdLine = trim(cmdLine)
    if cmdLine:sub(1,12):lower():find("tps?://") then -- ÍøÖ·http://»òftp://»òhttps://
@@ -167,6 +168,7 @@ CmdCallFunc = function(cmdLine,cmdArg)
     local DestDir = cmd:match("^(.-)[^\\|/]+$")
     shellExecute(cmd,cmdArg,DestDir)
 end
+]]
 
 function read_altrun_config (file)
   local fp = assert(io.open (file))
