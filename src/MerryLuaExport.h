@@ -512,19 +512,11 @@ static int LuaSetClipboardData(lua_State* L)
 
 static int LuaGetClipboardData(lua_State* L)
 {
-	int ret = 0;
-	if (wxTheClipboard->Open())
-	{
-		if (wxTheClipboard->IsSupported(wxDF_TEXT))
-		{
-			wxTextDataObject data;
-			wxTheClipboard->GetData(data);
-			lua_pushstring(L,data.GetText());
-			++ret;
-		}
-		wxTheClipboard->Close();
-	}
-	return ret;
+	wxString cliptext(GetClipboardText());
+	if (cliptext.empty())
+		return 0;
+	lua_pushstring(L,cliptext.c_str());
+	return 1;
 }
 
 static int LuaConfig(lua_State* L)

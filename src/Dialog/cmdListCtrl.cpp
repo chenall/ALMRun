@@ -275,6 +275,8 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				}
 				if (n)
 					wxMessageBox(wxString::Format("列表中有%d个条目[已选定]的命令找不到，可能是无效命令，请检查或直接删除",n));
+				else
+					wxMessageBox("校验完成，没有发现无效命令");
 			}
 			break;
 	}

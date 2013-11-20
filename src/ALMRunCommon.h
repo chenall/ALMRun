@@ -24,11 +24,12 @@ void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& file
 ALMRunCMDBase* lua_GetCommand(lua_State* L, int flags = 0);
 wxString GetPinYin(const wxString& source);
 wxString GetClipboardText();
+
 #ifdef __WXMSW__
 
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir = wxEmptyString);
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg = NULL);
-bool RunCMD(const wxString& cmdLine);
+bool RunCMD(const wxString& cmdLine,const wxString& cmdArg);
 
 #endif
 

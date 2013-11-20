@@ -41,9 +41,9 @@ public:
 
 	// show = normal, hide, min, max
 	bool ShellExecute(const wxString& commandName,
-		const wxString& commandArg,
-		const wxString& workingDir,
-		const wxString& show) const;
+		const wxString& commandArg = wxEmptyString,
+		const wxString& workingDir = wxEmptyString,
+		const wxString& show = wxEmptyString) const;
 
 private:
 	wxUIActionSimulator m_simulator;

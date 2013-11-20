@@ -2,6 +2,7 @@
 #include "MerryCommand.h"
 #include "wx/dir.h"
 #include <wx/clipbrd.h>
+#include "MerryController.h"
 
 #ifdef __WXMSW__
 	#include <wx/msw/registry.h>
@@ -288,7 +289,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 {
-	wxString cmdName = ParseCmd(commandLine);
+	wxString cmdName = wxExpandEnvVars(ParseCmd(commandLine));
 	wxString cmdFlags("@+>*");
 	while(!cmdName.empty())
 	{
@@ -307,7 +308,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	//如果文件存在返回文件路径
 	if (!workingDir.empty() && wxDirExists(workingDir))
 		fn.SetCwd(workingDir);
-	wxMessageBox(fn.GetFullPath());
+
 	if (fn.Exists())
 	{
 		fn.MakeAbsolute();
@@ -393,12 +394,29 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	return wxEmptyString;
 }
 
-bool RunCMD(const wxString& cmdLine)
+bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 {
     wxString cmd(cmdLine);
+	wxString argt = wxEmptyString;
 	//替换{%c}为剪贴板内容
-	cmd.Replace("{%c}",GetClipboardText());
-   //替换{%wt}为窗体标题
+	if (cmd.find("{%c}") != wxNOT_FOUND)
+		cmd.Replace("{%c}",GetClipboardText());
+
+	//替换{%wt}为窗体标题
+	if (cmd.find("{%wt}") != wxNOT_FOUND)
+		cmd.Replace("{%wt}",g_controller->GetWindowText(g_controller->GetForegroundWindow()));
+
+	if (cmd.find("{%p}") != wxNOT_FOUND)
+		cmd.Replace("{%p}",cmdArg);
+	else if (cmd.find("{%p+}") != wxNOT_FOUND)
+		cmd.Replace("{%p+}",cmdArg);
+	else
+		argt = cmdArg;
+	wxString arg;
+	cmd = ParseCmd(cmd,&arg);
+	arg += argt;
+
+	g_controller->ShellExecute(cmd,arg);
 	return true;
 }
 

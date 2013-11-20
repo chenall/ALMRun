@@ -143,6 +143,8 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		if (lua_isnil(L, 1))
 		{
 			lua_pop(L, 1);
+			if (RunCMD(m_commandLine,cmdArg))
+				goto ExecuteEnd;
 			return;
 		}
 		lua_pushstring(L, m_commandLine.c_str());
@@ -176,6 +178,8 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		);
 		lua_pop(L, 1);
 	}
+
+	ExecuteEnd:
 	if (m_commandName.empty() || m_flags == CMDS_FLAG_PLUGIN)
 		return;
 
