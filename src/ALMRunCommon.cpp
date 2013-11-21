@@ -272,10 +272,35 @@ wxString GetPinYin(const wxString& source)
 
 #ifdef __WXMSW__
 
+BOOL chkSysCmd(const wxString& cmdLine,wxString* const NewCmd = NULL)
+{
+	wxString cmdName(cmdLine);
+	wxString cmdFlags("@+>*");
+	while(!cmdName.empty())
+	{
+		if (cmdFlags.Index(cmdName[0]) == wxNOT_FOUND)
+			break;
+		cmdName.erase(0,1);
+	}
+
+	if (NewCmd)
+		*NewCmd = cmdName;
+
+	if (cmdName.find("://",3,3) !=  wxNOT_FOUND || //网址类型
+		  cmdName.StartsWith("::") || //:: 类型系统功能调用
+		  cmdName.StartsWith("\\\\")//网络地址或系统功能调用
+		)
+	{
+		return true;
+	}
+
+	return false;
+}
 //简单的分离命令和参数函数
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 {
-	if (cmdLine.empty())
+	wxString cmd;
+	if (cmdLine.empty() || chkSysCmd(cmdLine,&cmd))
 		return cmdLine;
 	wxArrayString cmdArray = ::wxSplit(cmdLine,' ');
 	wxString cmd = cmdArray.Item(0);
@@ -289,21 +314,12 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 {
-	wxString cmdName = wxExpandEnvVars(ParseCmd(commandLine));
-	wxString cmdFlags("@+>*");
-	while(!cmdName.empty())
-	{
-		if (cmdFlags.Index(cmdName[0]) == wxNOT_FOUND)
-			break;
-		cmdName.erase(0,1);
-	}
+	wxString cmdName;//
+	if (commandLine.empty() || chkSysCmd(commandLine,&cmdName))
+		return commandLine;
+
+	cmdName = wxExpandEnvVars(ParseCmd(cmdName));
 	wxFileName fn = wxFileName(cmdName);
-	if (commandLine.find("://",3,3) !=  wxNOT_FOUND)//网址类型
-		return commandLine;
-	if (commandLine.StartsWith("::"))//:: 类型系统功能调用
-		return commandLine;
-	if (commandLine.StartsWith("\\\\"))//网络地址或系统功能调用
-		return commandLine;
 
 	//如果文件存在返回文件路径
 	if (!workingDir.empty() && wxDirExists(workingDir))
