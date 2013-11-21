@@ -90,6 +90,7 @@ public:
 	wxFileConfig *order_conf;
 
 protected:
+	bool confWrite(const wxString& key,const wxString& value);
 	bool config[CONFIG_BOOL_MAX];
 	size_t config_u[CONFIG_UINT_MAX];
 	wxFileConfig *FavoriteList;

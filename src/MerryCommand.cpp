@@ -51,6 +51,7 @@ void MerryCommand::conf_cmd()
 		m_commandFName = m_commandName;
 		return;
 	}
+	m_commandName.Trim();
 	m_commandFName.sprintf("%s\n%s",m_commandName,GetPinYin(m_commandName));
 	if (m_flags == CMDS_FLAG_PLUGIN)
 		return;

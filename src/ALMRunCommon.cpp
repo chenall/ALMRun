@@ -299,8 +299,7 @@ BOOL chkSysCmd(const wxString& cmdLine,wxString* const NewCmd = NULL)
 //简单的分离命令和参数函数
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 {
-	wxString cmd;
-	if (cmdLine.empty() || chkSysCmd(cmdLine,&cmd))
+	if (cmdLine.empty() || chkSysCmd(cmdLine))
 		return cmdLine;
 	wxArrayString cmdArray = ::wxSplit(cmdLine,' ');
 	wxString cmd = cmdArray.Item(0);

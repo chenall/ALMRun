@@ -306,6 +306,17 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 	return cmdId;
 }
 
+bool ALMRunConfig::confWrite(const wxString& key,const wxString& value)
+{
+	if (!conf)
+		return false;
+	wxString Nkey(key);
+	wxString Nvalue(value);
+	Nkey.Trim();
+	Nvalue.Trim();
+	return conf->Write(Nkey,Nvalue);
+}
+
 bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc)
 {
 	if (!conf || id < 0)
@@ -315,19 +326,19 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 	wxString oldPath = conf->GetPath();
 	conf->SetPath(wxString::Format("/cmds/%d",id));
 
-	conf->Write("cmd",cmd);
+	confWrite("cmd",cmd);
 	if (!name.empty())
-		conf->Write("name",name);
+		confWrite("name",name);
 	else
 		conf->DeleteEntry("name");
 
 	if (!key.empty())
-		conf->Write("key",key);
+		confWrite("key",key);
 	else
 		conf->DeleteEntry("key");
 
 	if (!desc.empty())
-		conf->Write("desc",desc);
+		confWrite("desc",desc);
 	else
 		conf->DeleteEntry("desc");
 	conf->SetPath(oldPath);
