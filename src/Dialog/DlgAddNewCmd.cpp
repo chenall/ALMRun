@@ -53,7 +53,7 @@
 		if (filenames.Count() == 1)
 		{
 			wxString cmd = filenames[0];
-			cmd.Replace('\\','/');
+			//cmd.Replace('\\','/');
 			m_pOwner->cmdLine->SetValue(cmd);
 			m_pOwner->cmdName->SetValue(wxFileNameFromPath(cmd));
 			cmd.Clear();

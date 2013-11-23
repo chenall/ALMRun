@@ -24,7 +24,7 @@
 		if (filenames.Count() == 1)
 		{
 			wxString cmd = filenames[0];
-			cmd.Replace('\\','/');
+			//cmd.Replace('\\','/');
 			DlgAddNewCmd* dlg=new DlgAddNewCmd(m_pOwner->GetParent());
 			dlg->cmdLine->SetValue(cmd);
 			dlg->cmdName->SetValue(wxFileNameFromPath(cmd));
@@ -268,7 +268,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				size_t n = 0;
 				for(size_t i = 0;i<count;++i)
 				{
-					wxString test(GetCMDPath(ctrl->GetItemText(i,CMDLIST_COL_CMD)));
+					wxString test(GetCMDPath(ParseCmd(ctrl->GetItemText(i,CMDLIST_COL_CMD))));
 					long state = test.empty()?wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED:0;
 					ctrl->SetItemState(i,state,wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED);
 					if (state) ++n;

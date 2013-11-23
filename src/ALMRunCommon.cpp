@@ -272,19 +272,24 @@ wxString GetPinYin(const wxString& source)
 
 #ifdef __WXMSW__
 
-BOOL chkSysCmd(const wxString& cmdLine,wxString* const NewCmd = NULL)
+BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 {
-	wxString cmdName(cmdLine);
 	wxString cmdFlags("@+>*");
-	while(!cmdName.empty())
+	int n = 0;
+	int n_size = cmdLine.size();
+	for(n = 0;n<n_size;++n)
 	{
-		if (cmdFlags.Index(cmdName[0]) == wxNOT_FOUND)
+		if (cmdFlags.Index(cmdLine[n]) == wxNOT_FOUND)
 			break;
-		cmdName.erase(0,1);
+		++n;
 	}
+	if (n >= n_size)
+		return true;
 
-	if (NewCmd)
-		*NewCmd = cmdName;
+	if (cmdStart)
+		*cmdStart = n;
+	
+	wxString cmdName = cmdLine.substr(n);
 
 	if (cmdName.find("://",3,3) !=  wxNOT_FOUND || //网址类型
 		  cmdName.StartsWith("::") || //:: 类型系统功能调用
@@ -299,7 +304,11 @@ BOOL chkSysCmd(const wxString& cmdLine,wxString* const NewCmd = NULL)
 //简单的分离命令和参数函数
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 {
-	if (cmdLine.empty() || chkSysCmd(cmdLine))
+	size_t cmdIndex;
+	if (cmdLine.empty() || chkSysCmd(cmdLine,&cmdIndex))
+		return cmdLine;
+	wxString tmp = cmdLine.substr(cmdIndex);
+	if (wxFileName::Exists(tmp))//先尝试判断整个命令是否一个文件或目录并且已经存在
 		return cmdLine;
 	wxArrayString cmdArray = ::wxSplit(cmdLine,' ');
 	wxString cmd = cmdArray.Item(0);
@@ -313,11 +322,12 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 {
-	wxString cmdName;//
-	if (commandLine.empty() || chkSysCmd(commandLine,&cmdName))
+	size_t cmdIndex;
+
+	if (commandLine.empty() || chkSysCmd(commandLine,&cmdIndex))
 		return commandLine;
 
-	cmdName = wxExpandEnvVars(ParseCmd(cmdName));
+	wxString cmdName =commandLine.substr(cmdIndex);
 	wxFileName fn = wxFileName(cmdName);
 
 	//如果文件存在返回文件路径

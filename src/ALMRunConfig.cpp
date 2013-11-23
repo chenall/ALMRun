@@ -586,7 +586,7 @@ int ALMRunConfig::SetcmdOrder(wxString& cmd,int order)
 
 bool ALMRunConfig::SetFavorite(const wxString& key,const wxString& name)
 {
-	if (FavoriteList)
+	if (FavoriteList && !key.empty())
 	{
 		FavoriteList->Write(key,name);
 		return FavoriteList->Flush();

@@ -291,8 +291,7 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	const wxString& show) const
 {
 	// wxLogNull logNo;
-	wxString cmdName = wxExpandEnvVars(commandName);
-	wxString cmdArg = wxExpandEnvVars(commandArg);
+	wxString cmdName = commandName;
 
 	int showCommand = SW_SHOW;
 	bool runas = false;
@@ -319,16 +318,18 @@ bool MerryController::ShellExecute(const wxString& commandName,
 			break;
 		cmdName.erase(0,1);
 	}
-
+	wxString FullcmdName = GetCMDPath(cmdName);
 	if (!LocationExec)
 	{
-		__DEBUG_BEGIN(cmdName.c_str());
-		int ret = 0;
-		ret = (int)::ShellExecute(NULL,(runas?_T("RunAs"):NULL), cmdName.c_str(), cmdArg.c_str(), workingDir.c_str(), showCommand);
-		if (ret > 32)
-			return true;
-		__DEBUG_BEGIN(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,cmdArg));
-		return (int)::WinExec(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,cmdArg),SW_HIDE) > 32;
+		if (FullcmdName.empty())//没有获取到文件路径直接调用WINEXEC执行
+		{
+			__DEBUG_BEGIN(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg));
+			return (int)::WinExec(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg),SW_HIDE) > 32;
+		}
+		//有获取到文件路径，直接启动。
+		__DEBUG_BEGIN(FullcmdName.c_str());
+		return (int)::ShellExecute(NULL,(runas?_T("RunAs"):NULL), FullcmdName.c_str(), commandArg.c_str(), workingDir.c_str(), showCommand) > 32;
+
 		//wxString tmpName = GetFullCmdName(cmdName,workingDir,false);
 		//if (tmpName.empty())
 		//{
@@ -339,17 +340,16 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	}
 
 	LocationExec = false;//定位文件位置标志复位
-	cmdName = GetCMDPath(cmdName,workingDir);
-	if (cmdName.empty())
+	if (FullcmdName.empty())
 		return false;
 
-	cmdName.Replace('/','\\');
+	FullcmdName.Replace('/','\\');
 
 #ifdef _ALMRUN_CONFIG_H_
 	if (!g_config->Explorer.empty())
-		return (int)::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,cmdName),SW_SHOW) > 32;
+		return (int)::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,FullcmdName),SW_SHOW) > 32;
 #endif//ifdef _ALMRUN_CONFIG_H_
-	return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+cmdName.c_str(),NULL, SW_SHOW) > 32;
+	return (int)::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+FullcmdName.c_str(),NULL, SW_SHOW) > 32;
 	
 	//return (int)::ShellExecute(NULL,NULL,g_config->Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),NULL, SW_SHOW) > 32;
 }
