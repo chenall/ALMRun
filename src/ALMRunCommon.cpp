@@ -383,6 +383,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 
 	for(size_t i = 0;i< mc_size;++i)//循环查找所有路径下的文件
 	{
+
 		if (!::wxDirExists(mcwd[i]))//路径错误或不存在不查找
 			continue;
 		TCHAR szFind[MAX_PATH] = {_T("\0")};
@@ -396,6 +397,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 		_tcscpy_s(szFind, MAX_PATH, strPath.c_str());
  
 		HANDLE hFind = ::FindFirstFile(szFind, &findFileData);
+
 		if (INVALID_HANDLE_VALUE == hFind)
 			continue;
 			while (bRet)
@@ -403,7 +405,11 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 			if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{//非目录
 				wxString file(findFileData.cFileName);
-				if (hasext || wExt.Index(file.substr(file.find_last_of('.')),false,true) != wxNOT_FOUND)
+				size_t pos = file.find_last_of('.');
+				//查找的文件有扩展名说明已经找到了
+				//若没有扩展名，并且找到的文件也没有扩展名，也是符合
+				//否则查找符合PATHEXT的扩展名
+				if (hasext || pos == wxNOT_FOUND||wExt.Index(file.substr(pos),false,true) != wxNOT_FOUND)
 				{
 					bFind = true;
 					strPath = wxFileName(strPath).GetPathWithSep() + file;
@@ -412,6 +418,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 			}
 			bRet = ::FindNextFile(hFind, &findFileData);
 		}
+
  		::FindClose(hFind);
 		if (bFind)
 			return strPath;

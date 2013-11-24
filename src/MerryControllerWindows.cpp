@@ -319,6 +319,7 @@ bool MerryController::ShellExecute(const wxString& commandName,
 		cmdName.erase(0,1);
 	}
 	wxString FullcmdName = GetCMDPath(cmdName);
+
 	if (!LocationExec)
 	{
 		if (FullcmdName.empty())//没有获取到文件路径直接调用WINEXEC执行
