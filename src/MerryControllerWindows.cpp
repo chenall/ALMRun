@@ -291,38 +291,55 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	const wxString& show) const
 {
 	// wxLogNull logNo;
-	wxString cmdName = commandName;
+
 
 	int showCommand = SW_SHOW;
 	bool runas = false;
+	bool winexec = false;
+	bool NeedGetPath = true;
+
 	if (show.IsSameAs(wxT("hide"), false))
 		showCommand = SW_HIDE;
 	else if (show.IsSameAs(wxT("min"), false))
 		showCommand = SW_SHOWMINIMIZED;
 	else if (show.IsSameAs(wxT("max"), false))
 		showCommand = SW_SHOWMAXIMIZED;
-
-	while(true)
+	size_t len = commandName.size();
+	size_t n;
+	for(n = 0;n<len;++n)
 	{
-		UCHAR T = cmdName.GetChar(0).GetValue();
-		if (T == '@')//前导'@'隐藏窗口运行
-			showCommand = SW_HIDE;
-		else if (T == '*')//前导'*' NT6以上请会管理员权限,NT5运行为
-			runas = true;
-		else if (T == '>')//前导'>'请求管理员权限(NT6以上有效)
+		wxChar c = commandName[n];
+		switch(c)
 		{
-			if (::wxGetWinVersion() >= wxWinVersion_6)
+			case '@'://前导'@'隐藏窗口运行
+				showCommand = SW_HIDE;
+				continue;
+			case '*'://以管理员权限运行
 				runas = true;
+				continue;
+			case '>'://根据系统判断,NT6以上以管理员权限运行.
+				if (::wxGetWinVersion() >= wxWinVersion_6)
+					runas = true;
+				continue;
+			case '+'://强制参数标志
+				continue;
+			case '\2'://强制使用WinExec 函数执行
+				winexec = true;
+			case '\1'://\1\2 标志说明该命令已经经过处理,不需要再次处理
+				NeedGetPath = false;
+				continue;
+			default:
+				break;
 		}
-		else if (T != '+')
-			break;
-		cmdName.erase(0,1);
+		break;
 	}
-	wxString FullcmdName = GetCMDPath(cmdName);
+
+	wxString cmdName = commandName.substr(n);
+	wxString FullcmdName = NeedGetPath?GetCMDPath(cmdName):cmdName;
 
 	if (!LocationExec)
 	{
-		if (FullcmdName.empty())//没有获取到文件路径直接调用WINEXEC执行
+		if (winexec || FullcmdName.empty())//没有获取到文件路径直接调用WINEXEC执行
 		{
 			__DEBUG_BEGIN(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg));
 			return (int)::WinExec(wxString::Format("cmd.exe /c start \"\" /D \"%s\" \"%s\" %s",workingDir,cmdName,commandArg),SW_HIDE) > 32;

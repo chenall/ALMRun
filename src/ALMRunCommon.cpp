@@ -281,7 +281,6 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 	{
 		if (cmdFlags.Index(cmdLine[n]) == wxNOT_FOUND)
 			break;
-		++n;
 	}
 	if (n >= n_size)
 		return true;
@@ -291,9 +290,9 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 	
 	wxString cmdName = cmdLine.substr(n);
 
-	if (cmdName.find("://",3,3) !=  wxNOT_FOUND || //网址类型
-		  cmdName.StartsWith("::") || //:: 类型系统功能调用
-		  cmdName.StartsWith("\\\\")//网络地址或系统功能调用
+	if (cmdName.find("://",3,3) !=  wxNOT_FOUND //网址类型
+		 || cmdName.StartsWith("::") //:: 类型系统功能调用
+		 || cmdName.StartsWith("\\\\")//网络地址或系统功能调用
 		)
 	{
 		return true;
@@ -304,35 +303,97 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 //简单的分离命令和参数函数
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 {
-	size_t cmdIndex;
-	if (cmdLine.empty() || chkSysCmd(cmdLine,&cmdIndex))
-		return cmdLine;
-	wxString tmp = cmdLine.substr(cmdIndex);
-	if (wxFileName::Exists(tmp))//先尝试判断整个命令是否一个文件或目录并且已经存在
-		return cmdLine;
-	wxArrayString cmdArray = ::wxSplit(cmdLine,' ');
-	wxString cmd = cmdArray.Item(0);
-	if (cmdArg && cmdArray.size() > 1)
+	size_t cmd_len = cmdLine.size();
+	wxString cmdFlags("@+>*");
+	wxString cmd = wxEmptyString;
+	size_t n;
+	for(n = 0;n<cmd_len;++n)
 	{
-		cmdArray.RemoveAt(0);
-		*cmdArg = ::wxJoin(cmdArray,' ');
+		if (cmdFlags.Index(cmdLine[n]) == wxNOT_FOUND)
+			break;
 	}
-	return cmd;
+	if (n >= cmd_len)//命令行可能为空
+		return cmdLine;
+
+	wxString cmd_flag = cmdLine.Left(n);
+	size_t cmd_pos = n;
+	if (cmdLine[n] == '\"')//带引号
+	{
+		cmd_pos += 1;
+		for(++n;n<cmd_len;++n)
+		{
+			if (cmdLine[n] == '\"')
+				break;
+		}
+		cmd = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));
+
+		goto getParam;
+	}
+	else if (chkSysCmd(cmdLine.substr(n)))
+		return wxEmptyString;
+	else
+	{
+		cmd = GetCMDPath(cmdLine.substr(n));
+		if (!cmd.empty())
+			goto checkCmd;
+	}
+
+	for(;n<cmd_len;++n)
+	{
+		wxChar c = cmdLine[n];
+		if (c == ' ')
+		{
+			wxString _tmp = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));
+			if (!_tmp.empty())
+			{
+				cmd = _tmp;
+				break;
+			}
+		}
+	}
+
+getParam:
+	if (cmdArg)
+	{
+		for(++n;n<cmd_len;++n)
+		{
+			wxChar  c = cmdLine[n];
+			switch(c)
+			{
+				case ' ':
+				case '\t':
+				case '\r':
+				case '\n':
+					continue;
+				default:
+					break;
+			}
+			break;
+		}
+		if (n<cmd_len)
+			*cmdArg = cmdLine.substr(n);
+	}
+checkCmd:
+	if (cmd.empty())
+		return cmd;
+	return cmd_flag + cmd;
 }
 
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 {
 	size_t cmdIndex;
-
 	if (commandLine.empty() || chkSysCmd(commandLine,&cmdIndex))
 		return commandLine;
 
-	wxString cmdName =commandLine.substr(cmdIndex);
+	wxString cmdName =::wxExpandEnvVars(commandLine.substr(cmdIndex));
 	wxFileName fn = wxFileName(cmdName);
 
 	//如果文件存在返回文件路径
 	if (!workingDir.empty() && wxDirExists(workingDir))
 		fn.SetCwd(workingDir);
+
+	if (fn.IsDir() && !::wxDirExists(cmdName))
+		return wxEmptyString;
 
 	if (fn.Exists())
 	{
@@ -341,9 +402,9 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	}
 
 	bool hasvol = fn.HasVolume();
-	bool hasPath = cmdName.Find('\\') != wxNOT_FOUND;
 	bool hasext = fn.HasExt();
-	if (!hasPath)//无路径信息，首先尝试读取注册表App Paths位置
+
+	if (fn.GetPath().empty())//无路径信息，首先尝试读取注册表App Paths位置
 	{
 		wxString regPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\" + cmdName;
 		if (!hasext)//无扩展名，添加.exe
@@ -366,12 +427,10 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	wxArrayString mcwd;//根据PATH路径查询文件
 	wxArrayString wExt;//文件扩展名
 
-	if (cmdName.GetChar(0) == '\\')//当前磁盘根目录
-		mcwd.Add("\\");
-	else if (!hasPath)//在PATH和当前目录中查询
+	if (fn.IsRelative() && !fn.IsPathSeparator(cmdName[0]))//相对路径在PATH和当前目录中查询
 		mcwd = ::wxSplit(wxString::Format("%s;%s",wxGetCwd(),wxGetenv("PATH")),';','\0');
-	else//只在当前目录中查询
-		mcwd.Add(::wxGetCwd());
+	else//是个绝对路径或根路径
+		mcwd.Add("");
 
 	if (!hasext)//无扩展，查找符合PATHEXT变量设定扩展的文件
 	{
@@ -383,16 +442,19 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 
 	for(size_t i = 0;i< mc_size;++i)//循环查找所有路径下的文件
 	{
-
-		if (!::wxDirExists(mcwd[i]))//路径错误或不存在不查找
-			continue;
+		wxString strPath = mcwd[i];
+		if (!strPath.empty())
+		{
+			if (!::wxDirExists(mcwd[i]))//路径错误或不存在不查找
+				continue;
+			if(!::wxEndsWithPathSeparator(strPath))//路径不是以"\\"结尾自动添加
+				strPath += '\\';
+		}
 		TCHAR szFind[MAX_PATH] = {_T("\0")};
 		WIN32_FIND_DATA findFileData;
 		BOOL bRet = true;
 		BOOL bFind = false;
-		wxString strPath = mcwd[i];
-		if(!::wxEndsWithPathSeparator(strPath))//路径不是以"\\"结尾自动添加
-			strPath += '\\';
+
 		strPath += cmdName;
 		_tcscpy_s(szFind, MAX_PATH, strPath.c_str());
  
@@ -423,13 +485,22 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 		if (bFind)
 			return strPath;
 	}
+
 	return wxEmptyString;
 }
 
 bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 {
-    wxString cmd(cmdLine);
+	wxString arg;
 	wxString argt = wxEmptyString;
+	wxString cmd = ParseCmd(cmdLine,&arg);
+	bool winexec = false;
+	if (cmd.empty())//没有找到命令
+	{
+		winexec = true;
+		cmd = cmdLine;
+	}
+
 	//替换{%c}为剪贴板内容
 	if (cmd.find("{%c}") != wxNOT_FOUND)
 		cmd.Replace("{%c}",GetClipboardText());
@@ -443,13 +514,20 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 	else if (cmd.find("{%p+}") != wxNOT_FOUND)
 		cmd.Replace("{%p+}",cmdArg);
 	else
-		argt = cmdArg;
-	wxString arg;
-	cmd = ParseCmd(cmd,&arg);
-	arg += argt;
+		argt = wxT(' ') + cmdArg;
 
-	g_controller->ShellExecute(cmd,arg);
-	return true;
+	if (winexec)
+	{
+		cmd += argt;
+		cmd = wxString::Format("\2%s",::wxExpandEnvVars(cmd));
+	}
+	else
+	{
+		cmd.insert(0,'\1');
+		arg += argt;
+		arg = ::wxExpandEnvVars(arg);
+	}
+	return g_controller->ShellExecute(cmd,arg);
 }
 
 #endif
