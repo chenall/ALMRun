@@ -49,7 +49,6 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 		this->SetOwnFont(font);
 	}
 	this->EnterArgs = 0;
-
 	HWND_TEXTCTRL = this->GetHWND();
 }
 

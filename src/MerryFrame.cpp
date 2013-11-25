@@ -10,6 +10,9 @@
 #include "MerryHotkey.h"
 #include "MerryController.h"
 #include <wx/sound.h>
+#ifdef __WXMSW__
+	#include <wx/msw/registry.h>
+#endif
 //#define DEBUG_ALWAYS_SHOW
 
 BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
@@ -34,6 +37,29 @@ MerryFrame::MerryFrame():
 	m_isCentred = false;
 #ifdef DEBUG_ALWAYS_SHOW
 	this->Show();
+#endif
+
+#ifdef __WXMSW__
+	wxRegKey reg("HKCU\\Keyboard Layout\\Preload");
+	if (!reg.Open())
+		return;
+	size_t max_Keys;
+	reg.GetKeyInfo(NULL,NULL,&max_Keys,NULL);
+	wxString Value;
+	wxString tmp;
+	long n = 0;
+	while(reg.GetNextValue(Value,n))
+	{
+		if (reg.QueryValue(Value,tmp))
+		{
+			if (tmp == "00000804" || tmp == "00000409" || tmp == "00000809")
+			{
+				hkl = ::LoadKeyboardLayout(tmp,KLF_ACTIVATE);//有找到的英文键盘,就装载它
+				break;
+			}
+		}
+	}
+
 #endif
 }
 
@@ -191,6 +217,10 @@ void MerryFrame::OnShowEvent(wxShowEvent& e)
 		m_listBoxPanel->Dismiss();
 		this->Raise();
 		textCtrl->SetFocus();
+#ifdef __WXMSW__
+		if (hkl)
+			ActivateKeyboardLayout(hkl,KLF_SETFORPROCESS);
+#endif
 		if (g_config->get(AutoPopup))
 			textCtrl->AppendText(wxT(""));
 	}

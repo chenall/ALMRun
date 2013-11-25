@@ -34,6 +34,9 @@ private:
 	MerryTaskBarIcon* m_taskBarIcon;
 
 	bool m_isCentred;
+#ifdef __WXMSW__
+	HKL hkl;
+#endif
 
 private:
 	DECLARE_EVENT_TABLE()
