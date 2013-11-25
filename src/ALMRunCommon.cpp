@@ -494,6 +494,7 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 	wxString arg;
 	wxString argt = wxEmptyString;
 	wxString cmd = ParseCmd(cmdLine,&arg);
+	wxString workDir;
 	bool winexec = false;
 	if (cmd.empty())//Ã»ÓÐÕÒµ½ÃüÁî
 	{
@@ -516,6 +517,7 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 	else
 		argt = wxT(' ') + cmdArg;
 
+	workDir = wxPathOnly(cmd);
 	if (winexec)
 	{
 		cmd += argt;
@@ -527,7 +529,8 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 		arg += argt;
 		arg = ::wxExpandEnvVars(arg);
 	}
-	return g_controller->ShellExecute(cmd,arg);
+
+	return g_controller->ShellExecute(cmd,arg,workDir);
 }
 
 #endif
