@@ -1,14 +1,23 @@
 @echo off
 title ALMRun 自动编译脚本 by chenall http://almrun.chenall.net
-
+setlocal
 REM 
 REM 如果你的wxWidgets库没有安装在以下位置请删除下一行的REM注释，并修改为正确的位置，否则无法编译
 REM set WXWIN=D:\dev\wxWidgets-3.0.0
 REM
+REM 设置使用静态库编译,这样编译产生的文件将不依赖DLL文件.(目前只有LUA库)
+REM 等同于在执行Build.cmd时加上参数static
+REM set STATIC=1
+REM
+REM PARAMS 需要附加的参数
+set PARAMS=
+
+if /i "%1"=="STATIC" set STATIC=1
 
 pushd %~dp0build
 if not DEFINED VS100COMNTOOLS goto :END
-if not exist ALMRun.sln cmake .. -DRTL=MT || goto :END
+if defined STATIC set PARAMS=%PARAMS% -DSTATIC=1
+cmake .. -DRTL=MT %PARAMS% || goto :END
 if not exist ALMRun.sln goto :END
 "%VS100COMNTOOLS%\..\IDE\devenv.com" ALMRun.sln /build Release
 if errorlevel 1 goto :END
