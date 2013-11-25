@@ -30,7 +30,7 @@ MerryFrame::MerryFrame():
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = NULL;
-	this->ShowTrayIcon(true);
+//	this->ShowTrayIcon(true);
 	m_isCentred = false;
 #ifdef DEBUG_ALWAYS_SHOW
 	this->Show();
@@ -129,8 +129,9 @@ void MerryFrame::ShowTrayIcon(const bool show)
 {
 	if (!show)
 	{
-		if (m_taskBarIcon)
-			m_taskBarIcon->RemoveIcon();
+		wxDELETE(m_taskBarIcon);
+//		if (m_taskBarIcon)
+//			m_taskBarIcon->RemoveIcon();
 		return;
 	}
 	if (!m_taskBarIcon)

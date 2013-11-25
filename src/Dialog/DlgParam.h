@@ -16,7 +16,7 @@ class DlgParam : public wxDialog
 		wxString Param_file;
 	public:
 		
-		DlgParam(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,60), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
+		DlgParam(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,70), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
 		~DlgParam();
 		void OnOKClick(wxCommandEvent& e);
 		//void OnCancelClick(wxCommandEvent& e);
