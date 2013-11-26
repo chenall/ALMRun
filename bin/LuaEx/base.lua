@@ -35,9 +35,15 @@ function RegisterPlugin(Name,plugin)
 		    local result = _func(__name,...)
 		    if result then
 			if #result == 0 then--返回单个结果
+			    if _plugin.name ~= nil then
+				result.name = _plugin.name .. "\1" .. result.name
+			    end
 			    table.insert(_eventResult,result)
 			else
 			    for _,__ in ipairs(result) do
+			    	if _plugin.name ~= nil then
+				    __.name = _plugin.name .. "\1" .. __.name
+				end
 				table.insert(_eventResult,__)
 			    end
 			end

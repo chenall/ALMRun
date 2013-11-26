@@ -138,6 +138,12 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	{
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
+			if (m_lastKeyDownCode != keyCode && listBoxPanel->GetSelectionCommand()->GetCmd().empty())
+			{//命令为空不执行,忽略.
+				m_lastKeyDownCode = e.GetKeyCode();
+				e.Skip();
+				break;
+			}
 			this->ExecuteCmd();
 			break;
 		case WXK_ESCAPE:
@@ -148,7 +154,10 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 				this->SetSelection(0,-1);
 			}
 			else if (this->GetValue().size())//有输入的内容，按Esc清除内容
+			{
+				this->EnterArgs = 0;
 				this->Clear();
+			}
 			else//没有输入，按Esc隐藏
 				::wxGetApp().GetFrame().Hide();
 			break;
@@ -174,12 +183,24 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			}
 			else
 			{
-				this->ChangeValue(listBoxPanel->GetSelectionCommand()->GetCommandName());
+				const MerryCommand* cmd = listBoxPanel->GetSelectionCommand();
+				if (cmd->GetFlags() == CMDS_FLAG_PLUGIN && this->EnterArgs == 0)//插件命令
+				{
+					this->EnterArgs = -1;
+					//发送空格键
+					wxString name = cmd->GetCommandName(0);
+					if (!name.empty())
+						this->ChangeValue(cmd->GetCommandName(0));
+					this->AppendText(" ");
+					this->AutoCompletion(WXK_SPACE);
+					break;
+				}
+				this->ChangeValue(cmd->GetCommandName());
 				this->AppendText(wxT(">>"));
 				this->EnterArgs = this->GetValue().size();
 				listBoxPanel->flags = 1;
 				MerryCommandArray commands;
-				commands.push_back(const_cast<MerryCommand*>(listBoxPanel->GetSelectionCommand()));
+				commands.push_back(const_cast<MerryCommand*>(cmd));
 				listBoxPanel->SetCommandArray(commands);
 				listBoxPanel->Popup();
 			}
@@ -223,7 +244,7 @@ void MerryTextCtrl::OnIdleEvent(wxIdleEvent& e)
 #else
 void MerryTextCtrl::OnTextEvent(wxCommandEvent& e)
 {
-	if (this->EnterArgs == 0 && m_lastKeyDownCode != WXK_TAB)
+	if (this->EnterArgs <= 0 && m_lastKeyDownCode != WXK_TAB)
 		return this->AutoCompletion(m_lastKeyDownCode);
 }
 
@@ -266,6 +287,10 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 	long from, to;
 	this->GetSelection(&from, &to);
 	wxString name = this->GetValue();
+
+	if (name.empty())
+		this->EnterArgs = 0;
+
 	if (from != to)
 		name.Truncate(from);
 
@@ -275,7 +300,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 		listBoxPanel->SelectPrev();
 	else// if (keyCode != WXK_TAB)
 	{
-		MerryCommandArray commands = g_commands->Collect(name);
+		MerryCommandArray commands = g_commands->Collect(name,this->EnterArgs);
 #ifdef _ALMRUN_CONFIG_H_
 		//数字热键启用
 

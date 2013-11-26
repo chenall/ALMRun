@@ -337,18 +337,25 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 		if (!cmd.empty())
 			goto checkCmd;
 	}
-
+	size_t lastSpace = 0;
 	for(;n<cmd_len;++n)
 	{
 		wxChar c = cmdLine[n];
 		if (c == ' ')
 		{
+			lastSpace = n;
 			wxString _tmp = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));
 			if (!_tmp.empty())
 			{
 				cmd = _tmp;
 				break;
 			}
+		}
+		else if (c == ':' && lastSpace)//空格之后再出现盘符,一般认为空格后面的内容是参数
+		{
+			n = lastSpace;
+			cmd = cmdLine.substr(cmd_pos,n-cmd_pos);
+			break;
 		}
 	}
 
@@ -374,6 +381,7 @@ getParam:
 			*cmdArg = cmdLine.substr(n);
 	}
 checkCmd:
+
 	if (cmd.empty())
 		return cmd;
 	return cmd_flag + cmd;
@@ -388,13 +396,14 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	wxString cmdName =::wxExpandEnvVars(commandLine.substr(cmdIndex));
 	wxFileName fn = wxFileName(cmdName);
 
-	//如果文件存在返回文件路径
-	if (!workingDir.empty() && wxDirExists(workingDir))
-		fn.SetCwd(workingDir);
-
+	if (fn.HasVolume() && fn.GetVolume().Len() > 1)
+		return wxEmptyString;
 	if (fn.IsDir() && !::wxDirExists(cmdName))
 		return wxEmptyString;
 
+	//如果文件存在返回文件路径
+	if (!workingDir.empty() && wxDirExists(workingDir))
+		fn.SetCwd(workingDir);
 	if (fn.Exists())
 	{
 		fn.MakeAbsolute();

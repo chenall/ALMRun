@@ -6,8 +6,8 @@
 #define CMDS_FLAG_CMDS 1
 #define CMDS_FLAG_DIRS 2
 #define CMDS_FLAG_LUA 4
-#define CMDS_FLAG_PLUGIN -1
 #define CMDS_FLAG_ALTRUN 8
+#define CMDS_FLAG_PLUGIN -1
 
 
 class MerryCommand

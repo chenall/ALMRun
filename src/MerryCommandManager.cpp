@@ -223,13 +223,14 @@ void MerryCommandManager::GetPluginCmd(const wxString& name)
 	lua_pop(L,1);
 	return;
 }
-MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
+MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix,int flags)
 {
 	MerryCommandArray commands;
 	MerryCommandArray l_commands;
 	MerryCommand* favourite_cmd = NULL;
 	const wxString& favourite = g_config->GetFavorite(commandPrefix);
-
+	if (flags == -1)
+		goto plugincmdonly;
 	bool test_cmp = false;
 	int cmp_find = -1;
 	for (size_t i=0; i<m_commands.size(); ++i)
@@ -297,6 +298,8 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 
 	if (g_config->get(ShowTopTen) && commands.size() >= 10)
 		commands.resize(10);
+
+plugincmdonly:
 	if (commands.size() < 9)
 	{
 		this->GetPluginCmd(commandPrefix);

@@ -18,7 +18,7 @@ public:
 	const int AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags = 0);
 	const MerryCommand* GetCommand(int commandID) const;
 	bool DelCommand(int commandID);
-	MerryCommandArray Collect(const wxString& commandPrefix);
+	MerryCommandArray Collect(const wxString& commandPrefix,int flags = 0);
 	void clearCmds(MerryCommandArray& cmds);
 	MerryCommandArray plugin_commands;
 private:

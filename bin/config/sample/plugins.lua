@@ -4,7 +4,7 @@ RegisterPlugin('command',{name='LUA',func = function(commandName,...)
 	end}
 end})
 
-RegisterPlugin('command',{name="R",func=function(commandName,...)
+RegisterPlugin('command',{func=function(commandName,...)
     return {name="Run "..commandName,desc="ALMRun ÔËÐÐ²å¼þ",cmd=commandName}
 end})
 

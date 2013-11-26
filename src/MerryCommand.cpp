@@ -52,9 +52,18 @@ void MerryCommand::conf_cmd()
 		return;
 	}
 	m_commandName.Trim();
-	m_commandFName.sprintf("%s\n%s",m_commandName,GetPinYin(m_commandName));
 	if (m_flags == CMDS_FLAG_PLUGIN)
+	{
+		size_t n = m_commandName.find('\1');
+		if (n != wxNOT_FOUND)
+		{
+			m_commandFName = m_commandName.substr(0,n);
+			m_commandName.Remove(0,n+1);
+		}
 		return;
+	}
+
+	m_commandFName.sprintf("%s\n%s",m_commandName,GetPinYin(m_commandName));
 	#ifdef _ALMRUN_CONFIG_H_
 	//获取排序值信息
 	if (g_config && g_config->order_conf)
