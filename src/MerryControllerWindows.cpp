@@ -328,6 +328,9 @@ bool MerryController::ShellExecute(const wxString& commandName,
 			case '\1'://\1\2 标志说明该命令已经经过处理,不需要再次处理
 				NeedGetPath = false;
 				continue;
+			case ' ':
+			case '\t':
+				continue;
 			default:
 				break;
 		}

@@ -274,7 +274,7 @@ wxString GetPinYin(const wxString& source)
 
 BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 {
-	wxString cmdFlags("@+>*");
+	wxString cmdFlags("@+>* ");
 	int n = 0;
 	int n_size = cmdLine.size();
 	for(n = 0;n<n_size;++n)
@@ -304,7 +304,7 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 {
 	size_t cmd_len = cmdLine.size();
-	wxString cmdFlags("@+>*");
+	wxString cmdFlags("@+>* ");
 	wxString cmd = wxEmptyString;
 	size_t n;
 	for(n = 0;n<cmd_len;++n)
@@ -329,27 +329,48 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 
 		goto getParam;
 	}
-	else if (chkSysCmd(cmdLine.substr(n)))
-		return wxEmptyString;
 	else
 	{
-		cmd = GetCMDPath(cmdLine.substr(n));
+		wxString tmp = cmdLine.substr(n);
+		size_t k = -1;
+		if (tmp.StartsWith("::"))//以"::"开头的系统功能调用
+		{
+			k = tmp.find(" ");
+			cmd = tmp.substr(0,k);
+		}
+		else if (tmp.find("://",3,3) !=  wxNOT_FOUND)//网址类型
+			cmd = tmp;
+		else
+			cmd = GetCMDPath(tmp);
+
 		if (!cmd.empty())
-			goto checkCmd;
+		{
+			n = k;
+			goto getParam;
+		}
 	}
 	size_t lastSpace = 0;
+	bool InSpace = false;
 	for(;n<cmd_len;++n)
 	{
 		wxChar c = cmdLine[n];
 		if (c == ' ')
 		{
+			if (InSpace)
+				continue;
 			lastSpace = n;
+			InSpace = true;
 			wxString _tmp = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));
 			if (!_tmp.empty())
 			{
 				cmd = _tmp;
 				break;
 			}
+		}
+		else if (c == '/' && InSpace)//空格之后接 '/'认为是参数
+		{
+			cmd = cmdLine.substr(cmd_pos,lastSpace-cmd_pos);
+			break;
 		}
 		else if (c == ':' && lastSpace)//空格之后再出现盘符,一般认为空格后面的内容是参数
 		{
@@ -360,9 +381,9 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 	}
 
 getParam:
-	if (cmdArg)
+	if (cmdArg && n < cmd_len)
 	{
-		for(++n;n<cmd_len;++n)
+		for(;n<cmd_len;++n)
 		{
 			wxChar  c = cmdLine[n];
 			switch(c)
@@ -380,7 +401,6 @@ getParam:
 		if (n<cmd_len)
 			*cmdArg = cmdLine.substr(n);
 	}
-checkCmd:
 
 	if (cmd.empty())
 		return cmd;
@@ -502,14 +522,9 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 {
 	wxString arg;
 	wxString argt = wxEmptyString;
-	wxString cmd = ParseCmd(cmdLine,&arg);
+	wxString cmd = cmdLine;
 	wxString workDir;
 	bool winexec = false;
-	if (cmd.empty())//没有找到命令
-	{
-		winexec = true;
-		cmd = cmdLine;
-	}
 
 	//替换{%c}为剪贴板内容
 	if (cmd.find("{%c}") != wxNOT_FOUND)
@@ -526,6 +541,12 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 	else
 		argt = wxT(' ') + cmdArg;
 
+	cmd = ParseCmd(cmd,&arg);
+	if (cmd.empty())//没有找到命令
+	{
+		winexec = true;
+		cmd = cmdLine;
+	}
 	workDir = wxPathOnly(cmd);
 	if (winexec)
 	{
