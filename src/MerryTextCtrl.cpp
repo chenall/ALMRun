@@ -11,6 +11,11 @@
 #include "MerryMacHelper.h"
 #endif
 
+#ifdef __WXMSW__
+	#include <wx/msw/registry.h>
+	#pragma comment(lib, "imm32.lib")
+#endif
+
 bool LocationExec;
 #ifdef __WXMSW__
 	HWND HWND_TEXTCTRL = NULL;
@@ -50,6 +55,34 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	}
 	this->EnterArgs = 0;
 	HWND_TEXTCTRL = this->GetHWND();
+#ifdef __WXMSW__
+	hkl = NULL;
+	wxRegKey reg("HKCU\\Keyboard Layout\\Preload");
+	if (!reg.Open())
+		return;
+	size_t max_Keys;
+	reg.GetKeyInfo(NULL,NULL,&max_Keys,NULL);
+	wxString Value;
+	wxString tmp;
+	//Windows 8 0000804 是中文输入法
+	DWORD winver = ::GetVersion()&0xFFFF;
+	winver = ((winver & 0xff)<<8) | winver>>8;
+	bool isWin8 = winver > wxWinVersion_7;
+	long n = 0;
+	while(reg.GetNextValue(Value,n))
+	{
+		if (reg.QueryValue(Value,tmp))
+		{
+			if (tmp == "00000409" || tmp == "00000809" || (!isWin8 && tmp == "00000804"))
+			{
+				hkl = ::LoadKeyboardLayout(tmp,KLF_ACTIVATE);//有找到的英文键盘,就装载它
+				break;
+			}
+		}
+	}
+	HKL hk1 = hkl?hkl:GetKeyboardLayout(0);
+	ActivateKeyboardLayout(hk1, KLF_SUBSTITUTE_OK|KLF_SETFORPROCESS);
+#endif
 }
 
 void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
@@ -57,6 +90,22 @@ void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
 	e.StopPropagation();
 	e.Skip();
 }
+
+#ifdef __WXMSW__
+
+void MerryTextCtrl::SetEnInputMode(void)
+{
+	if (hkl)
+		ActivateKeyboardLayout(hkl,KLF_SETFORPROCESS);
+	HIMC hImc;
+	DWORD dwConv, dwSent;
+	HWND hwnd = this->GetHWND();
+	hImc = ImmGetContext(hwnd);
+	ImmGetConversionStatus(hImc, &dwConv, &dwSent);
+	ImmSetConversionStatus(hImc, 0, dwSent);
+	ImmReleaseContext(hwnd, hImc);
+}
+#endif
 
 void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 {

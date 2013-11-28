@@ -9,6 +9,9 @@ public:
 	long EnterArgs;
 	void ExecuteCmd();
 	MerryTextCtrl(wxWindow* parent);
+#ifdef __WXMSW__
+	void SetEnInputMode(void);
+#endif
 
 private:
 	void onContextMenu(wxContextMenuEvent& e);
@@ -28,6 +31,10 @@ private:
 #ifdef __WXGTK__
 	wxString m_lastValue;
 	bool m_needCompletion;
+#endif
+
+#ifdef __WXMSW__
+	HKL hkl;
 #endif
 
 private:
