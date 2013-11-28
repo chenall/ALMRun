@@ -320,9 +320,9 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 	if (cmdLine[n] == '\"')//´øÒýºÅ
 	{
 		cmd_pos += 1;
-		for(++n;n<cmd_len;++n)
+		for(++n;n<cmd_len;)
 		{
-			if (cmdLine[n] == '\"')
+			if (cmdLine[n++] == '\"')
 				break;
 		}
 		cmd = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));

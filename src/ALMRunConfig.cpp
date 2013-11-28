@@ -133,8 +133,8 @@ ALMRunConfig::ALMRunConfig()
 	conf->SetPath("/Config");
 
 	#ifdef __WXMSW__
-	wxString Sendto = wxStandardPaths::MSWGetShellDir(0x0009) + "/ALMRun.lnk";//CSIDL_SENDTO                    0x0009        // <user name>\SendTo
-	wxString Startup = wxStandardPaths::MSWGetShellDir(0x0007) + "/ALMRun.lnk";//CSIDL_STARTUP
+	wxString Sendto = wxStandardPaths::MSWGetShellDir(0x0009) + "\\ALMRun.lnk";//CSIDL_SENDTO                    0x0009        // <user name>\SendTo
+	wxString Startup = wxStandardPaths::MSWGetShellDir(0x0007) + "\\ALMRun.lnk";//CSIDL_STARTUP
 	bool InSendTo = ::wxFileExists(Sendto);
 	bool InStartup = ::wxFileExists(Startup);
 	if (config[AddToSendTo])
