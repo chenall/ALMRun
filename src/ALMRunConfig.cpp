@@ -155,7 +155,7 @@ ALMRunConfig::ALMRunConfig()
 	{
 		if (InStartup == false)
 		{
-			if (!CreateFileShortcut(::wxGetApp().argv[0],Startup.c_str(),Home,0,_T("ALMRun 快速启动工具")))
+			if (!CreateFileShortcut(::wxGetApp().argv[0],Startup.c_str(),Home,MAKEWORD('R',HOTKEYF_ALT | HOTKEYF_CONTROL),_T("ALMRun 快速启动工具")))
 				wxMessageBox("添加自动启动到<开始/启动>失败!");
 		}
 

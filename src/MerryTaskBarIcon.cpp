@@ -11,6 +11,7 @@ END_EVENT_TABLE()
 MerryTaskBarIcon::~MerryTaskBarIcon()
 {
 	__DEBUG_BEGIN("")
+		this->RemoveIcon();
 	__DEBUG_END("")
 }
 
