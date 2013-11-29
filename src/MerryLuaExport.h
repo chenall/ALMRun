@@ -114,7 +114,7 @@ static int LuaSetForegroundWindow(lua_State* L)
 
 static int LuaToggleMerry(lua_State* L)
 {
-	static time_t chktime;
+	static DWORD chktime;
 	MerryFrame& frame = ::wxGetApp().GetFrame();
 #ifdef __WXOSX__
 	if (!frame.IsShown())
@@ -124,19 +124,21 @@ static int LuaToggleMerry(lua_State* L)
 	if (frame.IsShown())
 	{
 		frame.Hide();
+#ifdef __WXMSW__
+		//显示界面之后300ms之内隐藏界面(比如连续按两次热键),根据系统配置执行上一个命令
 		if (g_config->get(DoubleToggleFunc) && LastCmd)
 		{
-			time_t n_time;
-			time(&n_time);
+			DWORD n_time = timeGetTime();//获取从开机到现在经过的ms数
 			n_time -= chktime;
-			if (n_time == 0 || n_time == 1)
+			if (n_time <= 300)//小于300ms
 				LastCmd->Execute(wxEmptyString);
 		}
+#endif
 	}
 	else
 	{
-		time(&chktime);
 #ifdef __WXMSW__
+		chktime = timeGetTime();
 		//使用POST发送消息，使得这个函数可以快速返回，否则如果在LUA脚本中执行该命令有可能会出错。
 		PostMessage(frame.GetHWND(),WM_COMMAND,MENU_ITEM_SHOW,0);
 #else
@@ -396,6 +398,12 @@ static int LuaEnterKey(lua_State* L)
 static int LuaEnterText(lua_State* L)
 {
 	wxString text(lua_tostring(L, 1), wxConvLocal);
+//延时输入,否则可能会由于像按热键时,按键还没有放开就输入了,这样会输入错误
+#ifdef __WXMSW__
+	::Sleep(300);
+#else
+	::wxSleep(1);
+#endif
 	g_controller->EnterText(text);
 	return 0;
 }

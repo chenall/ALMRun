@@ -1,5 +1,6 @@
 ### [2013-11-28 v1.2.0.46]
     1.修正enterKey不能发送超个两个组合键的BUG.
+    2.按两次热键启动上一个命令的时间缩短为300ms
 
 ### [2013-11-28 v1.2.0.45](https://github.com/chenall/ALMRun/archive/v1.2.0.45_BIN.zip)
     1.如果设置了随系统启动,这时会在启动项目中添加一个ALMRUN的快捷方式,快捷键为Ctrl+Alt+R,退出ALMRUN之后可以按Ctrl+Alt+R快速启动
