@@ -126,8 +126,13 @@ MerryKey::MerryKey()
 	m_windowsKeys[wxT("MBUTTON")] = VK_MBUTTON;
 	m_windowsKeys[wxT("CLEAR")] = VK_CLEAR;
 	m_windowsKeys[wxT("SHIFT")] = VK_SHIFT;
+	m_windowsKeys[wxT("RSHIFT")] = VK_RSHIFT;
+	m_windowsKeys[wxT("LSHIFT")] = VK_LSHIFT;
 	m_windowsKeys[wxT("ALT")] = VK_MENU;
 	m_windowsKeys[wxT("CONTROL")] = VK_CONTROL;
+	m_windowsKeys[wxT("CTRL")] = VK_CONTROL;;
+	m_windowsKeys[wxT("LCTRL")] = VK_LCONTROL;
+	m_windowsKeys[wxT("RCTRL")] = VK_RCONTROL;
 	m_windowsKeys[wxT("MENU")] = VK_MENU;
 	m_windowsKeys[wxT("PAUSE")] = VK_PAUSE;
 	m_windowsKeys[wxT("CAPITAL")] = VK_CAPITAL;

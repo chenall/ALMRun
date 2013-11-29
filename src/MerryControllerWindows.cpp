@@ -38,9 +38,37 @@ void MerryController::AddInputKey(std::vector<INPUT>& input, int keyCode, bool i
 	}
 	else
 	{
+		WORD wScan = 0;
 		tmpInput.type = INPUT_KEYBOARD;
 		tmpInput.ki.dwFlags = isDown ? 0 : KEYEVENTF_KEYUP;
 		tmpInput.ki.wVk = keyCode;
+		switch(keyCode)
+		{
+			case VK_LSHIFT:// 0xA0
+				wScan = 0x2a;
+				break;
+			case VK_RSHIFT:// 0xA1
+				wScan = 0x36;
+				break;
+			case VK_LCONTROL:// 0xA2
+				wScan = 0x1d;
+				break;
+			case VK_RCONTROL:// 0xA3
+				wScan = 0xe01d;
+				break;
+			case VK_LMENU:// 0xA4
+			case VK_RMENU:// 0xA5
+			default:
+				break;
+
+		}
+		if (wScan)
+		{
+			if (!isDown)
+				wScan |= 0x80;
+			tmpInput.ki.dwFlags |= KEYEVENTF_SCANCODE;
+			tmpInput.ki.wScan = wScan;
+		}
 	}
 	
 	input.push_back(tmpInput);
@@ -192,11 +220,11 @@ void MerryController::EnterKey(const wxArrayString& keys)
 
 		if (modifiers & wxMOD_ALT)
 			this->AddInputKey(input, VK_MENU);
-		else if (modifiers & wxMOD_CONTROL)
+		if (modifiers & wxMOD_CONTROL)
 			this->AddInputKey(input, VK_CONTROL);
-		else if (modifiers & wxMOD_SHIFT)
+		if (modifiers & wxMOD_SHIFT)
 			this->AddInputKey(input, VK_SHIFT);
-		else if (modifiers & wxMOD_META)
+		if (modifiers & wxMOD_META)
 			this->AddInputKey(input, VK_LWIN);
 
 		this->AddInputKey(input, keyCode);
@@ -204,11 +232,11 @@ void MerryController::EnterKey(const wxArrayString& keys)
 
 		if (modifiers & wxMOD_ALT)
 			this->AddInputKey(input, VK_MENU, false);
-		else if (modifiers & wxMOD_CONTROL)
+		if (modifiers & wxMOD_CONTROL)
 			this->AddInputKey(input, VK_CONTROL, false);
-		else if (modifiers & wxMOD_SHIFT)
+		if (modifiers & wxMOD_SHIFT)
 			this->AddInputKey(input, VK_SHIFT, false);
-		else if (modifiers & wxMOD_META)
+		if (modifiers & wxMOD_META)
 			this->AddInputKey(input, VK_LWIN, false);
 	}
 
