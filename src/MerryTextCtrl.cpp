@@ -13,6 +13,8 @@
 
 #ifdef __WXMSW__
 	#include <wx/msw/registry.h>
+	//#include "Shlwapi.h"
+//#pragma comment(lib, "ShLwApi.Lib")
 	#pragma comment(lib, "imm32.lib")
 #endif
 
@@ -20,6 +22,7 @@ bool LocationExec;
 #ifdef __WXMSW__
 	HWND HWND_TEXTCTRL = NULL;
 #endif
+
 
 BEGIN_EVENT_TABLE(MerryTextCtrl, wxTextCtrl)
 	EVT_CONTEXT_MENU(MerryTextCtrl::onContextMenu)
@@ -64,7 +67,7 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	reg.GetKeyInfo(NULL,NULL,&max_Keys,NULL);
 	wxString Value;
 	wxString tmp;
-	//Windows 8 0000804 是中文输入法
+	//Windows 8 00000804 是中文输入法
 	DWORD winver = ::GetVersion()&0xFFFF;
 	winver = ((winver & 0xff)<<8) | winver>>8;
 	bool isWin8 = winver > wxWinVersion_7;
@@ -83,6 +86,7 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	HKL hk1 = hkl?hkl:GetKeyboardLayout(0);
 	ActivateKeyboardLayout(hk1, KLF_SUBSTITUTE_OK|KLF_SETFORPROCESS);
 #endif
+//	::SHAutoComplete(this->GetHWND(),15);
 }
 
 void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)

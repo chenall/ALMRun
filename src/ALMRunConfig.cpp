@@ -390,6 +390,7 @@ int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString
 	if (!exc.empty())
 		conf->Write("exclude",exc);
 	cfg_changed = true;
+	conf->SetPath(oldPath);
 	return i;
 }
 

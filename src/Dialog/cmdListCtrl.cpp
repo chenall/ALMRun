@@ -3,6 +3,7 @@
 #include "MerryCommandManager.h"
 #include "cmdmgr.h"
 #include "DlgAddNewCmd.h"
+#include "DlgAddNewDir.h"
 
 #ifndef _DISABLE_DND_
 	#include <wx/dnd.h>
@@ -57,8 +58,8 @@ wxListCtrl(parent,id,pos,size,style)
 {
 	this->InsertColumn(CMDLIST_COL_NAME,_T("快捷命令"),wxLIST_AUTOSIZE,150);
 	this->InsertColumn(CMDLIST_COL_CMD,_T("命令行"),wxLIST_AUTOSIZE,250);
-	this->InsertColumn(CMDLIST_COL_KEY,_T("热键"),wxLIST_AUTOSIZE,100);
-	this->InsertColumn(CMDLIST_COL_DESC,_T("备注"),wxLIST_AUTOSIZE,100);
+	this->InsertColumn(CMDLIST_COL_KEY,_T("热键/包含"),wxLIST_AUTOSIZE,100);
+	this->InsertColumn(CMDLIST_COL_DESC,_T("备注/排除"),wxLIST_AUTOSIZE,100);
 	this->InsertColumn(CMDLIST_COL_ID,_T("ID"),0,30);
 	this->ReLoadCmds();
 //	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
@@ -78,8 +79,8 @@ void cmdListCtrl::ReLoadCmds()
 		wxString cmds;
 		long id = 0;
 		long index = 0;
-		const wxString oldPath = g_config->conf->GetPath();
 		wxFileConfig *conf = g_config->conf;
+		const wxString oldPath = conf->GetPath();
 		conf->SetPath("/cmds");
 		this->DeleteAllItems();
 		for(bool test = conf->GetFirstGroup(cmds,id); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,id))
@@ -95,6 +96,25 @@ void cmdListCtrl::ReLoadCmds()
 			this->SetItem(index, CMDLIST_COL_KEY ,conf->Read("key"));
 			this->SetItem(index, CMDLIST_COL_DESC ,conf->Read("desc"));
 		}
+		conf->SetPath("/dirs");
+		id = 0;
+		size_t item_index = this->GetItemCount();
+		for(bool test = conf->GetFirstGroup(cmds,id); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,id))
+		{
+			if (!cmds.IsNumber())
+				continue;
+			conf->SetPath(cmds);
+			cmds.ToLong(&index);
+			cmds.sprintf("%d",~index);
+			index = this->InsertItem(item_index + index,cmds);
+			this->SetItem(index, DIRLIST_COL_ID,cmds);
+			this->SetItem(index, DIRLIST_COL_PATH ,conf->Read("path"));
+			this->SetItem(index, DIRLIST_COL_INCLUDE ,conf->Read("include"));
+			this->SetItem(index, DIRLIST_COL_EXCLUDE ,conf->Read("exclude"));
+			this->SetItem(index, DIRLIST_COL_SUB ,conf->Read("sub"));
+			this->SetItemTextColour(index,wxColour(0xA20730));
+		}
+		conf->SetPath(oldPath);
 	}
 }
 
@@ -187,8 +207,9 @@ bool cmdListCtrl::onDelete(const wxString& item)
 	{
 		long id;
 		item.ToLong(&id);
-		if (id >= 0 && g_config->DeleteCmd(id))
-			return true;
+		if (id >= 0)
+			return g_config->DeleteCmd(id);
+		return g_config->DeleteDir(~id);		
 	}
 	return false;
 }
@@ -219,16 +240,39 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			if (item == -1)//没有当前激活条目
 				break;
 			{
-				DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
-//				dlg->flags = MENU_CMD_EDIT;
-				dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
-				dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
-				dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
-				dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
-				dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
-				if (dlg->ShowModal() == wxID_OK)
-					ctrl->ReLoadCmds();
-				dlg->Destroy();
+				long id;
+				ctrl->GetItemText(item,CMDLIST_COL_ID).ToLong(&id);
+				if (id >= 0)//ID>=0 命令
+				{
+					DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
+	//				dlg->flags = MENU_CMD_EDIT;
+					dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
+					dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
+					dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
+					dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
+					dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
+					if (dlg->ShowModal() == wxID_OK)
+						ctrl->ReLoadCmds();
+					dlg->Destroy();
+					break;
+				}
+				else
+				{
+					DlgAddNewDir* dlg = new DlgAddNewDir(NULL);
+					dlg->DirId = ~id;
+					dlg->SetMode(ADDDIR_FLAG_EDIT);
+					dlg->dirInclude->SetValue(ctrl->GetItemText(item,DIRLIST_COL_INCLUDE));
+					dlg->dirExclude->SetValue(ctrl->GetItemText(item,DIRLIST_COL_EXCLUDE));
+					wxString name = ctrl->GetItemText(item,DIRLIST_COL_PATH);
+					name.Replace("|","\n");
+					dlg->dirName->SetValue(name);
+					dlg->dirSub->SetValue(ctrl->GetItemText(item,DIRLIST_COL_SUB));
+					if (dlg->ShowModal() == wxID_OK)
+						ctrl->ReLoadCmds();
+					dlg->Destroy();
+					break;
+				}
+				
 			}
 			break;
 		case ID_TOOL_DELETE:
@@ -262,16 +306,24 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 			break;
 		case ID_TOOL_CHECK:
 			{
-				if (MessageBox(NULL,_T("校验会检测无效命令（有可能没有办法全部检测出来），并选中这些条目，你可以直接删除或修改，如果命令比较多可能需要比较长的时间，继续吗？"),_T("提示"),MB_YESNO|MB_TOPMOST|MB_ICONQUESTION) != IDYES)
+				if (MessageBox(NULL,_T("校验会检测无效命令（有可能没有办法全部检测出来），并用标记这些条目，你可以直接删除或修改，如果命令比较多可能需要比较长的时间，继续吗？"),_T("提示"),MB_YESNO|MB_TOPMOST|MB_ICONQUESTION) != IDYES)
 					break;
 				size_t count = ctrl->GetItemCount();
 				size_t n = 0;
 				for(size_t i = 0;i<count;++i)
 				{
+					long id;
+					ctrl->GetItemText(i,CMDLIST_COL_ID).ToLong(&id);
+					if (id < 0 )//ID < 0 是自动扫描目录不检测
+						break;
 					wxString test(ParseCmd(ctrl->GetItemText(i,CMDLIST_COL_CMD)));
 					long state = test.empty()?wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED:0;
 					ctrl->SetItemState(i,state,wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED);
-					if (state) ++n;
+					if (state)
+					{
+						ctrl->SetItemBackgroundColour(i,wxColour(0x6300f8));
+						++n;
+					}
 				}
 				if (n)
 					wxMessageBox(wxString::Format("列表中有%d个条目[已选定]的命令找不到，可能是无效命令，请检查或直接删除",n));
