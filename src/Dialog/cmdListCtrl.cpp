@@ -226,11 +226,23 @@ void cmdListCtrl::onRightClick(wxListEvent& e)
 void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 {
 	int item = ctrl->GetNextItem(-1,wxLIST_NEXT_ALL,wxLIST_STATE_FOCUSED);
+	long cmdID = 0;
+	if (item >= 0)
+		ctrl->GetItemText(item,CMDLIST_COL_ID).ToLong(&cmdID);
+
 	switch(id)
 	{
 		case ID_TOOL_ADD:
+			if (cmdID >= 0)
 			{
 				DlgAddNewCmd* dlg=new DlgAddNewCmd(NULL);
+				if (dlg->ShowModal() == wxID_OK)
+					ctrl->ReLoadCmds();
+				dlg->Destroy();
+			}
+			else
+			{
+				DlgAddNewDir* dlg=new DlgAddNewDir(NULL);
 				if (dlg->ShowModal() == wxID_OK)
 					ctrl->ReLoadCmds();
 				dlg->Destroy();
@@ -239,40 +251,33 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 		case ID_TOOL_EDIT:
 			if (item == -1)//没有当前激活条目
 				break;
+			if (cmdID >= 0)//cmdID >=0 命令
 			{
-				long id;
-				ctrl->GetItemText(item,CMDLIST_COL_ID).ToLong(&id);
-				if (id >= 0)//ID>=0 命令
-				{
-					DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
-	//				dlg->flags = MENU_CMD_EDIT;
-					dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
-					dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
-					dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
-					dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
-					dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
-					if (dlg->ShowModal() == wxID_OK)
-						ctrl->ReLoadCmds();
-					dlg->Destroy();
-					break;
-				}
-				else
-				{
-					DlgAddNewDir* dlg = new DlgAddNewDir(NULL);
-					dlg->DirId = ~id;
-					dlg->SetMode(ADDDIR_FLAG_EDIT);
-					dlg->dirInclude->SetValue(ctrl->GetItemText(item,DIRLIST_COL_INCLUDE));
-					dlg->dirExclude->SetValue(ctrl->GetItemText(item,DIRLIST_COL_EXCLUDE));
-					wxString name = ctrl->GetItemText(item,DIRLIST_COL_PATH);
-					name.Replace("|","\n");
-					dlg->dirName->SetValue(name);
-					dlg->dirSub->SetValue(ctrl->GetItemText(item,DIRLIST_COL_SUB));
-					if (dlg->ShowModal() == wxID_OK)
-						ctrl->ReLoadCmds();
-					dlg->Destroy();
-					break;
-				}
-				
+				DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
+	//			dlg->flags = MENU_CMD_EDIT;
+				dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
+				dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
+				dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
+				dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
+				dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
+				if (dlg->ShowModal() == wxID_OK)
+					ctrl->ReLoadCmds();
+				dlg->Destroy();
+			}
+			else
+			{
+				DlgAddNewDir* dlg = new DlgAddNewDir(NULL);
+				dlg->DirId = ~cmdID;
+				dlg->SetMode(ADDDIR_FLAG_EDIT);
+				dlg->dirInclude->SetValue(ctrl->GetItemText(item,DIRLIST_COL_INCLUDE));
+				dlg->dirExclude->SetValue(ctrl->GetItemText(item,DIRLIST_COL_EXCLUDE));
+				wxString name = ctrl->GetItemText(item,DIRLIST_COL_PATH);
+				name.Replace("|","\n");
+				dlg->dirName->SetValue(name);
+				dlg->dirSub->SetValue(ctrl->GetItemText(item,DIRLIST_COL_SUB));
+				if (dlg->ShowModal() == wxID_OK)
+					ctrl->ReLoadCmds();
+				dlg->Destroy();
 			}
 			break;
 		case ID_TOOL_DELETE:
