@@ -86,6 +86,7 @@ BEGIN_EVENT_TABLE( DlgAddNewDir, wxDialog )
 ////@end DlgAddNewDir event table entries
 EVT_BUTTON(ID_BUTTON,onButtonClick)
 EVT_BUTTON(wxID_OK,onButtonClick)
+EVT_CHECKBOX(ID_ADD_AS_CMD,onCheckBoxClick)
 END_EVENT_TABLE()
 
 
@@ -155,7 +156,6 @@ void DlgAddNewDir::Init()
 ////@end DlgAddNewDir member initialisation
 }
 
-
 /*!
  * Control creation for DlgAddNewDir
  */
@@ -182,7 +182,7 @@ void DlgAddNewDir::CreateControls()
     wxBoxSizer* itemBoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer3, 0, wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP, 5);
 
-    wxStaticText* itemStaticText4 = new wxStaticText( itemDialog1, wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x76EE + (wxChar) 0x5F55 + wxT(":")), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText* itemStaticText4 = new wxStaticText( itemDialog1, wxID_STATIC, wxT("目录:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer3->Add(itemStaticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     dirName = new wxTextCtrl( itemDialog1, ID_DLG_DIR_DIR, wxEmptyString, wxDefaultPosition, wxSize(220, -1), wxTE_MULTILINE);
@@ -197,7 +197,7 @@ void DlgAddNewDir::CreateControls()
     wxBoxSizer* itemBoxSizer7 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer7, 0, wxGROW|wxLEFT|wxRIGHT, 5);
 
-    wxStaticText* itemStaticText8 = new wxStaticText( itemDialog1, wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x8FC7 + (wxChar) 0x6EE4 + wxT("(") + (wxChar) 0x5305 + (wxChar) 0x542B + wxT("):")), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText* itemStaticText8 = new wxStaticText( itemDialog1, wxID_STATIC, wxT("过滤(包含):"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer7->Add(itemStaticText8, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
 
@@ -211,7 +211,7 @@ void DlgAddNewDir::CreateControls()
     wxBoxSizer* itemBoxSizer10 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer10, 0, wxGROW|wxLEFT|wxRIGHT, 5);
 
-    wxStaticText* itemStaticText11 = new wxStaticText( itemDialog1, wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x8FC7 + (wxChar) 0x6EE4 + wxT("(") + (wxChar) 0x6392 + (wxChar) 0x9664 + wxT("):")), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText* itemStaticText11 = new wxStaticText( itemDialog1, wxID_STATIC, wxT("过滤(排除):"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer10->Add(itemStaticText11, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     dirExclude = new wxTextCtrl( itemDialog1, ID_DIR_EXCLUDE, wxEmptyString, wxDefaultPosition, wxSize(250, -1), 0 );
@@ -223,23 +223,30 @@ void DlgAddNewDir::CreateControls()
     wxBoxSizer* itemBoxSizer13 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer13, 0, wxGROW|wxLEFT|wxRIGHT|wxBOTTOM, 5);
 
-    wxStaticText* itemStaticText14 = new wxStaticText( itemDialog1, wxID_STATIC, wxGetTranslation(wxString() + (wxChar) 0x5B50 + (wxChar) 0x76EE + (wxChar) 0x5F55 + (wxChar) 0x5C42 + (wxChar) 0x6570 + wxT(":")), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText* itemStaticText14 = new wxStaticText( itemDialog1, wxID_STATIC,wxT("子目录层数:"), wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer13->Add(itemStaticText14, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-    dirSub = new wxSpinCtrl( itemDialog1, ID_DIR_SUB, _T("0"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -1, 100, 0 );
+    dirSub = new wxSpinCtrl( itemDialog1, ID_DIR_SUB, _T("0"), wxDefaultPosition, wxSize(60,-1), wxSP_ARROW_KEYS, -1, 100, 0 );
     itemBoxSizer13->Add(dirSub, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 	dirSub->SetHelpText(dirSubHelp);
     if (ShowToolTips())
         dirSub->SetToolTip(dirSubHelp);
 
+	wxString AddAsCmdHelp("选中把该目录作为一个命令添加");
+	AddAsCmd = new wxCheckBox(itemDialog1,ID_ADD_AS_CMD,wxT("命令"));
+	itemBoxSizer13->Add(AddAsCmd,0,wxALIGN_CENTER_VERTICAL|wxALL,5);
+	AddAsCmd->SetHelpText(AddAsCmdHelp);
+    if (ShowToolTips())
+        AddAsCmd->SetToolTip(AddAsCmdHelp);
+
     wxStdDialogButtonSizer* itemStdDialogButtonSizer16 = new wxStdDialogButtonSizer;
 
     itemBoxSizer13->Add(itemStdDialogButtonSizer16, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-    wxButton* itemButton17 = new wxButton( itemDialog1, wxID_OK, wxGetTranslation(wxString() + (wxChar) 0x786E + (wxChar) 0x5B9A + wxT("(&O)")), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+    wxButton* itemButton17 = new wxButton( itemDialog1, wxID_OK, wxT("确定(&O)"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
 	itemButton17->SetDefault();
     itemStdDialogButtonSizer16->AddButton(itemButton17);
 
-    wxButton* itemButton18 = new wxButton( itemDialog1, wxID_CANCEL, wxGetTranslation(wxString() + (wxChar) 0x53D6 + (wxChar) 0x6D88 + wxT("(&C)")), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
+    wxButton* itemButton18 = new wxButton( itemDialog1, wxID_CANCEL, wxT("取消(&C)"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT );
     itemStdDialogButtonSizer16->AddButton(itemButton18);
 
     itemStdDialogButtonSizer16->Realize();
@@ -247,6 +254,26 @@ void DlgAddNewDir::CreateControls()
 	this->SetDropTarget(new NewDirDnd(this));
 #endif
 ////@end DlgAddNewDir content construction
+}
+
+void DlgAddNewDir::onCheckBoxClick(wxCommandEvent& e)
+{
+	switch(e.GetId())
+	{
+		case ID_ADD_AS_CMD:
+			if (e.IsChecked())
+			{
+				this->dirExclude->Disable();
+				this->dirInclude->Disable();
+				this->dirSub->Disable();
+			}
+			else
+			{
+				this->dirExclude->Enable();
+				this->dirInclude->Enable();
+				this->dirSub->Enable();
+			}
+	}
 }
 
 void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
@@ -257,15 +284,29 @@ void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
 		if (!name.empty())
 		{
 			//name.Replace("\\","/");
-			dirName->AppendText("\n"+name);
+			if (AddAsCmd->IsChecked() || dirName->GetValue().empty())
+				dirName->SetValue(name);
+			else
+				dirName->AppendText("\n"+name);
 		}
 		return;
 	}
 	if (!g_config)
 		return;
 	wxString dName = dirName->GetValue();
+	dName.Trim(false);
 	if (dName.empty())
 		return;
+	if (AddAsCmd->IsChecked())
+	{
+		if (g_config->AddCmd(dName) == -1)
+			return;
+		if (this->IsModal())
+			this->EndModal(wxID_OK);
+		else
+			this->Destroy();
+		return;
+	}
 	dName.Replace("\r","");
 	dName.Replace("\n","|");
 	if (flags < 2 && g_config->AddDir(dName,dirInclude->GetValue(),dirExclude->GetValue(),dirSub->GetValue(),this->DirId) == -1)
@@ -283,9 +324,11 @@ int DlgAddNewDir::SetMode(const int mode)
 	{
 		case ADDDIR_FLAG_EDIT:
 			this->SetTitle("扫描参数修改");
+			AddAsCmd->Disable();
 			break;
 		case ADDDIR_FLAG_CMDS:
 			this->SetTitle("批量添加命令");
+			AddAsCmd->Disable();
 			break;
 		default:
 			this->SetTitle(SYMBOL_DLGADDNEWDIR_TITLE);

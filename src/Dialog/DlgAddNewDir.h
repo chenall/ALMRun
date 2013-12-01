@@ -42,6 +42,7 @@
 #define ID_DIR_INCLUDE 10015
 #define ID_DIR_EXCLUDE 10000
 #define ID_DIR_SUB 10016
+#define ID_ADD_AS_CMD 10017
 #define SYMBOL_DLGADDNEWDIR_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
 #define SYMBOL_DLGADDNEWDIR_TITLE _T("添加自动扫描目录")
 #define SYMBOL_DLGADDNEWDIR_IDNAME ID_DLGADDNEWDIR
@@ -81,6 +82,7 @@ public:
 
 ////@begin DlgAddNewDir event handler declarations
 	void onButtonClick(wxCommandEvent& e);
+	void onCheckBoxClick(wxCommandEvent& e);
 ////@end DlgAddNewDir event handler declarations
 
 ////@begin DlgAddNewDir member function declarations
@@ -99,6 +101,7 @@ public:
 	wxTextCtrl* dirInclude;
 	wxTextCtrl* dirExclude;
 	wxSpinCtrl* dirSub;
+	wxCheckBox* AddAsCmd;
 	UINT DirId;
 ////@end DlgAddNewDir member variables
 private:
