@@ -86,17 +86,31 @@ bool MerryListBoxPanel::SetFont(const wxString& fontInfo)
 
 void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
 {
+	const MerryCommand* cmd = this->GetSelectionCommand();
+
 	m_commands = commands;
 
 	if (commands.size() == 0)
 	{
 		m_topCommandIndex = -1;
 		m_selectionCommandIndex = -1;
+		return;
 	}
-	else
+	m_topCommandIndex = 0;
+	m_selectionCommandIndex = 0;
+	if (!cmd)
+		return;
+	int	PreCmdID = cmd->GetCommandID();
+	int ITEM_NUM = GetVisibleItemNum();
+
+	for (int i=0; i<ITEM_NUM; ++i)
 	{
-		m_topCommandIndex = 0;
-		m_selectionCommandIndex = 0;
+		MerryCommand* command = m_commands[i];
+		if (command->GetCommandID() == PreCmdID)
+		{
+			m_selectionCommandIndex = i;
+			break;
+		}
 	}
 }
 
@@ -147,7 +161,9 @@ int MerryListBoxPanel::SetSelection(int index,int top)
 bool MerryListBoxPanel::DelSelectedItem()
 {
 	const MerryCommand* cmd = this->GetSelectionCommand();
-	assert(cmd);
+	if (!cmd)
+		return false;
+//	assert(cmd);
 	int flags = cmd->GetFlags();
 	if ((flags & CMDS_FLAG_CMDS) && (wxMessageBox(wxString::Format("…æ≥˝ ID:[%d] %s\n√¸¡Ó:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCmd()),"Ã· æ",wxYES_NO|wxICON_WARNING) == wxYES))
 	{
@@ -163,13 +179,17 @@ bool MerryListBoxPanel::DelSelectedItem()
 
 const MerryCommand* MerryListBoxPanel::GetSelectionCommand() const
 {
-	assert(0 <= m_selectionCommandIndex && m_selectionCommandIndex < (int)m_commands.size());
+	if (m_selectionCommandIndex < 0 || m_selectionCommandIndex > (int)m_commands.size())
+		return NULL;
+//	assert(0 <= m_selectionCommandIndex && m_selectionCommandIndex < (int)m_commands.size());
 	return m_commands[m_selectionCommandIndex];
 }
 
 void MerryListBoxPanel::Popup()
 {
-	assert(m_commands.size() > 0);
+	if (m_commands.size() == 0)
+		return;
+//	assert(m_commands.size() > 0);
 	m_isPopup = true;
 	this->SetHeight(this->CalcHeight());
 	this->Refresh();
