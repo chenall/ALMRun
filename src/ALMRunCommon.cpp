@@ -1,4 +1,5 @@
 #include "ALMRunCommon.h"
+#include "ALMRunConfig.h"
 #include "MerryCommand.h"
 #include "wx/dir.h"
 #include <wx/clipbrd.h>
@@ -561,6 +562,74 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 	}
 
 	return g_controller->ShellExecute(cmd,arg,workDir);
+}
+
+static int AddALTRunCMD(lua_State *L)
+{
+	if (!lua_istable(L, -1))
+		return 0;
+	int it = lua_gettop(L);
+
+	lua_rawgeti(L,it,3);//快捷名
+	wxString commandName(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_rawgeti(L,it,4);//备注
+	wxString commandDesc(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_rawgeti(L,it,5);//命令
+	wxString commandLine(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_rawgeti(L,it,2);//参数编码
+	wxString commandParam(wxString(lua_tostring(L, -1), wxConvLocal));
+
+	lua_settop(L,it);//恢复
+
+	if (!commandParam.Trim(false).empty())//如果需要参数，加上强制参数标志
+		commandLine.insert(0,'+');
+	if (g_config->AddCmd(commandLine,commandName,wxEmptyString,commandDesc) > 0)
+		return 1;
+	return 0;
+}
+/*
+	命令导入函数,目前只支持ALTRUN配置文件,文件名SHORTCUTLIST.txt
+*/
+int importCMD(wxString& filename)
+{
+	if (!g_lua || !g_config)
+		return -1;
+	if (wxFileNameFromPath(filename).Upper().StartsWith("SHORTCUTLIST.") == false || 
+		wxMessageBox("该文件可能是ALTRun的配置文件，是否导入命令?","ALTRun命令导入提示",wxYES_NO|wxICON_INFORMATION) != wxYES)
+		return -1;
+	lua_State *L = g_lua->GetLua();
+	lua_getglobal(L, "read_altrun_config");
+	if (!lua_isfunction(L, 1))
+	{
+		lua_pop(L, 1);
+		wxMessageBox("该功能所需要的LUA函数不存在，请确认LuaEx\\base.lua文件存在","错误");
+		return 0;
+	}
+	lua_pushstring(L,filename.c_str());
+	if (lua_pcall(L, 1, 1, 0) || !lua_istable(L,-1))
+	{
+		wxMessageBox("LUA脚本执行有误，或返回值不对");
+		lua_pop(L, 1);
+		return 0;
+	}
+	int it=lua_gettop(L);
+	int success = 0;
+	int failure = 0;
+	lua_pushnil(L);
+	while(lua_next(L, it))
+	{
+		if (AddALTRunCMD(L))
+			++success;
+		else
+			++failure;
+		lua_pop(L, 1);
+	}
+	lua_pop(L,1);
+	wxMessageBox(wxString::Format("成功导入%d个命令,失败%d个!",success,failure));
+	return success;
 }
 
 #endif

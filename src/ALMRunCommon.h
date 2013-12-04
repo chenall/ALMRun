@@ -24,6 +24,7 @@ void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& file
 ALMRunCMDBase* lua_GetCommand(lua_State* L, int flags = 0);
 wxString GetPinYin(const wxString& source);
 wxString GetClipboardText();
+int importCMD(wxString& filename);
 
 #ifdef __WXMSW__
 
