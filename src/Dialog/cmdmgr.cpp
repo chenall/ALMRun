@@ -35,6 +35,7 @@
 #include "paste.xpm"
 #include "cut.xpm"
 #include "find.xpm"
+#include "import.xpm"
 ////@end XPM images
 
 
@@ -52,7 +53,7 @@ IMPLEMENT_DYNAMIC_CLASS( cmdMgr, wxDialog )
 BEGIN_EVENT_TABLE( cmdMgr, wxDialog )
 
 ////@begin cmdMgr event table entries
-EVT_TOOL_RANGE(ID_TOOL_ADD, ID_TOOL_CHECK, cmdMgr::onToolClick)
+EVT_TOOL_RANGE(ID_TOOL_ADD, ID_TOOL_IMPORT, cmdMgr::onToolClick)
 //EVT_LIST_ITEM_SELECTED(ID_LISTCTRL, cmdMgr::onSelected)
 //EVT_LIST_COL_CLICK(ID_LISTCTRL, cmdMgr::onSelected)
 ////@end cmdMgr event table entries
@@ -152,6 +153,7 @@ void cmdMgr::CreateControls()
     wxBitmap itemtool8Bitmap(itemDialog1->GetBitmapResource(wxT("find.xpm")));
     wxBitmap itemtool8BitmapDisabled;
     itemToolBar3->AddTool(ID_TOOL_CHECK, _T("校验"), itemtool8Bitmap, itemtool8BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+	itemToolBar3->AddTool(ID_TOOL_IMPORT, _T("导入"), wxBitmap(import_xpm),itemtool8BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
     itemToolBar3->Realize();
     itemBoxSizer2->Add(itemToolBar3, 0, wxGROW, 5);
 	m_cmd_list = new cmdListCtrl(itemDialog1, ID_LISTCTRL, wxDefaultPosition, wxSize(-1,500));
@@ -198,6 +200,11 @@ wxBitmap cmdMgr::GetBitmapResource( const wxString& name )
         wxBitmap bitmap(find_xpm);
         return bitmap;
     }
+	else if (name == _T("import.png"))
+	{
+		wxBitmap bitmap(import_xpm);
+		return bitmap;
+	}
     return wxNullBitmap;
 ////@end cmdMgr bitmap retrieval
 }

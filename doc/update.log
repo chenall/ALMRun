@@ -1,5 +1,6 @@
 ### [2013-12-04 v1.2.0.49]
     1.ALTRUN命令导入函数从ADDCMD中移出转到COMMON模块.
+    2.命令管理器添加导入功能.可以方便导入ALTRUN配置.
 
 ### [2013-12-01 v1.2.0.48](https://github.com/chenall/ALMRun/archive/v1.2.0.48_BIN.zip)
     1.示范插件命令作了一些调整.

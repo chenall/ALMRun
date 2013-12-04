@@ -309,6 +309,15 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				sel.Clear();
 			}
 			break;
+		case ID_TOOL_IMPORT:
+			{
+				wxString selFile = wxFileSelector("从ALTRun配置文件ShortCutList.txt导入命令",wxEmptyString,"ShortCutList.txt",wxEmptyString,"ShortCutList.txt",0,NULL);
+				if (selFile.empty())
+					return;
+				if (importCMD(selFile)>0)
+					ctrl->ReLoadCmds();
+			}
+			break;
 		case ID_TOOL_CHECK:
 			{
 				if (MessageBox(NULL,_T("校验会检测无效命令（有可能没有办法全部检测出来），并用标记这些条目，你可以直接删除或修改，如果命令比较多可能需要比较长的时间，继续吗？"),_T("提示"),MB_YESNO|MB_TOPMOST|MB_ICONQUESTION) != IDYES)
