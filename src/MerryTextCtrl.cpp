@@ -98,7 +98,7 @@ void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
 void MerryTextCtrl::SetPluginMode(const MerryCommand* cmd)
 {
 	wxString name = cmd->GetCommandName(0);
-	if (!name.empty())
+	if (!name.empty() && name.size() > this->GetValue().size())
 		this->ChangeValue(name.Lower());
 	this->EnterArgs = -1;
 	this->AppendText(" ");
@@ -124,6 +124,7 @@ void MerryTextCtrl::SetEnInputMode(void)
 void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 {
 	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
+	const MerryCommand* SelectedCMD;
 	assert(listBoxPanel);
 	int keyCode = e.GetKeyCode();
 	m_lastKeyDownCode = keyCode;
@@ -159,6 +160,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 #endif
 	if (listBoxPanel->IsPopup())
 	{
+		SelectedCMD = listBoxPanel->GetSelectionCommand();
 		if ((e.AltDown() || e.ControlDown()) && keyCode >= '0' && keyCode <= '9')
 		{
 			if (!listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
@@ -193,19 +195,20 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 
 #ifdef _ALMRUN_CONFIG_H_
 		//按空格键执行
-		else if (keyCode == WXK_SPACE && g_config->get(SpaceKey) && EnterArgs == 0)
-			keyCode = WXK_RETURN;
+		else if (keyCode == WXK_SPACE && EnterArgs == 0)
+		{
+			//对于插件命令,按空格之后进入插件命令模式.
+			if (SelectedCMD->GetFlags() == CMDS_FLAG_PLUGIN)
+				this->SetPluginMode(SelectedCMD);
+			else if (g_config->get(SpaceKey))
+				keyCode = WXK_RETURN;
+		}
 #endif
 	}
 	switch (keyCode)
 	{
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
-			if (listBoxPanel->GetSelectionCommand()->GetCmd().empty())
-			{//命令为空不执行,只有插件命令才会命令为空,忽略.
-				SetPluginMode(listBoxPanel->GetSelectionCommand());
-				break;
-			}
 			this->ExecuteCmd();
 			break;
 		case WXK_ESCAPE:
@@ -245,18 +248,17 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 			}
 			else
 			{
-				const MerryCommand* cmd = listBoxPanel->GetSelectionCommand();
-				if (cmd->GetFlags() == CMDS_FLAG_PLUGIN && this->EnterArgs == 0)//插件命令
+				if (SelectedCMD->GetFlags() == CMDS_FLAG_PLUGIN && this->EnterArgs == 0)//插件命令
 				{
-					SetPluginMode(cmd);
+					SetPluginMode(SelectedCMD);
 					break;
 				}
-				this->ChangeValue(cmd->GetCommandName());
+				this->ChangeValue(SelectedCMD->GetCommandName());
 				this->AppendText(wxT(">>"));
 				this->EnterArgs = this->GetValue().size();
 				listBoxPanel->flags = 1;
 				MerryCommandArray commands;
-				commands.push_back(const_cast<MerryCommand*>(cmd));
+				commands.push_back(const_cast<MerryCommand*>(SelectedCMD));
 				listBoxPanel->SetCommandArray(commands);
 				listBoxPanel->Popup();
 			}
