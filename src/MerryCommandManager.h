@@ -18,12 +18,12 @@ public:
 	const int AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags = 0);
 	const MerryCommand* GetCommand(int commandID) const;
 	bool DelCommand(int commandID);
-	MerryCommandArray Collect(const wxString& commandPrefix,int flags = 0);
+	MerryCommandArray Collect(const wxString& commandPrefix);
+	void GetPluginCmd(const wxString& name,MerryCommandArray& commands);
 	void clearCmds(MerryCommandArray& cmds);
-	MerryCommandArray plugin_commands;
 private:
-	void GetPluginCmd(const wxString& name);
-	void AddPluginCmd(lua_State* L);
+//	void AddPluginCmd(lua_State* L);
+	MerryCommandArray plugin_commands;
 	MerryCommandArray m_commands;
 };
 

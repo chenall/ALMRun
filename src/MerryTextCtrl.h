@@ -2,6 +2,7 @@
 #define _MERRY_TEXT_CTRL_H_
 
 #include "MerryWx.h"
+#include "MerryCommandManager.h"
 
 class MerryTextCtrl : public wxTextCtrl
 {
@@ -25,7 +26,7 @@ private:
 
 private:
 	void AutoCompletion(int keyCode);
-
+	void SetPluginMode(const MerryCommand* cmd);
 private:
 	int m_lastKeyDownCode;
 #ifdef __WXGTK__

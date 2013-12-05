@@ -156,7 +156,7 @@ static bool command_sort(MerryCommand *s1,MerryCommand  *s2)
 		return s2->GetCommandName().Upper() > s1->GetCommandName().Upper();
 	return cmp > 0;
 }
-
+/*
 void MerryCommandManager::AddPluginCmd(lua_State* L)
 {
 	if (!lua_istable(L, -1))
@@ -192,12 +192,12 @@ void MerryCommandManager::AddPluginCmd(lua_State* L)
 	plugin_commands.push_back(new MerryCommand(plugin_commands.size()|(CMDS_FLAG_PLUGIN<<16),commandName, commandDesc,commandLine,funcRef,wxEmptyString,order));
 	return;
 }
-
-void MerryCommandManager::GetPluginCmd(const wxString& name)
+*/
+void MerryCommandManager::GetPluginCmd(const wxString& name,MerryCommandArray& commands)
 {
 	if (!g_lua)
 		return;
-	clearCmds(plugin_commands);
+	clearCmds(plugin_commands);//内存清理，必须的
 	lua_State* L = g_lua->GetLua();
 	lua_getglobal(L, "plugin_command");
 	if (!lua_isfunction(L, 1))
@@ -217,20 +217,21 @@ void MerryCommandManager::GetPluginCmd(const wxString& name)
 		wxDELETE(cmd);
         lua_pop(L, 1);                              // 将Item从栈里面弹出
     }
-	sort(plugin_commands.begin(),plugin_commands.end(),command_sort);
 
+	sort(plugin_commands.begin(),plugin_commands.end(),command_sort);
+	//添加到命令列表中
+	for(size_t i=0;i<plugin_commands.size();++i)
+		commands.push_back(plugin_commands[i]);
 	lua_pop://恢复
 	lua_pop(L,1);
 	return;
 }
-MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix,int flags)
+MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 {
 	MerryCommandArray commands;
 	MerryCommandArray l_commands;
 	MerryCommand* favourite_cmd = NULL;
 	const wxString& favourite = g_config->GetFavorite(commandPrefix);
-	if (flags == -1)
-		goto plugincmdonly;
 	bool test_cmp = false;
 	int cmp_find = -1;
 	for (size_t i=0; i<m_commands.size(); ++i)
@@ -240,7 +241,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix,int
 		l_commands.push_back(m_commands[i]);
 	}
 	sort(l_commands.begin(),l_commands.end(),command_sort);
-	cmdPrefix = commandPrefix.Upper().Trim();
+	cmdPrefix = commandPrefix.Upper().Trim(false).Trim();
 	if (cmdPrefix.empty())
 		return l_commands;
 	if (commandPrefix.empty())
@@ -298,14 +299,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix,int
 
 	if (g_config->get(ShowTopTen) && commands.size() >= 10)
 		commands.resize(10);
-
-plugincmdonly:
-	if (commands.size() < 9)
-	{
-		this->GetPluginCmd(commandPrefix);
-		for(size_t i=0;i<plugin_commands.size();++i)
-			commands.push_back(plugin_commands[i]);
-	}
 #endif//ifdef _ALMRUN_CONFIG_H_
+
 	return commands;
 }

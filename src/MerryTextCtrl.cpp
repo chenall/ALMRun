@@ -1,6 +1,6 @@
 #include "MerryTextCtrl.h"
 #include "MerryConfig.h"
-#include "MerryCommandManager.h"
+
 #include "MerryHelper.h"
 #include "MerryLua.h"
 #include "MerryApp.h"
@@ -93,6 +93,16 @@ void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
 {
 	e.StopPropagation();
 	e.Skip();
+}
+
+void MerryTextCtrl::SetPluginMode(const MerryCommand* cmd)
+{
+	wxString name = cmd->GetCommandName(0);
+	if (!name.empty())
+		this->ChangeValue(name.Lower());
+	this->EnterArgs = -1;
+	this->AppendText(" ");
+	this->AutoCompletion(WXK_SPACE);
 }
 
 #ifdef __WXMSW__
@@ -191,10 +201,9 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	{
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
-			if (m_lastKeyDownCode != keyCode && listBoxPanel->GetSelectionCommand()->GetCmd().empty())
-			{//命令为空不执行,忽略.
-				m_lastKeyDownCode = e.GetKeyCode();
-				e.Skip();
+			if (listBoxPanel->GetSelectionCommand()->GetCmd().empty())
+			{//命令为空不执行,只有插件命令才会命令为空,忽略.
+				SetPluginMode(listBoxPanel->GetSelectionCommand());
 				break;
 			}
 			this->ExecuteCmd();
@@ -239,13 +248,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 				const MerryCommand* cmd = listBoxPanel->GetSelectionCommand();
 				if (cmd->GetFlags() == CMDS_FLAG_PLUGIN && this->EnterArgs == 0)//插件命令
 				{
-					this->EnterArgs = -1;
-					//发送空格键
-					wxString name = cmd->GetCommandName(0);
-					if (!name.empty())
-						this->ChangeValue(cmd->GetCommandName(0));
-					this->AppendText(" ");
-					this->AutoCompletion(WXK_SPACE);
+					SetPluginMode(cmd);
 					break;
 				}
 				this->ChangeValue(cmd->GetCommandName());
@@ -316,7 +319,10 @@ void MerryTextCtrl::ExecuteCmd()
 		return;
 	const MerryCommand* command = listBoxPanel->GetSelectionCommand();
 	if (command->GetCmd().empty())
+	{//命令为空,插件命令
+		SetPluginMode(command);
 		return;
+	}
 	#ifdef __WXMSW__
 	if (command->GetCmd().Find("{%p+}") != wxNOT_FOUND && this->EnterArgs <= 0)
 	{
@@ -341,7 +347,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 	this->GetSelection(&from, &to);
 	wxString name = this->GetValue();
 
-	if (name.empty())
+	if (name.empty())//输入框内容为空时要恢复当前状态
 		this->EnterArgs = 0;
 
 	if (from != to)
@@ -353,16 +359,22 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 		listBoxPanel->SelectPrev();
 	else// if (keyCode != WXK_TAB)
 	{
-		MerryCommandArray commands = g_commands->Collect(name,this->EnterArgs);
-#ifdef _ALMRUN_CONFIG_H_
-		//数字热键启用
-
-		if (g_config->get(NumberKey) && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
+		MerryCommandArray commands;
+		if (this->EnterArgs >= 0)
 		{
-			if (keyCode == ' ' || listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
-				return this->ExecuteCmd();
+			commands = g_commands->Collect(name);
+#ifdef _ALMRUN_CONFIG_H_
+			//数字热键启用
+			if (g_config->get(NumberKey) && commands.size() == 0 && (keyCode == ' ' || (keyCode >= '0' && keyCode <= '9')))
+			{
+				if (keyCode == ' ' || listBoxPanel->SetSelection(-1,(keyCode & 0xf)))
+					return this->ExecuteCmd();
+			}
 		}
+		if (!g_config->get(ShowTopTen) || commands.size() < 10)
 #endif//#ifdef _ALMRUN_CONFIG_H_
+			g_commands->GetPluginCmd(name,commands);
+
 		listBoxPanel->SetCommandArray(commands);
 		if (commands.size() == 0)
 		{
