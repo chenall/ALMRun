@@ -29,5 +29,5 @@ void ShowErrinfo(const int error_type)
 	MerryInformationDialog *dlg = new MerryInformationDialog("ÌבÊ¾",s_lastError,wxEmptyString);
 	dlg->ShowModal();
 	if (dlg->isChecked())
-		g_config->set(error_type,true);
+		g_config->set(error_type,false);
 }
