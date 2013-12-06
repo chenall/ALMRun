@@ -10,13 +10,21 @@ function DoFile(file)
     xpcall(dofile,error_hook,file)
 end
 
-DoFile(ALMRUN_HOME .. 'LuaEx/base.lua')--基本库
+if FileExists('LuaEx/base.lua') then --基本库
+    DoFile('LuaEx/base.lua')
 
---读取用户扩展库
-local Files = ListDir(ALMRUN_CONFIG_PATH,"*.lua",-1)
-if Files == nil then 
-    return
+    --读取用户扩展库
+    local Files = ListDir(ALMRUN_CONFIG_PATH,"*.lua",-1)
+    if Files == nil then 
+	return
+    end
+    for key,value in pairs(Files) do  
+	DoFile(value)
+    end
+else
+    MessageBox("LUA基本库LuaEx\\base.lua不存在,将禁用LUA扩展功能","LUA扩展")
 end
-for key,value in pairs(Files) do  
-    DoFile(value)
+
+if FileExists('LuaEx/update.lua') then
+    DoFile('LuaEx/update.lua')
 end
