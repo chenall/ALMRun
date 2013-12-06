@@ -35,11 +35,19 @@ static int LuaAddCommand(lua_State* L)
 	if (commandID < 0 )
 	{
 		luaL_unref(L, LUA_REGISTRYINDEX,cmd->FuncRef);
-		return luaL_error(L, ::MerryGetLastError().c_str());
+		if (g_config && g_config->get(ShowCMDErrInfo))
+			return luaL_error(L, ::MerryGetLastError().c_str());
+		else
+			return 0;
 	}
 
 	if (!g_hotkey->RegisterHotkey(commandID))
-		return luaL_error(L, ::MerryGetLastError().c_str());
+	{
+		if (g_config && g_config->get(ShowCMDErrInfo))
+			return luaL_error(L, ::MerryGetLastError().c_str());
+		else
+			return 0;
+	}
 
 	lua_pushnumber(L, commandID);
 	return 1;

@@ -88,6 +88,8 @@ MerryLua::MerryLua()
 	lua_setglobal(L, "ALMRUN_HOME");
 	lua_pushinteger(L,CMDS_FLAG_ALTRUN>>3);
 	lua_setglobal(L, "CMDS_FLAG_ALTRUN");
+	lua_pushstring(L,VERSION_STR);
+	lua_setglobal(L, "ALMRUN_VERSION");
 	this->DoConfig();
 }
 

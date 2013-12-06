@@ -40,7 +40,8 @@
 		{
 			wxString cmd = filenames[i];
 			//cmd.Replace("\\","/");
-			g_config->AddCmd(cmd,wxFileNameFromPath(cmd));
+			if (g_config->AddCmd(cmd,wxFileNameFromPath(cmd)) <= 0)
+				ShowErrinfo(ShowCMDErrInfo);
 		}
 		m_pOwner->ReLoadCmds();
 		return true;

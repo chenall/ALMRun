@@ -588,6 +588,7 @@ static int AddALTRunCMD(lua_State *L)
 		commandLine.insert(0,'+');
 	if (g_config->AddCmd(commandLine,commandName,wxEmptyString,commandDesc) > 0)
 		return 1;
+	ShowErrinfo(ShowCMDErrInfo);
 	return 0;
 }
 /*

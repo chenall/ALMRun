@@ -1,5 +1,4 @@
 #include "MerryCommandManager.h"
-#include "MerryError.h"
 #include "MerryHotkey.h"
 #include "ALMRunConfig.h"
 #include "MerryListBoxPanel.h"
@@ -9,7 +8,7 @@
 #include "ALMRunCommon.h"
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","ShowCMDErrInfo"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行(添加一个快捷方式到启动菜单),快捷键 Ctrl+Shift+R,部份系统下也可以直接按这个快捷键快速启动",
 	"保持程序窗口置顶,默认禁用.",
@@ -224,21 +223,18 @@ void ALMRunConfig::GuiConfig()
 		return;
 	DlgConfig* dlg = new DlgConfig(0);
 	dlg->config_hotkey->SetValue(HotKey);
-	for(int i=sizeof(config)-1;i>=0;--i)
-	{
-		if (config[i])
-			dlg->config->Check(i);
-	}
+
+	for(size_t i=0; i < CONFIG_BOOL_ITEMS; ++i)
+		dlg->config->Check(i,config[i]);
+
 	if (dlg->ShowModal() == wxID_OK)
 	{
 		conf->SetPath("/Config");
 		if (!dlg->config_hotkey->GetValue().IsSameAs(HotKey))
 			conf->Write("HotKey",dlg->config_hotkey->GetValue());
-		for(int i=sizeof(config)-1;i>=0;--i)
-		{
-			if (config[i] != dlg->config->IsChecked(i))
-				conf->Write(config_str[i],!config[i]);
-		}
+		for(size_t i=0; i < CONFIG_BOOL_ITEMS; ++i)
+			this->set(i,dlg->config->IsChecked(i));
+
 		conf->Flush();
 		#ifdef __WXMSW__
 			//使用POST发送消息，使得这个函数可以快速返回.
@@ -265,8 +261,9 @@ bool ALMRunConfig::SaveCfg()
 
 int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const int id)
 {
+	MerrySetLastError(wxEmptyString);
 	if (!conf)
-		return false;
+		return 0;
 	wxString cmdName = name;
 	if (cmdName.empty() && key.empty())
 	{
@@ -285,18 +282,21 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 				return -1;
 		}
 	}
+
 	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,(Id << 4) | CMDS_FLAG_CMDS);
+
 	if (cmdId < 0)
 	{
-		wxMessageBox(wxString::Format("添加命令失败->命令[%d]:%s\n%s",Id,name,MerryGetLastError()),"失败");
+		MerrySetLastError(wxString::Format("添加命令失败\n命令%s\n%s",name,MerryGetLastError()));
 		return -1;
 	}
+
 	if (!key.empty() && !g_hotkey->RegisterHotkey(cmdId))
 	{
-		wxMessageBox(wxString::Format("添加命令失败->注册热键失败:%s\n,命令[%d]:%s",key,Id,name),"错误!");
-		g_commands->DelCommand(cmdId);
+		MerrySetLastError(wxString::Format("注册热键失败:%s\n,命令[%d]:%s\n%s",key,Id,name,MerryGetLastError()));
 		return -1;
 	}
+
 	if (id == -1)
 	{
 		if (!this->ModifyCmd(Id,cmd,name,key,desc))
@@ -394,11 +394,26 @@ int ALMRunConfig::AddDir(const wxString& path,const wxString& inc,const wxString
 	return i;
 }
 
-bool ALMRunConfig::get(config_item_t config_type)
+bool ALMRunConfig::set(size_t item,bool value)
 {
-	if (config_type<0 || config_type >= CONFIG_BOOL_MAX)
+	if (item < 0 || item >= CONFIG_BOOL_MAX)
 		return false;
-	return this->config[config_type];
+
+	if (this->config[item] == value)//没有变化,不需要更改
+		return true;
+
+	if (conf)
+		conf->Write(wxString::Format("/config/%s",config_str[item]),value);
+
+	this->config[item] = value;
+	return true;
+}
+
+bool ALMRunConfig::get(config_item_t item)
+{
+	if (item < 0 || item >= CONFIG_BOOL_MAX)
+		return false;
+	return this->config[item];
 }
 
 size_t ALMRunConfig::get_u(config_item_t config_type) const
@@ -445,7 +460,8 @@ void ALMRunConfig::ConfigCommand()
 		cmds.ToLong(&cmdId,10);
 		//if (cmdId < 1000 && cmdId > lastId)
 		//	lastId = cmdId + 1;
-		this->AddCmd(cmd,name,key,desc,cmdId);
+		if (this->AddCmd(cmd,name,key,desc,cmdId) <= 0)
+			ShowErrinfo(ShowCMDErrInfo);
     }
 	//自动扫描目录配置
 	conf->SetPath("/dirs");

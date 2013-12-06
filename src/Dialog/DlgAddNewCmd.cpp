@@ -177,7 +177,8 @@ void DlgAddNewCmd::OnBrowseClick(wxCommandEvent& e)
 				for(int i = files.Count() - 1 ;i>=0;--i)
 				{
 					//files[i].Replace("\\","/");
-					g_config->AddCmd(files[i],wxFileNameFromPath(files[i]));
+					if (g_config->AddCmd(files[i],wxFileNameFromPath(files[i]))<=0)
+						ShowErrinfo(ShowCMDErrInfo);;
 				}
 			}
 		}
@@ -256,6 +257,8 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		else
 			this->Destroy();
 	}
+	else
+		ShowErrinfo();
 }
 
 /*!

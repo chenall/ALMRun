@@ -2,6 +2,7 @@
 #define _MERRY_WX_H_
 
 #include <wx/wxprec.h>
+#include "MerryError.h"
 #ifdef __BORLANDC__
 	#pragma hdrstop
 #endif

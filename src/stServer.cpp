@@ -97,8 +97,8 @@ bool stConnection::OnDisconnect()
 			//cmd.Replace("\\","/");
 			if (::wxDirExists(cmd))
 				g_config->AddDir(cmd);
-			else
-				g_config->AddCmd(cmd,wxFileNameFromPath(cmd));
+			else if (g_config->AddCmd(cmd,wxFileNameFromPath(cmd)) <= 0)
+				ShowErrinfo(ShowCMDErrInfo);;
 		}
 		wxMessageBox("批量添加完成!");
 	}

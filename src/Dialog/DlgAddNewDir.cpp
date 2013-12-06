@@ -300,7 +300,7 @@ void DlgAddNewDir::onButtonClick(wxCommandEvent& e)
 	if (AddAsCmd->IsChecked())
 	{
 		if (g_config->AddCmd(dName) == -1)
-			return;
+			return ShowErrinfo();
 		if (this->IsModal())
 			this->EndModal(wxID_OK);
 		else

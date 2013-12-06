@@ -5,5 +5,6 @@
 
 const wxString& MerryGetLastError();
 void MerrySetLastError(const wxString& error);
+void ShowErrinfo(const int error_type = 0);
 
 #endif

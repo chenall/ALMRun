@@ -1,4 +1,3 @@
-#pragma once
 #ifndef _ALMRUN_CONFIG_H_
 #define _ALMRUN_CONFIG_H_
 #include "ALMRunVersion.h"
@@ -17,7 +16,7 @@ enum gui_config_item
 	GUI_CONFIG_MAX,
 };
 
-typedef enum
+typedef enum _config_item_t
 {
 	AutoRun,
 	StayOnTop,
@@ -37,12 +36,16 @@ typedef enum
 	DoubleToggleFunc,
 	DoubleClick,
 	DuplicateCMD,
+	CONFIG_BOOL_ITEMS,
+	CONFIG_ERROR_TYPE = CONFIG_BOOL_ITEMS,
+	ShowCMDErrInfo = CONFIG_ERROR_TYPE,
 	CONFIG_BOOL_MAX,
 	CONFIG_VER = 0,
 	ParamHistoryLimit,
 	CONFIG_UINT_MAX,
 } config_item_t;
 
+typedef _config_item_t CONFIG_ITEM_T;
 struct DirCfg
 {
 	wxString include;
@@ -68,10 +71,12 @@ public:
 	void Check();
 	bool Changed();
 	void get(const wxString& name);
-	bool get(config_item_t config_type);
 	size_t get_u(config_item_t config_type) const;
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
+
+	bool get(config_item_t config_type);
+	bool set(size_t item,bool value);
 	bool SaveCfg();
 	bool DeleteCmd(const int id);
 	bool DeleteDir(const int id);
