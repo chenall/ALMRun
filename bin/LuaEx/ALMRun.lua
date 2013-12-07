@@ -18,8 +18,11 @@ if FileExists('LuaEx/base.lua') then --基本库
     if Files == nil then 
 	return
     end
-    for key,value in pairs(Files) do  
-	DoFile(value)
+    for key,value in pairs(Files) do
+	if value:find("[\\/]_",#ALMRUN_CONFIG_PATH) == nil then--过滤以_开头的文件/文件夹
+	    DoFile(value)
+	    MessageBox(value)
+	end
     end
 else
     MessageBox("LUA基本库LuaEx\\base.lua不存在,将禁用LUA扩展功能","LUA扩展")
