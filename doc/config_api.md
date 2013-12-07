@@ -50,13 +50,17 @@ ALMRunAPI
 =================
 只要稍学习一下 lua 编程语言，就可以灵活的配置 ALMRun。配置文件位于 config 目录中，common.lua 为 ALMRun 提供了默认的配置。
 这里介绍一下 ALMRun 配置文件的 API：
-[addCommand]: #0-addcommand "addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}"
+[addCommand]: #0-addcommand "addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令/函数}"
 ### 0. addCommand
-	addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令,func=函数}
+	addCommand{name=命令名,desc=备注,key=[热键][HOT_KEY],cmd=执行命令/函数}
 
     添加一个命令
-	其中,cmd和func二选一,优先使用cmd参数.desc和key都是可选的.
+	其中,cmd参数是必须的,可以是一个字符串或一个LUA函数,desc和key都是可选的.
 	desc用于在使用func时显示备注信息.使用cmd参数时desc没有效果.
+	如果cmd是一个函数,则它接受两个参数args,cmdid分别是用户输入的参数,该命令对应的ID
+	例子:
+	addCommand{name="TestCmd",cmd="cmd.exe"}
+	addCommand{name="TestCmd2",cmd=function(arg,cmdid) MessageBox("命令ID:"..cmdid.."\n参数:"..arg) end}
 > 
 #### key 热键说明:
 
@@ -285,9 +289,9 @@ shellExecute(commandName, commandArg, workingDir, show)
 
 ```lua
 	--范例，按 HOME 键禁用某快捷键
-	local keyID = addCommand{ key = 'C-1', func = function() enterKey('S-F10', 'V', '', 'Return') end }
+	local keyID = addCommand{ key = 'C-1', cmd = function() enterKey('S-F10', 'V', '', 'Return') end }
 	local enabled = true
-	addCommand{ key = 'HOME', func = function()
+	addCommand{ key = 'HOME', cmd = function()
 			  if enabled then
 						 disableCommandKey(keyID)
 						 enabled = false
@@ -315,12 +319,12 @@ shellExecute(commandName, commandArg, workingDir, show)
 	使用 Ctrl + F7 关闭定时器
 ```lua
 	local timer
-	addCommand{ key = 'F7', func = function()
+	addCommand{ key = 'F7', cmd = function()
 			  timer = setTimer(5000, false, function()
 						 enterKey('Right')
 			  end)
 	end }
-	addCommand{ key = 'C-F7', func = function()
+	addCommand{ key = 'C-F7', cmd = function()
 			  clearTimer(timer)
 	end }
 	clearTimer
@@ -352,7 +356,7 @@ shellExecute(commandName, commandArg, workingDir, show)
 ### 26. config
 	config{CONFIG1=value1,CONFIG2=value2...}
 
-  程序序设置,目前支持以下设置
+  程序序设置,目前支持以下设置(除非必要,建议在GUI的参数配置中修改)
  
 	* CompareMode  命令匹配模式
    		0 默认,任意位置匹配
