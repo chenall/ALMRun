@@ -59,10 +59,10 @@ bool MerryCommandManager::DelCommand(int commandID)
 
 const int MerryCommandManager::AddCommand(const ALMRunCMDBase* cmd)
 {
-	return AddCommand(cmd->Name,cmd->Desc,cmd->cmdLine,cmd->FuncRef,cmd->Key,cmd->Flags);
+	return AddCommand(cmd->Name,cmd->Desc,cmd->cmdLine,cmd->WorkDir,cmd->FuncRef,cmd->Key,cmd->Flags);
 }
 
-const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags)
+const int MerryCommandManager::AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine,const wxString& commandWorkDir, int funcRef, const wxString& triggerKey,int flags)
 {
 	if (m_commands.size() >= 10000)
 	{
@@ -92,7 +92,7 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 			return -1;
 		}
 	}
-	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine, funcRef, triggerKey);
+	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine,commandWorkDir, funcRef, triggerKey);
 	m_commands.push_back(command);
 	return command->GetCommandID();
 }

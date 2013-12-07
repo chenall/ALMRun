@@ -9,10 +9,22 @@
 class ALMRunCMDBase
 {
 	public:
+		ALMRunCMDBase(const wxString& commandName = wxEmptyString,const wxString& commandDesc = wxEmptyString,const wxString& commandLine = wxEmptyString,const wxString& commandworkDir = wxEmptyString, int funcRef = 0, const wxString& triggerKey = wxEmptyString,const int order = 0)
+		{
+			this->Name = commandName;
+			this->Desc = commandDesc;
+			this->cmdLine = commandLine;
+			this->WorkDir = commandworkDir;
+			this->Key = triggerKey;
+			this->FuncRef = funcRef;
+			this->Order = order;
+		}
+
 		wxString Name;
 		wxString Desc;
 		wxString cmdLine;
 		wxString Key;
+		wxString WorkDir;
 		int FuncRef;
 		int Order;
 		int Flags;
@@ -25,12 +37,12 @@ ALMRunCMDBase* lua_GetCommand(lua_State* L, int flags = 0);
 wxString GetPinYin(const wxString& source);
 wxString GetClipboardText();
 int importCMD(wxString& filename);
+wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir = wxEmptyString);
 
 #ifdef __WXMSW__
-
-wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir = wxEmptyString);
-wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg = NULL);
-bool RunCMD(const wxString& cmdLine,const wxString& cmdArg);
+static wxString _GetCMDPath(const wxString& commandLine);
+wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg = NULL,const wxString& workDir = wxEmptyString);
+bool RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir = wxEmptyString);
 
 #endif
 

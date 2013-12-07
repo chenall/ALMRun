@@ -15,7 +15,7 @@ public:
 	const void AddFiles(const wxArrayString& files);
 	const void AddFiles(const wxArrayString& files,const wxArrayString& excludes);
 	const int AddCommand(const ALMRunCMDBase* cmd);
-	const int AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,int flags = 0);
+	const int AddCommand(const wxString& commandName,const wxString& commandDesc,const wxString& commandLine = wxEmptyString,const wxString& commandWorkDir = wxEmptyString, int funcRef = 0, const wxString& triggerKey = wxEmptyString,int flags = 0);
 	const MerryCommand* GetCommand(int commandID) const;
 	bool DelCommand(int commandID);
 	MerryCommandArray Collect(const wxString& commandPrefix);

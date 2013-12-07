@@ -16,7 +16,7 @@ function RegisterPlugin(Name,plugin)
 	    local _eventResult = {}
 	    for _,_plugin in ipairs(_plugins) do
 		local __name
-		if _plugin.name == nil then
+		if _plugin.name == nil or #_plugin.name==0 then
 		    __name = commandName
 		else
 		    local l_len = _plugin.name:len()
@@ -146,7 +146,7 @@ function SplitCmd(cmdLine)
 end
 
 -- 默认的命令调用函数
-CmdCallFunc = function(cmdLine,cmdArg)
+CmdCallFunc = function(cmdLine,cmdArg,workDir)
     -- 自动参数替换{%p}
     if cmdLine:match("{%%[pP]%+?}") then
 	cmdLine = cmdLine:gsub("{%%[pP]%+?}",cmdArg)
@@ -171,7 +171,10 @@ CmdCallFunc = function(cmdLine,cmdArg)
 	end
     end
 -- 提取可执行程序所在目录
-    local DestDir = cmd:match("^(.-)[^\\|/]+$")
+    local DestDir = workDir
+    if DestDir == nil or #DestDir==0 then
+	DestDir = cmd:match("^(.-)[^\\|/]+$")
+    end
     shellExecute(cmd,cmdArg,DestDir)
 end
 

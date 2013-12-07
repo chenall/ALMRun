@@ -14,7 +14,7 @@ class MerryCommand
 {
 public:
 	MerryCommand(int commandID, const ALMRunCMDBase* cmd);
-	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc = wxEmptyString,const wxString& commandLine = wxEmptyString, int funcRef = 0, const wxString& triggerKey = wxEmptyString,const int order = 0);
+	MerryCommand(int commandID, const wxString& commandName,const wxString& commandDesc = wxEmptyString,const wxString& commandLine = wxEmptyString,const wxString& workDir = wxEmptyString, int funcRef = 0, const wxString& triggerKey = wxEmptyString,const int order = 0);
 	~MerryCommand();
 
 	int GetCommandID() const { return m_commandID; }
@@ -23,6 +23,7 @@ public:
 	const wxString& GetCommandName(const int) const { return m_commandFName; }
 	const wxString& GetTriggerKey() const { return m_triggerKey; }
 	const wxString& GetCommandDesc() const { return m_commandDesc; }
+	const wxString& GetWorkDir() const{ return m_commandWorkDir;}
 	wxString GetCmd() const;
 	int GetOrder() const;
 	int SetOrder();
@@ -37,6 +38,7 @@ private:
 	wxString m_commandDesc;
 	wxString m_commandLine;
 	wxString m_commandFName;
+	wxString m_commandWorkDir;
 	int m_commandFunc;
 	int m_flags;
 	wxString m_triggerKey;

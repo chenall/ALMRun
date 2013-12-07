@@ -154,6 +154,10 @@ ALMRunCMDBase* lua_GetCommand(lua_State* L,int flags)
 	lua_rawget(L, it);
 	cmd->Key = wxString(lua_tostring(L, -1), wxConvLocal);
 
+	lua_pushstring(L, "workdir");
+	lua_rawget(L, it);
+	cmd->WorkDir = wxString(lua_tostring(L, -1), wxConvLocal);
+
 	lua_pushstring(L, "cmd");
 	lua_rawget(L, it);
 	if (lua_isfunction(L,-1))
@@ -271,6 +275,17 @@ wxString GetPinYin(const wxString& source)
 	return pinyin;
 }
 
+wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
+{
+	wxString cwd = ::wxGetCwd();
+	wxString cmdPath;
+	if (!workingDir.empty() && ::wxDirExists(workingDir))
+		::wxSetWorkingDirectory(workingDir);
+	cmdPath = _GetCMDPath(commandLine);
+	wxSetWorkingDirectory(cwd);
+	return cmdPath;
+}
+
 #ifdef __WXMSW__
 
 BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
@@ -302,7 +317,7 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 	return false;
 }
 //简单的分离命令和参数函数
-wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
+wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString& workDir)
 {
 	size_t cmd_len = cmdLine.size();
 	wxString cmdFlags("@+>* ");
@@ -326,7 +341,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 			if (cmdLine[n++] == '\"')
 				break;
 		}
-		cmd = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));
+		cmd = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos),workDir);
 
 		goto getParam;
 	}
@@ -342,7 +357,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 		else if (tmp.find("://",3,3) !=  wxNOT_FOUND)//网址类型
 			cmd = tmp;
 		else
-			cmd = GetCMDPath(tmp);
+			cmd = GetCMDPath(tmp,workDir);
 
 		if (!cmd.empty())
 		{
@@ -361,7 +376,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg)
 				continue;
 			lastSpace = n;
 			InSpace = true;
-			wxString _tmp = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos));
+			wxString _tmp = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos),workDir);
 			if (!_tmp.empty())
 			{
 				cmd = _tmp;
@@ -408,7 +423,7 @@ getParam:
 	return cmd_flag + cmd;
 }
 
-wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
+static wxString _GetCMDPath(const wxString& commandLine)
 {
 	size_t cmdIndex;
 	if (commandLine.empty() || chkSysCmd(commandLine,&cmdIndex))
@@ -421,10 +436,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 		return wxEmptyString;
 	if (fn.IsDir() && !::wxDirExists(cmdName))
 		return wxEmptyString;
-
 	//如果文件存在返回文件路径
-	if (!workingDir.empty() && wxDirExists(workingDir))
-		fn.SetCwd(workingDir);
 	if (fn.Exists())
 	{
 		fn.MakeAbsolute();
@@ -519,12 +531,12 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	return wxEmptyString;
 }
 
-bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
+bool RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir)
 {
 	wxString arg;
 	wxString argt = wxEmptyString;
 	wxString cmd = cmdLine;
-	wxString workDir;
+	wxString workdir = workDir;
 	bool winexec = false;
 
 	//替换{%c}为剪贴板内容
@@ -542,13 +554,15 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 	else
 		argt = wxT(' ') + cmdArg;
 
-	cmd = ParseCmd(cmd,&arg);
+	cmd = ParseCmd(cmd,&arg,workDir);
 	if (cmd.empty())//没有找到命令
 	{
 		winexec = true;
 		cmd = cmdLine;
 	}
-	workDir = wxPathOnly(cmd);
+	if (workdir.empty())
+		workdir = wxPathOnly(cmd);
+
 	if (winexec)
 	{
 		cmd += argt;
@@ -561,7 +575,7 @@ bool RunCMD(const wxString& cmdLine,const wxString& cmdArg)
 		arg = ::wxExpandEnvVars(arg);
 	}
 
-	return g_controller->ShellExecute(cmd,arg,workDir);
+	return g_controller->ShellExecute(cmd,arg,workdir);
 }
 
 static int AddALTRunCMD(lua_State *L)

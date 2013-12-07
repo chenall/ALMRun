@@ -108,7 +108,7 @@ ALMRunConfig::ALMRunConfig()
 
 	//³ÌÐòÏÔÒþÈÈ¼üÅäÖÃ
 	HotKey = conf->Read("HotKey","A-R");
-	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",-1,HotKey,0)))
+	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",wxEmptyString,-1,HotKey,0)))
 	{
 		this->set("ShowTrayIcon",true);
 		wxMessageBox(wxString::Format("ÈÈ¼ü %s ×¢²áÊ§°Ü!",HotKey),"´íÎóÌáÊ¾",0x00000100);
@@ -116,11 +116,11 @@ ALMRunConfig::ALMRunConfig()
 	//ÖØÔØÅäÖÃÈÈ¼üÅäÖÃ
 	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	if (!HotKeyReLoad.empty())
-		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",-1,HotKeyReLoad,0));
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",wxEmptyString,-1,HotKeyReLoad,0));
 	//ÉÏÒ»¸öÔËÐÐµÄÃüÁîÈÈ¼üÅäÖÃ
 	LastItemHotKey = conf->Read("LastItemHotKey");
 	if (!LastItemHotKey.empty())
-		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"LastCmd",-2,LastItemHotKey,0));
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"LastCmd",wxEmptyString,-2,LastItemHotKey,0));
 
 	this->OldToNew();
 
@@ -259,7 +259,7 @@ bool ALMRunConfig::SaveCfg()
 	return true;
 }
 
-int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const int id)
+int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const wxString& path,const int id)
 {
 	MerrySetLastError(wxEmptyString);
 	if (!conf)
@@ -283,7 +283,7 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 		}
 	}
 
-	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,0,key,(Id << 4) | CMDS_FLAG_CMDS);
+	int cmdId = g_commands->AddCommand(cmdName,desc,cmd,path,0,key,(Id << 4) | CMDS_FLAG_CMDS);
 
 	if (cmdId < 0)
 	{
@@ -299,7 +299,7 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 
 	if (id == -1)
 	{
-		if (!this->ModifyCmd(Id,cmd,name,key,desc))
+		if (!this->ModifyCmd(Id,cmd,name,key,desc,path))
 			return -1;
 	}
 
@@ -317,7 +317,7 @@ bool ALMRunConfig::confWrite(const wxString& key,const wxString& value)
 	return conf->Write(Nkey,Nvalue);
 }
 
-bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc)
+bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const wxString& workDir)
 {
 	if (!conf || id < 0)
 		return false;
@@ -341,6 +341,12 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 		confWrite("desc",desc);
 	else
 		conf->DeleteEntry("desc");
+
+	if (!workDir.empty())
+		confWrite("workDir",workDir);
+	else
+		conf->DeleteEntry("workDir");
+
 	conf->SetPath(oldPath);
 
 	return (cfg_changed = true);
@@ -440,6 +446,7 @@ void ALMRunConfig::ConfigCommand()
 	wxString cmd;
 	wxString desc;
 	wxString cmds;
+	wxString workdir;
 	long cmdId;
 	long index = 0;
 	bool isExpandEnv = conf->IsExpandingEnvVars();
@@ -457,10 +464,11 @@ void ALMRunConfig::ConfigCommand()
 		name = conf->Read("name");
 		key = conf->Read("key");
 		desc = conf->Read("desc");
+		workdir = conf->Read("workDir");
 		cmds.ToLong(&cmdId,10);
 		//if (cmdId < 1000 && cmdId > lastId)
 		//	lastId = cmdId + 1;
-		if (this->AddCmd(cmd,name,key,desc,cmdId) <= 0)
+		if (this->AddCmd(cmd,name,key,desc,workdir,cmdId) <= 0)
 			ShowErrinfo(ShowCMDErrInfo);
     }
 	//×Ô¶¯É¨ÃèÄ¿Â¼ÅäÖÃ

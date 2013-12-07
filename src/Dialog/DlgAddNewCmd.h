@@ -41,6 +41,7 @@
 #define ID_CMD_KEY 10005
 #define ID_CMD_DESC 10002
 #define ID_CMD_CMDLINE 10003
+#define ID_CMD_WORKDIR 10004
 #define ID_CMD_BROWSE 10008
 #define ID_CMD_ADD_DIR 10010
 #define SYMBOL_DLGADDNEWCMD_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
@@ -101,6 +102,7 @@ public:
 	wxTextCtrl* cmdName;
 	wxTextCtrl* cmdDesc;
 	wxTextCtrl* cmdLine;
+	wxTextCtrl* cmdPath;
 	HotkeyCtrl* cmdKey;
 	wxCheckBox* HideRun;
 	wxCheckBox* RunAs;

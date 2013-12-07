@@ -16,12 +16,12 @@ MerryCommand::MerryCommand(int commandID, const ALMRunCMDBase* cmd)
 	m_commandDesc = cmd->Desc;
 	m_triggerKey = cmd->Key;
 	m_commandLine = cmd->cmdLine;
+	m_commandWorkDir = cmd->WorkDir;
 	m_order = cmd->Order;
-
 	conf_cmd();
 }
 
- MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine, int funcRef, const wxString& triggerKey,const int order)
+ MerryCommand::MerryCommand(int commandID, const wxString& commandName, const wxString& commandDesc,const wxString& commandLine,const wxString& workDir, int funcRef, const wxString& triggerKey,const int order)
 {
 	m_commandID = commandID & 0xFFFF;
 	m_flags = commandID >> 16;
@@ -30,6 +30,7 @@ MerryCommand::MerryCommand(int commandID, const ALMRunCMDBase* cmd)
 	m_triggerKey = triggerKey;
 	m_commandDesc = commandDesc;
 	m_commandLine = commandLine;
+	m_commandWorkDir = workDir;
 	m_order = order;
 	conf_cmd();
 }
@@ -153,19 +154,19 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		if (lua_isnil(L, 1))
 		{
 			lua_pop(L, 1);
-			if (RunCMD(m_commandLine,cmdArg))
+			if (RunCMD(m_commandLine,cmdArg,m_commandWorkDir))
 				goto ExecuteEnd;
 			return;
 		}
 		lua_pushstring(L, m_commandLine.c_str());
 		lua_pushstring(L, cmdArg.c_str());
+		lua_pushstring(L, m_commandWorkDir.c_str());
 	}
 	else if (m_commandFunc == -2)
 	{
 		if (m_commandLine == "LastCmd" && LastCmd)
 			LastCmd->Execute(wxEmptyString);
 		return;
-
 	}
 	else
 	{
@@ -176,9 +177,8 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		assert(lua_isfunction(L, -1));
 		lua_pushstring(L, cmdArg.c_str());
 		lua_pushnumber(L, m_commandID);
+		lua_pushnumber(L,0);
 	}
-
-	lua_pushnumber(L,0);
 
 	if (lua_pcall(L, 3, 0, 0))
 	{

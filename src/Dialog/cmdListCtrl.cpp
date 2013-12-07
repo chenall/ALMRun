@@ -62,6 +62,7 @@ wxListCtrl(parent,id,pos,size,style)
 	this->InsertColumn(CMDLIST_COL_KEY,_T("热键/包含"),wxLIST_AUTOSIZE,100);
 	this->InsertColumn(CMDLIST_COL_DESC,_T("备注/排除"),wxLIST_AUTOSIZE,100);
 	this->InsertColumn(CMDLIST_COL_ID,_T("ID"),0,30);
+	this->InsertColumn(CMDLIST_COL_WORKDIR,_T("工作目录"),0,0);
 	this->ReLoadCmds();
 //	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
 //	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
@@ -96,6 +97,7 @@ void cmdListCtrl::ReLoadCmds()
 			this->SetItem(index, CMDLIST_COL_CMD ,conf->Read("cmd"));
 			this->SetItem(index, CMDLIST_COL_KEY ,conf->Read("key"));
 			this->SetItem(index, CMDLIST_COL_DESC ,conf->Read("desc"));
+			this->SetItem(index, CMDLIST_COL_WORKDIR,conf->Read("workdir"));
 		}
 		conf->SetPath("/dirs");
 		id = 0;
@@ -107,7 +109,7 @@ void cmdListCtrl::ReLoadCmds()
 			conf->SetPath(cmds);
 			cmds.ToLong(&index);
 			cmds.sprintf("%d",~index);
-			index = this->InsertItem(item_index + index,cmds);
+			index = this->InsertItem(item_index + index,"@自动扫描目录@");
 			this->SetItem(index, DIRLIST_COL_ID,cmds);
 			this->SetItem(index, DIRLIST_COL_PATH ,conf->Read("path"));
 			this->SetItem(index, DIRLIST_COL_INCLUDE ,conf->Read("include"));
@@ -261,6 +263,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
 				dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
 				dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
+				dlg->cmdPath->SetValue(ctrl->GetItemText(item,CMDLIST_COL_WORKDIR));
 				if (dlg->ShowModal() == wxID_OK)
 					ctrl->ReLoadCmds();
 				dlg->Destroy();

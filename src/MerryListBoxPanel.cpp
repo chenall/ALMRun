@@ -245,6 +245,7 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 					dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
 					dlg->cmdKey->SetValue(cmd->GetTriggerKey());
 					dlg->cmdLine->SetValue(cmd->GetCmd());
+					dlg->cmdPath->SetValue(cmd->GetWorkDir());
 				}
 				else
 					dlg = new DlgAddNewCmd(NULL,wxID_ANY);

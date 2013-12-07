@@ -249,8 +249,8 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		cmd.insert(0,'@');
 	if (RequiredArg->GetValue())
 		cmd.insert(0,'+');
-	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))
-		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue()))>0 )
+	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))
+		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))>0 )
 	{
 		if (this->IsModal())
 			this->EndModal(wxID_OK);
@@ -340,6 +340,7 @@ void DlgAddNewCmd::CreateControls()
     itemBoxSizer13->Add(itemStaticText14, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
     cmdLine = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_CMDLINE, wxEmptyString, wxDefaultPosition, wxSize(220, -1), 0 );
+	cmdLine->AutoCompleteFileNames();
     cmdLine->SetHelpText("必要参数,要执行的命令行");
     if (DlgAddNewCmd::ShowToolTips())
         cmdLine->SetToolTip("必要参数,要执行的命令行");
@@ -347,6 +348,20 @@ void DlgAddNewCmd::CreateControls()
 
     wxButton* itemButton16 = new wxButton( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_BROWSE, "浏览(&B)", wxDefaultPosition, wxSize(60, -1), 0 );
     itemBoxSizer13->Add(itemButton16, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+
+	wxBoxSizer* cmdPathBoxSizer = new wxBoxSizer(wxHORIZONTAL);
+    itemStaticBoxSizer3->Add(cmdPathBoxSizer, 0, wxGROW|wxLEFT, 5);
+
+    wxStaticText* cmdPathText = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC, "工作目录:", wxDefaultPosition, wxDefaultSize, 0 );
+    cmdPathBoxSizer->Add(cmdPathText, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+
+    cmdPath = new wxTextCtrl( itemStaticBoxSizer3->GetStaticBox(), ID_CMD_WORKDIR, wxEmptyString, wxDefaultPosition, wxSize(260, -1), 0 );
+	cmdPath->AutoCompleteDirectories();
+    cmdPath->SetHelpText("可选参数,程序运行目录,工作目录,留空默认程序所在目录");
+    if (DlgAddNewCmd::ShowToolTips())
+        cmdPath->SetToolTip("可选参数,程序运行目录,工作目录,留空默认程序所在目录");
+    cmdPathBoxSizer->Add(cmdPath, 0, wxGROW|wxALL, 5);
+
 	//高级选项
 	wxBoxSizer* itemBoxSizer_checkbox = new wxBoxSizer(wxHORIZONTAL);
     itemStaticBoxSizer3->Add(itemBoxSizer_checkbox, 0, wxGROW|wxALL, 5);
