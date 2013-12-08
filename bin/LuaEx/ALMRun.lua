@@ -21,7 +21,6 @@ if FileExists('LuaEx/base.lua') then --基本库
     for key,value in pairs(Files) do
 	if value:find("[\\/]_",#ALMRUN_CONFIG_PATH) == nil then--过滤以_开头的文件/文件夹
 	    DoFile(value)
-	    MessageBox(value)
 	end
     end
 else

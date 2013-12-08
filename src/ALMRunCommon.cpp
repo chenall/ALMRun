@@ -92,6 +92,13 @@ void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& file
 	exc.Clear();
 }
 
+void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips)
+{
+	win->SetHelpText(text);
+	if (ShowToolTips)
+		win->SetToolTip(text);
+}
+
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub)
 {
 	static int cur_sub_dir = 0;
@@ -284,6 +291,132 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	cmdPath = _GetCMDPath(commandLine);
 	wxSetWorkingDirectory(cwd);
 	return cmdPath;
+}
+
+
+// ----------------------------------------------------------------------------
+// filter functions
+// ----------------------------------------------------------------------------
+
+// undo FilterOutValue
+wxString UnEscapeString(const wxString& str)
+{
+    wxString strResult;
+    if ( str.empty() )
+        return strResult;
+
+    strResult.reserve(str.length());
+
+    wxString::const_iterator i = str.begin();
+    const bool bQuoted = *i == '"';
+    if ( bQuoted )
+        ++i;
+
+    for ( const wxString::const_iterator end = str.end(); i != end; ++i )
+    {
+        if ( *i == wxT('\\') )
+        {
+            if ( ++i == end )
+            {
+                wxLogWarning(_("trailing backslash ignored in '%s'"), str.c_str());
+                break;
+            }
+
+            switch ( (*i).GetValue() )
+            {
+                case wxT('n'):
+                    strResult += wxT('\n');
+                    break;
+
+                case wxT('r'):
+                    strResult += wxT('\r');
+                    break;
+
+                case wxT('t'):
+                    strResult += wxT('\t');
+                    break;
+
+                case wxT('\\'):
+                    strResult += wxT('\\');
+                    break;
+
+                case wxT('"'):
+                    strResult += wxT('"');
+                    break;
+            }
+        }
+        else // not a backslash
+        {
+            if ( *i != wxT('"') || !bQuoted )
+            {
+                strResult += *i;
+            }
+            else if ( i != end - 1 )
+            {
+                wxLogWarning(_("unexpected \" at position %d in '%s'."),
+                             i - str.begin(), str.c_str());
+            }
+            //else: it's the last quote of a quoted string, ok
+        }
+    }
+
+    return strResult;
+}
+
+// quote the string before writing it to file
+wxString EscapeString(const wxString& str)
+{
+   if ( !str )
+      return str;
+
+  wxString strResult;
+  strResult.Alloc(str.Len());
+
+  // quoting is necessary to preserve spaces in the beginning of the string
+  bool bQuote = wxIsspace(str[0]) || str[0] == wxT('"');
+
+  if ( bQuote )
+    strResult += wxT('"');
+
+  wxChar c;
+  for ( size_t n = 0; n < str.Len(); n++ ) {
+    switch ( str[n].GetValue() ) {
+      case wxT('\n'):
+        c = wxT('n');
+        break;
+
+      case wxT('\r'):
+        c = wxT('r');
+        break;
+
+      case wxT('\t'):
+        c = wxT('t');
+        break;
+
+      case wxT('\\'):
+        c = wxT('\\');
+        break;
+
+      case wxT('"'):
+        if ( bQuote ) {
+          c = wxT('"');
+          break;
+        }
+        //else: fall through
+
+      default:
+        strResult += str[n];
+        continue;   // nothing special to do
+    }
+
+    // we get here only for special characters
+    strResult << wxT('\\') << c;
+  }
+
+  if ( bQuote )
+    strResult += wxT('"');
+
+  return strResult;
 }
 
 #ifdef __WXMSW__

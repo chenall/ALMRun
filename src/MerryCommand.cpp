@@ -50,8 +50,12 @@ void MerryCommand::conf_cmd()
 	wxString luaCmd;
 	if (g_lua && m_commandLine.StartsWith("--LUA",&luaCmd))//是LUA脚本命令,需要转换
 	{
+
 		lua_State* L = g_lua->GetLua();
+		int top = lua_gettop(L);
 		m_commandLine.Clear();
+		luaCmd.insert(0,"return function(args,cmdID)\n").append("\nend");
+
 		if (!luaL_dostring(L,luaCmd) && lua_isfunction(L,-1))
 		{//执行正常返回一个函数
 			m_commandFunc = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -60,6 +64,7 @@ void MerryCommand::conf_cmd()
 		{
 			wxMessageBox("Error");
 		}
+		lua_settop(L,top);
 	}
 
 	if (m_commandName.empty())

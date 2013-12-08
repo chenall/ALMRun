@@ -22,6 +22,7 @@
 
 ////@begin includes
 #include "HotkeyCtrl.h"
+#include <wx/tglbtn.h>
 ////@end includes
 
 /*!
@@ -44,6 +45,7 @@
 #define ID_CMD_WORKDIR 10004
 #define ID_CMD_BROWSE 10008
 #define ID_CMD_ADD_DIR 10010
+#define ID_TGLBUTTON 10006
 #define SYMBOL_DLGADDNEWCMD_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
 #define SYMBOL_DLGADDNEWCMD_TITLE _("Ìí¼ÓÐÂÃüÁî")
 #define SYMBOL_DLGADDNEWCMD_IDNAME ID_DLGADDNEWCMD
@@ -85,6 +87,7 @@ public:
 	void OnOkButtonClick(wxCommandEvent& e);
 	void OnBrowseClick(wxCommandEvent& e);
 	void OnShow(wxShowEvent& e);
+	void OnToggle(wxCommandEvent& e);
 ////@end DlgAddNewCmd event handler declarations
 
 ////@begin DlgAddNewCmd member function declarations
@@ -104,14 +107,22 @@ public:
 	wxTextCtrl* cmdLine;
 	wxTextCtrl* cmdPath;
 	HotkeyCtrl* cmdKey;
-	wxCheckBox* HideRun;
-	wxCheckBox* RunAs;
-	wxCheckBox* RequiredArg;
-	int flags;
+
 	int cmdID;
 ////@end DlgAddNewCmd member variables
 private:
 
+protected:
+	wxCheckBox* HideRun;
+	wxCheckBox* RunAs;
+	wxCheckBox* RequiredArg;
+	int flags;
+	wxTextCtrl *luaCmd;
+	wxBoxSizer* luaBoxSizer;
+	wxBoxSizer* cmdBoxSizer;
+	wxBoxSizer* itemBoxSizerToggle;
+	wxToggleButton* m_toggleButton;
+	wxBoxSizer* itemBoxSizer2;
 };
 
 #endif

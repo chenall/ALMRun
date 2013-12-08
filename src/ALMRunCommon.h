@@ -38,6 +38,9 @@ wxString GetPinYin(const wxString& source);
 wxString GetClipboardText();
 int importCMD(wxString& filename);
 wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir = wxEmptyString);
+wxString UnEscapeString(const wxString& str);
+wxString EscapeString(const wxString& str);
+void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips = true);
 
 #ifdef __WXMSW__
 static wxString _GetCMDPath(const wxString& commandLine);

@@ -267,7 +267,8 @@ int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString
 	wxString cmdName = name;
 	if (cmdName.empty() && key.empty())
 	{
-		cmdName = wxFileName(cmd).GetFullName();
+		if (!cmd.StartsWith("--LUA"))
+			cmdName = wxFileName(cmd).GetFullName();
 		//if (!cmdName.empty())
 		//	cmdName.Append(".ALMRun");
 	}
@@ -326,7 +327,11 @@ bool ALMRunConfig::ModifyCmd(const int id,const wxString& cmd,const wxString& na
 	wxString oldPath = conf->GetPath();
 	conf->SetPath(wxString::Format("/cmds/%d",id));
 
-	confWrite("cmd",cmd);
+	if (cmd.StartsWith("--LUA"))
+		confWrite("cmd",EscapeString(cmd));
+	else
+		confWrite("cmd",cmd);
+
 	if (!name.empty())
 		confWrite("name",name);
 	else
@@ -468,6 +473,8 @@ void ALMRunConfig::ConfigCommand()
 		cmds.ToLong(&cmdId,10);
 		//if (cmdId < 1000 && cmdId > lastId)
 		//	lastId = cmdId + 1;
+		if (cmd.StartsWith("--LUA"))
+			cmd = UnEscapeString(cmd);
 		if (this->AddCmd(cmd,name,key,desc,workdir,cmdId) <= 0)
 			ShowErrinfo(ShowCMDErrInfo);
     }
