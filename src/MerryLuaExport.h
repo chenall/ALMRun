@@ -30,16 +30,17 @@ static int LuaAddCommand(lua_State* L)
 	else
 		commandID = g_commands->AddCommand(cmd);
 
-	wxDELETE(cmd);
-
 	if (commandID < 0 )
 	{
 		luaL_unref(L, LUA_REGISTRYINDEX,cmd->FuncRef);
+		wxDELETE(cmd);
 		if (g_config && g_config->get(ShowCMDErrInfo))
 			return luaL_error(L, ::MerryGetLastError().c_str());
 		else
 			return 0;
 	}
+
+	wxDELETE(cmd);
 
 	if (!g_hotkey->RegisterHotkey(commandID))
 	{

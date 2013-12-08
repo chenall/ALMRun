@@ -47,6 +47,21 @@ MerryCommand::~MerryCommand()
 
 void MerryCommand::conf_cmd()
 {
+	wxString luaCmd;
+	if (g_lua && m_commandLine.StartsWith("--LUA",&luaCmd))//是LUA脚本命令,需要转换
+	{
+		lua_State* L = g_lua->GetLua();
+		m_commandLine.Clear();
+		if (!luaL_dostring(L,luaCmd) && lua_isfunction(L,-1))
+		{//执行正常返回一个函数
+			m_commandFunc = luaL_ref(L, LUA_REGISTRYINDEX);
+		}
+		else
+		{
+			wxMessageBox("Error");
+		}
+	}
+
 	if (m_commandName.empty())
 	{
 		m_commandFName = m_commandName;

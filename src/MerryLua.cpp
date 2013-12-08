@@ -92,7 +92,6 @@ MerryLua::MerryLua()
 	lua_setglobal(L, "ALMRUN_VERSION");
 	lua_pushinteger(L,(int)HWND_TEXTCTRL);
 	lua_setglobal(L, "HWND_TEXTCTRL");
-	this->DoConfig();
 }
 
 MerryLua::~MerryLua()

@@ -59,6 +59,7 @@ void MerryFrame::NewConfig()
 	LastCmd = NULL;
 
 	wxDELETE(g_lua);
+	wxDELETE(g_config);
 
 	wxDELETE(g_hotkey);
 	g_hotkey = NewMerryHotkey();
@@ -71,19 +72,20 @@ void MerryFrame::NewConfig()
 	wxDELETE(g_commands);
 	g_commands = new MerryCommandManager();
 
+	g_lua = new MerryLua();
 #ifdef _ALMRUN_CONFIG_H_
-	wxDELETE(g_config);
+
 	g_config = new ALMRunConfig();
 
 #endif//#ifdef _ALMRUN_CONFIG_H_
 
-	g_lua = new MerryLua();
 	if (show)
 		m_mainPanel->GetTextCtrl()->AppendText("");
 #ifdef _ALMRUN_CONFIG_H_
 	if (!g_config->get(ShowTip))
 		m_listBoxPanel->SetToolTip(NULL);
 #endif//#ifdef _ALMRUN_CONFIG_H_
+	g_lua->DoConfig();
 	__DEBUG_END("::Ë¢ÐÂÅäÖÃ");
 }
 
@@ -100,12 +102,14 @@ void MerryFrame::OnInit()
 
 	assert(!g_commands);
 	g_commands = new MerryCommandManager();
+
+	assert(!g_lua);
+	g_lua = new MerryLua();
 #ifdef _ALMRUN_CONFIG_H_
 	assert(!g_config);
 	g_config = new ALMRunConfig();
 #endif//#ifdef _ALMRUN_CONFIG_H_
-	assert(!g_lua);
-	g_lua = new MerryLua();
+	g_lua->DoConfig();
 }
 
 void MerryFrame::OpenConfigDir()
