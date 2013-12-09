@@ -238,7 +238,7 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 		case ID_TOOL_ADD:
 			if (cmdID >= 0)
 			{
-				DlgAddNewCmd* dlg=new DlgAddNewCmd(NULL);
+				DlgAddNewCmd* dlg=new DlgAddNewCmd();
 				if (dlg->ShowModal() == wxID_OK)
 					ctrl->ReLoadCmds();
 				dlg->Destroy();
@@ -256,14 +256,14 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 				break;
 			if (cmdID >= 0)//cmdID >=0 ÃüÁî
 			{
-				DlgAddNewCmd* dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
+				DlgAddNewCmd* dlg = new DlgAddNewCmd(ctrl->GetItemText(item,CMDLIST_COL_ID));
 	//			dlg->flags = MENU_CMD_EDIT;
-				dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
-				dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
-				dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
-				dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
-				dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
-				dlg->cmdPath->SetValue(ctrl->GetItemText(item,CMDLIST_COL_WORKDIR));
+				//dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
+				//dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
+				//dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
+				//dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
+				//dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
+				//dlg->cmdPath->SetValue(ctrl->GetItemText(item,CMDLIST_COL_WORKDIR));
 				if (dlg->ShowModal() == wxID_OK)
 					ctrl->ReLoadCmds();
 				dlg->Destroy();

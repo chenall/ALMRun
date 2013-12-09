@@ -82,7 +82,7 @@ bool stConnection::OnDisconnect()
 		}
 		else
 		{
-			DlgAddNewCmd *dlg = new DlgAddNewCmd(NULL,wxID_ANY);
+			DlgAddNewCmd *dlg = new DlgAddNewCmd();
 			dlg->cmdLine->SetValue(cmd);
 			dlg->cmdName->SetValue(wxFileNameFromPath(cmd));
 			dlg->ShowModal();

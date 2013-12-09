@@ -91,6 +91,7 @@ public:
 	bool SetFavorite(const wxString& key,const wxString& name);
 	const wxString GetFavorite(const wxString& key);
 	int SetcmdOrder(wxString& cmd,int order = 0);
+	ALMRunCMDBase GetCmd(const int cmdid);
 	wxFileConfig *conf;
 	wxFileConfig *order_conf;
 

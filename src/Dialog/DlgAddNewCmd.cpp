@@ -100,11 +100,20 @@ END_EVENT_TABLE()
 DlgAddNewCmd::DlgAddNewCmd()
 {
     Init();
+	Create(NULL);
 }
 
-DlgAddNewCmd::DlgAddNewCmd(const int flags)
+DlgAddNewCmd::DlgAddNewCmd(const wxString& cmdID)
 {
-	this->flags = flags;
+	long cid;
+	if (cmdID.IsNumber() && cmdID.ToLong(&cid))
+		this->cmdID = cid;
+	Create(NULL);
+}
+
+DlgAddNewCmd::DlgAddNewCmd(const long cmdID)
+{
+	this->cmdID = cmdID;
 	this->Create(NULL);
 }
 
@@ -224,13 +233,19 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 	if (!e.GetShow())
 		return;
 	this->SetFocus();
-	wxString cmd = cmdLine->GetValue();
-	wxString lua;
-	if (cmd.empty())
+	if (cmdID == -1 || !g_config)
 		return;
-	if (cmd.StartsWith("--LUA",&lua))
+	ALMRunCMDBase cmd = g_config->GetCmd(cmdID);
+
+	if (cmd.cmdLine.empty())
+		return;
+	cmdDesc->SetValue(cmd.Desc);
+	cmdKey->SetValue(cmd.Key);
+	cmdName->SetValue(cmd.Name);
+
+	wxString lua;
+	if (cmd.cmdLine.StartsWith("--LUA",&lua))
 	{
-		cmdLine->Clear();
 		luaCmd->SetValue(UnEscapeString(lua));
 		luaBoxSizer->Show(true);
 		cmdBoxSizer->Show(false);
@@ -239,21 +254,21 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 		m_toggleButton->SetValue(true);
 		return;
 	}
-
-	while(true)
+	cmdPath->SetValue(cmd.WorkDir);
+	size_t i;
+	for(i = 0;;++i)
 	{
-		if (cmd[0] == '@')//前导'@'隐藏窗口运行
+		if (cmd.cmdLine[i] == '@')//前导'@'隐藏窗口运行
 			this->HideRun->SetValue(true);
-		else if (cmd[0] == '>')//前导'>'请求管理员权限(NT6以上有效)
+		else if (cmd.cmdLine[i] == '>')//前导'>'请求管理员权限(NT6以上有效)
 			this->RunAs->SetValue(true);
-		else if (cmd[0] == '+')//前导'+'，请求输入参数
+		else if (cmd.cmdLine[i] == '+')//前导'+'，请求输入参数
 			this->RequiredArg->SetValue(true);
 		else
 			break;
-		cmd.erase(0,1);
 	}
 //	cmd.Replace('\\','/');
-	cmdLine->SetValue(cmd);
+	cmdLine->SetValue(cmd.cmdLine.substr(i));
 }
 
 void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
@@ -291,7 +306,7 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 		if (RequiredArg->GetValue())
 			cmd.insert(0,'+');
 	}
-	if ((flags == MENU_CMD_EDIT && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))
+	if ((cmdID != -1 && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))
 		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))>0 )
 	{
 		if (this->IsModal())
@@ -310,7 +325,6 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 void DlgAddNewCmd::Init()
 {
 ////@begin DlgAddNewCmd member initialisation
-	flags = 0;
 	cmdID = -1;
 ////@end DlgAddNewCmd member initialisation
 }
@@ -431,7 +445,7 @@ void DlgAddNewCmd::CreateControls()
 
     wxBoxSizer* itemBoxSizer17 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer17, 0, wxGROW|wxALL, 5);
-	if (this->flags == MENU_CMD_EDIT)
+	if (cmdID != -1)
 	{
 		this->SetTitle("编辑命令参数");
 	}

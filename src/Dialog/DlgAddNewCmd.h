@@ -66,14 +66,12 @@ class DlgAddNewCmd: public wxDialog
 public:
     /// Constructors
     DlgAddNewCmd();
-	DlgAddNewCmd(const int flags);
+	DlgAddNewCmd(const long cmdID);
+	DlgAddNewCmd(const wxString& cmdID);
     DlgAddNewCmd( wxWindow* parent, wxWindowID id = SYMBOL_DLGADDNEWCMD_IDNAME, const wxString& caption = SYMBOL_DLGADDNEWCMD_TITLE, const wxPoint& pos = SYMBOL_DLGADDNEWCMD_POSITION, const wxSize& size = SYMBOL_DLGADDNEWCMD_SIZE, long style = SYMBOL_DLGADDNEWCMD_STYLE );
 
     /// Creation
     bool Create( wxWindow* parent, wxWindowID id = SYMBOL_DLGADDNEWCMD_IDNAME, const wxString& caption = SYMBOL_DLGADDNEWCMD_TITLE, const wxPoint& pos = SYMBOL_DLGADDNEWCMD_POSITION, const wxSize& size = SYMBOL_DLGADDNEWCMD_SIZE, long style = SYMBOL_DLGADDNEWCMD_STYLE );
-	void SetCmdID(wxString& id) { long i;id.ToLong(&i);cmdID = i;};
-	wxString GetCmdID() {return wxString::Format("%d",cmdID);};
-	void SetCmdID(int id) {cmdID = id;};
     /// Destructor
     ~DlgAddNewCmd();
 
@@ -108,15 +106,14 @@ public:
 	wxTextCtrl* cmdPath;
 	HotkeyCtrl* cmdKey;
 
-	int cmdID;
 ////@end DlgAddNewCmd member variables
 private:
 
 protected:
+	int cmdID;
 	wxCheckBox* HideRun;
 	wxCheckBox* RunAs;
 	wxCheckBox* RequiredArg;
-	int flags;
 	wxTextCtrl *luaCmd;
 	wxBoxSizer* luaBoxSizer;
 	wxBoxSizer* cmdBoxSizer;

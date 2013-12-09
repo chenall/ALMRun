@@ -259,6 +259,22 @@ bool ALMRunConfig::SaveCfg()
 	return true;
 }
 
+ALMRunCMDBase ALMRunConfig::GetCmd(const int cmdid)
+{
+	ALMRunCMDBase cmd(wxEmptyString);
+	wxString oldPath = conf->GetPath();
+	wxString tmpPath = wxString::Format("/cmds/%d",cmdid);
+	if (!conf || !conf->HasGroup(tmpPath))
+		return cmd;
+	conf->SetPath(tmpPath);
+	cmd.cmdLine = conf->Read("cmd");
+	cmd.Name = conf->Read("name");
+	cmd.Key = conf->Read("key");
+	cmd.Desc = conf->Read("desc");
+	cmd.WorkDir = conf->Read("workDir");
+	return cmd;
+}
+
 int ALMRunConfig::AddCmd(const wxString& cmd,const wxString& name,const wxString& key,const wxString& desc,const wxString& path,const int id)
 {
 	MerrySetLastError(wxEmptyString);

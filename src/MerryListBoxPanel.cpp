@@ -165,8 +165,10 @@ bool MerryListBoxPanel::DelSelectedItem()
 		return false;
 //	assert(cmd);
 	int flags = cmd->GetFlags();
-	if ((flags & CMDS_FLAG_CMDS) && (wxMessageBox(wxString::Format("删除 ID:[%d] %s\n命令:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCmd()),"提示",wxYES_NO|wxICON_WARNING) == wxYES))
+	if ((flags & CMDS_FLAG_CMDS))
 	{
+		if (wxMessageBox(wxString::Format("删除 ID:[%d] %s\n命令:%s?",flags >> 4,cmd->GetCommandName(),cmd->GetCmd()),"提示",wxYES_NO|wxICON_WARNING) != wxYES)
+			return false;
 	#ifdef _ALMRUN_CONFIG_H_
 		if (g_config->DeleteCmd(flags>>4))
 	#endif//#ifdef _ALMRUN_CONFIG_H_
@@ -238,20 +240,20 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
 						return;
 					}
-					dlg = new DlgAddNewCmd(MENU_CMD_EDIT);
+					dlg = new DlgAddNewCmd(cmd->GetFlags()>>4);
 //					dlg->flags = MENU_CMD_EDIT;
-					dlg->SetCmdID(cmd->GetFlags()>>4);
-					dlg->cmdName->SetValue(cmd->GetCommandName());
-					dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
-					dlg->cmdKey->SetValue(cmd->GetTriggerKey());
-					dlg->cmdLine->SetValue(cmd->GetCmd());
-					dlg->cmdPath->SetValue(cmd->GetWorkDir());
+					//dlg->SetCmdID(cmd->GetFlags()>>4);
+					//dlg->cmdName->SetValue(cmd->GetCommandName());
+					//dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
+					//dlg->cmdKey->SetValue(cmd->GetTriggerKey());
+					//dlg->cmdLine->SetValue(cmd->GetCmd());
+					//dlg->cmdPath->SetValue(cmd->GetWorkDir());
 				}
 				else
-					dlg = new DlgAddNewCmd(NULL,wxID_ANY);
-				dlg->ShowModal();
+					dlg = new DlgAddNewCmd();
+				if (dlg->ShowModal() == wxID_OK)
+					PostMessage(this->GetParent()->GetHWND(),WM_COMMAND,MENU_ITEM_RECONFIG,0);
 				dlg->Destroy();
-				PostMessage(this->GetParent()->GetHWND(),WM_COMMAND,MENU_ITEM_RECONFIG,0);
 			}
 			break;
 		case MENU_CMD_OPENDIR:
