@@ -664,7 +664,7 @@ static wxString _GetCMDPath(const wxString& commandLine)
 	return wxEmptyString;
 }
 
-bool RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir)
+DWORD RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir)
 {
 	wxString arg;
 	wxString argt = wxEmptyString;

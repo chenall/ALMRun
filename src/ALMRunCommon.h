@@ -45,7 +45,7 @@ void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips = t
 #ifdef __WXMSW__
 static wxString _GetCMDPath(const wxString& commandLine);
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg = NULL,const wxString& workDir = wxEmptyString);
-bool RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir = wxEmptyString);
+DWORD RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir = wxEmptyString);
 
 #endif
 

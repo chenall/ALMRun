@@ -313,6 +313,7 @@ wxString GetFullCmdName(const wxString& commandName,const wxString& workingDir,c
 	return cmdName;
 }
 */
+/*
 bool MerryController::ShellExecute(const wxString& commandName,
 	const wxString& commandArg,
 	const wxString& workingDir,
@@ -402,6 +403,107 @@ bool MerryController::ShellExecute(const wxString& commandName,
 	
 	//return (int)::ShellExecute(NULL,NULL,g_config->Explorer.c_str(),wxString::Format(wxT("\"%s\""),cmdName),NULL, SW_SHOW) > 32;
 }
+*/
+
+DWORD MerryController::ShellExecute(const wxString& commandName,
+	const wxString& commandArg,
+	const wxString& workingDir,
+	const wxString& show) const
+{
+	// wxLogNull logNo;
+
+
+	int showCommand = SW_SHOW;
+	bool runas = false;
+	bool winexec = false;
+	bool NeedGetPath = true;
+	bool SavePid = false;
+
+	if (g_config && g_config->get(cmdSingleProecss))
+		SavePid = true;
+
+	if (show.IsSameAs(wxT("hide"), false))
+		showCommand = SW_HIDE;
+	else if (show.IsSameAs(wxT("min"), false))
+		showCommand = SW_SHOWMINIMIZED;
+	else if (show.IsSameAs(wxT("max"), false))
+		showCommand = SW_SHOWMAXIMIZED;
+	size_t len = commandName.size();
+	size_t n;
+	for(n = 0;n<len;++n)
+	{
+		wxChar c = commandName[n];
+		switch(c)
+		{
+			case '?'://前导'?'唯一进程
+				SavePid = true;
+				continue;
+			case '@'://前导'@'隐藏窗口运行
+				showCommand = SW_HIDE;
+				continue;
+			case '*'://以管理员权限运行
+				runas = true;
+				continue;
+			case '>'://根据系统判断,NT6以上以管理员权限运行.
+				if (::wxGetWinVersion() >= wxWinVersion_6)
+					runas = true;
+				continue;
+			case '+'://强制参数标志
+				continue;
+			case '\2'://强制使用WinExec 函数执行
+				winexec = true;
+			case '\1'://\1\2 标志说明该命令已经经过处理,不需要再次处理
+				NeedGetPath = false;
+				continue;
+			case ':'://命令标志结尾.
+				++n;
+				break;
+			case ' ':
+			case '\t':
+				continue;
+			default:
+				break;
+		}
+		break;
+	}
+
+	wxString cmdName = commandName.substr(n);
+
+	if (!LocationExec)
+	{
+
+		__DEBUG_BEGIN(cmdName.c_str());
+		SHELLEXECUTEINFO ShExecInfo = {0};
+		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+		ShExecInfo.hwnd = NULL;
+		ShExecInfo.lpVerb = runas?_T("RunAs"):NULL;
+		ShExecInfo.lpFile = cmdName.c_str();    //要运行的文件
+		ShExecInfo.lpParameters =commandArg.c_str();
+		ShExecInfo.lpDirectory = workingDir.c_str();
+		ShExecInfo.nShow = showCommand;
+		ShExecInfo.hInstApp = NULL;
+ 
+		if (::ShellExecuteEx(&ShExecInfo))
+			return SavePid?GetProcessId(ShExecInfo.hProcess):1;
+		return 0;
+	}
+
+	LocationExec = false;//定位文件位置标志复位
+	wxString FullcmdName = NeedGetPath?GetCMDPath(cmdName):cmdName;
+	if (FullcmdName.empty())
+		return 0;
+
+	FullcmdName.Replace('/','\\');
+#ifdef _ALMRUN_CONFIG_H_
+	if (!g_config->Explorer.empty())
+		::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,FullcmdName),SW_SHOW);
+	else
+#endif//ifdef _ALMRUN_CONFIG_H_
+		::ShellExecute(NULL,NULL,_T("explorer.exe"),_T("/n,/select,")+FullcmdName.c_str(),NULL, SW_SHOW);
+	return 0;
+}
+
 typedef    int        (__stdcall  *  Wow)(LPVOID); 
 bool wowcall(wxString func,LPVOID old)
 {

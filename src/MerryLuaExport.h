@@ -88,7 +88,7 @@ static int LuaShellExecute(lua_State* L)
 	if (chkwow)
 		Wow64Disable(&wowOld);
 #endif
-	lua_pushboolean(L, g_controller->ShellExecute(commandName, commandArg, workingDir, show));
+	lua_pushinteger(L, g_controller->ShellExecute(commandName, commandArg, workingDir, show));
 #ifdef __WXMSW__
 	if (chkwow)
 		Wow64Revert(wowOld);

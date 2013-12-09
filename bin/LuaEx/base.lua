@@ -175,7 +175,7 @@ CmdCallFunc = function(cmdLine,cmdArg,workDir)
     if DestDir == nil or #DestDir==0 then
 	DestDir = cmd:match("^(.-)[^\\|/]+$")
     end
-    shellExecute(cmd,cmdArg,DestDir)
+    return shellExecute(cmd,cmdArg,DestDir)
 end
 
 function read_altrun_config (file)

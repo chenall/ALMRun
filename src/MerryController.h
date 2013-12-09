@@ -39,12 +39,18 @@ public:
 	void EnterKey(const wxArrayString& keys);
 	void EnterText(const wxString& text);
 
+#ifdef __WXMSW__
+	DWORD ShellExecute(const wxString& commandName,
+		const wxString& commandArg = wxEmptyString,
+		const wxString& workingDir = wxEmptyString,
+		const wxString& show = wxEmptyString) const;
+#else
 	// show = normal, hide, min, max
 	bool ShellExecute(const wxString& commandName,
 		const wxString& commandArg = wxEmptyString,
 		const wxString& workingDir = wxEmptyString,
 		const wxString& show = wxEmptyString) const;
-
+#endif
 private:
 	wxUIActionSimulator m_simulator;
 

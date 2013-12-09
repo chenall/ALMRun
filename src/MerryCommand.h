@@ -32,6 +32,7 @@ public:
 	int m_compare;
 private:
 	void conf_cmd();
+	DWORD PID;
 	int m_order;
 	int m_commandID;
 	wxString m_commandName;

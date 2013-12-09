@@ -180,6 +180,7 @@ void DlgConfig::CreateControls()
 	configStrings.Add("按两次程序热键重复执行上一个命令");
 	configStrings.Add("鼠标双击运行");
 	configStrings.Add("允许命令名重复");
+	configStrings.Add("禁止同一命令多次运行");
     config = new wxCheckListBox(itemStaticBoxSizer3->GetStaticBox(), ID_CHECKLISTBOX, wxDefaultPosition, wxDefaultSize, configStrings, 0 );
 	config_tip = new wxStaticText( itemStaticBoxSizer3->GetStaticBox(), wxID_STATIC,wxEmptyString, wxDefaultPosition, wxSize(-1,50), wxALIGN_LEFT|wxST_NO_AUTORESIZE|wxNO_BORDER);
 	config_tip->SetForegroundColour(wxColour(255, 0, 255));
