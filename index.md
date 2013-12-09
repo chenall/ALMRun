@@ -83,7 +83,7 @@ ALMRun Base 基本功能
 ALMRun Advanced 扩展功能
 ========================
 ************************
-  ALMRUN使用[luajit]引擎支持使用LUA脚本进行功能扩展，只需要把你的扩展脚本放在`config`目录下即可，不限文件名，不限子目录。
+  ALMRUN使用[luajit]引擎支持使用LUA脚本进行功能扩展，只需要把你的扩展脚本放在`config`目录下即可，不限文件名，不限子目录(以"_"开头的文件或目录除外)
   扩展能请参考[API 介绍](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
 
   * 使用LUA扩展时需注意：

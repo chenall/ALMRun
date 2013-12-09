@@ -5,6 +5,20 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [2013-12-09 v1.2.0.54](https://github.com/chenall/ALMRun/archive/v1.2.0.54_BIN.zip)
+    1.编辑修改命令功能优化.
+    2.使用ShellExecuteEx来运行程序,新增配置<<禁止同一命令多次运行>>
+    3.编辑命令时添加"唯一进程"的高级选项.
+
+### [2013-12-08 v1.2.0.53]
+    1.代码调整,以--LUA开头的命令会被转换为LUA指令.
+    2.命令管理器支持管理LUA命令.
+    
+### [2013-12-07 v1.2.0.52]
+    1.命令支持工作目录设置
+    2.LUA扩展过滤以"_"开头的文件或文件夹.
+    3.文档更新,简化addCommand的参数,去掉func参数,用cmd参数代替(如果有自己写命令的建议修改下,直接把addCommand的"func="改成"cmd="就行了,目前为了保持兼容,继续保留旧版语法,以后会去掉该兼容性)
+
 ### [2013-12-06 v1.2.0.51](https://github.com/chenall/ALMRun/archive/v1.2.0.51_BIN.zip)
     1.对提示信息进行了一些调整.
     2.当base.lua文件不存在时禁用LUA扩展.
