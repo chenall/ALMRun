@@ -114,6 +114,7 @@ protected:
 	wxCheckBox* HideRun;
 	wxCheckBox* RunAs;
 	wxCheckBox* RequiredArg;
+	wxCheckBox* isSingleProc;
 	wxTextCtrl *luaCmd;
 	wxBoxSizer* luaBoxSizer;
 	wxBoxSizer* cmdBoxSizer;

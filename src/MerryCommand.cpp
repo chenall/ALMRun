@@ -158,6 +158,33 @@ void MerryCommand::Execute(const wxString& commandArg) const
 	lua_State* L = g_lua->GetLua();
 	wxString cmdArg = commandArg;
 	assert(L);
+	#ifdef __WXMSW__
+	if (PID > 1)//禁止多个进程
+	{
+		HANDLE cmdHandle = OpenProcess(PROCESS_ALL_ACCESS,false,PID);
+		if (cmdHandle)
+		{//已经运行,查找前激活之前的窗口
+			CloseHandle(cmdHandle);
+			HWND hWnd = ::GetTopWindow(0);
+			while ( hWnd )
+			{
+				DWORD dwPid = 0;
+				DWORD dwTheardId = ::GetWindowThreadProcessId( hWnd,&dwPid);
+ 
+				if (dwTheardId && dwPid == PID)
+				{
+					::ShowWindow(hWnd,SW_NORMAL);
+					::SetForegroundWindow(hWnd);
+					::SetActiveWindow(hWnd);
+					break;
+				}
+				hWnd = ::GetNextWindow(hWnd , GW_HWNDNEXT);
+			}
+			return;
+		}
+	}
+	#endif
+
 	if (m_commandLine.size() && cmdArg.empty() && (m_commandLine[0] == '+' || m_commandLine.Find("{%p+}") != wxNOT_FOUND))
 	{
 		DlgParam *dlg = new DlgParam(NULL,-1,m_commandName);
@@ -171,32 +198,6 @@ void MerryCommand::Execute(const wxString& commandArg) const
 
 	if (m_commandFunc == 0)
 	{
-	#ifdef __WXMSW__
-		if (PID > 1 && g_config && g_config->get(cmdSingleProecss))//禁止多个进程
-		{
-			HANDLE cmdHandle = OpenProcess(PROCESS_ALL_ACCESS,false,PID);
-			if (cmdHandle)
-			{//已经运行,查找前激活之前的窗口
-				CloseHandle(cmdHandle);
-				HWND hWnd = ::GetTopWindow(0);
-				while ( hWnd )
-				{
-					DWORD dwPid = 0;
-					DWORD dwTheardId = ::GetWindowThreadProcessId( hWnd,&dwPid);
- 
-					if (dwTheardId && dwPid == PID)
-					{
-						::ShowWindow(hWnd,SW_NORMAL);
-						::SetForegroundWindow(hWnd);
-						::SetActiveWindow(hWnd);
-						break;
-					}
-					hWnd = ::GetNextWindow(hWnd , GW_HWNDNEXT);
-				}
-				return;
-			}
-		}
-	#endif
 		lua_getglobal(L, "CmdCallFunc");
 		if (lua_isnil(L, 1))
 		{

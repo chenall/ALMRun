@@ -258,14 +258,32 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 	size_t i;
 	for(i = 0;;++i)
 	{
-		if (cmd.cmdLine[i] == '@')//前导'@'隐藏窗口运行
-			this->HideRun->SetValue(true);
-		else if (cmd.cmdLine[i] == '>')//前导'>'请求管理员权限(NT6以上有效)
-			this->RunAs->SetValue(true);
-		else if (cmd.cmdLine[i] == '+')//前导'+'，请求输入参数
-			this->RequiredArg->SetValue(true);
-		else
-			break;
+		wxChar c = cmd.cmdLine[i];
+		switch(c)
+		{
+			case '?'://前导'?'唯一进程
+				this->isSingleProc->SetValue(true);
+				continue;
+			case '@'://前导'@'隐藏窗口运行
+				this->HideRun->SetValue(true);
+				continue;
+			case '>'://根据系统判断,NT6以上以管理员权限运行.
+			case '*'://以管理员权限运行
+				this->RunAs->SetValue(true);
+				continue;
+			case '+'://强制参数标志
+				this->RequiredArg->SetValue(true);
+				continue;
+			case ':'://命令标志结尾.
+				++i;
+				break;
+			case ' ':
+			case '\t':
+				continue;
+			default:
+				break;
+		}
+		break;
 	}
 //	cmd.Replace('\\','/');
 	cmdLine->SetValue(cmd.cmdLine.substr(i));
@@ -276,6 +294,7 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 	if (!g_config)
 		return;
 	wxString cmd = wxEmptyString;
+
 	if (m_toggleButton->GetValue())
 	{
 		cmd << "--LUA" << luaCmd->GetValue();
@@ -297,14 +316,22 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 				this->Destroy();
 			return;
 		}
-
 		cmdLine->SetValue(cmd);
-		if (RunAs->GetValue())
-			cmd.insert(0,'>');
-		if (HideRun->GetValue())
-			cmd.insert(0,'@');
-		if (RequiredArg->GetValue())
-			cmd.insert(0,'+');
+		wxString cmdFlag = wxEmptyString;
+
+		if (RequiredArg->IsChecked())
+			cmdFlag += '+';
+		if (isSingleProc->IsChecked())
+			cmdFlag += '?';
+		if (RunAs->IsChecked())
+			cmdFlag += '>';
+		if (HideRun->IsChecked())
+			cmdFlag += '@';
+		if (!cmdFlag.empty())
+		{
+			cmdFlag += ':';
+			cmd.insert(0,cmdFlag);
+		}
 	}
 	if ((cmdID != -1 && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))
 		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))>0 )
@@ -390,7 +417,7 @@ void DlgAddNewCmd::CreateControls()
 	luaBoxSizer = new wxBoxSizer(wxHORIZONTAL);
 	itemBoxSizerToggle->Add(luaBoxSizer,0,wxGROW|wxALL);
 
-	luaCmd = new wxTextCtrl(MainBoxSizer->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(350,120), wxTE_MULTILINE);
+	luaCmd = new wxTextCtrl(MainBoxSizer->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(350,170), wxTE_MULTILINE);
 	luaBoxSizer->Add(luaCmd,0,wxGROW|wxALL,1);
 	setWinHelpText(luaCmd,"高级模式,使用LUA脚本,请输入LUA脚本内容\n注:在脚本中 args:用户输入的参数,cmdID: 命令对应内部ID(非固定)",ShowToolTip);
 	luaCmd->Show(false);
@@ -427,21 +454,25 @@ void DlgAddNewCmd::CreateControls()
 //	itemBoxSizerToggle->Hide(luaBoxSizer);//默认隐藏不显示
 
 	//高级选项
-	wxBoxSizer* itemBoxSizer_checkbox = new wxBoxSizer(wxHORIZONTAL);
-    cmdBoxSizer->Add(itemBoxSizer_checkbox, 0, wxGROW|wxALL, 5);
-	wxStaticText* itemBoxSizer_checkbox_text = new wxStaticText( MainBoxSizer->GetStaticBox(), wxID_STATIC, "高级选项:", wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer_checkbox->Add(itemBoxSizer_checkbox_text, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
+	wxGridSizer* itemBoxSizer_checkbox = new wxGridSizer(3);
+	wxStaticBoxSizer* advConfig = new wxStaticBoxSizer(new wxStaticBox(MainBoxSizer->GetStaticBox(), wxID_ANY, "命令运行选项"),wxHORIZONTAL);
+    cmdBoxSizer->Add(advConfig, 0, wxGROW|wxALL, 5);
+	advConfig->Add(itemBoxSizer_checkbox,0,wxGROW|wxALL,5);
 
-	HideRun = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY, _T("隐藏执行"), wxDefaultPosition, wxDefaultSize, 0 );
+	HideRun = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY, _T("隐藏执行"));
     HideRun->SetValue(false);
-	itemBoxSizer_checkbox->Add(HideRun,0,wxALIGN_CENTER_VERTICAL|wxALL);
-	RunAs = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY, _T("管理员权限"), wxDefaultPosition, wxDefaultSize, 0 );
+	itemBoxSizer_checkbox->Add(HideRun,0,wxALIGN_CENTER_VERTICAL|wxALL,5);
+	RunAs = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY, _T("管理员权限"));
 	RunAs->SetValue(false);
-	itemBoxSizer_checkbox->Add(RunAs,0,wxALIGN_CENTER_VERTICAL|wxALL);
-	RequiredArg = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY, _T("强制要求参数"), wxDefaultPosition, wxDefaultSize, 0 );
-	RunAs->SetValue(false);
-	itemBoxSizer_checkbox->Add(RequiredArg,0,wxALIGN_CENTER_VERTICAL|wxALL);
+	itemBoxSizer_checkbox->Add(RunAs,0,wxALIGN_CENTER_VERTICAL|wxALL,5);
+	
+	isSingleProc = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY,_T("唯一进程"));
+	isSingleProc->SetValue(false);
+	itemBoxSizer_checkbox->Add(isSingleProc,0,wxALIGN_CENTER_VERTICAL|wxALL,5);
 
+	RequiredArg = new wxCheckBox( MainBoxSizer->GetStaticBox(),wxID_ANY, _T("强制要求参数"));
+	RunAs->SetValue(false);
+	itemBoxSizer_checkbox->Add(RequiredArg,0,wxALIGN_CENTER_VERTICAL|wxALL,5);
 
     wxBoxSizer* itemBoxSizer17 = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer2->Add(itemBoxSizer17, 0, wxGROW|wxALL, 5);

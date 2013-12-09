@@ -423,7 +423,7 @@ wxString EscapeString(const wxString& str)
 
 BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 {
-	wxString cmdFlags("@+>* ");
+	wxString cmdFlags(CMDFLAG_STRS);
 	int n = 0;
 	int n_size = cmdLine.size();
 	for(n = 0;n<n_size;++n)
@@ -453,7 +453,7 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString& workDir)
 {
 	size_t cmd_len = cmdLine.size();
-	wxString cmdFlags("@+>* ");
+	wxString cmdFlags(CMDFLAG_STRS);
 	wxString cmd = wxEmptyString;
 	size_t n;
 	for(n = 0;n<cmd_len;++n)
