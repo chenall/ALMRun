@@ -199,14 +199,15 @@ void MerryCommandManager::GetPluginCmd(const wxString& name,MerryCommandArray& c
 		return;
 	clearCmds(plugin_commands);//内存清理，必须的
 	lua_State* L = g_lua->GetLua();
-	lua_getglobal(L, "plugin_command");
-	if (!lua_isfunction(L, 1))
-		goto lua_pop;
 
+	if (!g_lua->get_func(LUA_PluginCommand_FUNC))
+		return;
 	lua_pushstring(L, name.c_str());
 	if (lua_pcall(L, 1, 1, 0))
 		goto lua_pop;
+
 	int it=lua_gettop(L);
+
 	lua_pushnil(L);                               // ？？
 	ALMRunCMDBase *cmd = NULL;
     while(lua_next(L, it))                         // 开始枚举，并把枚举到的值压入栈

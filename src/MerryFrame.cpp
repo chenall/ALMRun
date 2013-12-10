@@ -73,6 +73,7 @@ void MerryFrame::NewConfig()
 	g_commands = new MerryCommandManager();
 
 	g_lua = new MerryLua();
+
 #ifdef _ALMRUN_CONFIG_H_
 
 	g_config = new ALMRunConfig();
@@ -105,6 +106,7 @@ void MerryFrame::OnInit()
 
 	assert(!g_lua);
 	g_lua = new MerryLua();
+
 #ifdef _ALMRUN_CONFIG_H_
 	assert(!g_config);
 	g_config = new ALMRunConfig();

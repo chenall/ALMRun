@@ -749,13 +749,13 @@ int importCMD(wxString& filename)
 		wxMessageBox("该文件可能是ALTRun的配置文件，是否导入命令?","ALTRun命令导入提示",wxYES_NO|wxICON_INFORMATION) != wxYES)
 		return -1;
 	lua_State *L = g_lua->GetLua();
-	lua_getglobal(L, "read_altrun_config");
-	if (!lua_isfunction(L, 1))
+
+	if (!g_lua->get_func(LUA_ReadALTRunConfig_FUNC))
 	{
-		lua_pop(L, 1);
 		wxMessageBox("该功能所需要的LUA函数不存在，请确认LuaEx\\base.lua文件存在","错误");
 		return 0;
 	}
+
 	lua_pushstring(L,filename.c_str());
 	if (lua_pcall(L, 1, 1, 0) || !lua_istable(L,-1))
 	{

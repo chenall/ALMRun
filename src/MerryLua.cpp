@@ -3,7 +3,7 @@
 #include "MerryConfig.h"
 
 MerryLua* g_lua = NULL;
-
+const char *MerryLua::lua_func_str[] = {"toggleMerry","ReConfig","CmdCallFunc","HookCompare","plugin_command","read_altrun_config"};
 MerryLua::MerryLua()
 {
 	L = luaL_newstate();
@@ -92,6 +92,20 @@ MerryLua::MerryLua()
 	lua_setglobal(L, "ALMRUN_VERSION");
 	lua_pushinteger(L,(int)HWND_TEXTCTRL);
 	lua_setglobal(L, "HWND_TEXTCTRL");
+
+	//首先初始化
+	for(int i=0 ; i < LUA_FUNC_MAX ; ++i )
+		lua_func[i] = LUA_NOREF;
+
+	//获取内置函数
+	int it = lua_gettop(L);
+	for(int i=0; i < LUA_EXTERNAL_FUNC;++i)
+	{
+		lua_getglobal(L, lua_func_str[i]);
+		lua_func[i] = luaL_ref(L, LUA_REGISTRYINDEX);
+	}
+	it = lua_gettop(L);
+	return;
 }
 
 MerryLua::~MerryLua()
@@ -153,7 +167,35 @@ void MerryLua::DoConfig()
 			wxString(lua_tostring(L, -1), wxConvLocal)
 		);
 		lua_pop(L, 1);
+		return;
 	}
+	for(int i=LUA_EXTERNAL_FUNC; i < LUA_FUNC_MAX ; ++i )
+	{
+		lua_getglobal(L, lua_func_str[i]);
+		if (lua_isfunction(L, -1))
+			lua_func[i] = luaL_ref(L, LUA_REGISTRYINDEX);
+		else
+			lua_pop(L,1);
+	}
+}
+
+int MerryLua::get_funcref(lua_func_t t)
+{
+	if (t >= 0 && t < LUA_FUNC_MAX)
+		return lua_func[t];
+	return 0;
+}
+
+bool MerryLua::get_func(lua_func_t t)
+{
+	if (t >= 0 && t < LUA_FUNC_MAX)
+	{
+		if (lua_func[t] <= 0)
+			return false;
+		lua_rawgeti(L, LUA_REGISTRYINDEX, lua_func[t]);
+		return true;
+	}
+	return false;
 }
 
 void MerryLua::OnClose()
@@ -184,13 +226,10 @@ bool MerryLua::onCompare(const wxString& commandName,const wxString& commandPref
 {
 	assert(L);
 	bool ret = false;
-	lua_getglobal(L, "HookCompare");
-	if (lua_isnil(L, 1))
-	{
-		lua_pop(L, 1);
+	int cmdFunc = lua_func[LUA_CMDCompare_FUNC];
+	if (cmdFunc <= 0)
 		return false;
-	}
-
+	lua_rawgeti(L, LUA_REGISTRYINDEX, cmdFunc);
 	lua_pushstring(L, commandName.c_str());
 	lua_pushstring(L, commandPrefix.c_str());
 	if (lua_pcall(L, 2, 1, 0) == 0)

@@ -110,7 +110,7 @@ ALMRunConfig::ALMRunConfig()
 
 	//³ÌÐòÏÔÒþÈÈ¼üÅäÖÃ
 	HotKey = conf->Read("HotKey","A-R");
-	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",wxEmptyString,-1,HotKey,0)))
+	if (!g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"toggleMerry",wxEmptyString,g_lua->get_funcref(LUA_toggleMerry),HotKey,0)))
 	{
 		this->set("ShowTrayIcon",true);
 		wxMessageBox(wxString::Format("ÈÈ¼ü %s ×¢²áÊ§°Ü!",HotKey),"´íÎóÌáÊ¾",0x00000100);
@@ -118,11 +118,11 @@ ALMRunConfig::ALMRunConfig()
 	//ÖØÔØÅäÖÃÈÈ¼üÅäÖÃ
 	HotKeyReLoad = conf->Read("HotKeyReLoad");
 	if (!HotKeyReLoad.empty())
-		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",wxEmptyString,-1,HotKeyReLoad,0));
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"ReConfig",wxEmptyString,g_lua->get_funcref(LUA_ReConfig),HotKeyReLoad,0));
 	//ÉÏÒ»¸öÔËÐÐµÄÃüÁîÈÈ¼üÅäÖÃ
 	LastItemHotKey = conf->Read("LastItemHotKey");
 	if (!LastItemHotKey.empty())
-		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"LastCmd",wxEmptyString,-2,LastItemHotKey,0));
+		g_hotkey->RegisterHotkey(g_commands->AddCommand(wxEmptyString,wxEmptyString,"LastCmd",wxEmptyString,LUA_NOREF,LastItemHotKey,0));
 
 	this->OldToNew();
 

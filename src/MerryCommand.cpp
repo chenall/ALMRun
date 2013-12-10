@@ -198,10 +198,8 @@ void MerryCommand::Execute(const wxString& commandArg) const
 
 	if (m_commandFunc == 0)
 	{
-		lua_getglobal(L, "CmdCallFunc");
-		if (lua_isnil(L, 1))
+		if (!g_lua->get_func(LUA_CMDRun_FUNC))
 		{
-			lua_pop(L, 1);
 			const_cast<MerryCommand*>(this)->PID = RunCMD(m_commandLine,cmdArg,m_commandWorkDir);
 			goto ExecuteEnd;
 		}
@@ -209,7 +207,7 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		lua_pushstring(L, cmdArg.c_str());
 		lua_pushstring(L, m_commandWorkDir.c_str());
 	}
-	else if (m_commandFunc == -2)
+	else if (m_commandFunc == LUA_NOREF)
 	{
 		if (m_commandLine == "LastCmd" && LastCmd)
 			LastCmd->Execute(wxEmptyString);
