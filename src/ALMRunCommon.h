@@ -29,7 +29,7 @@ class ALMRunCMDBase
 		int Order;
 		int Flags;
 };
-const char CMDFLAG_STRS[]="?@+>*: ";
+const char CMDFLAG_STRS[]="?@+>*| ";
 BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR lpszWorkDir, WORD wHotkey = 0, LPCTSTR lpszDescription = NULL, int iShowCmd = SW_SHOWNORMAL);
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude  = wxEmptyString,const int sub = -1);

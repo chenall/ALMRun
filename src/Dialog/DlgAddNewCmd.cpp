@@ -274,7 +274,7 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 			case '+'://强制参数标志
 				this->RequiredArg->SetValue(true);
 				continue;
-			case ':'://命令标志结尾.
+			case '|'://命令标志结尾.
 				++i;
 				break;
 			case ' ':
@@ -329,7 +329,7 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 			cmdFlag += '@';
 		if (!cmdFlag.empty())
 		{
-			cmdFlag += ':';
+			cmdFlag += '|';
 			cmd.insert(0,cmdFlag);
 		}
 	}
@@ -429,7 +429,6 @@ void DlgAddNewCmd::CreateControls()
 
     wxStaticText* itemStaticText14 = new wxStaticText( MainBoxSizer->GetStaticBox(), wxID_STATIC, "命令:", wxDefaultPosition, wxDefaultSize, 0 );
     itemBoxSizer13->Add(itemStaticText14, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
-
 
     cmdLine = new wxTextCtrl( MainBoxSizer->GetStaticBox(), ID_CMD_CMDLINE, wxEmptyString, wxDefaultPosition, wxSize(220, -1), 0 );
 	cmdLine->AutoCompleteFileNames();
