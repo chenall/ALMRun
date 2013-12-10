@@ -1,3 +1,7 @@
+### [2013-12-09 v1.2.0.55](https://github.com/chenall/ALMRun/archive/v1.2.0.55_BIN.zip)
+    1.修正以::开头的系统命令运行不正常的问题.
+    2.内部LUA功能调用优化.
+
 ### [2013-12-09 v1.2.0.54](https://github.com/chenall/ALMRun/archive/v1.2.0.54_BIN.zip)
     1.编辑修改命令功能优化.
     2.使用ShellExecuteEx来运行程序,新增配置<<禁止同一命令多次运行>>
