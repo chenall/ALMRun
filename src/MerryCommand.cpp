@@ -185,7 +185,7 @@ void MerryCommand::Execute(const wxString& commandArg) const
 	}
 	#endif
 
-	if (m_commandLine.size() && cmdArg.empty() && (m_commandLine[0] == '+' || m_commandLine.Find("{%p+}") != wxNOT_FOUND))
+	if (!LocationExec && m_commandLine.size() && cmdArg.empty() && (m_commandLine[0] == '+' || m_commandLine.Find("{%p+}") != wxNOT_FOUND))
 	{
 		DlgParam *dlg = new DlgParam(NULL,-1,m_commandName);
 		if (dlg->ShowModal() == wxID_OK)
