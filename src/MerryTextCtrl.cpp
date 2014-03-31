@@ -373,6 +373,14 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 					return this->ExecuteCmd();
 			}
 		}
+#ifdef _ALMRUN_CONFIG_H_
+		if (g_config->get(ExecuteIfOnlyOne) && commands.size() == 1)
+		{
+			listBoxPanel->SetCommandArray(commands);
+			listBoxPanel->Popup();
+			return this->ExecuteCmd();
+		}
+#endif//#ifdef _ALMRUN_CONFIG_H_
 		if (!g_config->get(ShowTopTen) || commands.size() < 10)
 #endif//#ifdef _ALMRUN_CONFIG_H_
 			g_commands->GetPluginCmd(name,commands);
@@ -384,10 +392,7 @@ void MerryTextCtrl::AutoCompletion(int keyCode)
 			return;
 		}
 		listBoxPanel->Popup();
-#ifdef _ALMRUN_CONFIG_H_
-		if (g_config->get(ExecuteIfOnlyOne) && commands.size() == 1)
-			return this->ExecuteCmd();
-#endif//#ifdef _ALMRUN_CONFIG_H_
+
 	}
 	// Auto completion
 	/*
