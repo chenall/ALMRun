@@ -5,6 +5,12 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [2014-03-14 v1.2.0.57](https://github.com/chenall/ALMRun/archive/v1.2.0.57_BIN.zip)
+    1.修正由于插件命令引起的"仅剩一项立即执行"功能失效问题.
+
+### [2014-03-14 v1.2.0.56]
+    1.修正在强制参数的项目上按Ctrl+D时的问题
+
 ### [2013-12-09 v1.2.0.55](https://github.com/chenall/ALMRun/archive/v1.2.0.55_BIN.zip)
     1.修正以::开头的系统命令运行不正常的问题.
     2.内部LUA功能调用优化.
