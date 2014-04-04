@@ -5,6 +5,9 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [2014-04-04 v1.2.0.58](https://github.com/chenall/ALMRun/archive/v1.2.0.58_BIN.zip)
+    1.修正FavoriteList.txt键值重复的问题.
+
 ### [2014-03-14 v1.2.0.57](https://github.com/chenall/ALMRun/archive/v1.2.0.57_BIN.zip)
     1.修正由于插件命令引起的"仅剩一项立即执行"功能失效问题.
 
