@@ -638,7 +638,8 @@ bool ALMRunConfig::SetFavorite(const wxString& key,const wxString& name)
 {
 	if (FavoriteList && !key.empty())
 	{
-		FavoriteList->Write(key,name);
+		wxString k=key;
+		FavoriteList->Write(k.Trim(false),name);
 		return FavoriteList->Flush();
 	}
 	return false;
@@ -646,8 +647,9 @@ bool ALMRunConfig::SetFavorite(const wxString& key,const wxString& name)
 
 const wxString ALMRunConfig::GetFavorite(const wxString& key)
 {
+	wxString k = key;
 	if (FavoriteList)
-		return FavoriteList->Read(key);
+		return FavoriteList->Read(k.Trim(false));
 	return wxEmptyString;
 }
 

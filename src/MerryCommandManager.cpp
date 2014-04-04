@@ -232,7 +232,7 @@ MerryCommandArray MerryCommandManager::Collect(const wxString& commandPrefix)
 	MerryCommandArray commands;
 	MerryCommandArray l_commands;
 	MerryCommand* favourite_cmd = NULL;
-	const wxString& favourite = g_config->GetFavorite(commandPrefix);
+	const wxString& favourite = g_config->get(RememberFavouratMatch)?g_config->GetFavorite(commandPrefix):"";
 	bool test_cmp = false;
 	int cmp_find = -1;
 	for (size_t i=0; i<m_commands.size(); ++i)
