@@ -29,8 +29,8 @@ class ALMRunCMDBase
 		int Order;
 		int Flags;
 };
+
 const char CMDFLAG_STRS[]="?@+>*| ";
-BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR lpszWorkDir, WORD wHotkey = 0, LPCTSTR lpszDescription = NULL, int iShowCmd = SW_SHOWNORMAL);
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxArrayString& filespec,const int sub = -1);
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude  = wxEmptyString,const int sub = -1);
 ALMRunCMDBase* lua_GetCommand(lua_State* L, int flags = 0);
@@ -46,7 +46,8 @@ void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips = t
 static wxString _GetCMDPath(const wxString& commandLine);
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg = NULL,const wxString& workDir = wxEmptyString);
 DWORD RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir = wxEmptyString);
-
+BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR lpszWorkDir, WORD wHotkey = 0, LPCTSTR lpszDescription = NULL, int iShowCmd = SW_SHOWNORMAL);
+BOOL ReadShortcut(LPCWSTR lpwLnkFile, ALMRunCMDBase *cmd);
 #endif
 
 #endif

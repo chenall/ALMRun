@@ -1,3 +1,8 @@
+### [2014-04-04 v1.2.0.59](https://github.com/chenall/ALMRun/archive/v1.2.0.59_BIN.zip)
+    1. BUG修正(参数设置)
+    2. 支持{%wd}参数,方便配合winctl实现窗口控制,比如winctl close {%wd}
+    3. 新增配置项,快捷方式读取目标属性
+
 ### [2014-04-04 v1.2.0.58](https://github.com/chenall/ALMRun/archive/v1.2.0.58_BIN.zip)
     1.修正FavoriteList.txt键值重复的问题.
 

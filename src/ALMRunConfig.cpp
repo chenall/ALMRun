@@ -8,7 +8,7 @@
 #include "ALMRunCommon.h"
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","cmdSingleProecss","ShowCMDErrInfo"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","cmdSingleProecss","cmdReadShortcut","ShowCMDErrInfo"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行(添加一个快捷方式到启动菜单),快捷键 Ctrl+Shift+R,部份系统下也可以直接按这个快捷键快速启动",
 	"保持程序窗口置顶,默认禁用.",
@@ -27,8 +27,9 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中，显示ALMRun界面时自动显示列表框",
 	"如果选中，连续按两次程序热键相当于ALT+L功能，重复执行上一次的命令\n注:两次间隔不超过300毫秒才有效",
 	"如果选中，鼠标单击选中列表条目，双击运行\n否则鼠标移动自动选中,单击运行",
-	"如果选中，允许命令名称一样，否则添加命令时名称一样会失败。"
-	"如果选中, 同一个命令只允许运行一个,根据进程PID来确定(全局)."
+	"如果选中，允许命令名称一样，否则添加命令时名称一样会失败。",
+	"如果选中, 同一个命令只允许运行一个,根据进程PID来确定(全局).",
+	"如果选中, 添加快捷方式文件(.lnk)作为命令时自动读取该快捷方式的属性."
 };
 
 ALMRunConfig::ALMRunConfig()
@@ -46,6 +47,7 @@ ALMRunConfig::ALMRunConfig()
 	config[DoubleClick] = false;
 	config[DuplicateCMD] = false;
 	config[cmdSingleProecss] = false;
+	config[cmdReadShortcut] = false;
 	cfg_changed = false;
 	FavoriteList = NULL;
 	order_conf = NULL;

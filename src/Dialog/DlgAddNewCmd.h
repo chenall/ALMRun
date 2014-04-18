@@ -86,6 +86,7 @@ public:
 	void OnBrowseClick(wxCommandEvent& e);
 	void OnShow(wxShowEvent& e);
 	void OnToggle(wxCommandEvent& e);
+	void OnCmdUpdate(wxCommandEvent& e);
 ////@end DlgAddNewCmd event handler declarations
 
 ////@begin DlgAddNewCmd member function declarations

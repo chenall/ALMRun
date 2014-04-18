@@ -89,6 +89,7 @@ BEGIN_EVENT_TABLE( DlgAddNewCmd, wxDialog )
 	EVT_BUTTON(ID_CMD_BROWSE,OnBrowseClick)
 	EVT_BUTTON(ID_CMD_ADD_DIR,OnBrowseClick)
 	EVT_TOGGLEBUTTON(ID_TGLBUTTON, OnToggle)
+	EVT_TEXT(ID_CMD_CMDLINE,OnCmdUpdate)
 	EVT_SHOW(OnShow)
 END_EVENT_TABLE()
 
@@ -225,6 +226,25 @@ void DlgAddNewCmd::OnToggle(wxCommandEvent& e)
 	}
 	this->GetSizer()->RecalcSizes();
 	e.Skip();
+}
+
+void DlgAddNewCmd::OnCmdUpdate(wxCommandEvent& e)
+{
+	e.Skip();
+	if (!g_config->get(cmdReadShortcut))
+		return;
+	wxString cmd = cmdLine->GetValue();
+	if (wxFileName(cmd).GetExt().IsSameAs("lnk",true))
+	{
+		ALMRunCMDBase Lcmd;
+		if (ReadShortcut(cmd.c_str(),&Lcmd))
+		{
+			this->cmdLine->SetValue(Lcmd.cmdLine);
+			this->cmdDesc->SetValue(Lcmd.Desc);
+			this->cmdPath->SetValue(Lcmd.WorkDir);
+			this->cmdName->SetValue(wxFileName(cmd).GetName());
+		}
+	}
 }
 
 void DlgAddNewCmd::OnShow(wxShowEvent& e)

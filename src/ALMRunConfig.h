@@ -37,6 +37,7 @@ typedef enum _config_item_t
 	DoubleClick,
 	DuplicateCMD,
 	cmdSingleProecss,
+	cmdReadShortcut,
 	CONFIG_BOOL_ITEMS,
 	CONFIG_ERROR_TYPE = CONFIG_BOOL_ITEMS,
 	ShowCMDErrInfo = CONFIG_ERROR_TYPE,

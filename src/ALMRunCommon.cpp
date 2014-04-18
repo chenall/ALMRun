@@ -70,6 +70,45 @@ BOOL CreateFileShortcut(LPCWSTR lpszFileName, LPCWSTR lpszLnkFilePath, LPCWSTR l
     return SUCCEEDED(hr);  
 }
 
+BOOL ReadShortcut(LPCWSTR lpwLnkFile, ALMRunCMDBase *cmd)
+{
+	IShellLink     *pLink;
+	IPersistFile   *ppf;
+	HRESULT hr = CoInitialize(NULL) == S_OK;
+	WCHAR temp[MAX_PATH * 5];
+
+	if (FAILED(hr))
+		return FALSE;
+
+	hr = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,IID_IShellLink, (void **)&pLink) >= 0;
+	if (FAILED(hr))
+        return FALSE;
+
+	if (FAILED(pLink-> QueryInterface(IID_IPersistFile, (void **)&ppf)))
+	{
+		pLink->Release();
+		return FALSE;
+	}
+
+	if (FAILED(ppf->Load(lpwLnkFile,true)))
+		return FALSE;
+
+	if (SUCCEEDED(pLink->GetPath(temp,MAX_PATH,NULL,0)))
+		cmd->cmdLine = temp;
+	if (SUCCEEDED(pLink->GetArguments(temp,MAX_PATH * 5)))
+	{
+		cmd->cmdLine.Append(" ");
+		cmd->cmdLine.Append(temp);
+	}
+	if (SUCCEEDED(pLink->GetDescription(temp,MAX_PATH*5)))
+		cmd->Desc = temp;
+	if (SUCCEEDED(pLink->GetWorkingDirectory(temp,MAX_PATH)))
+		cmd->WorkDir = temp;
+	ppf->Release();
+	pLink->Release();
+	return TRUE;
+}
+
 void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& filespec,const wxString& exclude, const int sub)
 {
 	wxArrayString specs = wxSplit(filespec,'|');
@@ -679,6 +718,9 @@ DWORD RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& work
 	//替换{%wt}为窗体标题
 	if (cmd.find("{%wt}") != wxNOT_FOUND)
 		cmd.Replace("{%wt}",g_controller->GetWindowText(g_controller->GetForegroundWindow()));
+
+	if (cmd.find("{%wd}") != wxNOT_FOUND)
+		cmd.Replace("{%wd}",wxString::Format("%d",g_controller->GetForegroundWindow()));
 
 	if (cmd.find("{%p}") != wxNOT_FOUND)
 		cmd.Replace("{%p}",cmdArg);
