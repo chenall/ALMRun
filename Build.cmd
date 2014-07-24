@@ -15,11 +15,11 @@ set PARAMS=
 if /i "%1"=="STATIC" set STATIC=1
 
 pushd %~dp0build
-if not DEFINED VS100COMNTOOLS goto :END
+if not DEFINED VS110COMNTOOLS goto :END
 if defined STATIC set PARAMS=%PARAMS% -DSTATIC=1
 cmake .. -DRTL=MT %PARAMS% || goto :END
 if not exist ALMRun.sln goto :END
-"%VS100COMNTOOLS%\..\IDE\devenv.com" ALMRun.sln /build Release
+"%VS110COMNTOOLS%\..\IDE\devenv.com" ALMRun.sln /build Release
 if errorlevel 1 goto :END
 copy /y Release\ALMRun.exe ..\bin\ > nul
 popd
