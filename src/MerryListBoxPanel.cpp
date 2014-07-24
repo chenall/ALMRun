@@ -86,7 +86,7 @@ bool MerryListBoxPanel::SetFont(const wxString& fontInfo)
 
 void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
 {
-	const MerryCommand* cmd = this->GetSelectionCommand();
+//	const MerryCommand* cmd = this->GetSelectionCommand();
 
 	m_commands = commands;
 
@@ -98,6 +98,7 @@ void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
 	}
 	m_topCommandIndex = 0;
 	m_selectionCommandIndex = 0;
+	/* 自动选中前一个匹配的命令,感觉有点多余,新的版本取消了.
 	if (!cmd)
 		return;
 	int	PreCmdID = cmd->GetCommandID();
@@ -112,6 +113,7 @@ void MerryListBoxPanel::SetCommandArray(const MerryCommandArray& commands)
 			break;
 		}
 	}
+	*/
 }
 
 void MerryListBoxPanel::SelectNext()
