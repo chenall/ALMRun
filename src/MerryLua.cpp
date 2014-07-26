@@ -1,6 +1,6 @@
 #include "MerryLua.h"
 #include "MerryLuaExport.h"
-#include "MerryConfig.h"
+#include "SkinConfig.h"
 
 MerryLua* g_lua = NULL;
 const char *MerryLua::lua_func_str[] = {"toggleMerry","ReConfig","CmdCallFunc","HookCompare","plugin_command","read_altrun_config"};

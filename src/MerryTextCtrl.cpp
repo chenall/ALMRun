@@ -1,5 +1,4 @@
 #include "MerryTextCtrl.h"
-#include "MerryConfig.h"
 
 #include "MerryHelper.h"
 #include "MerryLua.h"
@@ -37,8 +36,8 @@ END_EVENT_TABLE()
 
 MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	wxTextCtrl(parent, wxID_ANY, wxEmptyString,
-		wxPoint(MERRY_DEFAULT_TEXT_CTRL_LEFT, MERRY_DEFAULT_TEXT_CTRL_TOP),
-		wxSize(MERRY_DEFAULT_TEXT_CTRL_WIDTH, MERRY_DEFAULT_TEXT_CTRL_HEIGHT),
+		wxPoint(skin->get(EDIT_CTRL_LEFT),skin->get(EDIT_CTRL_TOP)),
+		wxSize(skin->get(EDIT_CTRL_WIDTH),skin->get(EDIT_CTRL_HEIGHT)),
 		wxWANTS_CHARS | wxBORDER_NONE
 	)
 {
@@ -50,12 +49,16 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	m_needCompletion = false;
 #endif
 
-	if (MERRY_DEFAULT_TEXT_CTRL_FONT_HEIGHT)
+	if (skin->get(FONT_SIZE))
 	{
 		wxFont font = this->GetFont();
-		font.SetPixelSize(wxSize(0, MERRY_DEFAULT_TEXT_CTRL_FONT_HEIGHT));
+		font.SetPointSize(skin->get(FONT_SIZE));
+		//font.SetPixelSize(wxSize(0, skin->get(FONT_SIZE)));
 		this->SetOwnFont(font);
 	}
+	this->SetForegroundColour(skin->get(TEXT_COLOR));
+	this->SetBackgroundColour(skin->get(TEXT_BACKCOLOR));
+	//this->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
 	this->EnterArgs = 0;
 	HWND_TEXTCTRL = this->GetHWND();
 #ifdef __WXMSW__

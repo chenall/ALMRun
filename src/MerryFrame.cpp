@@ -1,5 +1,4 @@
 #include "MerryFrame.h"
-#include "MerryConfig.h"
 #include "MerryMainPanel.h"
 #include "MerryListBoxPanel.h"
 #include "MerryTaskBarIcon.h"
@@ -21,13 +20,16 @@ BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
-	wxFrame(NULL, wxID_ANY, MERRY_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxBORDER_NONE// | wxSTAY_ON_TOP
+wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxFRAME_TOOL_WINDOW | wxFRAME_FLOAT_ON_PARENT | wxBORDER_NONE// | wxSTAY_ON_TOP
 #ifdef __WXOSX__
 		| wxSTAY_ON_TOP
 #endif
 	)
 {
-	this->SetClientSize(MERRY_DEFAULT_WIDTH, MERRY_DEFAULT_HEIGHT);
+	skin = new SkinConfig();
+	if (skin->get(SHOW_WINDOW))
+		this->SetWindowStyleFlag(wxCLOSE_BOX | wxCAPTION);// | wxBORDER_NONE);
+	this->SetClientSize(skin->get(MAIN_WIDTH),skin->get(MAIN_HEIGHT));
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = NULL;
@@ -43,9 +45,8 @@ MerryFrame::~MerryFrame()
 	__DEBUG_BEGIN("")
 	if (g_lua)
 		OnClose();
-	if (m_taskBarIcon)
-		wxDELETE(m_taskBarIcon);
-	m_taskBarIcon = NULL;
+	wxDELETE(m_taskBarIcon);
+	wxDELETE(skin);
 	m_listBoxPanel = NULL;
 	m_mainPanel = NULL;
 	__DEBUG_END("")
@@ -217,7 +218,7 @@ void MerryFrame::CentreOnce()
 
 	this->Centre();
 	wxPoint position = this->GetPosition();
-	position.y -= MERRY_DEFAULT_LIST_BOX_ITEM_HEIGHT * MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM / 4;
+	position.y -= skin->get(LIST_ITEM_HEIGHT) * MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM / 4;
 	this->SetPosition(position);
 	
 	m_isCentred = true;

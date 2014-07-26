@@ -73,9 +73,7 @@ ALMRunConfig::ALMRunConfig()
 
 	//lastId = 0;
 	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,7|wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
-	gui_config[ListFont] = conf->Read("/GUI/ListFont");
-	MerryListBoxPanel* listBoxPanel = ::wxGetApp().GetFrame().GetListBoxPanel();
-	listBoxPanel->SetFont(gui_config[ListFont]);
+
 	conf->SetPath("/Config");
 	conf->SetExpandEnvVars(true);
 	this->set("Explorer",conf->Read("Explorer"));

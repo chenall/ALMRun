@@ -3,6 +3,7 @@
 #include "ALMRunVersion.h"
 #include "ALMRunCommon.h"
 #include "MerryWx.h"
+#include "SkinConfig.h"
 #include <wx/fileconf.h>
 
 #define TASKBARICON_TIP "ALMRun v"##VERSION_STR##"\n±ã½ÝÆô¶¯¹¤¾ß"
@@ -121,6 +122,7 @@ private:
 	extern HWND HWND_TEXTCTRL;
 #endif
 extern ALMRunConfig* g_config;
+extern SkinConfig *skin;
 extern bool LocationExec;
 enum
 {

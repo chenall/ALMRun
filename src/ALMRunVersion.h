@@ -1,6 +1,6 @@
 #ifndef _ALMRUN_VERSION_H_
 #define _ALMRUN_VERSION_H_
-#define VERSION_INT  1,2,0,60
-#define VERSION_STR  "1,2,0,60"
-#define VERSION_DATE  "2014/07/24"
+#define VERSION_INT  1,2,0,61
+#define VERSION_STR  "1,2,0,61"
+#define VERSION_DATE  "2014/07/27"
 #endif

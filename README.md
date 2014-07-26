@@ -102,6 +102,7 @@ Resource 相关资源
 * 源码: <https://github.com/chenall/ALMRun>  
 * 搏客: <http://chenall.net/post/alrun-merry/>  
 * 主页: <http://almrun.chenall.net>  
+* Executor: <http://executor.dk/> ALMrun 使用了Excutor的主题格式.
 * altrun介绍：<http://xbeta.info/altrun.htm> 可以参考一下，使用方法基本上都是差不多的。
 
 [Merry]:http://code.google.com/p/name5566-merry/

@@ -1,5 +1,4 @@
 #include "MerryMainPanel.h"
-#include "MerryConfig.h"
 #include "MerryTaskBarIcon.h"
 
 BEGIN_EVENT_TABLE(MerryMainPanel, wxPanel)
@@ -20,10 +19,8 @@ MerryMainPanel::MerryMainPanel(wxWindow* parent):
 	menu->Append(MENU_ITEM_ABOUT, wxT("¹ØÓÚALMRun(&A)"));
 	menu->Append(MENU_ITEM_EXIT, wxT("ÍË³ö(&X)"));
 
-	if (!wxImage::FindHandler(wxBITMAP_TYPE_PNG))
-		wxImage::AddHandler(new wxPNGHandler);
-	bool isOk = m_background.LoadFile(MERRY_DEFAULT_BACKGROUND_FILE, wxBITMAP_TYPE_PNG);
-	assert(isOk);
+	if (!skin->get(SKINPICTURE).empty())
+		m_background.LoadFile(skin->get(SKINPICTURE), wxBITMAP_TYPE_ANY);
 }
 
 MerryMainPanel::~MerryMainPanel()
@@ -75,5 +72,6 @@ void MerryMainPanel::OnMouseEvent(wxMouseEvent& e)
 void MerryMainPanel::OnPaintEvent(wxPaintEvent& e)
 {
 	wxPaintDC dc(this);
-	dc.DrawBitmap(m_background, 0, 0, false);
+	if (m_background.IsOk())
+		dc.DrawBitmap(m_background, 0, 0, false);
 }

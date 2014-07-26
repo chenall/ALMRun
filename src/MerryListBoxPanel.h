@@ -2,7 +2,6 @@
 #define _MERRY_LIST_BOX_PANEL_H_
 
 #include "MerryCommandManager.h"
-#include "MerryConfig.h"
 
 #ifdef __WXMSW__
 #include <wx/dcbuffer.h>
@@ -21,7 +20,6 @@ public:
 	void SelectNext();
 	void SelectPrev();
 	int flags;
-	bool SetFont(const wxString& font);
 	int SetSelection(int index,int top = -1);
 	bool DelSelectedItem();
 	const MerryCommand* GetSelectionCommand() const;
@@ -41,6 +39,8 @@ private:
 	void DrawBorder(MerryPaintDC& dc) const;
 	void DrawBackground(MerryPaintDC& dc) const;
 	void DrawItems(MerryPaintDC& dc);
+	void DrawItem(MerryPaintDC& dc,size_t item);
+	int commands_size;
 
 	void SetHeight(int height);
 	int CalcHeight() const;
@@ -50,17 +50,13 @@ private:
 	MerryCommandArray m_commands;
 	int m_topCommandIndex;
 	int m_selectionCommandIndex;
+	int item_height;
+	int item_width;
+	BOOL show_title;
 	wxMenu* menu;
 
-	struct ListBoxItem
-	{
-		wxRect rect;
-		wxRect LeftRect;
-		wxRect mainRect;
-		wxRect RightRect;
-	};
-	ListBoxItem m_items[MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM+1];
-	wxBitmap m_selectionItemBackground;
+	wxRect m_items[MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM+1];
+	wxBitmap m_listBackground;
 
 	bool m_isPopup;
 
