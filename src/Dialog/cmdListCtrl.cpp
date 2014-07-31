@@ -236,14 +236,14 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 	switch(id)
 	{
 		case ID_TOOL_ADD:
-			if (cmdID >= 0)
 			{
 				DlgAddNewCmd* dlg=new DlgAddNewCmd();
 				if (dlg->ShowModal() == wxID_OK)
 					ctrl->ReLoadCmds();
 				dlg->Destroy();
 			}
-			else
+			break;
+		case ID_TOOL_ADD_FOLDER:
 			{
 				DlgAddNewDir* dlg=new DlgAddNewDir(NULL);
 				if (dlg->ShowModal() == wxID_OK)

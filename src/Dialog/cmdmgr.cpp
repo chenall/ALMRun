@@ -36,6 +36,7 @@
 #include "cut.xpm"
 #include "find.xpm"
 #include "import.xpm"
+#include "folder.xpm"
 ////@end XPM images
 
 
@@ -53,7 +54,7 @@ IMPLEMENT_DYNAMIC_CLASS( cmdMgr, wxDialog )
 BEGIN_EVENT_TABLE( cmdMgr, wxDialog )
 
 ////@begin cmdMgr event table entries
-EVT_TOOL_RANGE(ID_TOOL_ADD, ID_TOOL_IMPORT, cmdMgr::onToolClick)
+EVT_TOOL_RANGE(ID_TOOL_ADD, ID_TOOL_ADD_FOLDER, cmdMgr::onToolClick)
 //EVT_LIST_ITEM_SELECTED(ID_LISTCTRL, cmdMgr::onSelected)
 //EVT_LIST_COL_CLICK(ID_LISTCTRL, cmdMgr::onSelected)
 ////@end cmdMgr event table entries
@@ -142,18 +143,20 @@ void cmdMgr::CreateControls()
     itemToolBar3->SetToolBitmapSize(wxSize(32, 32));
     wxBitmap itemtool4Bitmap(itemDialog1->GetBitmapResource(wxT("open.xpm")));
     wxBitmap itemtool4BitmapDisabled;
-    itemToolBar3->AddTool(ID_TOOL_ADD, _T("添加"), itemtool4Bitmap, itemtool4BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+    itemToolBar3->AddTool(ID_TOOL_ADD, _T("添加"), itemtool4Bitmap, itemtool4BitmapDisabled, wxITEM_NORMAL, _T("添加新的命令"));
     wxBitmap itemtool5Bitmap(itemDialog1->GetBitmapResource(wxT("paste.xpm")));
     wxBitmap itemtool5BitmapDisabled;
-    itemToolBar3->AddTool(ID_TOOL_EDIT, _T("编辑"), itemtool5Bitmap, itemtool5BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+    itemToolBar3->AddTool(ID_TOOL_EDIT, _T("编辑"), itemtool5Bitmap, itemtool5BitmapDisabled, wxITEM_NORMAL, "修改编辑当前选中项", wxEmptyString);
     wxBitmap itemtool6Bitmap(itemDialog1->GetBitmapResource(wxT("cut.xpm")));
     wxBitmap itemtool6BitmapDisabled;
-    itemToolBar3->AddTool(ID_TOOL_DELETE, _T("删除"), itemtool6Bitmap, itemtool6BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+    itemToolBar3->AddTool(ID_TOOL_DELETE, _T("删除"), itemtool6Bitmap, itemtool6BitmapDisabled, wxITEM_NORMAL, "删除当前选中项目(可多选)", wxEmptyString);
     itemToolBar3->AddSeparator();
     wxBitmap itemtool8Bitmap(itemDialog1->GetBitmapResource(wxT("find.xpm")));
     wxBitmap itemtool8BitmapDisabled;
-    itemToolBar3->AddTool(ID_TOOL_CHECK, _T("校验"), itemtool8Bitmap, itemtool8BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
-	itemToolBar3->AddTool(ID_TOOL_IMPORT, _T("导入"), wxBitmap(import_xpm),itemtool8BitmapDisabled, wxITEM_NORMAL, wxEmptyString, wxEmptyString);
+    itemToolBar3->AddTool(ID_TOOL_CHECK, _T("校验"), itemtool8Bitmap, itemtool8BitmapDisabled, wxITEM_NORMAL, "检验列表项目,并在可能失效的命令上设置高亮颜色", wxEmptyString);
+	itemToolBar3->AddTool(ID_TOOL_IMPORT, _T("导入"), wxBitmap(import_xpm),itemtool8BitmapDisabled, wxITEM_NORMAL, "从ALTRun的配置文件ShortCutList.txt导入命令", wxEmptyString);
+	itemToolBar3->AddSeparator();
+	itemToolBar3->AddTool(ID_TOOL_ADD_FOLDER, _T("添加目录"), wxBitmap(folder_xpm),itemtool8BitmapDisabled, wxITEM_NORMAL, "添加一个文件夹,启动时根据设定自动扫描该文件夹添加命令", wxEmptyString);
     itemToolBar3->Realize();
     itemBoxSizer2->Add(itemToolBar3, 0, wxGROW, 5);
 	m_cmd_list = new cmdListCtrl(itemDialog1, ID_LISTCTRL, wxDefaultPosition, wxSize(-1,500));
@@ -203,6 +206,11 @@ wxBitmap cmdMgr::GetBitmapResource( const wxString& name )
 	else if (name == _T("import.png"))
 	{
 		wxBitmap bitmap(import_xpm);
+		return bitmap;
+	}
+	else if (name == ("folder.xpm"))
+	{
+		wxBitmap bitmap(folder_xpm);
 		return bitmap;
 	}
     return wxNullBitmap;
