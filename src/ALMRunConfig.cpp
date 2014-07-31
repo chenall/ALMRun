@@ -8,7 +8,7 @@
 #include "ALMRunCommon.h"
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ShowCommandLine","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","cmdSingleProecss","cmdReadShortcut","ShowCMDErrInfo"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ShowCommandLine","ExecuteIfOnlyOne","RememberFavouratMatch","MatchAnywhere","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","cmdSingleProecss","cmdReadShortcut","ShowCMDErrInfo"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行(添加一个快捷方式到启动菜单),快捷键 Ctrl+Shift+R,部份系统下也可以直接按这个快捷键快速启动",
 	"保持程序窗口置顶,默认禁用.",
@@ -18,6 +18,7 @@ const char *ALMRunConfig::config_tip[] = {
 	"如果选中，在底部显示命令行",
 	"选中时列表只剩一项时无需按键立即执行",
 	"如果选中，记住最近一次关键字和快捷项的对应关系",
+	"如果未选中，从第一个字母匹配关键字\n注:设置该项会自动修改CompareMode的值.(如果有通过LUA脚本动态配置则以LUA的配置为准)",
 	"如果未选中，编号顺序为 1, 2, ..., 9, 0",
 	"如果选中, 命令列表中前辍匹配的排前面",
 	"如果选中,鼠标移动列表框项目时会显示备注信息或命令行",
@@ -50,6 +51,7 @@ ALMRunConfig::ALMRunConfig()
 	config[cmdSingleProecss] = false;
 	config[cmdReadShortcut] = false;
 	config[ShowCommandLine] = false;
+	config[MatchAnywhere]=true;
 	cfg_changed = false;
 	FavoriteList = NULL;
 	order_conf = NULL;
@@ -100,11 +102,12 @@ ALMRunConfig::ALMRunConfig()
 		}
 	}
 	config_u[ParamHistoryLimit] = conf->ReadLong("ParamHistoryLimit",ParamHistoryLimit_default);
-	CompareMode = conf->ReadLong("CompareMode",0);
 
 	//从配置文件中读取参数，如果不存在则使用默认值
 	for(int i=0;i<CONFIG_BOOL_MAX;++i)
 		config[i] = conf->ReadBool(config_str[i],config[i]);
+
+	CompareMode = conf->ReadLong("CompareMode",!config[MatchAnywhere]);
 
 	this->set("ShowTrayIcon",config[ShowTrayIcon]);
 	this->set("StayOnTop",config[StayOnTop]);
@@ -246,6 +249,11 @@ void ALMRunConfig::GuiConfig()
 		conf->SetPath("/Config");
 		if (!dlg->config_hotkey->GetValue().IsSameAs(HotKey))
 			conf->Write("HotKey",dlg->config_hotkey->GetValue());
+		if (config[MatchAnywhere] != dlg->config->IsChecked(MatchAnywhere))
+		{
+			CompareMode = config[MatchAnywhere];
+			conf->Write("/Config/CompareMode",CompareMode);
+		}
 		for(size_t i=0; i < CONFIG_BOOL_ITEMS; ++i)
 			this->set(i,dlg->config->IsChecked(i));
 

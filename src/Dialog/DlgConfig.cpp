@@ -170,6 +170,7 @@ void DlgConfig::CreateControls()
 	configStrings.Add("显示命令行");
     configStrings.Add("仅剩一项时立即执行");
 	configStrings.Add("保存最近一次匹配");
+	configStrings.Add("从任意位置匹配关键字");
     configStrings.Add("数字序列顺序 = 0, 1, ..., 8, 9");
     configStrings.Add("前辍匹配优先");
 	configStrings.Add("显示命令提示信息");

@@ -28,6 +28,7 @@ typedef enum _config_item_t
 	ShowCommandLine,
 	ExecuteIfOnlyOne,
 	RememberFavouratMatch,
+	MatchAnywhere,
 	IndexFrom0to9,
 	OrderByPre,
 	ShowTip,
