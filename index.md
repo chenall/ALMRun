@@ -110,6 +110,7 @@ Resource 相关资源
 * 源码: <https://github.com/chenall/ALMRun>  
 * 搏客: <http://chenall.net/post/alrun-merry/>  
 * 主页: <http://almrun.chenall.net>  
+* Executor: <http://executor.dk/> ALMrun 使用了Excutor的主题格式.
 * altrun介绍：<http://xbeta.info/altrun.htm> 可以参考一下，使用方法基本上都是差不多的。
 
 [Merry]:http://code.google.com/p/name5566-merry/
@@ -119,15 +120,27 @@ Resource 相关资源
 [更新记录]:update_log.html
 Requirement(编译环境)
 ======================
-	vs2010 sp1
+	vs2012
 	cmake >= 2.8
 	wxWidgets >=2.9.5
 
 Build 编译方法
 ===================
+1.  先用下载[wxWidget源码](https://www.wxwidgets.org/downloads/)
+
+    需要**2.9.5**以上的版本,建议用**3.0.1**版的源码,直接解压到`d:\dev`目录下,
+    然后打开`D:\dev\wxWidgets-3.0.1\build\msw\wx_vc11.sln`文件编译 **Release** 和 **Debug** 两个版本,直接编译就行了.
+
+2. 下载[cmake](http://www.cmake.org/cmake/resources/software.html)(2.8以上的版本),直接安装.
+
+3. 打开命令管理器(CMD.EXE)进入ALMRUN源码目录
+```
 	cd Build
 	cmake ..
 	ALMRun.sln
+```
+
+以后可以直接打开**ALMRun.sln**修改编译.
 
 Download 程序下载
 ===================

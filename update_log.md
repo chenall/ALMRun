@@ -5,6 +5,13 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [2014-07-31 v1.2.0.62](https://github.com/chenall/ALMRun/archive/v1.2.0.62_BIN.zip)
+    1.对主题界面进行一些修正调整,发布第一个支持主题切换的测试版本.
+      默认只带了一个主题,需要主题的可以自己设计或直接下载[executor](http://executor.dk/)提取skins目录里面的文件复制到almrun/skin目录下.
+
+### [2014-07-27 v1.2.0.61]
+    1. 新的主题界面,支持换肤.使用了[Executor](http://executor.dk/)的主题格式.(对于alpha的主题支持不是很好,主要是透明的部份不支持).
+
 ### [2014-04-04 v1.2.0.59](https://github.com/chenall/ALMRun/archive/v1.2.0.59_BIN.zip)
     1. BUG修正(参数设置)
     2. 支持{%wd}参数,方便配合winctl实现窗口控制,比如winctl close {%wd}
