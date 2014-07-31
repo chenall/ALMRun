@@ -30,6 +30,18 @@ wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, w
 	if (skin->get(SHOW_WINDOW))
 		this->SetWindowStyleFlag(wxCLOSE_BOX | wxCAPTION);// | wxBORDER_NONE);
 	this->SetClientSize(skin->get(MAIN_WIDTH),skin->get(MAIN_HEIGHT));
+	wxFont font = this->GetFont();
+
+	font.SetFaceName(skin->get(SKIN_FONT));
+	if (skin->get(FONT_SIZE))
+		font.SetPointSize(skin->get(FONT_SIZE));
+	if (skin->get(FONT_BOLD))
+		font = font.Bold();
+	this->SetFont(font);
+	font.FreeResource();
+	this->SetForegroundColour(skin->get(TEXT_COLOR));
+	this->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
+	this->SetBackgroundColour("#ffff");
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = NULL;
@@ -50,6 +62,12 @@ MerryFrame::~MerryFrame()
 	m_listBoxPanel = NULL;
 	m_mainPanel = NULL;
 	__DEBUG_END("")
+}
+
+void MerryFrame::setTitle(const wxString& title)
+{
+	m_mainPanel->setTitle(title);
+	m_mainPanel->Refresh();
 }
 
 void MerryFrame::NewConfig()

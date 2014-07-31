@@ -8,13 +8,14 @@
 #include "ALMRunCommon.h"
 
 ALMRunConfig* g_config = NULL;
-const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","cmdSingleProecss","cmdReadShortcut","ShowCMDErrInfo"};
+const char *ALMRunConfig::config_str[] = {"AutoRun","StayOnTop","NumberKey","ShowTrayIcon","ShowTopTen","ShowCommandLine","ExecuteIfOnlyOne","RememberFavouratMatch","IndexFrom0to9","OrderByPre","ShowTip","DisableWow64FsRedirection","AddToSendTo","PlayPopupNotify","SpaceKey","AutoPopup","DoubleToggleFunc","DoubleClick","DuplicateCMD","cmdSingleProecss","cmdReadShortcut","ShowCMDErrInfo"};
 const char *ALMRunConfig::config_tip[] = {
 	"如果选中，随系统启动而自动运行(添加一个快捷方式到启动菜单),快捷键 Ctrl+Shift+R,部份系统下也可以直接按这个快捷键快速启动",
 	"保持程序窗口置顶,默认禁用.",
 	"选中时敲0-9键执行对应编号的快捷项",
 	"选中时在系统托盘显示图标",
 	"选中时仅显示前10项快捷项",
+	"如果选中，在底部显示命令行",
 	"选中时列表只剩一项时无需按键立即执行",
 	"如果选中，记住最近一次关键字和快捷项的对应关系",
 	"如果未选中，编号顺序为 1, 2, ..., 9, 0",
@@ -48,6 +49,7 @@ ALMRunConfig::ALMRunConfig()
 	config[DuplicateCMD] = false;
 	config[cmdSingleProecss] = false;
 	config[cmdReadShortcut] = false;
+	config[ShowCommandLine] = false;
 	cfg_changed = false;
 	FavoriteList = NULL;
 	order_conf = NULL;
@@ -73,7 +75,7 @@ ALMRunConfig::ALMRunConfig()
 
 	//lastId = 0;
 	conf = new wxFileConfig(wxT("ALMRun"),wxEmptyString,cfg_file,wxEmptyString,7|wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
-
+	gui_config[CurrentSkin] = conf->Read("/GUI/skin");
 	conf->SetPath("/Config");
 	conf->SetExpandEnvVars(true);
 	this->set("Explorer",conf->Read("Explorer"));
@@ -184,9 +186,19 @@ bool ALMRunConfig::set(const wxString& name,const wxString &value)
 		HotKey = value;
 	else if(name.Cmp("HotKeyReLoad") == 0)
 		HotKeyReLoad = value;
+	else if (name.IsSameAs("skin"))
+	{
+		conf->Write("/Config/skin",value);
+		cfg_changed = true;
+	}
 	else
 		return false;
 	return ::wxSetEnv(wxT("ALMRUN_")+name.Upper(),value);
+}
+
+wxString ALMRunConfig::get(gui_config_str_t item) const
+{
+	return gui_config[item];
 }
 
 bool ALMRunConfig::set(const wxString& name,const int value)

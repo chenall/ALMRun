@@ -49,13 +49,6 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	m_needCompletion = false;
 #endif
 
-	if (skin->get(FONT_SIZE))
-	{
-		wxFont font = this->GetFont();
-		font.SetPointSize(skin->get(FONT_SIZE));
-		//font.SetPixelSize(wxSize(0, skin->get(FONT_SIZE)));
-		this->SetOwnFont(font);
-	}
 	this->SetForegroundColour(skin->get(TEXT_COLOR));
 	this->SetBackgroundColour(skin->get(TEXT_BACKCOLOR));
 	//this->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);

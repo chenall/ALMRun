@@ -11,11 +11,12 @@
 #define FAVORITELIST_FILE wxT("config/FavoriteList.txt")
 #define ParamHistoryLimit_default 50
 
-enum gui_config_item
+typedef enum gui_config_item
 {
 	ListFont,
+	CurrentSkin,
 	GUI_CONFIG_MAX,
-};
+} gui_config_str_t;
 
 typedef enum _config_item_t
 {
@@ -24,6 +25,7 @@ typedef enum _config_item_t
 	NumberKey,
 	ShowTrayIcon,
 	ShowTopTen,
+	ShowCommandLine,
 	ExecuteIfOnlyOne,
 	RememberFavouratMatch,
 	IndexFrom0to9,
@@ -73,11 +75,13 @@ public:
 	wxString HotKeyReLoad;
 	void Check();
 	bool Changed();
-	void get(const wxString& name);
+
 	size_t get_u(config_item_t config_type) const;
 	bool set(const wxString& name,const wxString& value);
 	bool set(const wxString& name,const int value);
 
+	void get(const wxString& name);
+	wxString get(gui_config_str_t item) const;
 	bool get(config_item_t config_type);
 	bool set(size_t item,bool value);
 	bool SaveCfg();
@@ -135,6 +139,7 @@ enum
 	MENU_ITEM_EXIT,
 	MENU_ITEM_EXIT1,
 	MENU_ITEM_CMDMGR,
+	MENU_ITEM_SKIN,
 	MENU_ITEM_LAST,
 	MENU_CMD_FIRST = 10000,
 	MENU_CMD_ADD,

@@ -15,6 +15,7 @@ public:
 	void OnClose();
 	void OpenConfigDir();
 	void NewConfig();
+	void setTitle(const wxString& title);
 	void ShowTrayIcon(const bool show);
 
 	MerryListBoxPanel* GetListBoxPanel();

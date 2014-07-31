@@ -22,22 +22,28 @@ typedef enum _skin_config
 	LIST_BOX_WIDTH,
 	LIST_BOX_LEFT,
 	LIST_FONT_SIZE,
+	LIST_ITEM_MARGIN,
+
+	LISTFMT_NAME_MAX,
+	LISTFMT_DESC_MAX,
+	LISTFMT_KEY_MAX,
+	LISTFMT_CMD_MAX,
+	LISTFMT_ID_MAX,
+	LISTFMT_NUM_MAX,
 
 	TITLE_CONFIG,
-	MAIN_WIDTH,
-	MAIN_HEIGHT,
 
 	TITLE_LEFT = TITLE_CONFIG,
 	TITLE_TOP,
 	TITLE_WIDTH,
 	TITLE_HEIGHT,
-	TITLE_ALIGH,
 	TITLE_ENABLED,
+	TITLE_ALIGN,
 
 	LIST_ITEM_HEIGHT,
-	LIST_ITEM_FONT_SIZE,
-	LIST_ITEM_MARGIN,
 	LIST_ITEM_MAX,
+	MAIN_WIDTH,
+	MAIN_HEIGHT,
 	SKIN_CONFIG_MAX,
 } skin_config_t;
 
@@ -63,6 +69,9 @@ typedef enum _skin_custom_config
 	LISTPICTURE,
 	DEFAULT_TITLE,
 	SKIN_TYPE,
+	LIST_FMT,
+	LIST_ITEM,
+	SKIN_FONT,
 	CUSTOM_CONFIG_MAX,
 } skin_custom_t;
 
@@ -76,6 +85,7 @@ public:
 	wxString get(skin_custom_t item) const;
 private:
 	void read_config();
+	wxString skin_name;
 	int config[SKIN_CONFIG_MAX];
 	wxColor color[COLOR_CONFIG_MAX];
 	wxString custom[CUSTOM_CONFIG_MAX];

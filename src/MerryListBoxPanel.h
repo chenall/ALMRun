@@ -10,6 +10,16 @@ typedef wxBufferedPaintDC MerryPaintDC;
 typedef wxPaintDC MerryPaintDC;
 #endif
 
+typedef enum _list_fmt_
+{
+	LIST_CMD_ITEM,
+	LIST_CMD_ID,
+	LIST_CMD_DESC,
+	LIST_CMD_CMD,
+	LIST_CMD_KEY,
+	LIST_CMD_NAME,
+};
+
 class MerryListBoxPanel : public wxPanel
 {
 public:
@@ -41,6 +51,7 @@ private:
 	void DrawItems(MerryPaintDC& dc);
 	void DrawItem(MerryPaintDC& dc,size_t item);
 	int commands_size;
+	wxString list_fmt;
 
 	void SetHeight(int height);
 	int CalcHeight() const;
@@ -52,7 +63,6 @@ private:
 	int m_selectionCommandIndex;
 	int item_height;
 	int item_width;
-	BOOL show_title;
 	wxMenu* menu;
 
 	wxRect m_items[MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM+1];

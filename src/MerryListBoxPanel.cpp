@@ -1,5 +1,6 @@
 #include "MerryListBoxPanel.h"
 #include "DlgAddNewCmd.h"
+#include "MerryApp.h"
 
 BEGIN_EVENT_TABLE(MerryListBoxPanel, wxPanel)
 	EVT_MOUSE_EVENTS(MerryListBoxPanel::OnMouseEvent)
@@ -15,7 +16,7 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 {
 	wxString listpicture(skin->get(LISTPICTURE));
 	wxFont font = this->GetFont();
-	show_title = (skin->get(TITLE_ENABLED) == 2);
+
 
 	m_topCommandIndex = -1;
 	m_selectionCommandIndex = -1;
@@ -48,6 +49,7 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 
 	item_height = skin->get(LIST_ITEM_HEIGHT);
 	item_width = this->GetClientSize().x - 4;
+	list_fmt = skin->get(LIST_FMT);
 
 	for (int i=0; i<=MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM; ++i)
 	{
@@ -358,6 +360,11 @@ void MerryListBoxPanel::DrawBackground(MerryPaintDC& dc) const
 
 }
 
+wxString printfmt(long n,const wxString &str)
+{
+	return wxString::Format("%*.*s",n,abs(n),str);
+}
+
 void MerryListBoxPanel::DrawItem(MerryPaintDC& dc,size_t item)
 {
 	int index = item + m_topCommandIndex;
@@ -368,8 +375,44 @@ void MerryListBoxPanel::DrawItem(MerryPaintDC& dc,size_t item)
 		return;
 
 	int i = (g_config->get(IndexFrom0to9))?item:(item==9?0:item+1);
-//	dc.DrawText(wxString::Format(wxT("%5.5s(%1d | %s"),command->GetTriggerKey(),i,command->GetCommandName()),2,item*item_height+2);
-	dc.DrawLabel(wxString::Format(wxT("%5.5s(%1d | %s"),command->GetTriggerKey(),i,command->GetCommandName()),m_items[item],wxALIGN_LEFT);
+
+	wxString fmt = skin->get(LIST_FMT);
+	wxString label = "";
+	for(size_t i=0;i<fmt.size();++i)
+	{
+		wxChar c=fmt[i];
+		if (c == '$')
+		{
+			c=wxTolower(fmt[++i]);
+
+			switch(c)
+			{
+				case '$':
+					label += wxString::Format("%*d",skin->get(LISTFMT_NUM_MAX),item);
+					break;
+				case 'i':
+					label +=wxString::Format("%*d",skin->get(LISTFMT_ID_MAX),command->GetCommandID());
+					break;
+				case 'n':
+					label += printfmt(skin->get(LISTFMT_NAME_MAX),command->GetCommandName());
+					break;
+				case 'd':
+					label += printfmt(skin->get(LISTFMT_DESC_MAX),command->GetCommandDesc());
+					break;
+				case 'c':
+					label += printfmt(skin->get(LISTFMT_CMD_MAX),command->GetCmd());
+					break;
+				case 'k':
+					label += printfmt(skin->get(LISTFMT_KEY_MAX),command->GetTriggerKey());
+					break;
+			}
+
+		} else {
+			label += c;
+		}
+	}
+
+	dc.DrawLabel(label,m_items[item],wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 }
 
 void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
@@ -385,30 +428,38 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 			DrawItem(dc,i);
 	}
 
-	if (show_title)
-	{
-	const MerryCommand* command = m_commands[m_selectionCommandIndex];
-	const wxString& cmdLine = command->GetCmd();
-	const wxString& cmdDesc = command->GetCommandDesc();
-	if (this->flags > 0)
-	{
-		dc.DrawLabel("  输入命令参数按回车执行或按Esc键返回",m_items[ITEM_NUM], wxALIGN_LEFT);
-		this->flags = 0;
-	}else {
-#ifdef _RELWITHDEBINFO
-	dc.DrawLabel(wxString::Format(wxT(" 命令[%d]: %s"),command->GetOrder(),cmdLine.c_str()),item.rect, wxALIGN_LEFT);
-#else
-	if (!cmdLine.empty())
-		dc.DrawLabel(wxString::Format(wxT(" 命令: %s"),cmdLine.c_str()),m_items[ITEM_NUM], wxALIGN_LEFT);
-	else if (!cmdDesc.empty())
-		dc.DrawLabel(wxString::Format(wxT(" 说明: %s"),cmdDesc.c_str()),m_items[ITEM_NUM], wxALIGN_LEFT);	
-#endif
-	}
-	}
 	dc.SetTextForeground(skin->get(LIST_FOCUSTEXT_COLOR));
 	dc.SetBrush(wxBrush(skin->get(LIST_FOCUSBG_COLOR)));
 	dc.DrawRectangle(m_items[active_item]);
 	DrawItem(dc,active_item);
+
+	const MerryCommand* command = m_commands[m_selectionCommandIndex];
+
+	::wxGetApp().GetFrame().setTitle(command->GetCommandDesc());
+	if (g_config->get(ShowCommandLine))
+	{
+		const wxString& cmdLine = command->GetCmd();
+		const wxString& cmdDesc = command->GetCommandDesc();
+		wxString title;
+
+		if (this->flags > 0)
+		{
+			title = "  输入命令参数按回车执行或按Esc键返回";
+			this->flags = 0;
+		}else {
+	#ifdef _RELWITHDEBINFO
+			title = wxString::Format(wxT(" 命令[%d]: %s"),command->GetOrder(),cmdLine.c_str());
+	#else
+		if (!cmdLine.empty())
+			title = wxString::Format(wxT(" 命令: %s"),cmdLine.c_str());
+		else if (!cmdDesc.empty())
+			title = wxString::Format(wxT(" 说明: %s"),cmdDesc.c_str());	
+	#endif
+		}
+		dc.SetBrush(wxBrush(skin->get(LIST_FOCUSBG_COLOR)));
+		dc.DrawRectangle(m_items[ITEM_NUM]);
+		dc.DrawLabel(title,m_items[ITEM_NUM],wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+	}
 }
 
 void MerryListBoxPanel::SetHeight(int height)
@@ -428,8 +479,8 @@ int MerryListBoxPanel::CalcHeight() const
 {
 	const int ITEM_NUM = this->GetVisibleItemNum();
 	int height = ITEM_NUM * item_height + 4;
-	if (show_title)
-		height += skin->get(TITLE_HEIGHT);
+	if (g_config->get(ShowCommandLine))
+		height += item_height;
 	return height;
 }
 

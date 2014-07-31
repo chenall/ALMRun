@@ -34,6 +34,16 @@ void MerryTaskBarIcon::onPopMenu(wxCommandEvent& e)
 {
 	switch(e.GetId())
 	{
+		case MENU_ITEM_SKIN:
+			{
+				wxString file = wxFileSelector("请选择","skin/",wxEmptyString,wxT(".skn"),"*.skn",0);
+				if (file.IsEmpty())
+					break;
+				wxFileName fn(file);
+				if (g_config->set("skin",fn.GetName()))
+					wxMessageBox("目前的版本尚未完善,修改主题需要重新启动程序才能看到效果,请重启程序.","切换主题");
+			}
+			break;
 		case MENU_ITEM_ABOUT:
 			new MerryInformationDialog(wxT("关于 ALMRun"),wxString::Format("version " VERSION_STR " --- http://ALMRun.chenall.net\r\n相关资源:\r\n原版: http://name5566.com\r\n主题: http://executor.dk/\r\n源码: https://github.com/chenall/almrun\r\n\r\n编译时间:%s %s",__DATE__,__TIME__));
 			break;
