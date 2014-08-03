@@ -7,7 +7,10 @@
 const char		ALMRUN_DEFAULT_TITLE[] = "ALMRun 快速启动工具";
 const char		ALMRUN_DEFAULT_CONFIG_FILE[] = "LuaEx/ALMRun.lua";
 const int		MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM = 10;
-
+#define SKIN_TYPE_ALPHA 1
+#define SKIN_TYPE_MEDIUM 2
+#define SKIN_TYPE_MINI 3
+#define SKIN_TYPE_SMALL 4
 typedef enum _skin_config
 {
 	SHOW_WINDOW,
@@ -44,6 +47,7 @@ typedef enum _skin_config
 	LIST_ITEM_MAX,
 	MAIN_WIDTH,
 	MAIN_HEIGHT,
+	SKIN_TYPE,
 	SKIN_CONFIG_MAX,
 } skin_config_t;
 
@@ -54,6 +58,7 @@ typedef enum _skin_color_config
 	WINDOW_COLOR,
 	LIST_FOCUSBG_COLOR,
 	LIST_FOCUSTEXT_COLOR,
+	LIST_BACKCOLOR,
 	LIST_TEXT_COLOR,
 	LIST_TITLE_COLOR,
 	TITLE_TEXT_COLOR,
@@ -68,9 +73,7 @@ typedef enum _skin_custom_config
 	SKINPICTURE,
 	LISTPICTURE,
 	DEFAULT_TITLE,
-	SKIN_TYPE,
 	LIST_FMT,
-	LIST_ITEM,
 	SKIN_FONT,
 	CUSTOM_CONFIG_MAX,
 } skin_custom_t;

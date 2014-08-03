@@ -20,7 +20,7 @@ BEGIN_EVENT_TABLE(MerryFrame, wxFrame)
 END_EVENT_TABLE()
 
 MerryFrame::MerryFrame():
-wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxFRAME_TOOL_WINDOW | wxFRAME_FLOAT_ON_PARENT | wxBORDER_NONE// | wxSTAY_ON_TOP
+wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR | wxFRAME_TOOL_WINDOW | wxFRAME_SHAPED | wxBORDER_NONE// | wxSTAY_ON_TOP
 #ifdef __WXOSX__
 		| wxSTAY_ON_TOP
 #endif
@@ -40,8 +40,8 @@ wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, w
 	this->SetFont(font);
 	font.FreeResource();
 	this->SetForegroundColour(skin->get(TEXT_COLOR));
-	this->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
-	this->SetBackgroundColour("#ffff");
+	this->SetBackgroundColour(skin->get(TEXT_BACKCOLOR));
+//	this->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
 	m_mainPanel = new MerryMainPanel(this);
 	m_listBoxPanel = new MerryListBoxPanel(this);
 	m_taskBarIcon = NULL;

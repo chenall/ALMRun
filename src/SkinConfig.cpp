@@ -17,7 +17,7 @@ SkinConfig::SkinConfig()
 	config[TITLE_ALIGN] = -1;
 	//default custom config;
 	custom[DEFAULT_TITLE] =wxT("ALMRun");
-	custom[LIST_FMT] = "$$) | $N";
+	custom[LIST_FMT] = "$$. $N";
 	custom[SKIN_FONT]="ËÎÌו";
 	skin_name = "merry";
 
@@ -35,6 +35,9 @@ SkinConfig::SkinConfig()
 
 	if (!color[WINDOW_COLOR].IsOk())
 		color[WINDOW_COLOR].Set("#e1ebf2");
+
+	if (!color[LIST_BACKCOLOR].IsOk())
+		color[LIST_BACKCOLOR] = wxTransparentColour;
 
 	if (!wxImage::FindHandler(wxBITMAP_TYPE_JPEG))
 		wxImage::AddHandler(new wxJPEGHandler);
@@ -88,12 +91,13 @@ SkinConfig::SkinConfig()
 		custom[LISTPICTURE].insert(0,wxT("skin/"));
 
 	if (config[MAIN_WIDTH] == 0)
-		config[MAIN_WIDTH] = config[EDIT_CTRL_WIDTH];
+		config[MAIN_WIDTH] = config[EDIT_CTRL_WIDTH] + config[EDIT_CTRL_LEFT];
+
 	if (config[MAIN_HEIGHT] == 0)
-		config[MAIN_HEIGHT] = config[EDIT_CTRL_HEIGHT] + 2;
+		config[MAIN_HEIGHT] = config[LIST_BOX_TOP]?config[LIST_BOX_TOP]:config[EDIT_CTRL_HEIGHT];
 
 	if (config[LIST_BOX_WIDTH] <=0 )
-		config[LIST_BOX_WIDTH] = config[MAIN_WIDTH];
+		config[LIST_BOX_WIDTH] = config[MAIN_WIDTH] - config[LIST_BOX_LEFT];
 };
 
 void SkinConfig::read_config()
@@ -103,7 +107,7 @@ void SkinConfig::read_config()
 		"editleft","edittop","editwidth","editheight",
 		"listtop","listwidth","listleft","listfontsize","listmargin","LISTFMT_NAME_MAX","LISTFMT_DESC_MAX","LISTFMT_KEY_MAX","LISTFMT_CMD_MAX",	"LISTFMT_ID_MAX","LISTFMT_NUM_MAX",
 		"titleleft","titletop","titlewidth","titleheight"};	
-	const char* skin_color_str[]={"TEXTCOLOR","TEXTBACKCOLOR","WINDOWCOLOR","LISTFOCUSBGCOLOR","listfocustextcolor","LISTTEXTCOLOR","LISTTITLECOLOR","titletextcolor","BUTTONARROWCOLOR","BUTTONOUTLINECOLOR","BUTTONFILLCOLOR"};
+	const char* skin_color_str[]={"TEXTCOLOR","TEXTBACKCOLOR","WINDOWCOLOR","LISTFOCUSBGCOLOR","listfocustextcolor","LISTBACKCOLOR","LISTTEXTCOLOR","LISTTITLECOLOR","titletextcolor","BUTTONARROWCOLOR","BUTTONOUTLINECOLOR","BUTTONFILLCOLOR"};
 	wxString Home;
 	wxString config_file;
 	int i;
@@ -129,11 +133,23 @@ void SkinConfig::read_config()
 	conf->SetPath("skinvalues");
 	custom[SKINPICTURE] = conf->Read("skinpicture");
 	custom[LISTPICTURE] = conf->Read("listpicture");
-	custom[SKIN_TYPE] = conf->Read("skintype");
 	custom[LIST_FMT] = conf->Read("listfmt",custom[LIST_FMT]);
 	custom[SKIN_FONT] = conf->Read("fontname",custom[SKIN_FONT]);
 	config[TITLE_ENABLED] = conf->ReadLong("titleenabled",0);
-	
+
+	wxString skin_type = conf->Read("skintype");
+
+	if (skin_type.IsEmpty())
+		config[SKIN_TYPE] = 0;
+	else if (skin_type.IsSameAs("alpha",FALSE))
+		config[SKIN_TYPE] = SKIN_TYPE_ALPHA;
+	else if (skin_type.IsSameAs("medium",false))
+		config[SKIN_TYPE] = SKIN_TYPE_MEDIUM;
+	else if (skin_type.IsSameAs("mini",false))
+		config[SKIN_TYPE] = SKIN_TYPE_MINI;
+	else if (skin_type.IsSameAs("small",false))
+		config[SKIN_TYPE] = SKIN_TYPE_SMALL;
+
 	i = (config[TITLE_ENABLED]?TITLE_ENABLED:TITLE_CONFIG);
 	for(--i;i>=0;--i)
 	{
@@ -142,7 +158,13 @@ void SkinConfig::read_config()
 
 	for(i=0;i<COLOR_CONFIG_MAX;++i)
 	{
-		color[i] = wxColor(conf->Read(skin_color_str[i]));
+		wxString col = conf->Read(skin_color_str[i]);
+		if (col.IsEmpty())
+			continue;
+		if (col.IsNumber())
+			color[i] = conf->ReadLong(skin_color_str[i],0);
+		else
+			color[i] = col;
 	}
 
 	//Title align config
@@ -170,12 +192,16 @@ void SkinConfig::read_config()
 
 int SkinConfig::get(skin_config_t item) const
 {
-	return config[item];
+	if (item<=SKIN_CONFIG_MAX)
+		return config[item];
+	return 0;
 }
 
 wxColor SkinConfig::get(skin_color_t item) const
 {
-	return color[item];
+	if (item<=COLOR_CONFIG_MAX)
+		return color[item];
+	return 1;
 }
 
 wxString SkinConfig::get(skin_custom_t item) const

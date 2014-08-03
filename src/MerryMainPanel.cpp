@@ -87,13 +87,12 @@ void MerryMainPanel::OnPaintEvent(wxPaintEvent& e)
 {
 	wxPaintDC dc = wxPaintDC(this);
 	dc.Clear();
+
 	if (m_background.IsOk())
-	{
 		dc.DrawBitmap(m_background, 0, 0, false);
-	}
+
 	if (title_align == -1)
 		return;
-
 	dc.SetTextForeground(skin->get(TITLE_TEXT_COLOR));
 	dc.DrawLabel(title_info,title_cfg,title_align);
 }

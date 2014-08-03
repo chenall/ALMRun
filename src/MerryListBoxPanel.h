@@ -69,6 +69,8 @@ private:
 	wxBitmap m_listBackground;
 
 	bool m_isPopup;
+	MerryPaintDC *dc;
+	wxPanel *panel;
 
 private:
 	DECLARE_EVENT_TABLE()

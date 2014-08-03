@@ -39,7 +39,6 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 	}
 
 	this->SetOwnForegroundColour(skin->get(LIST_TEXT_COLOR));
-	this->SetOwnBackgroundColour(skin->get(TEXT_BACKCOLOR));
 
 	if (skin->get(LIST_FONT_SIZE))
 	{
@@ -48,13 +47,14 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 	}
 
 	item_height = skin->get(LIST_ITEM_HEIGHT);
-	item_width = this->GetClientSize().x - 4;
+	item_width = skin->get(LIST_BOX_WIDTH);
 	list_fmt = skin->get(LIST_FMT);
+	int left = skin->get(LIST_BOX_LEFT);
 
 	for (int i=0; i<=MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM; ++i)
 	{
-		m_items[i].x = 2;
-		m_items[i].y = item_height * i + 2;
+		m_items[i].x = 0;
+		m_items[i].y = item_height * i;
 		m_items[i].width = item_width;
 		m_items[i].height = item_height;
 	}
@@ -180,7 +180,6 @@ const MerryCommand* MerryListBoxPanel::GetSelectionCommand() const
 {
 	if (m_selectionCommandIndex < 0 || m_selectionCommandIndex > (int)m_commands.size())
 		return NULL;
-//	assert(0 <= m_selectionCommandIndex && m_selectionCommandIndex < (int)m_commands.size());
 	return m_commands[m_selectionCommandIndex];
 }
 
@@ -188,7 +187,6 @@ void MerryListBoxPanel::Popup()
 {
 	if (m_commands.size() == 0)
 		return;
-//	assert(m_commands.size() > 0);
 	m_isPopup = true;
 	this->SetHeight(this->CalcHeight());
 	this->Refresh();
@@ -320,6 +318,8 @@ void MerryListBoxPanel::OnPaintEvent(wxPaintEvent& e)
 {
 	MerryPaintDC dc(this);
 	dc.Clear();
+	if (skin->get(LIST_BACKCOLOR) != wxTransparentColour)
+		dc.SetBackgroundMode(wxPENSTYLE_SOLID);
 	this->DrawBackground(dc);
 	this->DrawBorder(dc);
 	this->DrawItems(dc);
@@ -340,7 +340,7 @@ void MerryListBoxPanel::DrawBorder(MerryPaintDC& dc) const
 	p[3].x = p[1].x;
 	p[3].y = p[2].y;
 
-	dc.SetPen(wxPen(skin->get(WINDOW_COLOR),2));
+	dc.SetPen(wxPen(skin->get(WINDOW_COLOR),2,wxPENSTYLE_SOLID));
 	dc.DrawLine(p[0],p[1]);
 	dc.DrawLine(p[0],p[2]);
 	dc.DrawLine(p[1],p[3]);
@@ -429,7 +429,9 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 	}
 
 	dc.SetTextForeground(skin->get(LIST_FOCUSTEXT_COLOR));
-	dc.SetBrush(wxBrush(skin->get(LIST_FOCUSBG_COLOR)));
+	dc.SetTextBackground(skin->get(LIST_FOCUSBG_COLOR));
+	dc.SetBrush(wxBrush(skin->get(LIST_FOCUSBG_COLOR),wxBRUSHSTYLE_SOLID));
+	dc.SetPen(wxPen(wxColor(skin->get(LIST_FOCUSBG_COLOR)),0));
 	dc.DrawRectangle(m_items[active_item]);
 	DrawItem(dc,active_item);
 
@@ -451,14 +453,23 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 			title = wxString::Format(wxT(" 命令[%d]: %s"),command->GetOrder(),cmdLine.c_str());
 	#else
 		if (!cmdLine.empty())
-			title = wxString::Format(wxT(" 命令: %s"),cmdLine.c_str());
+			title = wxString::Format(wxT("命令: %s"),cmdLine.c_str());
 		else if (!cmdDesc.empty())
-			title = wxString::Format(wxT(" 说明: %s"),cmdDesc.c_str());	
+			title = wxString::Format(wxT("说明: %s"),cmdDesc.c_str());	
 	#endif
 		}
-		dc.SetBrush(wxBrush(skin->get(LIST_FOCUSBG_COLOR)));
-		dc.DrawRectangle(m_items[ITEM_NUM]);
-		dc.DrawLabel(title,m_items[ITEM_NUM],wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+		dc.SetBrush(wxBrush(skin->get(TEXT_BACKCOLOR)));
+		wxRect rect = m_items[ITEM_NUM];
+		wxFont font=dc.GetFont();
+		font.SetPointSize(skin->get(FONT_SIZE));
+		dc.SetFont(font);
+		dc.SetBackgroundMode(wxPENSTYLE_TRANSPARENT);
+		dc.SetTextForeground(skin->get(TEXT_COLOR));
+		rect.x += 4;
+		rect.y += 8;
+		rect.width -= 8;
+		dc.DrawRectangle(rect);
+		dc.DrawLabel(title,rect,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	}
 }
 
@@ -480,7 +491,7 @@ int MerryListBoxPanel::CalcHeight() const
 	const int ITEM_NUM = this->GetVisibleItemNum();
 	int height = ITEM_NUM * item_height + 4;
 	if (g_config->get(ShowCommandLine))
-		height += item_height;
+		height += item_height + 12;
 	return height;
 }
 
