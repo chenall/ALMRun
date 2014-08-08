@@ -17,6 +17,7 @@ public:
 private:
 	void onContextMenu(wxContextMenuEvent& e);
 	void OnKeyDownEvent(wxKeyEvent& e);
+	void OnMouseEvent(wxMouseEvent& e);
 #ifdef __WXGTK__
 	void OnIdleEvent(wxIdleEvent& e);
 #else

@@ -25,6 +25,7 @@ bool LocationExec;
 
 BEGIN_EVENT_TABLE(MerryTextCtrl, wxTextCtrl)
 	EVT_CONTEXT_MENU(MerryTextCtrl::onContextMenu)
+	EVT_MOUSE_EVENTS(OnMouseEvent)
 	EVT_KEY_DOWN(MerryTextCtrl::OnKeyDownEvent)
 #ifdef __WXGTK__
 	EVT_IDLE(MerryTextCtrl::OnIdleEvent)
@@ -87,7 +88,12 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 
 void MerryTextCtrl::onContextMenu(wxContextMenuEvent& e)
 {
-	e.StopPropagation();
+//	e.StopPropagation();
+	e.Skip();
+}
+
+void MerryTextCtrl::OnMouseEvent(wxMouseEvent& e)
+{
 	e.Skip();
 }
 
