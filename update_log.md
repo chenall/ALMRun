@@ -5,6 +5,9 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [2014-08-07 v1.2.0.65]
+    1. 主界面右键菜单调整.
+
 ### [2014-08-03 v1.2.0.64](https://github.com/chenall/ALMRun/archive/v1.2.0.64_BIN.zip)
     1.添加一个仿ALTRun主题(凑合着用).
     2.添加主题模板skin.txt,想自己弄主题可以参考.
