@@ -75,15 +75,20 @@ ALMRun Base 基本功能
 
 *  主题界面预览
    * 仿 ALTRun 主题
-  ![altrun](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/altrun_demo.png)
+
+      ![altrun](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/altrun_demo.png)
 
    * Merry 原生界面
-  ![merry](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/merry_demo.png)
+
+     ![merry](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/merry_demo.png)
 
    * 直接使用Executor 主题效果
-   ![medium_silver_short](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/medium_silver_short_demo.png)
-   ![medium_camo](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/medium_camo_demo.png)
-   ![small_windowsish](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/small_windowsish_demo.png)
+
+     ![medium_silver_short](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/medium_silver_short_demo.png)
+
+     ![medium_camo](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/medium_camo_demo.png)
+
+     ![small_windowsish](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/small_windowsish_demo.png)
 
 <h2 id="ALMRun_Advanced"></h2>
 ALMRun Advanced 扩展功能
