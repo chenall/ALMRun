@@ -16,6 +16,7 @@ end})
 RegisterPlugin('command',{name='RECONFIG',func=function(commandName,...)
     return {name="ReConfig"..commandName,desc="重新加载配置文件",cmd = function(arg) ReConfig() end,order=1000}
 end})
+
 --计算器插件示范，返回多个命令，通过order值对命令进行排序，值高的排前面
 RegisterPlugin('command',{name="CAL",func=function(commandName,...)
     local t_command = {}
