@@ -38,6 +38,7 @@ RegisterPlugin('command',{name="CAL",func=function(commandName,...)
     end
     return t_command
 end})
+--查询Docset插件，功能参考自Wox插件
 RegisterPlugin('command',{name="DOC",func=function(commandName,...)
     local t_command = {}
     if commandName:len() > 0 then
