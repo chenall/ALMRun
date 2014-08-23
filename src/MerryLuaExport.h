@@ -16,6 +16,7 @@ extern "C"
 #ifndef   EVERYTHING_DLL       //如果没有定义这个宏  
 #define   EVERYTHING_DLL       //定义这个宏  
 #include "../third_party/Everything-SDK/include/Everything.h"
+#pragma comment(lib,"../third_party/Everything-SDK/lib/Everything.lib")
 #endif 
 };
 
@@ -602,7 +603,7 @@ static int LuaEverything(lua_State* L)
 	wxString name = wxString(lua_tostring(L, -1));
 	wchar_t fullfilepath[MAX_PATH] = {0};
 
-	Everything_SetMax(20);
+	Everything_SetMax(50);
 	Everything_SetSearchW(name.t_str());
 
 	Everything_QueryW(TRUE);
