@@ -1,12 +1,12 @@
-RegisterPlugin('command',{name='LUA',func = function(commandName,...)
-    local t_command = {name="执行LUA命令:"..commandName,desc="ALMRun 插件示范",order=1000}
-    if commandName:len() > 1 then
-	t_command.cmd = function(arg)
-	    MessageBox(loadstring("return "..commandName)(arg))
-	end
-    end
-    return t_command
-end})
+-- RegisterPlugin('command',{name='LUA',func = function(commandName,...)
+    -- local t_command = {name="执行LUA命令:"..commandName,desc="ALMRun 插件示范",order=1000}
+    -- if commandName:len() > 1 then
+	-- t_command.cmd = function(arg)
+	    -- MessageBox(loadstring("return "..commandName)(arg))
+	-- end
+    -- end
+    -- return t_command
+-- end})
 
 --order值为负数,使得这个命令的优先级比较低,也就是保持这个命令在列表尾部
 RegisterPlugin('command',{func=function(commandName,...)
@@ -16,7 +16,14 @@ end})
 RegisterPlugin('command',{name='RECONFIG',func=function(commandName,...)
     return {name="ReConfig"..commandName,desc="重新加载配置文件",cmd = function(arg) ReConfig() end,order=1000}
 end})
-
+--计算器插件示范，返回多个命令，通过order值对命令进行排序，值高的排前面
+RegisterPlugin('command',{name="tttttt",func=function(commandName,...)
+    local t_command = {}
+    table.insert(t_command,{name=string.format("ttttt: %s",commandName),desc="计算器插件",order=1099});
+    --require("alien") --1.加载alien
+    --libc = alien.load("Everything32.dll") 
+    return t_command
+end})
 --计算器插件示范，返回多个命令，通过order值对命令进行排序，值高的排前面
 RegisterPlugin('command',{name="CAL",func=function(commandName,...)
     local t_command = {}
@@ -36,6 +43,23 @@ RegisterPlugin('command',{name="CAL",func=function(commandName,...)
             end
             table.insert(t_command,{name=string.format("    = %s",strresult),desc="计算结果",order=1090})
         end
+    end
+    return t_command
+end})
+--everything插件查询文件功能
+RegisterPlugin('command',{name="EV",func=function(commandName,...)
+    local t_command = {}
+    if commandName:len() > 0 then
+        local files = Everything(commandName);
+        for k,v in pairs(files) do
+            local pre = "*"
+            if v["TYPE"]=="FILE" then
+                pre = ""
+            end
+            table.insert(t_command,{name=pre..v["NAME"],desc=v["PATH"],order=1090,cmd = 'Explorer /select, "'..v["FULL_PATH"]..'"'})
+        end
+    else
+        table.insert(t_command,{name=string.format("查找文件: %s",commandName),desc="",order=1099});
     end
     return t_command
 end})

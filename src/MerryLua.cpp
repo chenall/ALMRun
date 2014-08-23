@@ -72,6 +72,7 @@ MerryLua::MerryLua()
 	lua_register(L, "DirExists",						  LuaDirExists);
 	lua_register(L, "FileExists",						  LuaFileExists);
 	lua_register(L, "TestConfig",						  LuaTestConfig);
+	lua_register(L, "Everything",						  LuaEverything);
 	lua_pushboolean(L, true);
 #ifdef __WXMSW__
 	lua_setglobal(L, "WINDOWS");
