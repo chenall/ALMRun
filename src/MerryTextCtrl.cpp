@@ -103,7 +103,7 @@ void MerryTextCtrl::SetPluginMode(const MerryCommand* cmd)
 	if (!name.empty() && name.size() > this->GetValue().size())
 		this->ChangeValue(name.Lower());
 	this->EnterArgs = -1;
-	this->AppendText(" ");
+	//this->AppendText(" ");
 	this->AutoCompletion(WXK_SPACE);
 }
 

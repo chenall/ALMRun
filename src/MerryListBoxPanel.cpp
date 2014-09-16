@@ -362,7 +362,9 @@ void MerryListBoxPanel::DrawBackground(MerryPaintDC& dc) const
 
 wxString printfmt(long n,const wxString &str)
 {
-	return wxString::Format("%*.*s",n,abs(n),str);
+	int len = strlen(str.mb_str())-str.Len();
+	int spaceLen = (n!=0?(n/(abs(n)))*(abs(n)-len):n);//修正中文字符引起的错位
+	return wxString::Format("%*s",spaceLen,str);
 }
 
 void MerryListBoxPanel::DrawItem(MerryPaintDC& dc,size_t item)

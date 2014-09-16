@@ -11,6 +11,14 @@
 #include <wx/stdpaths.h>
 #include "dlgconfig.h"
 #include "ALMRunCommon.h"
+extern "C"
+{
+#ifndef   EVERYTHING_DLL       //如果没有定义这个宏  
+#define   EVERYTHING_DLL       //定义这个宏  
+#include "../third_party/Everything-SDK/include/Everything.h"
+#pragma comment(lib,"../third_party/Everything-SDK/lib/Everything.lib")
+#endif 
+};
 
 static void* lua_tohwnd(lua_State* L,int index)
 {
@@ -578,6 +586,55 @@ static int LuaFileExists(lua_State* L)
 static int LuaDirExists(lua_State* L)
 {
 	lua_pushboolean(L,wxDirExists(wxString(lua_tostring(L, -1), wxConvLocal)));
+	return 1;
+}
+
+extern "C" void EVERYTHINGAPI Everything_SetMax(DWORD dwMax);
+extern "C" void EVERYTHINGAPI Everything_SetSearchW(LPCWSTR lpString);
+extern "C" DWORD EVERYTHINGAPI Everything_GetResultFullPathNameW(DWORD nIndex,LPWSTR wbuf,DWORD wbuf_size_in_wchars);
+extern "C" DWORD EVERYTHINGAPI Everything_GetNumResults(void);
+extern "C" BOOL EVERYTHINGAPI Everything_IsFileResult(DWORD nIndex);
+extern "C" LPCWSTR EVERYTHINGAPI Everything_GetResultFileNameW(DWORD nIndex);
+extern "C" LPCWSTR EVERYTHINGAPI Everything_GetResultPathW(DWORD nIndex);
+extern "C" void EVERYTHINGAPI Everything_SortResultsByPath(void);
+
+static int LuaEverything(lua_State* L)
+{
+	wxString name = wxString(lua_tostring(L, -1));
+	wchar_t fullfilepath[MAX_PATH] = {0};
+
+	Everything_SetMax(50);
+	Everything_SetSearchW(name.t_str());
+
+	Everything_QueryW(TRUE);
+	{
+		lua_newtable(L);
+		DWORD i;
+		for(i=0;i<Everything_GetNumResults()&&i<20;i++)
+		{
+			lua_pushnumber(L,i);
+			lua_newtable(L);
+			Everything_GetResultFullPathNameW(i,fullfilepath,MAX_PATH);
+
+			wxString type = Everything_IsFileResult(i)?wxT("FILE"):wxT("DIR");
+			wxString filename = wxString(Everything_GetResultFileNameW(i));
+			wxString path = wxString(Everything_GetResultPathW(i));
+			wxString fullpath = wxString(fullfilepath);
+			lua_pushstring(L, "TYPE");
+			lua_pushstring(L, type);
+			lua_settable(L,-3);
+			lua_pushstring(L, "NAME");
+			lua_pushstring(L, filename);
+			lua_settable(L,-3);
+			lua_pushstring(L, "PATH");
+			lua_pushstring(L,path);
+			lua_settable(L,-3);
+			lua_pushstring(L, "FULL_PATH");
+			lua_pushstring(L,fullpath);
+			lua_settable(L,-3);
+			lua_settable(L,-3);
+		}
+	}
 	return 1;
 }
 
