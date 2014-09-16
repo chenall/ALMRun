@@ -3,6 +3,24 @@
 
 IMPLEMENT_APP(MerryApp)
 
+#ifdef __WXMSW__
+BOOL IsX64()
+{
+	typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+	BOOL bX64 = FALSE;
+	SYSTEM_INFO si;
+	PGNSI pGNSI;
+	ZeroMemory(&si, sizeof(SYSTEM_INFO));
+	pGNSI = (PGNSI) GetProcAddress(GetModuleHandle(_T("kernel32.dll")), "GetNativeSystemInfo");
+	if(NULL != pGNSI)
+	   pGNSI(&si);
+	else
+	   GetSystemInfo(&si);
+	if(si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
+	   bX64 = true;
+	return bX64;
+}
+#endif
 bool MerryApp::OnInit()
 {
 	const wxString name = wxString::Format("ALMRun-%s", wxGetUserId().c_str());
@@ -67,6 +85,7 @@ bool MerryApp::OnInit()
 		::wxSetEnv(wxT("ALMRUN_DRIVE"),volume.c_str());
 	}
 	::wxSetWorkingDirectory(pathTmp);
+	::wxSetEnv(wxT("ALMRUN_SYS"),IsX64()?"x64":"x86");
 	//pathTmp.Clear();
 	//volume.Clear();
 	#endif

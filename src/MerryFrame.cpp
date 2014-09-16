@@ -29,6 +29,7 @@ wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, w
 	skin = new SkinConfig();
 	if (skin->get(SHOW_WINDOW))
 		this->SetWindowStyleFlag(wxCLOSE_BOX | wxCAPTION);// | wxBORDER_NONE);
+
 	this->SetClientSize(skin->get(MAIN_WIDTH),skin->get(MAIN_HEIGHT));
 	wxFont font = this->GetFont();
 

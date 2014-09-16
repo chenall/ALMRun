@@ -9,7 +9,11 @@ addCommand { key = "Alt+Shift+R", cmd = function()
     end
     DisableToggleMerryKey = not DisableToggleMerryKey
 end }
---关闭当前窗口
+
+--重新加载配置文件
+addCommand{name="ReConfig",desc="重新加载配置文件",cmd = ReConfig}
+
+--关闭当前窗口ss
 --addCommand{ key = 'A-Q', cmd = function()
 --	closeWindow(getForegroundWindow())
 --end }

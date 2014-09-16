@@ -46,15 +46,16 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 		this->SetOwnFont(font);
 	}
 
+	border_width = skin->get(LIST_BORDER_WIDTH);
 	item_height = skin->get(LIST_ITEM_HEIGHT);
-	item_width = skin->get(LIST_BOX_WIDTH);
+	item_width = skin->get(LIST_BOX_WIDTH) - border_width * 2;
 	list_fmt = skin->get(LIST_FMT);
 	int left = skin->get(LIST_BOX_LEFT);
 
 	for (int i=0; i<=MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM; ++i)
 	{
-		m_items[i].x = 0;
-		m_items[i].y = item_height * i;
+		m_items[i].x = border_width;
+		m_items[i].y = item_height * i + border_width;
 		m_items[i].width = item_width;
 		m_items[i].height = item_height;
 	}
@@ -328,23 +329,31 @@ void MerryListBoxPanel::OnPaintEvent(wxPaintEvent& e)
 void MerryListBoxPanel::DrawBorder(MerryPaintDC& dc) const
 {
 	wxPoint p[4];
-	p[0].x = 0;
-	p[0].y = 0;
+	if (!border_width)
+		return;
+	int bw = border_width/2;
+	if (!bw)
+		++bw;
+	p[0].x = bw;
+	p[0].y = bw;
 
-	p[1].x = this->GetClientSize().x - 2;
-	p[1].y = 0;
+	p[1].x = this->GetClientSize().x - bw;
+	p[1].y = bw;
 
-	p[2].x = 0;
-	p[2].y = this->GetClientSize().y - 2;
+	p[2].x = bw;
+	p[2].y = this->GetClientSize().y - bw;
 
 	p[3].x = p[1].x;
 	p[3].y = p[2].y;
-
-	dc.SetPen(wxPen(skin->get(WINDOW_COLOR),2,wxPENSTYLE_SOLID));
+	p[4].y = p[2].y - item_height - border_width;
+	dc.SetPen(wxPen(skin->get(WINDOW_COLOR),border_width,skin->get(LIST_BORDER_STYLE)));
 	dc.DrawLine(p[0],p[1]);
 	dc.DrawLine(p[0],p[2]);
 	dc.DrawLine(p[1],p[3]);
 	dc.DrawLine(p[2],p[3]);
+
+	if (g_config->get(ShowCommandLine))
+		dc.DrawLine(bw,p[4].y,p[1].x,p[4].y);
 }
 
 void MerryListBoxPanel::DrawBackground(MerryPaintDC& dc) const
@@ -376,8 +385,6 @@ void MerryListBoxPanel::DrawItem(MerryPaintDC& dc,size_t item)
 	if (!command)
 		return;
 
-	int i = (g_config->get(IndexFrom0to9))?item:(item==9?0:item+1);
-
 	wxString fmt = skin->get(LIST_FMT);
 	wxString label = "";
 	for(size_t i=0;i<fmt.size();++i)
@@ -390,7 +397,7 @@ void MerryListBoxPanel::DrawItem(MerryPaintDC& dc,size_t item)
 			switch(c)
 			{
 				case '$':
-					label += wxString::Format("%*d",skin->get(LISTFMT_NUM_MAX),item);
+					label += wxString::Format("%*d",skin->get(LISTFMT_NUM_MAX),g_config->get(IndexFrom0to9)?item:(item+1)%10);
 					break;
 				case 'i':
 					label +=wxString::Format("%*d",skin->get(LISTFMT_ID_MAX),command->GetCommandID());
@@ -467,9 +474,7 @@ void MerryListBoxPanel::DrawItems(MerryPaintDC& dc)
 		dc.SetFont(font);
 		dc.SetBackgroundMode(wxPENSTYLE_TRANSPARENT);
 		dc.SetTextForeground(skin->get(TEXT_COLOR));
-		rect.x += 4;
-		rect.y += 8;
-		rect.width -= 8;
+		rect.y += border_width;
 		dc.DrawRectangle(rect);
 		dc.DrawLabel(title,rect,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	}
@@ -491,9 +496,9 @@ void MerryListBoxPanel::SetHeight(int height)
 int MerryListBoxPanel::CalcHeight() const
 {
 	const int ITEM_NUM = this->GetVisibleItemNum();
-	int height = ITEM_NUM * item_height + 4;
+	int height = ITEM_NUM * item_height + border_width * 2;
 	if (g_config->get(ShowCommandLine))
-		height += item_height + 12;
+		height += item_height + border_width;
 	return height;
 }
 

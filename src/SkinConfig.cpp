@@ -15,6 +15,8 @@ SkinConfig::SkinConfig()
 	config[LISTFMT_ID_MAX] = 5;
 	config[LISTFMT_NUM_MAX] = 2;
 	config[TITLE_ALIGN] = -1;
+	config[LIST_BORDER_STYLE] = 0;
+	config[LIST_BORDER_WIDTH] = 1;
 	//default custom config;
 	custom[DEFAULT_TITLE] =wxT("ALMRun");
 	custom[LIST_FMT] = "$$. $N";
@@ -80,7 +82,7 @@ SkinConfig::SkinConfig()
 		if (config[MAIN_WIDTH] == 0)
 			config[MAIN_WIDTH] = img.GetWidth()+1;
 		if (config[MAIN_HEIGHT] == 0)
-			config[MAIN_HEIGHT] = img.GetHeight()+2;
+			config[MAIN_HEIGHT] = img.GetHeight()+1;
 		if (config[EDIT_CTRL_TOP] == 0)
 			config[EDIT_CTRL_TOP] = (img.GetHeight() - config[FONT_SIZE])/2 - 2;
 		if (config[EDIT_CTRL_LEFT] == 0)
@@ -98,6 +100,8 @@ SkinConfig::SkinConfig()
 
 	if (config[LIST_BOX_WIDTH] <=0 )
 		config[LIST_BOX_WIDTH] = config[MAIN_WIDTH] - config[LIST_BOX_LEFT];
+
+	config[LIST_BORDER_STYLE] += 100;
 };
 
 void SkinConfig::read_config()
@@ -105,7 +109,7 @@ void SkinConfig::read_config()
 	const char* skin_cfg_str[]={"SHOWWINDOW",
 		"fontsize","fontbold",
 		"editleft","edittop","editwidth","editheight",
-		"listtop","listwidth","listleft","listfontsize","listmargin","LISTFMT_NAME_MAX","LISTFMT_DESC_MAX","LISTFMT_KEY_MAX","LISTFMT_CMD_MAX",	"LISTFMT_ID_MAX","LISTFMT_NUM_MAX",
+		"listtop","listwidth","listleft","listfontsize","LIST_BORDER_STYLE","LIST_BORDER_WIDTH","listmargin","LISTFMT_NAME_MAX","LISTFMT_DESC_MAX","LISTFMT_KEY_MAX","LISTFMT_CMD_MAX",	"LISTFMT_ID_MAX","LISTFMT_NUM_MAX",
 		"titleleft","titletop","titlewidth","titleheight"};	
 	const char* skin_color_str[]={"TEXTCOLOR","TEXTBACKCOLOR","WINDOWCOLOR","LISTFOCUSBGCOLOR","listfocustextcolor","LISTBACKCOLOR","LISTTEXTCOLOR","LISTTITLECOLOR","titletextcolor","BUTTONARROWCOLOR","BUTTONOUTLINECOLOR","BUTTONFILLCOLOR"};
 	wxString Home;
