@@ -533,6 +533,7 @@ ALMRun 已有的事件如下:
 Other 其它说明
 ==========
 1. 内置环境变量
+    * ALMRUN_SYS	操作系统类型,值为x86或x64
     * ALMRUN_HOME	(ALMRUN程序所在目录)
     * ALMRUN_DRIVE 	(ALMRUN程序所在磁盘比如C:)
     * ALMRUN_ROOT	(ALMRUN默认根目录,可用config和ROOT参数修改)

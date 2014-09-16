@@ -31,6 +31,9 @@ listmargin   ;;列表框每一行的间隔
 ;列表框背景图片,默认skin_name_listbg.png/jpg/bmp
 listpicture  ;;列表框的背景图片,如果有设置了listbackcolor则无效.
 
+LIST_BORDER_STYLE=0  //列表框边框样式设置
+LIST_BORDER_WIDTH=1  //列表框边框宽度
+
 listbackcolor=#ff0000     ;;列表文字的背景色
 listtextcolor=#ff0000     ;;列表文字的前景色
 listfocusbgcolor=#ff0000  ;;当前选中项的背景颜色

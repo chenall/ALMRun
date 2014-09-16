@@ -72,6 +72,24 @@ ALMRun Base 基本功能
 
 *  常用配置直接使用参数配置功能即可，需要一些高级配置打开[bin/ALMRun.ini](https://github.com/chenall/ALMRun/blob/master/bin/ALMRun.ini)里面有更详细的配置介绍.
 
+
+*  主题界面预览
+   * 仿 ALTRun 主题
+
+      ![altrun](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/altrun_demo.png)
+
+   * Merry 原生界面
+
+     ![merry](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/merry_demo.png)
+
+   * 直接使用Executor 主题效果
+
+     ![medium_silver_short](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/medium_silver_short_demo.png)
+
+     ![medium_camo](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/medium_camo_demo.png)
+
+     ![small_windowsish](https://raw.githubusercontent.com/chenall/ALMRun/master/bin/skin/small_windowsish_demo.png)
+
 <h2 id="ALMRun_Advanced"></h2>
 ALMRun Advanced 扩展功能
 ========================
@@ -100,7 +118,7 @@ Resource 相关资源
 ****************
 * 原版: <http://code.google.com/p/name5566-merry/>  
 * 源码: <https://github.com/chenall/ALMRun>  
-* 搏客: <http://chenall.net/post/alrun-merry/>  
+* 博客: <http://chenall.net/post/alrun-merry/>  
 * 主页: <http://almrun.chenall.net>  
 * Executor: <http://executor.dk/> ALMrun 使用了Excutor的主题格式.
 * altrun介绍：<http://xbeta.info/altrun.htm> 可以参考一下，使用方法基本上都是差不多的。

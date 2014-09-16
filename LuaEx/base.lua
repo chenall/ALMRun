@@ -19,8 +19,9 @@ function RegisterPlugin(Name,plugin)
 		if _plugin.name == nil or #_plugin.name==0 then
 		    __name = commandName
 		else
-		    local l_len = _plugin.name:len()
+		    local l_len = _plugin.name:len()+1
 		    __name = commandName:sub(1,l_len)
+            __name = string.gsub(__name," ","")
 		    if _plugin.name:upper():find(__name:upper()) then
 			__name,l_len = commandName:gsub("%S+%s+(.+)","%1")
 			if l_len == 0 then
