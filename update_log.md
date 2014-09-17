@@ -5,6 +5,17 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [v1.2.0.68](https://github.com/chenall/ALMRun/releases/download/v1.2.0.68/ALMRun-1.2.0.68_bin.7z)
+    2014-09-17 1. 简单修正中文字符长度问题(不是很完美,但一般况下没有什么问题).
+               2. 主题增加listfontname设置,允许单独指定列表的字体,skin.txt模板更新.
+
+### [v1.2.0.67](https://github.com/chenall/ALMRun/archive/v1.2.0.67_BIN.zip)
+    一些代码调整,整合ojeo的代码,增加两个新的插件命令EV和doc.
+
+### [v1.2.0.66](https://github.com/chenall/ALMRun/archive/v1.2.0.66_BIN.zip)
+    2014-08-13 修正列表框数字序列顺序显示错误的问题.
+    2014-08-14 界面列表框边框调整.
+
 ### [2014-08-07 v1.2.0.65]
     1. 主界面右键菜单调整.
 
