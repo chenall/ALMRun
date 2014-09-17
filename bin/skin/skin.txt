@@ -1,55 +1,59 @@
 [skinvalues]
-;;;almrun ����ģ��.
-;; ���ݲ��� executor ������ �����Լ��� http://executor.dk/ ����exceutor��ȡskinsĿ¼������ļ����Ƶ�almrun/skinĿ¼��.ͨ����������Ҽ��˵��л����⹦���л�.
-;;;��ɫ���ÿ���ʹ��web�� #RRGGBB ��ʹ��������ʽ,����255 65535֮���.
+;;该文件需要使用UTF-8编码
+;;;almrun 主题模板.
+;; 兼容部份 executor 的主题 可以自己从 http://executor.dk/ 下载exceutor提取skins目录里面的文件复制到almrun/skin目录下.通过主界面的右键菜单切换主题功能切换.
+;;;颜色设置可以使用web颜 #RRGGBB 或使用数字形式,比如255 65535之类的.
 
-showwindow=0 ;�Ƿ���ʾWINDOWS������(��ʾ�رհ�ť������)
-fontsize=10 ;�����������С    ��Ҫ�����봰�ڵ������С
-fontbold=0    ;�Ƿ������Ӵ�. 
-
-;;;������������ɫ����(���������)
+showwindow=0 ;是否显示WINDOWS窗口栏(显示关闭按钮标题栏)
+fontsize=10 ;主界面字体大小    主要是输入窗口的字体大小
+fontbold=0    ;是否对字体加粗. 
+fontname=宋体 ; 默认字体
+;;;主界面文字颜色设置(输入框文字)
 textcolor=0
 textbackcolor=0
 
-;;�߿���ɫ(������Ч)
+;;边框颜色(可能无效)
 windowcolor=0
 
-;�����汳��ͼƬ���Զ�ʹ����ЩͼƬskin_name.png/jpg/bmp,Ҳ�����Լ�ָ��
+;主界面背景图片会自动使用这些图片skin_name.png/jpg/bmp,也可以自己指定
 skinpicture=skin.bmp
-;;�༭���������
+;;编辑输入框设置
 editleft=10
 edittop=10
 editwidth=260
 editheight=20
 
-;;�б�������
+;;列表框设置
 listleft=0
-listtop=20  ;;top��������������.
-listwidth
-listfontsize ;;�б����ֺ�
-listmargin   ;;�б���ÿһ�еļ��
-;�б��򱳾�ͼƬ,Ĭ��skin_name_listbg.png/jpg/bmp
-listpicture  ;;�б���ı���ͼƬ,�����������listbackcolor����Ч.
+listtop=20		;;top是相对整个界面的.
 
-LIST_BORDER_STYLE=0  //�б���߿���ʽ����
-LIST_BORDER_WIDTH=1  //�б���߿����
+;;以下非必须的,一般情况下不需要设置,若需要设置直接去掉前面的";"再修改为相应的值就行了.
+;listwidth=260		;;列表框宽度(一般情况下不用设置)
+;listfontname		;;列表框字体(参考fontname)
+;listfontsize		;;列表框字号
+;listmargin		;;列表框每一行的间隔
+;列表框背景图片,默认skin_name_listbg.png/jpg/bmp
+;listpicture		;;列表框的背景图片,如果有设置了listbackcolor则无效.
 
-listbackcolor=#ff0000     ;;�б����ֵı���ɫ
-listtextcolor=#ff0000     ;;�б����ֵ�ǰ��ɫ
-listfocusbgcolor=#ff0000  ;;��ǰѡ����ı�����ɫ
-listfocustextcolor=#ff0000 ;;��ǰѡ�����ǰ��ɫ
+LIST_BORDER_STYLE=0  //列表框边框样式设置
+LIST_BORDER_WIDTH=1  //列表框边框宽度
+
+listbackcolor=#ff0000     ;;列表文字的背景色
+listtextcolor=#ff0000     ;;列表文字的前景色
+listfocusbgcolor=#ff0000  ;;当前选中项的背景颜色
+listfocustextcolor=#ff0000 ;;当前选中项的前景色
 
 
-;;;�б���ʽ����
-;listfmt�б���ʽ,�����Լ��������.
-;; $$ ��ǰ��ʾ���(0-9)                                                    num 
-;; $i �����ID��(Ψһ),��������²���Ҫʹ��,ֻ���ڲ�ʶ������ʹ��.        id
-;; $n ��������(��ݷ�ʽ����)                                               name
-;; $d ���ע��Ϣ                                                         desc
-;; $c ������,Ҫִ�е�����.                                                 cmd
-;; $k ��Ӧ������ȼ�.                                                      key
+;;;列表格式设置
+;listfmt列表格式,可以自己随意组合.
+;; $$ 当前显示序号(0-9)                                                    num 
+;; $i 命令的ID号(唯一),正常情况下不需要使用,只作内部识别或调试使用.        id
+;; $n 命令名次(快捷方式名称)                                               name
+;; $d 命令备注信息                                                         desc
+;; $c 命令行,要执行的命令.                                                 cmd
+;; $k 对应命令的热键.                                                      key
 
-;listfmt_xxxx_max ���ö�Ӧ��Ϣ�ĳ���Ĭ���Ҷ���,ǰ��Ӹ���"-"�����(��C���Ե��﷨һ��),�������òο�����˵���˵��.
+;listfmt_xxxx_max 设置对应信息的长度默认右对齐,前面加负号"-"左对齐(和C语言的语法一样),其它设置参考上面说面的说明.
 listfmt=$$|$n|d
 listfmt_name_max=-25
 listfmt_desc_max=-50
@@ -58,18 +62,18 @@ listfmt_cmd_max=10
 listfmt_id_max=5
 listfmt_num_max=2
 
-;; �������� ������ʾ��Ӧ��Ŀ�ı�ע��Ϣ
-titleenabled = 0 ;0����ʾ,1��ʾ,Ϊ1ʱ������Ϣ��Ч
+;; 标题设置 用于显示对应项目的备注信息
+titleenabled = 0 ;0不显示,1显示,为1时以下信息有效
 
-;;����λ�ô�С����
+;;标题位置大小设置
 ;titleleft=
 ;titletop=
 ;titlewidth=
 ;titleheight=
 
-;; ����������� left right top bottom center  center_vertical center_horizontal
+;; 标题对齐设置 left right top bottom center  center_vertical center_horizontal
 ;titlealign
 
-;;����������ɫ
+;;标题文字颜色
 titletextcolor=0
 

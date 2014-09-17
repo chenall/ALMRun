@@ -16,7 +16,7 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 {
 	wxString listpicture(skin->get(LISTPICTURE));
 	wxFont font = this->GetFont();
-
+	wxString list_font(skin->get(LIST_FONT));
 
 	m_topCommandIndex = -1;
 	m_selectionCommandIndex = -1;
@@ -40,11 +40,12 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 
 	this->SetOwnForegroundColour(skin->get(LIST_TEXT_COLOR));
 
+	font.SetFaceName(skin->get(LIST_FONT));
 	if (skin->get(LIST_FONT_SIZE))
-	{
 		font.SetPointSize(skin->get(LIST_FONT_SIZE));
-		this->SetOwnFont(font);
-	}
+
+	this->SetOwnFont(font);
+	font.FreeResource();
 
 	border_width = skin->get(LIST_BORDER_WIDTH);
 	item_height = skin->get(LIST_ITEM_HEIGHT);

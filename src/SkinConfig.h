@@ -76,6 +76,7 @@ typedef enum _skin_custom_config
 	LISTPICTURE,
 	DEFAULT_TITLE,
 	LIST_FMT,
+	LIST_FONT,
 	SKIN_FONT,
 	CUSTOM_CONFIG_MAX,
 } skin_custom_t;

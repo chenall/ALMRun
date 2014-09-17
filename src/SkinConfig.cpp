@@ -139,6 +139,7 @@ void SkinConfig::read_config()
 	custom[LISTPICTURE] = conf->Read("listpicture");
 	custom[LIST_FMT] = conf->Read("listfmt",custom[LIST_FMT]);
 	custom[SKIN_FONT] = conf->Read("fontname",custom[SKIN_FONT]);
+	custom[LIST_FONT] = conf->Read("listfontname",custom[SKIN_FONT]);
 	config[TITLE_ENABLED] = conf->ReadLong("titleenabled",0);
 
 	wxString skin_type = conf->Read("skintype");
