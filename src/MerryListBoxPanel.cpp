@@ -371,7 +371,23 @@ void MerryListBoxPanel::DrawBackground(MerryPaintDC& dc) const
 
 wxString printfmt(long n,const wxString &str)
 {
-	return wxString::Format("%*.*s",n,abs(n),str);
+	size_t max = abs(n);
+	size_t str_len = str.size();
+	size_t len = 0,i = 0;
+	for(len = 0;i < max && len<str_len;++len)
+	{
+		if (str[len].IsAscii())
+			++i;
+		else
+			i += 2;
+	}
+
+	if (i>len)
+	{
+		i -= len;
+		n -= (n > 0)?i:-i;
+	}
+	return wxString::Format("%*.*s",n,len,str);
 }
 
 void MerryListBoxPanel::DrawItem(MerryPaintDC& dc,size_t item)
