@@ -55,6 +55,7 @@ ALMRun Base 基本功能
     例子(以管理员权限隐藏执行notepad.exe): ">@notepad.exe“
 
 *   内置环境变量
+    * `%ALMRUN_SYS%`	操作系统类型,值为x86或x64
     * `%ALMRUN_HOME%`	(ALMRUN程序所在目录)
     * `%ALMRUN_DRIVE%` 	(ALMRUN程序所在磁盘比如C:)
     * `%ALMRUN_ROOT%`	(ALMRUN默认根目录,可用config和ROOT参数修改)
@@ -155,6 +156,6 @@ Build 编译方法
 Download 程序下载
 ===================
 
-ALMRUN最新编译版： <https://github.com/chenall/ALMRun/archive/Build.zip>
+ALMRUN最新版本下载： <https://github.com/chenall/ALMRun/releases>
 
 其它版本请从 [更新记录] 下载

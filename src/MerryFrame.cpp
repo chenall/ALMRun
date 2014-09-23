@@ -217,6 +217,8 @@ void MerryFrame::OnShowEvent(wxShowEvent& e)
 		this->CentreOnce();
 		m_listBoxPanel->Dismiss();
 		this->Raise();
+
+		g_controller->SetWindowPos(this->GetHWND(),HWND_TOPMOST,0,0,0,0,SWP_NOMOVE | SWP_NOSIZE);
 		textCtrl->SetFocus();
 #ifdef __WXMSW__
 		textCtrl->SetEnInputMode();
