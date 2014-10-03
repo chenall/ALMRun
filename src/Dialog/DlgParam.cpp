@@ -1,6 +1,8 @@
 #include "DlgParam.h"
 #include "ALMRunConfig.h"
+#include "MyTextCompleter.h"
 #include <wx/wfstream.h>
+
 #define PARAMHISTORY_FILE wxT("config/ParamHistory.txt")
 
 BEGIN_EVENT_TABLE(DlgParam, wxDialog)
@@ -33,6 +35,7 @@ END_EVENT_TABLE()
 	}
 #endif
 
+
 DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -41,7 +44,6 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	this->SetSizer(bSizer2 );
 
-	wxArrayString m_array;
 	if (g_config->get_u(ParamHistoryLimit))
 	{
 		Param_file = PARAMHISTORY_FILE;
@@ -57,9 +59,10 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 			}
 		}
 	}
-	comboBox = new wxComboBox(this, wxID_ANY,wxEmptyString, wxDefaultPosition,wxSize(this->GetSize().GetWidth()-80,this->GetSize().GetHeight()-5),m_array,wxCB_DROPDOWN ); 
-	comboBox->AutoComplete(m_array);
+	comboBox = new wxComboBox(this, 1013,wxEmptyString, wxDefaultPosition,wxSize(this->GetSize().GetWidth()-80,this->GetSize().GetHeight()-5),m_array,wxCB_DROPDOWN );
+	comboBox->AutoComplete(new MyTextCompleter(comboBox));
 	comboBox->SetSelection(0);
+	comboBox->Bind(wxEVT_KEY_DOWN,&DlgParam::OnKey,this);
 	bSizer2->Add(comboBox, 0, wxALL, 5 );
 
 	wxButton* ButtonOk = new wxButton(this,wxID_OK,"确定(&O)",wxDefaultPosition,wxDefaultSize);
@@ -76,23 +79,41 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 //	this->SetEscapeId(wxID_CLOSE);
 }
 
+void DlgParam::OnKey(wxKeyEvent& e)
+{
+	if (e.GetKeyCode() == WXK_DELETE && e.GetModifiers() == wxMOD_ALT)
+	{
+		int i = m_array.Index(comboBox->GetValue());
+		if (i != wxNOT_FOUND)
+		{
+			if (wxMessageBox(wxString::Format("确定要删除参数历史记录:\n [ %s ]",comboBox->GetValue()),"提示",wxYES_NO|wxICON_WARNING) == wxYES)
+			{
+				m_array.RemoveAt(i);
+				tfile.RemoveLine(i);
+				tfile.Write();
+				comboBox->Set(m_array);
+				return;
+			}
+		}
+	}
+	e.Skip();
+}
+
 void DlgParam::OnOKClick(wxCommandEvent& e)
 {
 	wxString m_value = comboBox->GetValue();
 	if (m_value.empty() || !tfile.IsOpened())
 		return this->EndModal(wxID_OK);
-	int i = comboBox->GetSelection();
-	if (i < 0 )
-		i = comboBox->FindString(m_value);
-	if (i)
+	int i = comboBox->FindString(m_value);
+
+	if (i > 0)
 	{
-		if (i > 0)
-			tfile.RemoveLine(i);
-		else if (tfile.GetLineCount() >= g_config->get_u(ParamHistoryLimit))
+		tfile.RemoveLine(i);
+		if (tfile.GetLineCount() >= g_config->get_u(ParamHistoryLimit))
 			tfile.RemoveLine(tfile.GetLineCount()-1);
 		tfile.InsertLine(comboBox->GetValue(),0);
-		tfile.Write();
 	}
+	tfile.Write();
 	this->EndModal(wxID_OK);
 }
 
