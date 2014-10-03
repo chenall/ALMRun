@@ -36,13 +36,17 @@ bool MyTextCompleter::Start(const wxString& prefix)
 	if (m_completions.empty())
 		return false;
 
-	wxString str(m_completions[0]);
+	size_t find_pos = 0;
 	if (m_completions.Count() == 1)
+	{
+		wxString str(m_completions[0]);
+		find_pos = str.Upper().find(find);
 		m_entry->ChangeValue(str);
+	}
 	else if (!Match.IsEmpty())
 		m_entry->ChangeValue(Match.Truncate(find.size() + 16));
 
-	m_entry->SetSelection(find.size(),-1);
+	m_entry->SetSelection(find_pos + find.size(),-1);
 	return true;
 }
 
