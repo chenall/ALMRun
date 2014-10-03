@@ -49,6 +49,47 @@
 	}
 #endif
 
+int wxCALLBACK
+cmdListCompare(wxIntPtr item1, wxIntPtr item2, wxIntPtr sortData)
+{
+	ListSortInfo *SortInfo = (ListSortInfo *)sortData;
+	wxListCtrl *ListCtrl= SortInfo->ListCtrl;
+	int col = SortInfo->Column;
+	long index1 = ListCtrl->FindItem(-1,item1);
+	long index2 = ListCtrl->FindItem(-1,item2);
+	long cmdid1,cmdid2;
+	long cmp = 0;
+	wxString str1(ListCtrl->GetItemText(index1,CMDLIST_COL_ID));
+	wxString str2(ListCtrl->GetItemText(index2,CMDLIST_COL_ID));
+
+	str1.ToLong(&cmdid1);
+	str2.ToLong(&cmdid2);
+
+	if (col == CMDLIST_COL_ID)//ID比较
+	{
+		cmp = cmdid1 - cmdid2;
+	}
+	else
+	{//字符串比较
+		str1 = ListCtrl->GetItemText(index1,col);
+		str2 = ListCtrl->GetItemText(index2,col);
+		cmp = str1.CmpNoCase(str2);
+	}
+
+	if (cmp == 0)
+		return 0;
+
+	if (cmdid1 < 0 && cmdid2 >=0)
+		return 1;
+	if (cmdid2 < 0 && cmdid1 >=0)
+		return -1;
+
+	if (SortInfo->SortAscending)
+		return cmp;
+
+	return cmp>0?-1:1;
+}
+
 BEGIN_EVENT_TABLE(cmdListCtrl, wxListCtrl)
 	EVT_LEFT_DCLICK(cmdListCtrl::onDclick)
 	EVT_MENU(MENU_CMD_DEL,cmdListCtrl::onPopMenu)
@@ -57,6 +98,7 @@ END_EVENT_TABLE()
 cmdListCtrl::cmdListCtrl(wxWindow *parent, wxWindowID id, const wxPoint& pos,const wxSize& size, long style):
 wxListCtrl(parent,id,pos,size,style)
 {
+	SortInfo.ListCtrl = this;
 	this->InsertColumn(CMDLIST_COL_NAME,_T("快捷命令"),wxLIST_AUTOSIZE,150);
 	this->InsertColumn(CMDLIST_COL_CMD,_T("命令行"),wxLIST_AUTOSIZE,250);
 	this->InsertColumn(CMDLIST_COL_KEY,_T("热键/包含"),wxLIST_AUTOSIZE,100);
@@ -66,8 +108,10 @@ wxListCtrl(parent,id,pos,size,style)
 	this->ReLoadCmds();
 //	this->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED,wxObjectEventFunction(&cmdListCtrl::OnSelected));
 //	this->Connect(wxEVT_COMMAND_LIST_COL_CLICK,wxObjectEventFunction(&cmdListCtrl::OnColClick));
-	this->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,wxObjectEventFunction(&cmdListCtrl::onRightClick));
-	this->Connect(wxEVT_LIST_KEY_DOWN,wxObjectEventFunction(&cmdListCtrl::onKeyDown));
+//	this->Connect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,wxObjectEventFunction(&cmdListCtrl::onRightClick));
+	this->Bind(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK,&cmdListCtrl::onRightClick,this);
+	this->Bind(wxEVT_LIST_KEY_DOWN,&cmdListCtrl::onKeyDown,this);
+	this->Bind(wxEVT_LIST_COL_CLICK,&cmdListCtrl::OnColClick,this);
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(new DnDialogFile(this));
 #endif
@@ -80,7 +124,7 @@ void cmdListCtrl::ReLoadCmds()
 	{
 		wxString cmds;
 		long id = 0;
-		long index = 0;
+		long index = -1;
 		wxFileConfig *conf = g_config->conf;
 		const wxString oldPath = conf->GetPath();
 		conf->SetPath("/cmds");
@@ -90,8 +134,8 @@ void cmdListCtrl::ReLoadCmds()
 			if (!cmds.IsNumber())
 				continue;
 			conf->SetPath(cmds);
-			cmds.ToLong(&index);
-			index = this->InsertItem(index,cmds);
+			index = this->InsertItem(++index,cmds);
+			this->SetItemData(index,index);
 			this->SetItem(index, CMDLIST_COL_ID,cmds);
 			this->SetItem(index, CMDLIST_COL_NAME ,conf->Read("name"));
 			this->SetItem(index, CMDLIST_COL_CMD ,conf->Read("cmd"));
@@ -101,15 +145,16 @@ void cmdListCtrl::ReLoadCmds()
 		}
 		conf->SetPath("/dirs");
 		id = 0;
-		size_t item_index = this->GetItemCount();
 		for(bool test = conf->GetFirstGroup(cmds,id); test ; conf->SetPath("../"),test = conf->GetNextGroup(cmds,id))
 		{
 			if (!cmds.IsNumber())
 				continue;
 			conf->SetPath(cmds);
-			cmds.ToLong(&index);
-			cmds.sprintf("%d",~index);
-			index = this->InsertItem(item_index + index,"@自动扫描目录@");
+			long cid;
+			cmds.ToLong(&cid);
+			cmds.sprintf("%d",~cid);
+			index = this->InsertItem(++index,"@自动扫描目录@");
+			this->SetItemData(index,index);
 			this->SetItem(index, DIRLIST_COL_ID,cmds);
 			this->SetItem(index, DIRLIST_COL_PATH ,conf->Read("path"));
 			this->SetItem(index, DIRLIST_COL_INCLUDE ,conf->Read("include"));
@@ -119,6 +164,20 @@ void cmdListCtrl::ReLoadCmds()
 		}
 		conf->SetPath(oldPath);
 	}
+}
+
+void cmdListCtrl::OnColClick(wxListEvent& e)
+{
+	int col = e.GetColumn();
+
+    // set or unset image
+    static bool x[COL_MAX];
+    x[col] = !x[col];
+
+	SortInfo.Column = col;
+	SortInfo.SortAscending = x[col];
+
+	this->SortItems(cmdListCompare,(long)&SortInfo);
 }
 
 void cmdListCtrl::onKeyDown(wxListEvent& e)
@@ -153,9 +212,11 @@ void cmdListCtrl::onDclick(wxMouseEvent& e)
 cmdListCtrl::~cmdListCtrl()
 {
 	__DEBUG_BEGIN("")
+/*
 	this->Disconnect(wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK);
 	this->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED);
 	this->Disconnect(wxEVT_LIST_KEY_DOWN);
+*/
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(NULL);
 #endif

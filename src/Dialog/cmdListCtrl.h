@@ -6,6 +6,21 @@
 #ifdef _ALMRUN_CONFIG_H_
 #define DIRLIST_MODE 1
 #define CMDLIST_MODE 0
+
+class ListSortInfo
+{
+public:
+        ListSortInfo()
+        {
+                SortAscending = false;
+                Column = -1;
+        }
+
+        bool SortAscending;
+        int Column;
+        class cmdListCtrl *ListCtrl;
+};
+
 class cmdListCtrl : public wxListCtrl
 {
 public:
@@ -27,7 +42,9 @@ protected:
 
 private:
 //    void SetColumnImage(int col, int image);
+	void OnColClick(wxListEvent& event);
 	int mode;
+	ListSortInfo SortInfo;
 
 private:
     DECLARE_NO_COPY_CLASS(cmdListCtrl)
@@ -42,6 +59,7 @@ enum
 	CMDLIST_COL_DESC,
 	CMDLIST_COL_ID,
 	CMDLIST_COL_WORKDIR,
+	COL_MAX,
 };
 
 enum
