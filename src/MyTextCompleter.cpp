@@ -16,7 +16,7 @@ bool MyTextCompleter::Start(const wxString& prefix)
 	}
 
 	const wxString find(m_entry->GetRange(0, from).Upper());
-
+	wxString Match;
 	int n = m_entry->GetCount();
 
 	m_index = 0;
@@ -27,17 +27,22 @@ bool MyTextCompleter::Start(const wxString& prefix)
 		wxString str(m_entry->GetString(i));
 		size_t pos = str.Upper().find(find);
 		if (pos != wxNOT_FOUND)
+		{
 			m_completions.Add(str);
+			if (pos == 0)
+				Match = str;
+		}
 	}
 	if (m_completions.empty())
 		return false;
 
 	wxString str(m_completions[0]);
-	if (str.Upper().find(find) == 0)
-	{
-		m_entry->ChangeValue(str.Truncate(find.size() + 16));
-		m_entry->SetSelection(find.size(),-1);
-	}
+	if (m_completions.Count() == 1)
+		m_entry->ChangeValue(str);
+	else if (!Match.IsEmpty())
+		m_entry->ChangeValue(Match.Truncate(find.size() + 16));
+
+	m_entry->SetSelection(find.size(),-1);
 	return true;
 }
 

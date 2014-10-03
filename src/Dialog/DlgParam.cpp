@@ -111,8 +111,11 @@ void DlgParam::OnOKClick(wxCommandEvent& e)
 		tfile.RemoveLine(i);
 		if (tfile.GetLineCount() >= g_config->get_u(ParamHistoryLimit))
 			tfile.RemoveLine(tfile.GetLineCount()-1);
-		tfile.InsertLine(comboBox->GetValue(),0);
 	}
+
+	if (i)
+		tfile.InsertLine(comboBox->GetValue(),0);
+
 	tfile.Write();
 	this->EndModal(wxID_OK);
 }
