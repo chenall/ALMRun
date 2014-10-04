@@ -39,7 +39,7 @@ END_EVENT_TABLE()
 DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
+
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	this->SetSizer(bSizer2 );
@@ -63,6 +63,7 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	comboBox->AutoComplete(new MyTextCompleter(comboBox));
 	comboBox->SetSelection(0);
 	comboBox->Bind(wxEVT_KEY_DOWN,&DlgParam::OnKey,this);
+	comboBox->SetToolTip("提示: \n1.选中一个历史记录按Alt+Delete可以删除.\n2.按[Alt+F]可以插入一个文件路径.\n3.按[Alt+D]可以插入一个文件夹路径");
 	bSizer2->Add(comboBox, 0, wxALL, 5 );
 
 	wxButton* ButtonOk = new wxButton(this,wxID_OK,"确定(&O)",wxDefaultPosition,wxDefaultSize);
@@ -81,19 +82,37 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 void DlgParam::OnKey(wxKeyEvent& e)
 {
-	if (e.GetKeyCode() == WXK_DELETE && e.GetModifiers() == wxMOD_ALT)
+	int key =e.GetKeyCode();
+	if (e.GetModifiers() == wxMOD_ALT)
 	{
-		int i = m_array.Index(comboBox->GetValue());
-		if (i != wxNOT_FOUND)
+		wxString path;
+		size_t pos = comboBox->GetInsertionPoint();
+		if (key == WXK_DELETE)
 		{
-			if (wxMessageBox(wxString::Format("确定要删除参数历史记录:\n [ %s ]",comboBox->GetValue()),"提示",wxYES_NO|wxICON_WARNING) == wxYES)
+			int i = m_array.Index(comboBox->GetValue());
+			if (i != wxNOT_FOUND)
 			{
-				m_array.RemoveAt(i);
-				tfile.RemoveLine(i);
-				tfile.Write();
-				comboBox->Set(m_array);
-				return;
+				if (wxMessageBox(wxString::Format("确定要删除参数历史记录:\n [ %s ]",comboBox->GetValue()),"提示",wxYES_NO|wxICON_WARNING) == wxYES)
+				{
+					m_array.RemoveAt(i);
+					tfile.RemoveLine(i);
+					tfile.Write();
+					comboBox->Set(m_array);
+					return;
+				}
 			}
+		}
+		else if (key == 'F')
+			path = wxFileSelector("请选择一个文件",wxEmptyString,wxEmptyString,wxEmptyString,wxFileSelectorDefaultWildcardStr,0,this);
+		else if (key == 'D')
+			path = wxDirSelector("请选择一个目录",wxEmptyString,0,wxDefaultPosition,this);
+		if (!path.empty())
+		{
+			wxString str = comboBox->GetValue();
+			str.insert(pos,path);
+			comboBox->ChangeValue(str);
+			comboBox->SetInsertionPointEnd();
+			return;
 		}
 	}
 	e.Skip();

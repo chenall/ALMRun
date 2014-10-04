@@ -17,7 +17,7 @@ class DlgParam : public wxDialog
 		wxString Param_file;
 	private:
 		wxArrayString m_array;
-		wxArrayString m_completions;
+		wxString m_last_str;
 	public:
 		
 		DlgParam(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400,70), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP);
