@@ -1,7 +1,6 @@
 #include "DlgParam.h"
 #include "ALMRunConfig.h"
 #include "MyTextCompleter.h"
-#include <wx/wfstream.h>
 
 #define PARAMHISTORY_FILE wxT("config/ParamHistory.txt")
 

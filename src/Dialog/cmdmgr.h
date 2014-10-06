@@ -42,13 +42,14 @@ class wxListCtrl;
 #define ID_CMDMGR 10001
 #define ID_TOOLBAR 10005
 //ID_TOOL_ADD = MENU_CMD_ADD
+#define ID_LISTCTRL 10007
 #define ID_TOOL_ADD 10008
-#define ID_TOOL_ADD_FOLDER 10013
 #define ID_TOOL_DELETE 10009
 #define ID_TOOL_EDIT 10010
 #define ID_TOOL_CHECK 10011
 #define ID_TOOL_IMPORT 10012
-#define ID_LISTCTRL 10007
+#define ID_TOOL_ADD_FOLDER 10013
+#define ID_TOOL_FILTER 10014
 #define SYMBOL_CMDMGR_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxMAXIMIZE_BOX|wxTAB_TRAVERSAL
 #define SYMBOL_CMDMGR_TITLE _T("ALMRun √¸¡Óπ‹¿Ì∆˜")
 #define SYMBOL_CMDMGR_IDNAME ID_CMDMGR
@@ -100,9 +101,14 @@ public:
     /// Should we show tooltips?
     static bool ShowToolTips();
 
-////@begin cmdMgr member variables
+private:
+	void onText(wxCommandEvent& event);
+	void onChar(wxKeyEvent& event);
+
+	////@begin cmdMgr member variables
     cmdListCtrl* m_cmd_list;
-////@end cmdMgr member variables
+	wxTextCtrl *filter;
+	////@end cmdMgr member variables
 };
 
 #endif

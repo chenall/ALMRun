@@ -15,7 +15,7 @@ public:
                 SortAscending = false;
                 Column = -1;
         }
-
+		wxString filter;
         bool SortAscending;
         int Column;
         class cmdListCtrl *ListCtrl;
@@ -28,6 +28,7 @@ public:
         const wxSize& size = wxDefaultSize, long style =  wxLC_REPORT|wxLC_HRULES|wxLC_VRULES);// | wxLC_LIST | wxLC_VIRTUAL);
 	static void RunMenu(const int id,cmdListCtrl* t);
 	static bool onDelete(const wxString& item);
+	void SortFilter(const wxString& filter);
 	void ReLoadCmds();
 	~cmdListCtrl();
 

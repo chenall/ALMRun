@@ -109,6 +109,8 @@ void cmdMgr::onSelected(wxListEvent& e)
 cmdMgr::~cmdMgr()
 {
 	__DEBUG_BEGIN("")
+	wxDELETE(filter);
+	wxDELETE(m_cmd_list);
 ////@begin cmdMgr destruction
 ////@end cmdMgr destruction
 	__DEBUG_END("")
@@ -157,10 +159,18 @@ void cmdMgr::CreateControls()
 	itemToolBar3->AddTool(ID_TOOL_IMPORT, _T("导入"), wxBitmap(import_xpm),itemtool8BitmapDisabled, wxITEM_NORMAL, "从ALTRun的配置文件ShortCutList.txt导入命令", wxEmptyString);
 	itemToolBar3->AddSeparator();
 	itemToolBar3->AddTool(ID_TOOL_ADD_FOLDER, _T("添加目录"), wxBitmap(folder_xpm),itemtool8BitmapDisabled, wxITEM_NORMAL, "添加一个文件夹,启动时根据设定自动扫描该文件夹添加命令", wxEmptyString);
-    itemToolBar3->Realize();
-    itemBoxSizer2->Add(itemToolBar3, 0, wxGROW, 5);
+	itemToolBar3->AddSeparator();
+	filter = new wxTextCtrl(this,ID_TOOL_FILTER);
+	itemToolBar3->Realize();
+	wxBoxSizer* ToolBarSizer = new wxBoxSizer(wxHORIZONTAL);
+	ToolBarSizer->Add(itemToolBar3,0,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL ,5);
+	ToolBarSizer->Add(filter,0,wxALIGN_CENTER,5);
+    itemBoxSizer2->Add(ToolBarSizer, 0, wxGROW, 0);
 	m_cmd_list = new cmdListCtrl(itemDialog1, ID_LISTCTRL, wxDefaultPosition, wxSize(-1,500));
     itemBoxSizer2->Add(m_cmd_list, 2, wxGROW|wxALL, 5);
+	filter->SetFocusFromKbd();
+	filter->Bind(wxEVT_TEXT,&cmdMgr::onText,this);
+	filter->Bind(wxEVT_CHAR,&cmdMgr::onChar,this);
 ////@end cmdMgr content construction
 }
 
@@ -233,4 +243,23 @@ wxIcon cmdMgr::GetIconResource( const wxString& name )
 void cmdMgr::onToolClick(wxCommandEvent& e)
 {
 	return cmdListCtrl::RunMenu(e.GetId(),m_cmd_list);
+}
+
+void cmdMgr::onText(wxCommandEvent& e)
+{
+	wxString str = e.GetString().Upper();
+	m_cmd_list->SortFilter(str);
+	wxString test = m_cmd_list->GetItemText(0,CMDLIST_COL_NAME).Upper();
+
+	if (test.find(str) == wxNOT_FOUND)//没有任何匹配时全选方便重新输入匹配.
+		filter->SelectAll();
+
+	e.Skip();
+}
+
+void cmdMgr::onChar(wxKeyEvent& e)
+{
+	if (e.GetKeyCode() == WXK_ESCAPE)
+		filter->Clear();
+	e.Skip();
 }

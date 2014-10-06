@@ -61,6 +61,7 @@ cmdListCompare(wxIntPtr item1, wxIntPtr item2, wxIntPtr sortData)
 	long cmp = 0;
 	wxString str1(ListCtrl->GetItemText(index1,CMDLIST_COL_ID));
 	wxString str2(ListCtrl->GetItemText(index2,CMDLIST_COL_ID));
+	wxString filter(SortInfo->filter);
 
 	str1.ToLong(&cmdid1);
 	str2.ToLong(&cmdid2);
@@ -74,6 +75,23 @@ cmdListCompare(wxIntPtr item1, wxIntPtr item2, wxIntPtr sortData)
 		str1 = ListCtrl->GetItemText(index1,col);
 		str2 = ListCtrl->GetItemText(index2,col);
 		cmp = str1.CmpNoCase(str2);
+	}
+
+	if (!filter.empty())
+	{
+		size_t s1,s2;
+
+		str1 = ListCtrl->GetItemText(index1,CMDLIST_COL_NAME);
+		str2 = ListCtrl->GetItemText(index2,CMDLIST_COL_NAME);
+		s1 = str1.Upper().find(filter);
+		s2 = str2.Upper().find(filter);
+		if (s1 != wxNOT_FOUND)
+		{
+			if (s2 == wxNOT_FOUND)
+				return -1;
+		}
+		else if (s2 != wxNOT_FOUND)
+			return 1;
 	}
 
 	if (cmp == 0)
@@ -166,6 +184,12 @@ void cmdListCtrl::ReLoadCmds()
 	}
 }
 
+void cmdListCtrl::SortFilter(const wxString& s)
+{
+	SortInfo.filter = s;
+	this->SortItems(cmdListCompare,(long)&SortInfo);
+}
+
 void cmdListCtrl::OnColClick(wxListEvent& e)
 {
 	int col = e.GetColumn();
@@ -195,6 +219,8 @@ void cmdListCtrl::onKeyDown(wxListEvent& e)
 		case WXK_F2:
 			menuid = ID_TOOL_EDIT;
 			break;
+		case WXK_ESCAPE:
+			return;
 		default:
 			e.Skip();
 			return;
