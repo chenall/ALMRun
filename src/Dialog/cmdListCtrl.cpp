@@ -89,6 +89,8 @@ cmdListCompare(wxIntPtr item1, wxIntPtr item2, wxIntPtr sortData)
 		{
 			if (s2 == wxNOT_FOUND)
 				return -1;
+			else
+				return s1 - s2;
 		}
 		else if (s2 != wxNOT_FOUND)
 			return 1;
