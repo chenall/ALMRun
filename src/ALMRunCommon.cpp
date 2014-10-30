@@ -458,6 +458,24 @@ wxString EscapeString(const wxString& str)
   return strResult;
 }
 
+
+wxString wxURL_GET(const wxString &uri,const wxString& proxy)
+{
+	wxURL u(uri);
+	wxURLError err = u.GetError();
+	if (err != wxURL_NOERR)
+		return wxString::Format("Error: %d",err);
+	if (!proxy.empty())
+		u.SetProxy(proxy);
+	wxInputStream *in   = u.GetInputStream();
+	wxString Response;
+    wxStringOutputStream out(&Response);
+    if(in && in->IsOk())
+        in->Read(out);
+    delete in;
+	return Response;
+}
+
 #ifdef __WXMSW__
 
 BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)

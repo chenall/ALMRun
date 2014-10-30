@@ -145,7 +145,8 @@ void DlgParam::OnShow(wxShowEvent& e)
 	#ifdef __WXMSW__
 		::SetWindowPos(this->GetHWND(),HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
 	#endif
-		comboBox->SetFocus();
+		this->SetFocus();
+		comboBox->SetFocusFromKbd();
 	}
 	e.Skip();
 }

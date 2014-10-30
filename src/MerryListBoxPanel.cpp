@@ -60,22 +60,13 @@ MerryListBoxPanel::MerryListBoxPanel(wxWindow* parent):
 		m_items[i].width = item_width;
 		m_items[i].height = item_height;
 	}
-
-	menu = new wxMenu;
-	menu->Append(MENU_CMD_ADD, wxT("添加(&I)"));
-	menu->Append(MENU_CMD_EDIT, wxT("编辑(&E)"));
-	menu->Append(MENU_CMD_DEL, wxT("删除(&D)"));
-	menu->Append(MENU_CMD_OPENDIR, wxT("定位(&L)"));
-	menu->Append(MENU_CMD_INFO, wxT("详情(&M)"));
     return;
 }
 
 MerryListBoxPanel::~MerryListBoxPanel()
 {
 	__DEBUG_BEGIN("")
-	if (menu)
-		delete menu;
-	menu = NULL;
+
 	__DEBUG_END("")
 }
 
@@ -162,7 +153,6 @@ bool MerryListBoxPanel::DelSelectedItem()
 	const MerryCommand* cmd = this->GetSelectionCommand();
 	if (!cmd)
 		return false;
-//	assert(cmd);
 	int flags = cmd->GetFlags();
 	if ((flags & CMDS_FLAG_CMDS))
 	{
@@ -203,7 +193,19 @@ void MerryListBoxPanel::Dismiss()
 void  MerryListBoxPanel::onContextMenu(wxContextMenuEvent& e)
 {
 	e.StopPropagation();
-	PopupMenu(menu);
+	const MerryCommand* cmd = GetSelectionCommand();
+
+	wxMenu menu;
+	menu.Append(MENU_CMD_ADD, wxT("添加(&I)"));
+	if ((cmd->GetFlags() & CMDS_FLAG_CMDS))
+	{
+		menu.Append(MENU_CMD_EDIT, wxT("编辑(&E)"));
+		menu.Append(MENU_CMD_DEL, wxT("删除(&D)"));
+	}
+	menu.Append(MENU_CMD_OPENDIR, wxT("定位(&L)"));
+	menu.Append(MENU_CMD_INFO, wxT("详情(&M)"));
+
+	PopupMenu(&menu);
 }
 
 void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)

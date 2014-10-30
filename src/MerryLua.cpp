@@ -57,6 +57,7 @@ MerryLua::MerryLua()
 	lua_register(L, "EmptyRecycleBin",					  LuaEmptyRecycleBin);
 	lua_register(L, "SHEmptyRecycleBin",				  LuaSHEmptyRecycleBin);
 #endif
+	lua_register(L, "wxURL",							  LuawxURL);
 	lua_register(L, "message",                            LuaMessage);
 	lua_register(L, "enterKey",                           LuaEnterKey);
 	lua_register(L, "enterText",                          LuaEnterText);

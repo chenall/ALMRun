@@ -12,12 +12,13 @@
 		* [clearTimer] 清除定时器
 		* [config] 程序配置
 		* [ReConfig] 刷新配置 
+		* [wxURL] 读取网页
 	+ 系统界面相关API
 		* [GetForegroundWindow]
 		* [SetForegroundWindow]
 		* [ShowWindow]
 		* [CloseWindow]
-		* [IsWindowMax]	
+		* [IsWindowMax]
 		* [IsWindowMin]
 		* [IsWindowShown]
 		* [GetWindowText]
@@ -476,7 +477,14 @@ shellExecute(commandName, commandArg, workingDir, show)
 >参考资料:  
 	1. <http://baike.baidu.com/view/1080349.htm>   
 	2. <http://msdn.microsoft.com/en-us/library/windows/desktop/ms633545(v=vs.85).aspx> 
+[wxURL]: #37-wxurl "wxurl(uri,proxy)"
+### 37. wxURL
+    wxURL(uri,proxy)
 
+	返回一个网页内容(不支持https),支持代理.
+	例子:
+	  ret = wxURL("http://www.google.com")
+	  ret = wxURL("http://www.google.com","192.168.0.8:89") 使用代理服务器
  
 <h2 id="almrunplugins"></h2>
 ALMRunPlugins

@@ -544,6 +544,12 @@ static int LuaGetClipboardData(lua_State* L)
 	return 1;
 }
 
+static int LuawxURL(lua_State* L)
+{
+	lua_pushstring(L,wxURL_GET(lua_tostring(L, 1),lua_tostring(L, 2)));
+	return 1;
+}
+
 static int LuaConfig(lua_State* L)
 {
 #ifdef _ALMRUN_CONFIG_H_

@@ -64,7 +64,6 @@ private:
 	int item_height;
 	int item_width;
 	int border_width;
-	wxMenu* menu;
 
 	wxRect m_items[MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM+1];
 	wxBitmap m_listBackground;

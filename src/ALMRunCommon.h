@@ -5,6 +5,8 @@
 #include <wx/fileconf.h>
 #include "MerryWx.h"
 #include "MerryLua.h"
+#include "wx/sstream.h"
+#include "wx/url.h"
 
 class ALMRunCMDBase
 {
@@ -41,6 +43,7 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir = wxE
 wxString UnEscapeString(const wxString& str);
 wxString EscapeString(const wxString& str);
 void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips = true);
+wxString wxURL_GET(const wxString &uri,const wxString& proxy = wxEmptyString);
 
 #ifdef __WXMSW__
 static wxString _GetCMDPath(const wxString& commandLine);
