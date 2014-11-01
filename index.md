@@ -22,7 +22,7 @@ ALMRun
 * [相关资源](#ALMRun_resource)
 * [更新记录]
 * [API 参考](https://github.com/chenall/ALMRun/blob/master/doc/config_api.md)
-* [程序下载](https://github.com/chenall/ALMRun/archive/Build.zip)
+* [程序下载](https://github.com/chenall/ALMRun/releases)
 
 <h2 id="ALMRUN_BASE"></h2>
 ALMRun Base 基本功能
