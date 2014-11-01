@@ -170,17 +170,15 @@ void MerryCommand::Execute(const wxString& commandArg) const
 			{
 				DWORD dwPid = 0;
 				DWORD dwTheardId = ::GetWindowThreadProcessId( hWnd,&dwPid);
- 
 				if (dwTheardId && dwPid == PID)
 				{
-					::ShowWindow(hWnd,SW_NORMAL);
+					::ShowWindow(hWnd,SW_RESTORE);
 					::SetForegroundWindow(hWnd);
 					::SetActiveWindow(hWnd);
-					break;
+					return;
 				}
 				hWnd = ::GetNextWindow(hWnd , GW_HWNDNEXT);
 			}
-			return;
 		}
 	}
 	#endif
