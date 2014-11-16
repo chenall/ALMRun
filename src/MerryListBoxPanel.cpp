@@ -164,7 +164,7 @@ bool MerryListBoxPanel::DelSelectedItem()
 			return g_commands->DelCommand(cmd->GetCommandID());
 	}
 	else
-		wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
+		wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法删除");
 	return false;
 }
 
@@ -197,9 +197,9 @@ void  MerryListBoxPanel::onContextMenu(wxContextMenuEvent& e)
 
 	wxMenu menu;
 	menu.Append(MENU_CMD_ADD, wxT("添加(&I)"));
+	menu.Append(MENU_CMD_EDIT, wxT("编辑(&E)"));
 	if ((cmd->GetFlags() & CMDS_FLAG_CMDS))
 	{
-		menu.Append(MENU_CMD_EDIT, wxT("编辑(&E)"));
 		menu.Append(MENU_CMD_DEL, wxT("删除(&D)"));
 	}
 	menu.Append(MENU_CMD_OPENDIR, wxT("定位(&L)"));
@@ -236,10 +236,16 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 					const MerryCommand* cmd = GetSelectionCommand();
 					if (!(cmd->GetFlags() & CMDS_FLAG_CMDS)) 
 					{
-						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,无法编辑/删除");
-						return;
+						wxMessageBox("该命令可能是LUA脚本或自动生成的命令,继续编辑将会自动转为ALMRun常规命令","提示");
+						dlg = new DlgAddNewCmd();
+						dlg->cmdName->SetValue(cmd->GetCommandName());
+						dlg->cmdDesc->SetValue(cmd->GetCommandDesc());
+						dlg->cmdKey->SetValue(cmd->GetTriggerKey());
+						dlg->cmdLine->SetValue(cmd->GetCmd());
+						dlg->cmdPath->SetValue(cmd->GetWorkDir());
 					}
-					dlg = new DlgAddNewCmd(cmd->GetFlags()>>4);
+					else
+						dlg = new DlgAddNewCmd(cmd->GetFlags()>>4);
 //					dlg->flags = MENU_CMD_EDIT;
 					//dlg->SetCmdID(cmd->GetFlags()>>4);
 					//dlg->cmdName->SetValue(cmd->GetCommandName());

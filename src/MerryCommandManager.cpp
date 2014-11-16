@@ -97,8 +97,11 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 			continue;
 		if (!commandName.empty() && commandName.IsSameAs(command->GetCommandName(), false))
 		{
-			MerrySetLastError(wxString::Format(wxT("\n命令[%s]已经存在\n\n%s"),commandName,command->GetDetails()));
-			return -1;
+			if (!(flags & CMDS_FLAG_CMDS) || (command->GetFlags() & CMDS_FLAG_CMDS))
+			{
+				MerrySetLastError(wxString::Format(wxT("\n命令[%s]已经存在\n\n%s"),commandName,command->GetDetails()));
+				return -1;
+			}
 		}
 	}
 	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine,commandWorkDir, funcRef, triggerKey);
