@@ -21,11 +21,20 @@ void MerryCommandManager::clearCmds(MerryCommandArray& cmds)
 		delete cmds[i];
 	cmds.clear();
 }
+
+const int  MerryCommandManager::AddCommand(const wxString& file)
+{
+	wxFileName fn = file;
+	return AddCommand(fn.GetName(),wxString(),file,fn.GetFullPath(),0,wxString(),CMDS_FLAG_DIRS);
+}
+
 const void MerryCommandManager::AddFiles(const wxArrayString& files)
 {
 	for(int i=files.GetCount()-1;i >= 0;--i)
 	{
-		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
+		if (this->AddCommand(files[i]) == -2)
+			break;
+//		m_commands.push_back(new MerryCommand(m_commands.size() | (CMDS_FLAG_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
 	}
 }
 
@@ -41,8 +50,8 @@ const void MerryCommandManager::AddFiles(const wxArrayString& files,const wxArra
 			if (files[i].Matches(excludes[j]))
 				break;
 		}
-		if (j == -1)
-			m_commands.push_back(new MerryCommand(m_commands.size() |(CMDS_FLAG_DIRS<<16),wxFileNameFromPath(files[i]),wxEmptyString,wxString::Format("\"%s\"",files[i])));
+		if (j == -1 && this->AddCommand(files[i]) == -2)
+			break;
 	}
 }
 

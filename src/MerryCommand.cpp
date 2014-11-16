@@ -67,6 +67,28 @@ void MerryCommand::conf_cmd()
 		}
 		lua_settop(L,top);
 	}
+	else if (g_config->get(cmdReadShortcut))
+	{
+		if (wxFileName(m_commandLine).GetExt().IsSameAs("lnk",true))
+		{
+			ALMRunCMDBase Lcmd;
+			if (ReadShortcut(m_commandLine.c_str(),&Lcmd))
+			{
+				m_commandLine = Lcmd.cmdLine;
+				if (m_flags & CMDS_FLAG_DIRS)
+				{
+					m_commandDesc = Lcmd.Desc;
+					m_commandWorkDir = Lcmd.WorkDir;
+				}
+				else
+				{
+					if (m_commandDesc.IsEmpty()) m_commandDesc = Lcmd.Desc;
+					if (m_commandWorkDir.IsEmpty()) m_commandWorkDir = Lcmd.WorkDir;
+				}
+
+			}
+		}
+	}
 
 	if (m_commandName.empty())
 	{
