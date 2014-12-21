@@ -146,8 +146,8 @@ function SplitCmd(cmdLine)
     return cmdLine
 end
 
--- 默认的命令调用函数
-CmdCallFunc = function(cmdLine,cmdArg,workDir)
+-- 默认的命令调用函数(默认不启用)
+__CmdCallFunc = function(cmdLine,cmdArg,workDir)
     -- 自动参数替换{%p}
     if cmdLine:match("{%%[pP]%+?}") then
 	cmdLine = cmdLine:gsub("{%%[pP]%+?}",cmdArg)

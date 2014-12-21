@@ -1,3 +1,7 @@
+### [v1.2.0.72](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.72)
+	2014-12-21
+		1. 修正包含空格的文件名没有正确处理的问题(issue #14).
+
 ### [v1.2.0.71](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.71)
     2014-11-16
         1. 现在自动扫描目录添加的命令会过滤重复命令(根据命令名称),另外如果添加的是一个快捷方式也可以自动读取快捷方式属性设置

@@ -509,7 +509,7 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 //简单的分离命令和参数函数
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString& workDir)
 {
-	size_t cmd_len = cmdLine.size();
+	size_t cmd_len = cmdLine.Len();
 	wxString cmdFlags(CMDFLAG_STRS);
 	wxString cmd = wxEmptyString;
 	size_t n;
@@ -549,7 +549,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString&
 		else
 			cmd = GetCMDPath(tmp,workDir);
 
-		if (!cmd.empty())
+		if (cmd.Len())
 		{
 			n = k;
 			goto getParam;
@@ -565,9 +565,8 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString&
 			if (InSpace)
 				continue;
 			lastSpace = n;
-			InSpace = true;
 			wxString _tmp = GetCMDPath(cmdLine.substr(cmd_pos,n-cmd_pos),workDir);
-			if (!_tmp.empty())
+			if (_tmp.Len())
 			{
 				cmd = _tmp;
 				break;
@@ -584,6 +583,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString&
 			cmd = cmdLine.substr(cmd_pos,n-cmd_pos);
 			break;
 		}
+		InSpace = c == ' ';
 	}
 
 getParam:
