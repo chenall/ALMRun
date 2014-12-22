@@ -1,4 +1,7 @@
+app                     ICON                    "merry_icon.ico"
 MERRYICON               ICON                    "merry_icon.ico"
+DESC                    ICON                    "desc.ico"
+ASC                     ICON                    "asc.ico"
 #ifdef __WXMSW__
 #include <wx/msw/wx.rc>
 #endif

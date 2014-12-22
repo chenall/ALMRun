@@ -39,7 +39,7 @@ protected:
 	void onRightClick(wxListEvent& event);
 	void onDclick(wxMouseEvent& e);
 	void onPopMenu(wxCommandEvent& e);
-
+	wxImageList *m_imageListSmall;
 
 private:
 //    void SetColumnImage(int col, int image);

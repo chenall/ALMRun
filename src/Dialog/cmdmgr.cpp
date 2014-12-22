@@ -250,8 +250,9 @@ void cmdMgr::onText(wxCommandEvent& e)
 	wxString str = e.GetString().Upper();
 	m_cmd_list->SortFilter(str);
 	wxString test = m_cmd_list->GetItemText(0,CMDLIST_COL_NAME).Upper();
+	wxString test2 = m_cmd_list->GetItemText(0,CMDLIST_COL_CMD).Upper();
 
-	if (test.find(str) == wxNOT_FOUND)//没有任何匹配时全选方便重新输入匹配.
+	if (test.find(str) == wxNOT_FOUND && test2.find(str) == wxNOT_FOUND)//没有任何匹配时全选方便重新输入匹配.
 		filter->SelectAll();
 
 	e.Skip();

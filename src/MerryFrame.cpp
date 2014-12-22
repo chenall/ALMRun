@@ -26,6 +26,11 @@ wxFrame(NULL, wxID_ANY,ALMRUN_DEFAULT_TITLE, wxDefaultPosition, wxDefaultSize, w
 #endif
 	)
 {
+	#ifdef __WXMSW__
+    SetIcon(wxICON(app));
+	#else
+    SetIcon(wxICON(main));
+	#endif // __WXMSW__
 	skin = new SkinConfig();
 	if (skin->get(SHOW_WINDOW))
 		this->SetWindowStyleFlag(wxCLOSE_BOX | wxCAPTION);// | wxBORDER_NONE);

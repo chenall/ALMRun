@@ -59,10 +59,41 @@ cmdListCompare(wxIntPtr item1, wxIntPtr item2, wxIntPtr sortData)
 	long index2 = ListCtrl->FindItem(-1,item2);
 	long cmdid1,cmdid2;
 	long cmp = 0;
-	wxString str1(ListCtrl->GetItemText(index1,CMDLIST_COL_ID));
-	wxString str2(ListCtrl->GetItemText(index2,CMDLIST_COL_ID));
+	wxString str1;
+	wxString str2;
 	wxString filter(SortInfo->filter);
 
+	if (!filter.empty())
+	{
+		size_t s1,s2;
+		int _col = col;
+		int _col_2;
+		if (_col != CMDLIST_COL_NAME && _col != CMDLIST_COL_CMD)
+			_col = CMDLIST_COL_NAME;
+
+		_col_2 = (_col == CMDLIST_COL_NAME) ? CMDLIST_COL_CMD : CMDLIST_COL_NAME;
+
+		str1 = ListCtrl->GetItemText(index1,_col);
+		str2 = ListCtrl->GetItemText(index2,_col);
+		if (str1.IsEmpty())
+			str1 = ListCtrl->GetItemText(index1,_col_2);
+		if (str2.IsEmpty())
+			str2 = ListCtrl->GetItemText(index2,_col_2);
+		s1 = str1.Upper().find(filter);
+		s2 = str2.Upper().find(filter);
+		if (s1 != wxNOT_FOUND)
+		{
+			if (s2 == wxNOT_FOUND)
+				return -1;
+			else
+				return s1 - s2;
+		}
+		else if (s2 != wxNOT_FOUND)
+			return 1;
+	}
+
+	str1 = ListCtrl->GetItemText(index1,CMDLIST_COL_ID);
+	str2 = ListCtrl->GetItemText(index2,CMDLIST_COL_ID);
 	str1.ToLong(&cmdid1);
 	str2.ToLong(&cmdid2);
 
@@ -75,25 +106,6 @@ cmdListCompare(wxIntPtr item1, wxIntPtr item2, wxIntPtr sortData)
 		str1 = ListCtrl->GetItemText(index1,col);
 		str2 = ListCtrl->GetItemText(index2,col);
 		cmp = str1.CmpNoCase(str2);
-	}
-
-	if (!filter.empty())
-	{
-		size_t s1,s2;
-
-		str1 = ListCtrl->GetItemText(index1,CMDLIST_COL_NAME);
-		str2 = ListCtrl->GetItemText(index2,CMDLIST_COL_NAME);
-		s1 = str1.Upper().find(filter);
-		s2 = str2.Upper().find(filter);
-		if (s1 != wxNOT_FOUND)
-		{
-			if (s2 == wxNOT_FOUND)
-				return -1;
-			else
-				return s1 - s2;
-		}
-		else if (s2 != wxNOT_FOUND)
-			return 1;
 	}
 
 	if (cmp == 0)
@@ -119,6 +131,10 @@ cmdListCtrl::cmdListCtrl(wxWindow *parent, wxWindowID id, const wxPoint& pos,con
 wxListCtrl(parent,id,pos,size,style)
 {
 	SortInfo.ListCtrl = this;
+	m_imageListSmall = new wxImageList(16, 16, true);
+	m_imageListSmall->Add( wxIcon(wxT("desc"), wxBITMAP_TYPE_ICO_RESOURCE) );
+	m_imageListSmall->Add( wxIcon(wxT("asc"), wxBITMAP_TYPE_ICO_RESOURCE) );
+	this->SetImageList(m_imageListSmall, wxIMAGE_LIST_SMALL);
 	this->InsertColumn(CMDLIST_COL_NAME,_T("快捷命令"),wxLIST_AUTOSIZE,150);
 	this->InsertColumn(CMDLIST_COL_CMD,_T("命令行"),wxLIST_AUTOSIZE,250);
 	this->InsertColumn(CMDLIST_COL_KEY,_T("热键/包含"),wxLIST_AUTOSIZE,100);
@@ -135,6 +151,7 @@ wxListCtrl(parent,id,pos,size,style)
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(new DnDialogFile(this));
 #endif
+//	this->SetImageList(m_imageListSort, wxIMAGE_LIST_SMALL);
 //	this->Connect(wxEVT_COMMAND_LIST_DELETE_ITEM,wxObjectEventFunction(&cmdListCtrl::onDelete));
 }
 
@@ -154,7 +171,7 @@ void cmdListCtrl::ReLoadCmds()
 			if (!cmds.IsNumber())
 				continue;
 			conf->SetPath(cmds);
-			index = this->InsertItem(++index,cmds);
+			index = this->InsertItem(++index,cmds,-1);
 			this->SetItemData(index,index);
 			this->SetItem(index, CMDLIST_COL_ID,cmds);
 			this->SetItem(index, CMDLIST_COL_NAME ,conf->Read("name"));
@@ -173,7 +190,7 @@ void cmdListCtrl::ReLoadCmds()
 			long cid;
 			cmds.ToLong(&cid);
 			cmds.sprintf("%d",~cid);
-			index = this->InsertItem(++index,"@自动扫描目录@");
+			index = this->InsertItem(++index,"@自动扫描目录@",-1);
 			this->SetItemData(index,index);
 			this->SetItem(index, DIRLIST_COL_ID,cmds);
 			this->SetItem(index, DIRLIST_COL_PATH ,conf->Read("path"));
@@ -198,11 +215,17 @@ void cmdListCtrl::OnColClick(wxListEvent& e)
 
     // set or unset image
     static bool x[COL_MAX];
+	wxListItem itemCol;
+	itemCol.SetMask(wxLIST_MASK_IMAGE);
+	itemCol.SetImage(-1);
+	SetColumn(SortInfo.Column,itemCol);
+
     x[col] = !x[col];
 
 	SortInfo.Column = col;
 	SortInfo.SortAscending = x[col];
-
+	itemCol.SetImage(SortInfo.SortAscending);
+	SetColumn(SortInfo.Column,itemCol);
 	this->SortItems(cmdListCompare,(long)&SortInfo);
 }
 
@@ -245,6 +268,7 @@ cmdListCtrl::~cmdListCtrl()
 	this->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED);
 	this->Disconnect(wxEVT_LIST_KEY_DOWN);
 */
+	delete m_imageListSmall;
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(NULL);
 #endif
