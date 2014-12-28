@@ -1,4 +1,6 @@
 ### [v1.2.0.72](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.72)
+	2014-12-28
+		1. issue #13 右键菜单增加以管理员方式运行("运行为").(快捷键Shift+Enter)
 	2014-12-21
 		1. 修正包含空格的文件名没有正确处理的问题(issue #14).
 	2014-12-22

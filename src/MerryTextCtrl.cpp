@@ -17,6 +17,7 @@
 	#pragma comment(lib, "imm32.lib")
 #endif
 
+int cmdrun_flags;
 bool LocationExec;
 #ifdef __WXMSW__
 	HWND HWND_TEXTCTRL = NULL;
@@ -211,6 +212,7 @@ void MerryTextCtrl::OnKeyDownEvent(wxKeyEvent& e)
 	{
 		case WXK_RETURN:
 		case WXK_NUMPAD_ENTER:
+			if (e.ShiftDown()) cmdrun_flags |= CMDRUN_FLAG_RUNAS;
 			this->ExecuteCmd();
 			break;
 		case WXK_ESCAPE:

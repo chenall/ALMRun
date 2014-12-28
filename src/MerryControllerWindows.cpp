@@ -468,10 +468,12 @@ DWORD MerryController::ShellExecute(const wxString& commandName,
 	}
 
 	wxString cmdName = commandName.substr(n);
+	if (cmdrun_flags & CMDRUN_FLAG_RUNAS) runas = true;
+	if (cmdrun_flags & CMDRUN_FLAG_HIDE) showCommand = SW_HIDE;
+	cmdrun_flags = 0;
 
 	if (!LocationExec)
 	{
-
 		__DEBUG_BEGIN(cmdName.c_str());
 		SHELLEXECUTEINFO ShExecInfo = {0};
 		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -483,7 +485,6 @@ DWORD MerryController::ShellExecute(const wxString& commandName,
 		ShExecInfo.lpDirectory = workingDir.c_str();
 		ShExecInfo.nShow = showCommand;
 		ShExecInfo.hInstApp = NULL;
- 
 		if (::ShellExecuteEx(&ShExecInfo))
 			return SavePid?GetProcessId(ShExecInfo.hProcess):1;
 		return 0;
@@ -495,6 +496,7 @@ DWORD MerryController::ShellExecute(const wxString& commandName,
 		return 0;
 
 	FullcmdName.Replace('/','\\');
+
 #ifdef _ALMRUN_CONFIG_H_
 	if (!g_config->Explorer.empty())
 		::WinExec(wxString::Format("%s \"%s\"",g_config->Explorer,FullcmdName),SW_SHOW);

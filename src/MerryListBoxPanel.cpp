@@ -204,6 +204,7 @@ void  MerryListBoxPanel::onContextMenu(wxContextMenuEvent& e)
 	}
 	menu.Append(MENU_CMD_OPENDIR, wxT("定位(&L)"));
 	menu.Append(MENU_CMD_INFO, wxT("详情(&M)"));
+	menu.Append(MENU_CMD_RUNAS, wxT("运行为(&A)"));
 
 	PopupMenu(&menu);
 }
@@ -265,7 +266,10 @@ void MerryListBoxPanel::onPopMenu(wxCommandEvent& e)
 			LocationExec = true;
 			GetSelectionCommand()->Execute(wxEmptyString);
 			break;
-
+		case MENU_CMD_RUNAS:
+			cmdrun_flags |= CMDRUN_FLAG_RUNAS;
+			GetSelectionCommand()->Execute(wxEmptyString);
+			break;
 	}
 }
 
