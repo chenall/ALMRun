@@ -496,7 +496,7 @@ BOOL chkSysCmd(const wxString& cmdLine,size_t * const cmdStart = NULL)
 	
 	wxString cmdName = cmdLine.substr(n);
 
-	if (cmdName.find("://",3,3) !=  wxNOT_FOUND //网址类型
+	if (cmdName.substr(0,8).find("://") != wxNOT_FOUND //网址类型
 		 || cmdName.StartsWith("::") //:: 类型系统功能调用
 		 || cmdName.StartsWith("\\\\")//网络地址或系统功能调用
 		)
@@ -544,7 +544,7 @@ wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg,const wxString&
 			k = tmp.find(" ");
 			cmd = tmp.substr(0,k);
 		}
-		else if (tmp.find("://",3,3) !=  wxNOT_FOUND)//网址类型
+		else if (tmp.substr(0,8).find("://") !=  wxNOT_FOUND)//网址类型
 			cmd = tmp;
 		else
 			cmd = GetCMDPath(tmp,workDir);
