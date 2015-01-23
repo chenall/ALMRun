@@ -131,6 +131,28 @@ void ListFiles(const wxString& dirname,wxArrayString *files,const wxString& file
 	exc.Clear();
 }
 
+#ifdef __WXMSW__
+static int x64sys = -1;
+BOOL IsX64()
+{
+	typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+	BOOL bX64 = FALSE;
+	SYSTEM_INFO si;
+	PGNSI pGNSI;
+	if (x64sys != -1) return x64sys;
+	ZeroMemory(&si, sizeof(SYSTEM_INFO));
+	pGNSI = (PGNSI) GetProcAddress(GetModuleHandle(_T("kernel32.dll")), "GetNativeSystemInfo");
+	if(NULL != pGNSI)
+	   pGNSI(&si);
+	else
+	   GetSystemInfo(&si);
+	if(si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64 )
+	   bX64 = true;
+	x64sys = bX64;
+	return bX64;
+}
+#endif
+
 void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips)
 {
 	win->SetHelpText(text);

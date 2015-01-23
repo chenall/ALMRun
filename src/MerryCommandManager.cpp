@@ -105,6 +105,11 @@ const int MerryCommandManager::AddCommand(const wxString& commandName,const wxSt
 		}
 	}
 	MerryCommand* command = new MerryCommand(m_commands.size() | (flags<<16), commandName,commandDesc,commandLine,commandWorkDir, funcRef, triggerKey);
+	if (command->GetCommandID() == -1)
+	{
+		delete command;
+		return -1;
+	}
 	m_commands.push_back(command);
 	return command->GetCommandID();
 }
