@@ -7,6 +7,7 @@
 
 #ifdef __WXMSW__
 	#include <wx/msw/registry.h>
+	#include "TlHelp32.h"
 #endif
 /* 
 函数功能：对指定文件在指定的目录下创建其快捷方式 
@@ -151,6 +152,48 @@ BOOL IsX64()
 	x64sys = bX64;
 	return bX64;
 }
+
+BOOL ActiveWindow(HWND hwnd)
+{
+	if (IsIconic(hwnd)) ShowWindow(hwnd, SW_RESTORE);
+	return (BringWindowToTop(hwnd) && SetForegroundWindow(hwnd));
+}
+
+BOOL CheckActiveProg(DWORD PID)
+{
+	PROCESSENTRY32 ProInfo;
+	ProInfo.dwSize = sizeof(PROCESSENTRY32);
+	HANDLE hProSnap;
+	HWND h = GetTopWindow(0);
+	while (h)
+	{
+		DWORD pid = 0;
+		DWORD dwTheardId = GetWindowThreadProcessId( h,&pid);
+		if (dwTheardId != 0)
+		{
+			if ( pid == PID && GetParent(h) == NULL && wxGetWindowText(h).length())
+			{
+				if (ActiveWindow(h)) return TRUE;
+			}
+		}
+		h = GetNextWindow( h , GW_HWNDNEXT);
+	}
+
+	hProSnap=CreateToolhelp32Snapshot(TH32CS_SNAPALL,0);
+	if (::Process32First(hProSnap,&ProInfo))
+	{
+		for (;::Process32Next(hProSnap,&ProInfo);)
+		{
+			if (ProInfo.th32ProcessID == PID)
+			{
+				wxMessageBox("程序已经在运行!","激活失败!");
+				return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
 #endif
 
 void setWinHelpText(wxWindowBase* win,const wxString& text,bool ShowToolTips)

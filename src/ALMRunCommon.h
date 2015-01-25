@@ -47,6 +47,8 @@ wxString wxURL_GET(const wxString &uri,const wxString& proxy = wxEmptyString);
 
 #ifdef __WXMSW__
 BOOL IsX64();
+BOOL ActiveWindow(HWND hwnd);
+BOOL CheckActiveProg(DWORD PID);
 static wxString _GetCMDPath(const wxString& commandLine);
 wxString ParseCmd(const wxString& cmdLine,wxString* const cmdArg = NULL,const wxString& workDir = wxEmptyString);
 DWORD RunCMD(const wxString& cmdLine,const wxString& cmdArg,const wxString& workDir = wxEmptyString);

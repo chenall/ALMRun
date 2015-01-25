@@ -134,7 +134,6 @@ ALMRunConfig::ALMRunConfig()
 	ConfigCommand();
 	if (config[RememberFavouratMatch])
 		FavoriteList = new wxFileConfig(wxT("ALMRun"),wxEmptyString,Home +  FAVORITELIST_FILE ,wxEmptyString,wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH | wxCONFIG_USE_NO_ESCAPE_CHARACTERS);
-
 #ifndef _DEBUG
 	conf->SetPath("/Config");
 

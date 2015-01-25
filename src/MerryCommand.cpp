@@ -191,24 +191,9 @@ void MerryCommand::Execute(const wxString& commandArg) const
 	#ifdef __WXMSW__
 	if (PID > 1)//禁止多个进程
 	{
-		HANDLE cmdHandle = OpenProcess(PROCESS_ALL_ACCESS,false,PID);
-		if (cmdHandle)
+		if (CheckActiveProg(PID))
 		{//已经运行,查找前激活之前的窗口
-			CloseHandle(cmdHandle);
-			HWND hWnd = ::GetTopWindow(0);
-			while ( hWnd )
-			{
-				DWORD dwPid = 0;
-				DWORD dwTheardId = ::GetWindowThreadProcessId( hWnd,&dwPid);
-				if (dwTheardId && dwPid == PID)
-				{
-					::ShowWindow(hWnd,SW_RESTORE);
-					::SetForegroundWindow(hWnd);
-					::SetActiveWindow(hWnd);
-					return;
-				}
-				hWnd = ::GetNextWindow(hWnd , GW_HWNDNEXT);
-			}
+			return;
 		}
 	}
 	#endif
