@@ -242,11 +242,17 @@ void MerryFrame::CentreOnce()
 {
 	if (m_isCentred)
 		return;
-
 	this->Centre();
 	wxPoint position = this->GetPosition();
-	position.y -= skin->get(LIST_ITEM_HEIGHT) * MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM / 4;
+	if (g_config && g_config->get(SaveWinPos))
+	{
+		position.x = g_config->conf->ReadLong("/Window/WinLeft",position.x);
+		position.y = g_config->conf->ReadLong("/Window/WinTop",position.y);
+	}
+	else
+	{
+		position.y -= skin->get(LIST_ITEM_HEIGHT) * MERRY_DEFAULT_LIST_BOX_ITEM_MAX_NUM / 4;
+	}
 	this->SetPosition(position);
-	
 	m_isCentred = true;
 }
