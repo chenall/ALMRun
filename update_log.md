@@ -5,6 +5,12 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [v1.2.0.73](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.73)
+	2015-01-26 参数配置新增<保存窗口位置>选项.
+	2015-01-25 修正使用空格键执行时,再次弹出程序程序时输入框的空格问题.
+	2015-01-25 使用新的方法激活窗口(唯一进程功能更稳定).
+	2015-01-23 在x86系统运行时自动过滤x64的软件(根据文件名识别,有包含x64的自动过滤)
+
 ### [v1.2.0.72](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.72)
 	2014-12-28
 		1. issue #13 右键菜单增加以管理员方式运行("运行为").(快捷键Shift+Enter)
