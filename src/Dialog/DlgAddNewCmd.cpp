@@ -520,6 +520,7 @@ void DlgAddNewCmd::CreateControls()
     itemStdDialogButtonSizer->AddButton(itemButton19);
     itemStdDialogButtonSizer->Realize();
 	cmdName->SetFocus();
+	cmdKey->MoveAfterInTabOrder(RequiredArg);
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(new NewCmdDnd(this));
 #endif
