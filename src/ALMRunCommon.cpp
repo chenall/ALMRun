@@ -392,6 +392,8 @@ wxString GetCMDPath(const wxString& commandLine,const wxString& workingDir)
 	wxString cmdPath;
 	if (!workingDir.empty() && ::wxDirExists(workingDir))
 		::wxSetWorkingDirectory(workingDir);
+	if (commandLine.Len() >= MAX_PATH)
+		return "";
 	cmdPath = _GetCMDPath(commandLine);
 	wxSetWorkingDirectory(cwd);
 	return cmdPath;

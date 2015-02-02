@@ -205,7 +205,9 @@ int SkinConfig::get(skin_config_t item) const
 wxColor SkinConfig::get(skin_color_t item) const
 {
 	if (item<=COLOR_CONFIG_MAX)
-		return color[item];
+	{
+		return color[item].IsOk()?color[item]:wxColor(0x111111);
+	}
 	return 1;
 }
 
