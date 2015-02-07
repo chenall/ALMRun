@@ -9,7 +9,7 @@ if(WIN32)
 	# wxWidgets path
 	set(WXWIN $ENV{WXWIN})
 	if (NOT WXWIN)
-	    set(WXWIN D:/dev/wxWidgets-3.0.0)
+	    set(WXWIN D:/dev/wxWidgets)
 	ENDIF()
 	if (NOT EXISTS ${WXWIN}/include/msvc/wx/setup.h)
 	    MESSAGE(FATAL_ERROR "\nwxWidgets 库设置(${WXWIN})可能不正确\n编译需要至少wxWidgets 2.9.5以上版本")
