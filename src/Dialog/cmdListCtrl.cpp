@@ -201,6 +201,7 @@ void cmdListCtrl::ReLoadCmds()
 		}
 		conf->SetPath(oldPath);
 	}
+	this->SortItems(cmdListCompare,(long)&SortInfo);
 }
 
 void cmdListCtrl::SortFilter(const wxString& s)

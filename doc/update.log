@@ -1,3 +1,4 @@
+	2015-02-14 修复命令管理器筛选问题(#23)
 	2015-02-02 修正命令太长会出错的BUG(#21)
 
 ### [v1.2.0.73](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.73)
