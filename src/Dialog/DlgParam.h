@@ -25,6 +25,8 @@ class DlgParam : public wxDialog
 		void OnOKClick(wxCommandEvent& e);
 		//void OnCancelClick(wxCommandEvent& e);
 		void OnShow(wxShowEvent& e);
+		//void OnFocus(wxFocusEvent& e);
+		//void OnActivate(wxActivateEvent& e);
 		void SetValue(const wxString& str);
 		wxString getvalue();
 };

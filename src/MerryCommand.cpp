@@ -1,6 +1,7 @@
 #include "MerryCommand.h"
 #include "MerryCommandManager.h"
 #include "MerryLua.h"
+#include "MerryApp.h"
 #include "MerryInformationDialog.h"
 #include "DlgParam.h"
 #include "ALMRunConfig.h"
@@ -188,11 +189,13 @@ void MerryCommand::Execute(const wxString& commandArg) const
 	lua_State* L = g_lua->GetLua();
 	wxString cmdArg = commandArg;
 	assert(L);
+
 	#ifdef __WXMSW__
 	if (PID > 1)//禁止多个进程
 	{
 		if (CheckActiveProg(PID))
 		{//已经运行,查找前激活之前的窗口
+			::wxGetApp().GetFrame().Hide();
 			return;
 		}
 	}
@@ -208,6 +211,9 @@ void MerryCommand::Execute(const wxString& commandArg) const
 		if (cmdArg.empty())
 			return;
 	}
+
+	if (m_commandFunc != g_lua->get_funcref(LUA_toggleMerry))
+		::wxGetApp().GetFrame().Hide();
 
 	if (m_commandFunc == 0)
 	{

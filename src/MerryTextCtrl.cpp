@@ -339,8 +339,6 @@ void MerryTextCtrl::ExecuteCmd()
 	#endif
 	if (g_config->get(RememberFavouratMatch))
 		g_config->SetFavorite((this->EnterArgs > 0)?key.Left(this->EnterArgs - 2):key,command->GetCommandName());
-
-	::wxGetApp().GetFrame().Hide();
 	command->Execute(commandArg);
 }
 
