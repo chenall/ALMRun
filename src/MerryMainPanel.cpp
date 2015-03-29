@@ -81,7 +81,6 @@ void MerryMainPanel::OnMouseEvent(wxMouseEvent& e)
 			offset = parent->GetPosition();
 			g_config->conf->Write("/Window/WinLeft",offset.x);
 			g_config->conf->Write("/Window/WinTop",offset.y);
-			g_config->SaveCfg();
 		}
 	}
 	else if (e.LeftUp() && this->HasCapture())

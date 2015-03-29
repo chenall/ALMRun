@@ -73,7 +73,8 @@ DlgParam::DlgParam( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer2->Add(ButtonOk,0,wxALL,5);
 	bSizer2->Add(ButtonCancel,0,wxALL,5);
 	this->Layout();
-	this->Centre( wxBOTH );
+	if (g_config->conf->ReadBool("/Window/DlgParamCenter",true))
+		this->Centre( wxBOTH );
 
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(new FileDropDnd(this));
