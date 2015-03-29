@@ -1,7 +1,9 @@
-	2015-03-29 新增手工控制参数/Window/DlgParamCenter参数窗口是否自动居中,默认是,否则就跟随ALMRUN主窗口位置.(issue #27)
+	2015-03-29 1. 新增手工控制参数/Window/DlgParamCenter参数窗口是否自动居中,默认是,否则就跟随ALMRUN主窗口位置.(issue #27)
 		   手工修改可以在在ALMRUN.INI里面的[Window]字段中添加一行DlgParamCenter=0
 		   [Window]
 		   DlgParamCenter=0
+		   2. 命令管理器右键新增复制菜单(用于复制命令)(issue #26)
+		      在编辑命令时按住Ctrl键再点击确定也可以用于复制.
 	2015-02-14 修复命令管理器筛选问题(#23)
 	2015-02-02 修正命令太长会出错的BUG(#21)
 

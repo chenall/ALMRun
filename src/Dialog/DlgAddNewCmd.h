@@ -51,6 +51,7 @@
 #define SYMBOL_DLGADDNEWCMD_IDNAME ID_DLGADDNEWCMD
 #define SYMBOL_DLGADDNEWCMD_SIZE wxDefaultSize
 #define SYMBOL_DLGADDNEWCMD_POSITION wxDefaultPosition
+#define CMD_FLAGS_COPY 0x1
 ////@end control identifiers
 
 
@@ -87,6 +88,7 @@ public:
 	void OnShow(wxShowEvent& e);
 	void OnToggle(wxCommandEvent& e);
 	void OnCmdUpdate(wxCommandEvent& e);
+	void SetFlags(int e){flags = e;};
 ////@end DlgAddNewCmd event handler declarations
 
 ////@begin DlgAddNewCmd member function declarations
@@ -112,6 +114,7 @@ private:
 
 protected:
 	int cmdID;
+	int flags;
 	wxCheckBox* HideRun;
 	wxCheckBox* RunAs;
 	wxCheckBox* RequiredArg;

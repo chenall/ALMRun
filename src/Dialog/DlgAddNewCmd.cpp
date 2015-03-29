@@ -260,7 +260,13 @@ void DlgAddNewCmd::OnShow(wxShowEvent& e)
 	if (cmd.cmdLine.empty())
 		return;
 	cmdDesc->SetValue(cmd.Desc);
-	cmdKey->SetValue(cmd.Key);
+	if (this->flags & CMD_FLAGS_COPY)
+	{
+		this->SetTitle(wxString::Format("添加新命令-->[%s]副本",cmd.Name));
+		this->cmdID = -1;
+	}
+	else
+		cmdKey->SetValue(cmd.Key);
 	cmdName->SetValue(cmd.Name);
 
 	wxString lua;
@@ -353,6 +359,8 @@ void DlgAddNewCmd::OnOkButtonClick(wxCommandEvent& e)
 			cmd.insert(0,cmdFlag);
 		}
 	}
+	if (wxGetKeyState(WXK_CONTROL))
+		cmdID = -1;
 	if ((cmdID != -1 && g_config->ModifyCmd(cmdID,cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))
 		|| (cmdID = g_config->AddCmd(cmd,cmdName->GetValue(),cmdKey->GetValue(),cmdDesc->GetValue(),cmdPath->GetValue()))>0 )
 	{
@@ -373,6 +381,7 @@ void DlgAddNewCmd::Init()
 {
 ////@begin DlgAddNewCmd member initialisation
 	cmdID = -1;
+	this->flags = 0;
 ////@end DlgAddNewCmd member initialisation
 }
 
@@ -524,6 +533,7 @@ void DlgAddNewCmd::CreateControls()
 #ifndef _DISABLE_DND_
 	this->SetDropTarget(new NewCmdDnd(this));
 #endif
+	this->flags = 0;
 ////@end DlgAddNewCmd content construction
 }
 

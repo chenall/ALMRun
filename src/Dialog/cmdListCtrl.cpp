@@ -336,6 +336,7 @@ void cmdListCtrl::onRightClick(wxListEvent& e)
 	wxMenu *menu = new wxMenu;
 	menu->Append(ID_TOOL_EDIT,"编辑(&E)");
 	menu->Append(ID_TOOL_DELETE,"删除(&D)");
+	menu->Append(ID_TOOL_COPY,"复制(&C)");
 	PopupMenu(menu);
 	delete menu;
 }
@@ -360,6 +361,25 @@ void cmdListCtrl::RunMenu(const int id,cmdListCtrl* ctrl)
 		case ID_TOOL_ADD_FOLDER:
 			{
 				DlgAddNewDir* dlg=new DlgAddNewDir(NULL);
+				if (dlg->ShowModal() == wxID_OK)
+					ctrl->ReLoadCmds();
+				dlg->Destroy();
+			}
+			break;
+		case ID_TOOL_COPY:
+			if (item == -1)//没有当前激活条目
+				break;
+			if (cmdID >= 0)//cmdID >=0 命令
+			{
+				DlgAddNewCmd* dlg = new DlgAddNewCmd(ctrl->GetItemText(item,CMDLIST_COL_ID));
+				dlg->SetFlags(1);
+	//			dlg->flags = MENU_CMD_EDIT;
+				//dlg->SetCmdID(ctrl->GetItemText(item,CMDLIST_COL_ID));
+				//dlg->cmdName->SetValue(ctrl->GetItemText(item,CMDLIST_COL_NAME));
+				//dlg->cmdDesc->SetValue(ctrl->GetItemText(item,CMDLIST_COL_DESC));
+				//dlg->cmdKey->SetValue(ctrl->GetItemText(item,CMDLIST_COL_KEY));
+				//dlg->cmdLine->SetValue(ctrl->GetItemText(item,CMDLIST_COL_CMD));
+				//dlg->cmdPath->SetValue(ctrl->GetItemText(item,CMDLIST_COL_WORKDIR));
 				if (dlg->ShowModal() == wxID_OK)
 					ctrl->ReLoadCmds();
 				dlg->Destroy();
