@@ -315,8 +315,8 @@ static int LuaFindWindowEx(lua_State* L)
 	{
 		void *Parent = lua_tohwnd(L,1);
 		void *Child = lua_tohwnd(L,2);
-		wxString ClassName(wxString(lua_tostring(L, 1), wxConvLocal));
-		wxString WindowName(wxString(lua_tostring(L, 1), wxConvLocal));
+		wxString ClassName(wxString(lua_tostring(L, 3), wxConvLocal));
+		wxString WindowName(wxString(lua_tostring(L, 4), wxConvLocal));
 		window = g_controller->FindWindowEx(Parent,Child,ClassName,WindowName);
 	}
 	if (window)
