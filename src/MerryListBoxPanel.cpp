@@ -341,7 +341,7 @@ void MerryListBoxPanel::OnPaintEvent(wxPaintEvent& e)
 
 void MerryListBoxPanel::DrawBorder(MerryPaintDC& dc) const
 {
-	wxPoint p[4];
+	wxPoint p[5];
 	if (!border_width)
 		return;
 	int bw = border_width/2;
@@ -359,7 +359,8 @@ void MerryListBoxPanel::DrawBorder(MerryPaintDC& dc) const
 	p[3].x = p[1].x;
 	p[3].y = p[2].y;
 	p[4].y = p[2].y - item_height - border_width;
-	dc.SetPen(wxPen(skin->get(WINDOW_COLOR),border_width,skin->get(LIST_BORDER_STYLE)));
+	int twidth=border_width;
+	dc.SetPen(wxPen(skin->get(WINDOW_COLOR),twidth,skin->get(LIST_BORDER_STYLE)));
 	dc.DrawLine(p[0],p[1]);
 	dc.DrawLine(p[0],p[2]);
 	dc.DrawLine(p[1],p[3]);
