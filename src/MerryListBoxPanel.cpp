@@ -341,7 +341,7 @@ void MerryListBoxPanel::OnPaintEvent(wxPaintEvent& e)
 
 void MerryListBoxPanel::DrawBorder(MerryPaintDC& dc) const
 {
-	wxPoint p[4];
+	wxPoint p[5];
 	if (!border_width)
 		return;
 	int bw = border_width/2;
