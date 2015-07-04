@@ -363,7 +363,8 @@ wxString GetPinYin(const wxString& source)
 		//一个区94个,位码 A1 - FE
 		if (H < 0xB0 ||  L < 0xA1 || H > 0xF7 || L == 0xFF)
 		{
-			pinyin.Append(H);
+			if (H < 0x80)
+				pinyin.Append(H);
 			continue;
 		}
 
