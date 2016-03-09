@@ -26,7 +26,7 @@ BEGIN
             VALUE "FileDescription", "ALMRun 便捷启动工具,集热键管理,快速启动于一身"
             VALUE "FileVersion", VERSION_STR
             VALUE "InternalName", VER_DATE
-            VALUE "LegalCopyright", "Copyright (C) 2013"
+            VALUE "LegalCopyright", "Copyright (C) 2016"
             VALUE "OriginalFilename", "ALMRun.exe"
             VALUE "ProductName", "ALMRun"
             VALUE "ProductVersion", VERSION_STR
