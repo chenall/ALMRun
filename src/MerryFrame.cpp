@@ -176,7 +176,7 @@ void MerryFrame::ShowTrayIcon(const bool show)
 void MerryFrame::OnClose()
 {
 	__DEBUG_BEGIN("")
-	this->Hide();
+//	this->Hide();
 
 	wxDELETE(g_lua);
 	wxDELETE(g_commands);

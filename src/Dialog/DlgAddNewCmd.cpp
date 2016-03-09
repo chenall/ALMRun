@@ -250,7 +250,7 @@ void DlgAddNewCmd::OnCmdUpdate(wxCommandEvent& e)
 void DlgAddNewCmd::OnShow(wxShowEvent& e)
 {
 	e.Skip();
-	if (!e.GetShow())
+	if (!e.IsShown())
 		return;
 	this->SetFocus();
 	if (cmdID == -1 || !g_config)

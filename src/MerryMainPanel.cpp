@@ -91,7 +91,7 @@ void MerryMainPanel::OnMouseEvent(wxMouseEvent& e)
 
 void MerryMainPanel::OnPaintEvent(wxPaintEvent& e)
 {
-	wxPaintDC dc = wxPaintDC(this);
+	wxPaintDC dc(this);
 	dc.Clear();
 
 	if (m_background.IsOk())
