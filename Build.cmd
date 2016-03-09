@@ -13,13 +13,18 @@ REM PARAMS 需要附加的参数
 set PARAMS=
 
 if /i "%1"=="STATIC" set STATIC=1
-
-pushd %~dp0build
-if not DEFINED VS110COMNTOOLS goto :END
+pushd %~dp0
+if not exist build md build
+cd build
+SET VSTOOLS=
+FOR /f "usebackq tokens=1* delims==" %%I IN (`SET VS1`) DO SET VSTOOLS=%%J
+for %%i in (cmake.exe) do set CMAKE=%%~$PATH:i
+if not defined CMAKE goto :ERR_CMAKE
+if not DEFINED VSTOOLS goto :END
 if defined STATIC set PARAMS=%PARAMS% -DSTATIC=1
-cmake .. -DRTL=MT %PARAMS% || goto :END
+%CMAKE% .. -DRTL=MT %PARAMS% || goto :END
 if not exist ALMRun.sln goto :END
-"%VS110COMNTOOLS%\..\IDE\devenv.com" ALMRun.sln /build Release
+"%VSTOOLS%\..\IDE\devenv.com" ALMRun.sln /build Release
 if errorlevel 1 goto :END
 copy /y Release\ALMRun.exe ..\bin\ > nul
 popd
@@ -32,9 +37,14 @@ echo.
 echo 编译成功完成，生成的文件在BIN目录下。
 echo.
 goto :END
+:ERR_CMAKE
+echo.
+echo 系统未安装CMAKE，无启启动编译。
+echo.
+goto :END
 :NEED_VS100
 echo.
-echo 系统未安装VS2010，无启启动编译。
+echo 系统未安装VS2010或以上版本，无启启动编译。
 echo.
 :END
 pause
