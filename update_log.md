@@ -5,6 +5,10 @@ description: "ALMRun 更新记录"
 ---
 {% include JB/setup %}
 {% raw %}
+### [v1.2.0.74](http://pan.baidu.com/s/1mgTGrDQ)
+	2016-03-09 修正一些小问题，并尝试解决关机时出现的内存不能读错误问题 。
+	
+
 ### [v1.2.0.73](https://github.com/chenall/ALMRun/releases/tag/v1.2.0.73)
 	2015-01-26 参数配置新增<保存窗口位置>选项.
 	2015-01-25 修正使用空格键执行时,再次弹出程序程序时输入框的空格问题.
