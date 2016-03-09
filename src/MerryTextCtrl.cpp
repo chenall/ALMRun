@@ -74,7 +74,7 @@ MerryTextCtrl::MerryTextCtrl(wxWindow* parent):
 	{
 		if (reg.QueryValue(Value,tmp))
 		{
-			if (tmp == "00000409" || tmp == "00000809" || (!isWin8 && tmp == "00000804"))
+			if (tmp == "00000409" || tmp == "00000809" || (isWin8 && tmp == "00000804"))
 			{
 				hkl = ::LoadKeyboardLayout(tmp,KLF_ACTIVATE);//有找到的英文键盘,就装载它
 				break;
@@ -115,11 +115,20 @@ void MerryTextCtrl::SetEnInputMode(void)
 	if (hkl)
 		ActivateKeyboardLayout(hkl,KLF_SETFORPROCESS);
 	HIMC hImc;
-	DWORD dwConv, dwSent;
 	HWND hwnd = this->GetHWND();
 	hImc = ImmGetContext(hwnd);
-	ImmGetConversionStatus(hImc, &dwConv, &dwSent);
-	ImmSetConversionStatus(hImc, 0, dwSent);
+	/*
+	IME_CMODE_FULLSHAPE	全角
+	IME_CMODE_SYMBOL	中文标点
+	IME_CMODE_NATIVE	英文
+	*/
+	if (ImmGetOpenStatus(hImc)) // 输入法是打开状态
+	{
+		DWORD dwConv, dwSent;
+		ImmGetConversionStatus(hImc, &dwConv, &dwSent);//获取输入法状态
+		dwConv &= ~(IME_CMODE_NATIVE| IME_CMODE_SYMBOL| IME_CMODE_FULLSHAPE);//设置为半角英文模式.
+		ImmSetConversionStatus(hImc, dwConv, dwSent);
+	}
 	ImmReleaseContext(hwnd, hImc);
 }
 #endif
